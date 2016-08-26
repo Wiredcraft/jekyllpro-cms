@@ -1,0 +1,50 @@
+---
+#
+# Install Nginx
+#
+
+- hosts: web
+  roles:
+    - role: nginx
+      nginx_http_params:
+        - sendfile on
+        - server_tokens off
+        - access_log /var/log/nginx/access.log
+        - error_log /var/log/nginx/error.log
+        - types_hash_max_size 2048
+        - server_name_in_redirect on
+        - port_in_redirect off
+        - server_names_hash_bucket_size 64
+        - gzip on
+        - gzip_disable msie6
+        - gzip_proxied any
+        - gzip_comp_level 6
+        - gzip_buffers 16 8k
+        - gzip_http_version 1.1
+        - gzip_types text/plain text/css application/json application/x-javascript application/javascript text/xml application/xml application/xml+rss text/javascript image/svg+xml font/ttf font/opentype
+
+      nginx_sites:
+        status:
+          - listen 127.0.0.1:8001
+          - location /nginx_status { stub_status on; access_log off; }
+
+        jekyllpro: 
+          - listen 80
+          - index index.html
+          - server_name _
+          - error_page 404 /404.html
+          - error_page 500 403 =404 /404.html
+          # Prepare the path to the host
+          - if ($host ~ "(.*).(.*).(.*).{{ domain }}") { set $root {{ baseroot }}/$3/$2/$1; }
+          - location / { root $root; }
+
+
+  tasks:
+    - name: Ensure mime types are present for the Fonts
+      lineinfile:
+        line={{ item }}
+        dest=/etc/nginx/mime.types
+        insertbefore='\}'
+      with_items:
+        - 'font/ttf        ttf;'
+        - 'font/opentype   otf;'

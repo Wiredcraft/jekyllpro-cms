@@ -1,0 +1,19 @@
+---
+common_git_user_name: Jekyll Pro
+common_git_user_email: jekyllpro@wiredcraft.com
+
+# Misc 
+disable_firewall: true
+disable_networkmanager: true
+
+#################
+# 
+# Define SSH users
+#
+#################
+
+wcladmin_ssh_pub_keys:
+  - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC45xILcAxud6vtjSwxnoH3pKDAwoGeoPWy2t8ZXtpi1yMxe9I6kuFlVi2QRxz88GNlFckaQPLNMe05g7l3+KFZT67TvwuTyHH2NnlEBlRngsc62wtFVXNPxFVC9aDfmPZuF0RsOGxhxZvyiaJzW0jXF4O8P6OkSF1weB8mf/cmZZCG8pZR4ITCLyPZFG1juv9ZdGYwrg/YrpKlqrMvBR6V7vJuK2wQrfLm6nAxgwwt+Ohr6KqICKLzpAM6og8rUskZxLnTv96NoxnX7BpZLddHQ/jBaHCL+pwAk2J18UIVBVzoCs6OV61Ga9i3XL2VL3sw2X2Y0MPQgktYgH3pHo6B vincent@wiredcraft
+  - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCkxz58yBatKsaLzP3NHP3YLTwBUBvun8NrbWDydxK6pb3c8bTAtP3i+psfTdLXbIdB4g+sIak7dtiSm8nH2ZeixOLkqFx8lrSBU0MHFSVQFJo4CrXMR2jUIHGtUbuiMnw+zlfalQFKm/dgqOjh/YEEAWBLzxFEbBV1D8PrBXHD6/4WnD9gqh3IuX1FPNlqJ2kN+s6YwchHb+g5aCXTUIP6hbDa4pXgTz4M4P9JvFcrYyzuRl8ZiCjCX9dameVrXaaTgpcbkKVRKeHFLUCX/Zf8X4Ce+AohteCallQdGfft1RsVcQUh7NR5oS3Y5jrVBqvOR7KFFGAnjc+9B+JfDlTl song@wiredcraft
+
+baseroot: /var/www

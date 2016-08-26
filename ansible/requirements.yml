@@ -1,0 +1,24 @@
+---
+- src: https://github.com/wiredcraft-ops/role-wcl-common.git
+  name: wcl-common
+  version: master
+
+- src: https://github.com/wiredcraft-ops/role-wcl-logs.git
+  name: wcl-logs
+  version: master
+
+- src: https://github.com/wiredcraft-ops/role-wcl-nginx.git
+  name: wcl-nginx
+  version: master
+
+- src: https://github.com/wiredcraft-ops/role-wcl-zabbix-scripts.git
+  name: wcl-zabbix-scripts
+  version: master
+
+# For dev env only - setup bind
+- src: bertvv.bind
+
+- src: https://github.com/dj-wasabi/ansible-zabbix-agent
+  name: dj-wasabi.zabbix-agent
+  version: master
+

@@ -4,3 +4,11 @@
 *.retry
 *.pyc
 *.pyo
+*.swp
+*.log
+*~
+sandbox
+
+ansible/roles/*
+!ansible/roles/README.md
+!ansible/roles/sbux-*

@@ -1,0 +1,16 @@
+---
+- hosts: jekyll
+  tasks:
+    - name: Install Ruby and Gems
+      apt: 
+        name={{ item }}
+        state=present
+      with_items:
+        - ruby
+        - rubygems
+
+    - name: Install jekyll
+      gem:
+        name=jekyll
+        state=present
+        user_install=no

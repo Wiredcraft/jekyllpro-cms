@@ -1,0 +1,9 @@
+[jekyll]
+prod-jekyllpro-web
+
+[web]
+prod-jekyllpro-web
+
+[production:children]
+jekyll
+web
