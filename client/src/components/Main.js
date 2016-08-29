@@ -114,19 +114,15 @@ class AppComponent extends React.Component {
       <div>
         <h3>Schema</h3>
         <textarea
-          cols='50'
           defaultValue={defaultSchemaText}
           onChange={() => this.checkSchema()}
           ref='schemaInput'
-          rows='10'
           className={ schemaCanBeParsed ? '' : 'error' }
         />
         <h3>Original Markdown</h3>
         <textarea
-          cols='50'
           defaultValue={markdownText}
           ref='markdownInput'
-          rows='10'
           onChange={() => this.updateMarkdown()}
         />
         <h3>Edit From</h3>
@@ -135,12 +131,7 @@ class AppComponent extends React.Component {
           schema={formSchema}
         />
         <h3>Result</h3>
-        <textarea
-          cols='50'
-          rows='10'
-          ref='res'
-          value={resultMarkdown}
-        />
+        <textarea value={resultMarkdown} />
       </div>
     )
   }
