@@ -118,6 +118,47 @@ example success response body
 ]
 ```
 
+**get indivadual file content**
+```
+GET /api/repository?ref=[branchName]&path=[filePath]&raw=[true or false]
+
+// raw=true will return the file content in raw data instead of GitHub's normalized format
+```
+example
+
+`http://localhost:3000/api/repository?ref=test-dev&path=test/test.MD&raw=true`
+return
+```
+"test readme file, second modify"
+```
+
+`http://localhost:3000/api/repository?ref=test-dev&path=test/test.MD`
+return
+```
+{
+  "name": "test.MD",
+  "path": "test/test.MD",
+  "sha": "c9e36349dcfb4144d0905d52d44e6f59c07f3f38",
+  "size": 31,
+  "url": "https://api.github.com/repos/woodpig07/test/contents/test/test.MD?ref=test-dev",
+  "html_url": "https://github.com/woodpig07/test/blob/test-dev/test/test.MD",
+  "git_url": "https://api.github.com/repos/woodpig07/test/git/blobs/c9e36349dcfb4144d0905d52d44e6f59c07f3f38",
+  "download_url": "https://raw.githubusercontent.com/woodpig07/test/test-dev/test/test.MD",
+  "type": "file",
+  "content": "dGVzdCByZWFkbWUgZmlsZSwgc2Vjb25kIG1vZGlmeQ==\n",
+  "encoding": "base64",
+  "_links": {
+    "self": "https://api.github.com/repos/woodpig07/test/contents/test/test.MD?ref=test-dev",
+    "git": "https://api.github.com/repos/woodpig07/test/git/blobs/c9e36349dcfb4144d0905d52d44e6f59c07f3f38",
+    "html": "https://github.com/woodpig07/test/blob/test-dev/test/test.MD"
+  }
+}
+```
+
+
+
+
+
 **add/update files to repo**
 
 ```
@@ -176,7 +217,7 @@ example success response body
 }
 ```
 
-***list all branches***
+**list all branches**
 
 ```
 GET /api/repository/branch
@@ -201,7 +242,7 @@ Example success response body
 ]
 ```
 
-***create branch***
+**create branch**
 
 ```
 POST /api/repository/branch
