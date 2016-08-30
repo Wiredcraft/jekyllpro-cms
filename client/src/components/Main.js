@@ -1,9 +1,9 @@
 import React from 'react'
 import Form from 'react-jsonschema-form'
-import yaml from 'js-yaml'
 
 import { defaultMarkdownText, defaultSchemaText } from '../constants/defaultText'
 import { SUPPORTED_TYPE } from '../constants/types'
+import { parseYamlInsideMarkdown } from '../helpers/markdown'
 import 'normalize.css/normalize.css'
 import 'styles/main.scss'
 
@@ -38,32 +38,25 @@ class AppComponent extends React.Component {
           }
         }
       }
-      this.setState({ schemaCanBeParsed })
     } catch (e) {
-      schemaCanBeParsed = false
-      this.setState({ schemaCanBeParsed: false })
+      return this.setState({ schemaCanBeParsed: false })
     }
+    this.setState({ schemaCanBeParsed })
     if(schemaCanBeParsed) this.updateEditFrom()
   }
 
   updateEditFrom() {
     const { schemaInput } = this.refs
     let { markdownText, schemaCanBeParsed, formSchema } = this.state
+    const docConfigObj = parseYamlInsideMarkdown(markdownText)
+    if(!docConfigObj) return
 
     const schemaObj = JSON.parse(schemaInput.value)
     if (!schemaCanBeParsed) return
     formSchema.properties = {}
     for (let i = 0; i < schemaObj.length; i++) {
       if(!schemaObj[i].name) continue
-      const linePattern = new RegExp(schemaObj[i].target + ': ?[\\w ]*')
-      const line = linePattern.exec(markdownText)
-      if(!line) continue
-
-      const prePattern = new RegExp(schemaObj[i].target + ': ?')
-      let defaultValue = line[0].replace(prePattern, '')
-      if(schemaObj[i].type === 'boolean') {
-        defaultValue = defaultValue === 'true'
-      }
+      const defaultValue = docConfigObj[schemaObj[i].target]
       formSchema.properties[schemaObj[i].name] = {
         default: defaultValue,
         title: schemaObj[i].name,
@@ -73,32 +66,12 @@ class AppComponent extends React.Component {
     this.setState({ formSchema })
   }
 
-  parseMarkdownYaml(text) {
-    const splitter = '---'
-    const targetLines = text.split('\n')
-    const indexes = []
-    const lineCount = targetLines.length
-    for (let i = 0; i < lineCount; i++) {
-      if (targetLines[i] === splitter) indexes.push(i)
-    }
-    if (indexes.length > 1) {
-      let text = ''
-      for (let i = indexes[0] + 1; i < indexes[1]; i++) {
-        text += targetLines[i] + '\n'
-      }
-      const doc = yaml.load(text)
-      console.log(doc);
-    }
-
-  }
-
   updateMarkdown() {
     const { schemaCanBeParsed } = this.state
     const { markdownInput } = this.refs
 
     this.setState({ markdownText: markdownInput.value })
 
-    this.parseMarkdownYaml(markdownInput.value)
     if (schemaCanBeParsed) {
       setTimeout(() => this.updateEditFrom(), 20)
     }
@@ -107,14 +80,14 @@ class AppComponent extends React.Component {
   updateResult(formData) {
     const { schemaInput } = this.refs
     let { markdownText, schemaCanBeParsed } = this.state
+    const docConfigObj = parseYamlInsideMarkdown(markdownText)
+    if(!docConfigObj) return
 
     const schemaObj = JSON.parse(schemaInput.value)
     let newMarkdownText = markdownText
     if (!schemaCanBeParsed) return
     for (let i = 0; i < schemaObj.length; i++) {
       const linePattern = new RegExp(schemaObj[i].target + ': ?[\\w ]*')
-      const line = linePattern.exec(markdownText)
-      if(!line) continue
 
       const prePattern = new RegExp(schemaObj[i].target + ': ?')
       let newValue = formData[schemaObj[i].name]
@@ -122,7 +95,10 @@ class AppComponent extends React.Component {
       newMarkdownText =
         newMarkdownText.replace(linePattern, preText + newValue)
     }
-    this.setState({ resultMarkdown: newMarkdownText, previousMarkdownState: newMarkdownText })
+    this.setState({
+      previousMarkdownState: newMarkdownText,
+      resultMarkdown: newMarkdownText
+    })
   }
 
   render() {
