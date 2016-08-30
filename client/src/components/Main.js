@@ -1,5 +1,6 @@
 import React from 'react'
 import Form from 'react-jsonschema-form'
+import yaml from 'js-yaml'
 
 import { defaultMarkdownText, defaultSchemaText } from '../constants/defaultText'
 import { SUPPORTED_TYPE } from '../constants/types'
@@ -56,8 +57,9 @@ class AppComponent extends React.Component {
       if(!schemaObj[i].name) continue
       const linePattern = new RegExp(schemaObj[i].target + ': ?[\\w ]*')
       const line = linePattern.exec(markdownText)
-      const prePattern = new RegExp(schemaObj[i].target + ': ?')
       if(!line) continue
+
+      const prePattern = new RegExp(schemaObj[i].target + ': ?')
       let defaultValue = line[0].replace(prePattern, '')
       if(schemaObj[i].type === 'boolean') {
         defaultValue = defaultValue === 'true'
@@ -71,12 +73,32 @@ class AppComponent extends React.Component {
     this.setState({ formSchema })
   }
 
+  parseMarkdownYaml(text) {
+    const splitter = '---'
+    const targetLines = text.split('\n')
+    const indexes = []
+    const lineCount = targetLines.length
+    for (let i = 0; i < lineCount; i++) {
+      if (targetLines[i] === splitter) indexes.push(i)
+    }
+    if (indexes.length > 1) {
+      let text = ''
+      for (let i = indexes[0] + 1; i < indexes[1]; i++) {
+        text += targetLines[i] + '\n'
+      }
+      const doc = yaml.load(text)
+      console.log(doc);
+    }
+
+  }
+
   updateMarkdown() {
     const { schemaCanBeParsed } = this.state
     const { markdownInput } = this.refs
 
     this.setState({ markdownText: markdownInput.value })
 
+    this.parseMarkdownYaml(markdownInput.value)
     if (schemaCanBeParsed) {
       setTimeout(() => this.updateEditFrom(), 20)
     }
@@ -92,8 +114,9 @@ class AppComponent extends React.Component {
     for (let i = 0; i < schemaObj.length; i++) {
       const linePattern = new RegExp(schemaObj[i].target + ': ?[\\w ]*')
       const line = linePattern.exec(markdownText)
-      const prePattern = new RegExp(schemaObj[i].target + ': ?')
       if(!line) continue
+
+      const prePattern = new RegExp(schemaObj[i].target + ': ?')
       let newValue = formData[schemaObj[i].name]
       const preText = prePattern.exec(markdownText)[0]
       newMarkdownText =
@@ -117,7 +140,7 @@ class AppComponent extends React.Component {
           defaultValue={defaultSchemaText}
           onChange={() => this.checkSchema()}
           ref='schemaInput'
-          className={ schemaCanBeParsed ? '' : 'error' }
+          className={schemaCanBeParsed ? '' : 'error'}
         />
         <h3>Original Markdown</h3>
         <textarea
