@@ -175,3 +175,48 @@ example success response body
   }
 }
 ```
+
+***list all branches***
+
+```
+GET /api/repository/branch
+```
+Example success response body
+```
+[
+  {
+    "name": "master",
+    "commit": {
+      "sha": "929743aa8354cc37ac69e13ad2abaaa6d0b5994a",
+      "url": "https://api.github.com/repos/woodpig07/test/commits/929743aa8354cc37ac69e13ad2abaaa6d0b5994a"
+    }
+  },
+  {
+    "name": "test-dev",
+    "commit": {
+      "sha": "929743aa8354cc37ac69e13ad2abaaa6d0b5994a",
+      "url": "https://api.github.com/repos/woodpig07/test/commits/929743aa8354cc37ac69e13ad2abaaa6d0b5994a"
+    }
+  }
+]
+```
+
+***create branch***
+
+```
+POST /api/repository/branch
+
+// form data {oldBranch: "master", newBranch: "newBranchName"}
+```
+Example success response body
+```
+{
+  "ref": "refs/heads/test-dev",
+  "url": "https://api.github.com/repos/woodpig07/test/git/refs/heads/test-dev",
+  "object": {
+    "sha": "929743aa8354cc37ac69e13ad2abaaa6d0b5994a",
+    "type": "commit",
+    "url": "https://api.github.com/repos/woodpig07/test/git/commits/929743aa8354cc37ac69e13ad2abaaa6d0b5994a"
+  }
+}
+```
