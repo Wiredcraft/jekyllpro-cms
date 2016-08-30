@@ -20,13 +20,15 @@ const requireGithubAPI = (req, res, next) => {
 
 const getRepoContent = (req, res, next) => {
   var repo = req.githubRepo
-  repo.getContents()
+  var { ref, path, raw } = req.query
+
+  repo.getContents(ref, path, raw)
   .then((data) => {
-    console.log(data)
+    // console.log(data)
     res.status(200).json(data.data)
   })
   .catch((err) => {
-    console.log(err)
+    // console.log(err)
     if (err.status === 404) {
       return res.status(404).json(err.response.data)
     }
@@ -42,18 +44,51 @@ const writeRepoFile = (req, res, next) => {
   }
   repo.writeFile(newFile.branch, newFile.path, newFile.content, newFile.message, newFile.options, cb)
   .then((data) => {
-    console.log(data)
+    // console.log(data)
     res.status(200).json(data.data)
   })
   .catch((err) => {
-    console.log(err)
+    // console.log(err)
     res.status(err.status).json(err.response.data)
     // res.status(400).json({message: 'something wrong'})
+  })
+}
+
+const listBranches = (req, res, next) => {
+  var repo = req.githubRepo
+  repo.listBranches()
+  .then((data) => {
+    // console.log(data)
+    res.status(200).json(data.data)
+  })
+  .catch((err) => {
+    // console.log(err)
+    if (err.status === 404) {
+      return res.status(404).json(err.response.data)
+    }
+    res.status(400).json({message: 'something wrong'})
+  })
+}
+
+const createBranches = (req, res, next) => {
+  var repo = req.githubRepo
+  var formData = req.body
+
+  repo.createBranch(formData.oldBranch, formData.newBranch)
+  .then((data) => {
+    // console.log(data)
+    res.status(200).json(data.data)
+  })
+  .catch((err) => {
+    // console.log(err)
+    res.status(err.status).json(err.response.data)
   })
 }
 
 export default {
   requireGithubAPI,
   getRepoContent,
+  listBranches,
+  createBranches,
   writeRepoFile
 }

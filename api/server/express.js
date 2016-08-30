@@ -129,10 +129,16 @@ const initRoutes = (app) => {
   // Setting the github oauth routes
   app.route('/api/auth/github').get(users.githubOauthCall());
   app.route('/api/auth/github/callback').get(users.githubOauthCallback());
+  app.route('/api/me').get(users.getUserInfo);
   app.route('/api/repository')
   .all(users.requireAuthentication, repository.requireGithubAPI)
   .get(repository.getRepoContent)
-  .post(repository.writeRepoFile) 
+  .post(repository.writeRepoFile)
+
+  app.route('/api/repository/branch')
+  .all(users.requireAuthentication, repository.requireGithubAPI)
+  .get(repository.listBranches)
+  .post(repository.createBranches)
 }
 
 const initErrorHandler = (app) => {

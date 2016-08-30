@@ -31,12 +31,56 @@ npm run dev
 ```
 GET   /api/auth/github
 ```
+
+**check if user is loggend and get user profile**
+
+```
+GET   /api/me
+```
+if not logged in, it return 401 error
+
+example success response body
+```
+{
+  login: "woodpig07",
+  id: 4519861,
+  avatar_url: "https://avatars.githubusercontent.com/u/4519861?v=3",
+  gravatar_id: "",
+  url: "https://api.github.com/users/woodpig07",
+  html_url: "https://github.com/woodpig07",
+  followers_url: "https://api.github.com/users/woodpig07/followers",
+  following_url: "https://api.github.com/users/woodpig07/following{/other_user}",
+  gists_url: "https://api.github.com/users/woodpig07/gists{/gist_id}",
+  starred_url: "https://api.github.com/users/woodpig07/starred{/owner}{/repo}",
+  subscriptions_url: "https://api.github.com/users/woodpig07/subscriptions",
+  organizations_url: "https://api.github.com/users/woodpig07/orgs",
+  repos_url: "https://api.github.com/users/woodpig07/repos",
+  events_url: "https://api.github.com/users/woodpig07/events{/privacy}",
+  received_events_url: "https://api.github.com/users/woodpig07/received_events",
+  type: "User",
+  site_admin: false,
+  name: "Kate Wu",
+  company: null,
+  blog: null,
+  location: null,
+  email: null,
+  hireable: null,
+  bio: null,
+  public_repos: 9,
+  public_gists: 0,
+  followers: 4,
+  following: 0,
+  created_at: "2013-05-24T14:04:07Z",
+  updated_at: "2016-08-27T04:03:00Z"
+}
+```
+
 **get repo content in json format**
 
 ```
 GET    /api/repository
 ```
-example sucess response body
+example success response body
 ```
 [
   {
@@ -73,6 +117,47 @@ example sucess response body
   }
 ]
 ```
+
+**get indivadual file content**
+```
+GET /api/repository?ref=[branchName]&path=[filePath]&raw=[true or false]
+
+// raw=true will return the file content in raw data instead of GitHub's normalized format
+```
+example
+
+`http://localhost:3000/api/repository?ref=test-dev&path=test/test.MD&raw=true`
+return
+```
+"test readme file, second modify"
+```
+
+`http://localhost:3000/api/repository?ref=test-dev&path=test/test.MD`
+return
+```
+{
+  "name": "test.MD",
+  "path": "test/test.MD",
+  "sha": "c9e36349dcfb4144d0905d52d44e6f59c07f3f38",
+  "size": 31,
+  "url": "https://api.github.com/repos/woodpig07/test/contents/test/test.MD?ref=test-dev",
+  "html_url": "https://github.com/woodpig07/test/blob/test-dev/test/test.MD",
+  "git_url": "https://api.github.com/repos/woodpig07/test/git/blobs/c9e36349dcfb4144d0905d52d44e6f59c07f3f38",
+  "download_url": "https://raw.githubusercontent.com/woodpig07/test/test-dev/test/test.MD",
+  "type": "file",
+  "content": "dGVzdCByZWFkbWUgZmlsZSwgc2Vjb25kIG1vZGlmeQ==\n",
+  "encoding": "base64",
+  "_links": {
+    "self": "https://api.github.com/repos/woodpig07/test/contents/test/test.MD?ref=test-dev",
+    "git": "https://api.github.com/repos/woodpig07/test/git/blobs/c9e36349dcfb4144d0905d52d44e6f59c07f3f38",
+    "html": "https://github.com/woodpig07/test/blob/test-dev/test/test.MD"
+  }
+}
+```
+
+
+
+
 
 **add/update files to repo**
 
@@ -128,6 +213,51 @@ example success response body
         "html_url": "https://github.com/woodpig07/test/commit/a7e402b4bd914ce270184559d752512e60782547"
       }
     ]
+  }
+}
+```
+
+**list all branches**
+
+```
+GET /api/repository/branch
+```
+Example success response body
+```
+[
+  {
+    "name": "master",
+    "commit": {
+      "sha": "929743aa8354cc37ac69e13ad2abaaa6d0b5994a",
+      "url": "https://api.github.com/repos/woodpig07/test/commits/929743aa8354cc37ac69e13ad2abaaa6d0b5994a"
+    }
+  },
+  {
+    "name": "test-dev",
+    "commit": {
+      "sha": "929743aa8354cc37ac69e13ad2abaaa6d0b5994a",
+      "url": "https://api.github.com/repos/woodpig07/test/commits/929743aa8354cc37ac69e13ad2abaaa6d0b5994a"
+    }
+  }
+]
+```
+
+**create branch**
+
+```
+POST /api/repository/branch
+
+// form data {oldBranch: "master", newBranch: "newBranchName"}
+```
+Example success response body
+```
+{
+  "ref": "refs/heads/test-dev",
+  "url": "https://api.github.com/repos/woodpig07/test/git/refs/heads/test-dev",
+  "object": {
+    "sha": "929743aa8354cc37ac69e13ad2abaaa6d0b5994a",
+    "type": "commit",
+    "url": "https://api.github.com/repos/woodpig07/test/git/commits/929743aa8354cc37ac69e13ad2abaaa6d0b5994a"
   }
 }
 ```
