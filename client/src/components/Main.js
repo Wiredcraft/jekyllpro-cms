@@ -87,7 +87,7 @@ class AppComponent extends React.Component {
     let newMarkdownText = markdownText
     if (!schemaCanBeParsed) return
     for (let i = 0; i < schemaObj.length; i++) {
-      const linePattern = new RegExp(schemaObj[i].target + ': ?[\\w ]*')
+      const linePattern = new RegExp(schemaObj[i].target + ': ?[\\w 、\/]*')
 
       const prePattern = new RegExp(schemaObj[i].target + ': ?')
       let newValue = formData[schemaObj[i].name]
@@ -128,6 +128,11 @@ class AppComponent extends React.Component {
         <Form
           onSubmit={res => this.updateResult(res.formData)}
           schema={formSchema}
+          uiSchema={{
+            // Parse uiSchema dynamically
+            //
+            date: { 'ui:widget': 'date' }
+          }}
         />
         <h3>Result</h3>
         <textarea value={resultMarkdown} />
