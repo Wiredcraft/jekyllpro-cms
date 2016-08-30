@@ -31,12 +31,56 @@ npm run dev
 ```
 GET   /api/auth/github
 ```
+
+**check if user is loggend and get user profile**
+
+```
+GET   /api/me
+```
+if not logged in, it return 401 error
+
+example success response body
+```
+{
+  login: "woodpig07",
+  id: 4519861,
+  avatar_url: "https://avatars.githubusercontent.com/u/4519861?v=3",
+  gravatar_id: "",
+  url: "https://api.github.com/users/woodpig07",
+  html_url: "https://github.com/woodpig07",
+  followers_url: "https://api.github.com/users/woodpig07/followers",
+  following_url: "https://api.github.com/users/woodpig07/following{/other_user}",
+  gists_url: "https://api.github.com/users/woodpig07/gists{/gist_id}",
+  starred_url: "https://api.github.com/users/woodpig07/starred{/owner}{/repo}",
+  subscriptions_url: "https://api.github.com/users/woodpig07/subscriptions",
+  organizations_url: "https://api.github.com/users/woodpig07/orgs",
+  repos_url: "https://api.github.com/users/woodpig07/repos",
+  events_url: "https://api.github.com/users/woodpig07/events{/privacy}",
+  received_events_url: "https://api.github.com/users/woodpig07/received_events",
+  type: "User",
+  site_admin: false,
+  name: "Kate Wu",
+  company: null,
+  blog: null,
+  location: null,
+  email: null,
+  hireable: null,
+  bio: null,
+  public_repos: 9,
+  public_gists: 0,
+  followers: 4,
+  following: 0,
+  created_at: "2013-05-24T14:04:07Z",
+  updated_at: "2016-08-27T04:03:00Z"
+}
+```
+
 **get repo content in json format**
 
 ```
 GET    /api/repository
 ```
-example sucess response body
+example success response body
 ```
 [
   {
