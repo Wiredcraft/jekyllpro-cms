@@ -8,6 +8,7 @@ import 'normalize.css/normalize.css'
 import 'styles/main.scss'
 
 
+// TODO: remove linePattern
 class AppComponent extends React.Component {
   constructor() {
     super()
