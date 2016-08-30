@@ -54,7 +54,7 @@ const requireAuthentication = (req, res, next) => {
 
 const getUserInfo = (req, res) => {
   if (req.user) {
-    var info = req.user
+    var info = Object.assign({}, req.user)
     delete info.accessToken
     delete info.refreshToken
     res.status(200).send(info)
