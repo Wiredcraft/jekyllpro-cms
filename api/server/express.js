@@ -27,7 +27,7 @@ const initMiddleware = (app) => {
   app.use(cookieParser());
 
   if (config.corsEnabled) {
-    // app.use(cors())
+    app.use(cors())
   }
 }
 
