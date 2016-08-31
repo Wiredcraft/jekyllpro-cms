@@ -1,0 +1,259 @@
+/* Egg Magic */
+
+@import '_variables'; // Variables (colors, layout, spacing & typography)
+@import '_defaults'; // Styling defaults
+// @import 'partials/_dropdown';
+// @import 'partials/_modal';
+// @import 'partials/_notifications';
+
+/* Custom */
+
+$menu: 120px;
+$navigation: 240px;
+
+body {
+  @include font-size($smaller);
+}
+
+h1,
+h2,
+h3 {
+  font-weight: normal;
+}
+
+#header {
+  background: $black;
+  left: 0;
+  position: fixed;
+  right: 0;
+  top: 0;
+  z-index: 999;
+}
+
+#menu,
+#navigation {
+  bottom: 0;
+  color: #FFF;
+  overflow: auto;
+  position: fixed;
+  top: 0;
+  .select {
+    width: 100%;
+    select {
+      background: $black;
+      border: 0;
+      border-radius: 0;
+      width: 100%;
+      &:hover {
+        background: shade($black, 10%);
+      }
+    }
+  }
+  .button {
+    padding: $space/12 $space/3;
+  }
+  input {
+    background: rgba(0, 0, 0, 0.1);
+    padding: $space/12 $space/3;
+    &:hover {
+      background: rgba(0, 0, 0, 0.2);
+    }
+    &:focus {
+      background: #FFF;
+      color: $black;
+    }
+  }
+  svg {
+    display: block;
+    fill: #FFF;
+    height: 1.5*$space/2;
+  }
+  h2,
+  h3 {
+    color: inherit;
+    line-height: 160%;
+    margin: 0;
+  }
+  h3 {
+    @include font-size($pico);
+    letter-spacing: 1px;
+  }
+  a {
+    color: inherit;
+    display: block;
+    opacity: 0.5;
+    .meta {
+      opacity: 0.5;
+    }
+    &:hover,
+    &.active {
+      opacity: 1;
+      text-decoration: none;
+    }
+  }
+}
+
+#menu {
+  background: $black;
+  left: 0;
+  width: $menu;
+  .body {
+    h3 {
+      padding: $space/3 1.5*$space/3;
+      opacity: 0.4;
+    }
+    a {
+      border-left: 2px solid transparent;
+      color: inherit;
+      cursor: pointer;
+      display: block;
+      padding: $space/3 1.5*$space/3;
+      // padding: $space/2 1.5*$space/2;
+      @include transition-property(opacity);
+      @include transition-duration($ease);
+      svg {
+        float: left;
+        margin-right: $space/12;
+      }
+      &:hover,
+      &.active {
+        opacity: 1;
+        text-decoration: none;
+      }
+      &.active {
+        border-color: $blue;
+      }
+    }
+  }
+  .footer {
+    position: absolute;
+    bottom: 0;
+    img {
+      border-radius: $radius;
+      box-shadow: 1px 1px 0 rgba(0, 0, 0, 0.1);
+      float: left;
+      height: $space;
+      margin: (-$space/12) $space/4 0 0;
+    }
+  }
+}
+
+#navigation {
+  background: tint($black, 7%);
+  left: $menu;
+  width: $navigation;
+  .header {
+    border-bottom: 1px solid $black;
+    @include font-size($small);
+    padding: $space/2 1.5*$space/2;
+    input {
+      border-radius: $space;
+    }
+    .controls {
+      float: right;
+      .button {
+        @include tooltip(bottom, #FFF);
+        padding: $space/12;
+        span {
+          color: $black;
+        }
+      }
+    }
+  }
+  .body {
+    a {
+      border-bottom: 1px solid $black;
+      padding: $space/2 1.5*$space/2;
+      &.active {
+        background: $blue;
+      }
+    }
+    h2 {
+      font-size: inherit;
+    }
+  }
+}
+
+$sidebar: 240px;
+
+#content {
+  margin-left: $menu + $navigation;
+  input:not([type=submit]),
+  textarea,
+  .select select {
+    width: 100%;
+  }
+  .description {
+    color: tint($black, 40%);
+  }
+  .sidebar {
+    box-sizing: border-box;
+    @include clearfix;
+    padding: $space;
+    position: fixed;
+    right: 0;
+    top: 0;
+    width: $sidebar;
+    .primary {
+      width: 100%;
+    }
+    & + .body {
+      padding-right: $sidebar;
+    }
+  }
+  .body {
+    box-sizing: border-box;
+    padding: $space;
+  }
+}
+
+/* The switch - the box around the slider */
+$switch_size: 12px;
+$switch_padding: 4px;
+
+.switch {
+  display: inline-block;
+  float: left;
+  height: $switch_size + 2*$switch_padding;
+  margin: 0 $space/3 0 0;
+  opacity: 1;
+  position: relative;
+  width: 2*$switch_size + 2*$switch_padding;
+  input {
+    display: none;
+    &:checked + .slider {
+      background: $blue;
+    }
+    &:checked + .slider:before {
+      @include transform(translateX($switch_size));
+    }
+  }
+  .slider {
+    background: rgba(0, 0, 0, 0.1);
+    box-shadow: 1px 1px 0 rgba(0, 0, 0, 0.1) inset;
+    border-radius: 2*$switch_size;
+    bottom: 0;
+    cursor: pointer;
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+    @include transition-duration($ease);
+    &:before {
+      background: #FFF;
+      box-shadow: 1px 1px 0 rgba(0, 0, 0, 0.1);
+      border-radius: 50%;
+      bottom: $switch_padding;
+      content: '';
+      height: $switch_size;
+      left: $switch_padding;
+      position: absolute;
+      width: $switch_size;
+      @include transition-duration($ease);
+    }
+  }
+  & + label {
+    cursor: pointer;
+    margin: 0;
+  }
+}

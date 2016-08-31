@@ -1,0 +1,7 @@
+.*
+!.gitignore
+!.gitmodules
+*~
+
+node_modules/
+docs/node_modules/

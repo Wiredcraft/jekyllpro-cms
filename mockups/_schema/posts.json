@@ -1,5 +1,10 @@
 {
 	"title": "Blog post",
+  "jekyll": {
+    "type": "collection",
+    "id": "posts",
+    "dir": "_posts"
+  },
 	"type": "object",
 	"properties": {
 		"title": {
