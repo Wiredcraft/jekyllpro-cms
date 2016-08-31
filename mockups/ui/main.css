@@ -1258,26 +1258,27 @@ h3 {
     color: #858a90; }
   #content .header {
     background: #F4F4F4;
-    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1);
+    bottom: 0;
+    box-shadow: 0 -1px 0 rgba(0, 0, 0, 0.1);
     box-sizing: border-box;
     padding: 12px 36px;
     position: fixed;
     left: 400px;
     right: 0;
-    top: 0;
     z-index: 999; }
     #content .header::after {
       clear: both;
       content: "";
       display: table; }
     #content .header + .body {
-      padding-top: 78px; }
+      padding-bottom: 78px; }
     #content .header > * {
       display: block;
       float: left;
       margin: 0;
       vertical-align: bottom; }
     #content .header .filename {
+      margin-left: 8px;
       position: relative;
       width: 50%; }
       #content .header .filename input {
@@ -1288,8 +1289,6 @@ h3 {
         left: 6px;
         position: absolute;
         top: 3px; }
-    #content .header .primary {
-      margin-left: 8px; }
     #content .header .published {
       display: inline-block;
       margin: 6px 0 0 8px;

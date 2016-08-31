@@ -206,17 +206,17 @@ $toolbar: 54px;
   }
   .header {
     background: $background;
-    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1);
+    bottom: 0;
+    box-shadow: 0 -1px 0 rgba(0, 0, 0, 0.1);
     box-sizing: border-box;
     @include clearfix;
     padding: $space/2 1.5*$space;
     position: fixed;
     left: $menu + $navigation;
     right: 0;
-    top: 0;
     z-index: 999;
     & + .body {
-      padding-top: $toolbar + $space;
+      padding-bottom: $toolbar + $space;
     }
     > * {
       display: block;
@@ -225,6 +225,7 @@ $toolbar: 54px;
       vertical-align: bottom;
     }
     .filename {
+      margin-left: $space/3;
       position: relative;
       width: 50%;
       input {
@@ -237,9 +238,6 @@ $toolbar: 54px;
         position: absolute;
         top: $space/8;
       }
-    }
-    .primary {
-      margin-left: $space/3;
     }
     .published {
       display: inline-block;
