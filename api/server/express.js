@@ -133,6 +133,10 @@ const initRoutes = (app) => {
   .get(repository.getRepoContent)
   .post(repository.writeRepoFile)
 
+  app.route('/api/repository/details')
+  .all(users.requireAuthentication, repository.requireGithubAPI)
+  .get(repository.getRepoDetails)
+
   app.route('/api/repository/branch')
   .all(users.requireAuthentication, repository.requireGithubAPI)
   .get(repository.listBranches)

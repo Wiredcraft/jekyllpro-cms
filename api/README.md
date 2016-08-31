@@ -85,10 +85,34 @@ example success response body
 }
 ```
 
+**get repo details**
+
+```
+GET    /api/repository/details
+
+// you can know which is default_branch here
+```
+example success response body
+```
+{
+  name: "test",
+  full_name: "woodpig07/test",
+  description: null,
+  private: false,
+  url: "https://api.github.com/repos/woodpig07/test",
+  default_branch: "master",
+  owner: {
+    login: "woodpig07",
+    type: "User"
+  }
+}
+```
+
 **get repo content in json format**
 
 ```
 GET    /api/repository
+// it will return content for default branch if no `?ref=<branch name>`
 ```
 example success response body
 ```
