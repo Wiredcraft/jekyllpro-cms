@@ -18,7 +18,11 @@ let config = Object.assign({}, baseConfig, {
     new webpack.optimize.UglifyJsPlugin(),
     new webpack.optimize.OccurenceOrderPlugin(),
     new webpack.optimize.AggressiveMergingPlugin(),
-    new webpack.NoErrorsPlugin()
+    new webpack.NoErrorsPlugin(),
+    new webpack.DefinePlugin({
+      API_BASE_URL:
+        JSON.stringify(process.env.API_BASE_URL || 'http://127.0.0.1:3000')
+    })
   ],
   module: defaultSettings.getDefaultModules()
 })
