@@ -14,6 +14,7 @@ module.exports = {
     clientSecret: process.env.GITHUB_CLIENT_SECRETE || 'APP_SECRETE',
     callbackURL: 'http://localhost:3000/api/auth/github/callback'
   },
+  redirectUrl: process.env.REDIRECT_URL || 'http://localhost:8000/',
   repo: {
     user: '',
     name: ''

@@ -27,7 +27,7 @@ const initMiddleware = (app) => {
   app.use(cookieParser());
 
   if (config.corsEnabled) {
-    // app.use(cors())
+    app.use(cors())
   }
 }
 
@@ -103,7 +103,7 @@ const initHelmet = (app) => {
 
 const initRoutes = (app) => {
   app.get('/', function (req, res) {
-    console.log(req.isAuthenticated())
+    console.log(req.session)
     if (req.user) {
       return res.render('index', { title: 'Hey', message: 'Hello ' + req.user.name});
     }
@@ -128,7 +128,7 @@ const initRoutes = (app) => {
 
   // Setting the github oauth routes
   app.route('/api/auth/github').get(users.githubOauthCall());
-  app.route('/api/auth/github/callback').get(users.githubOauthCallback());
+  app.route('/api/auth/github/callback').get(users.githubOauthCallback(config.redirectUrl));
   app.route('/api/me').get(users.getUserInfo);
   app.route('/api/repository')
   .all(users.requireAuthentication, repository.requireGithubAPI)
