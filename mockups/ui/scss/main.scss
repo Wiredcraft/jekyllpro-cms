@@ -31,7 +31,8 @@ h3 {
   top: 0;
   .select {
     select {
-      @include button(shade($black, 10%));
+      @include button(shade($black, 10%), false, false);
+      box-shadow: 1px 1px 0 rgba(0, 0, 0, 0.1);
       padding: $space/6 $space $space/6 $space/3;
     }
   }
@@ -90,7 +91,7 @@ h3 {
   .body {
     .select {
       display: inline-block;
-      margin: 0 1.5*$space/3;
+      margin: 0 1.5*$space/3 $space/3;
       select {
         width: 100%;
       }

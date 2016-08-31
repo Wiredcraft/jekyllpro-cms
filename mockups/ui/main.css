@@ -1083,7 +1083,8 @@ h3 {
     -webkit-transition-duration: 0.2s;
     -moz-transition-duration: 0.2s;
     transition-duration: 0.2s;
-    border: 1px solid #2a3139;
+    border: 0;
+    box-shadow: 1px 1px 0 rgba(0, 0, 0, 0.1);
     padding: 4px 24px 4px 8px; }
     #menu .select select:hover, #menu .select select:focus,
     #navigation .select select:hover,
@@ -1158,7 +1159,7 @@ h3 {
   width: 160px; }
   #menu .body .select {
     display: inline-block;
-    margin: 0 12px; }
+    margin: 0 12px 8px; }
     #menu .body .select select {
       width: 100%; }
   #menu .body h3 {
