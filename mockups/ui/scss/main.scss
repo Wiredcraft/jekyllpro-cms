@@ -10,6 +10,7 @@
 
 $menu: 160px;
 $navigation: 240px;
+$menu_footer: 74px;
 
 body {
   @include font-size($smaller);
@@ -84,6 +85,7 @@ h3 {
   background: $black;
   box-shadow: 10px 0 0 rgba(0, 0, 0, 0.1);
   left: 0;
+  padding-bottom: $menu_footer;
   width: $menu;
   .body {
     .select {
@@ -131,9 +133,9 @@ h3 {
     background: shade($black, 5%);
     bottom: 0;
     @include clearfix;
-    position: absolute;
+    position: fixed;
     text-align: center;
-    width: 100%;
+    width: $menu;
     > * {
       background: shade($black, 15%);
       box-sizing: border-box;
@@ -152,7 +154,7 @@ h3 {
       img {
         display: block;
         height: $space;
-        margin: 0 auto $space/8;
+        margin: 0 auto $space/6;
       }
     }
   }
@@ -247,11 +249,16 @@ $toolbar: 54px;
       float: right;
       line-height: 1;
       margin-top: $space/12;
+      outline: none;
       padding: 0;
+      position: relative;
       @include tooltip();
       vertical-align: middle;
+      @include tooltip(bottom);
       svg {
         fill: rgba(0, 0, 0, 0.2);
+        @include transition-property(fill);
+        @include transition-duration($ease);
       }
       &:hover {
         svg {
