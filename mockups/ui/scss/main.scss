@@ -8,7 +8,7 @@
 
 /* Custom */
 
-$menu: 140px;
+$menu: 160px;
 $navigation: 240px;
 
 body {
@@ -86,9 +86,12 @@ h3 {
   left: 0;
   width: $menu;
   .body {
-    .dropdown .options {
-      color: $black;
-      left: 1.5*$space/3;
+    .select {
+      display: inline-block;
+      margin: 0 1.5*$space/3;
+      select {
+        width: 100%;
+      }
     }
     h3 {
       padding: $space/3 1.5*$space/3;
@@ -101,8 +104,7 @@ h3 {
       height: $space;
       margin: (-$space/12) $space/4 0 0;
     }
-    > a,
-    > .dropdown > a {
+    > a {
       border-left: 2px solid transparent;
       color: inherit;
       cursor: pointer;
@@ -122,27 +124,6 @@ h3 {
       }
       &.active {
         border-color: $blue;
-      }
-    }
-    .dropdown {
-      box-sizing: border-box;
-      display: block;
-      > a {
-        &:after {
-          bottom: 0;
-          content: '▾';
-          cursor: pointer;
-          @include font-size($smaller);
-          line-height: 120%;
-          pointer-events: none;
-          position: absolute;
-          right: $space/2;
-          top: 50%;
-          @include transform(translateY(-50%));
-        }
-      }
-      .options {
-        width: $menu - $space;
       }
     }
   }

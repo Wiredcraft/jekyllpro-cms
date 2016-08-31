@@ -1154,10 +1154,12 @@ h3 {
   background: #343c46;
   box-shadow: 10px 0 0 rgba(0, 0, 0, 0.1);
   left: 0;
-  width: 140px; }
-  #menu .body .dropdown .options {
-    color: #343c46;
-    left: 12px; }
+  width: 160px; }
+  #menu .body .select {
+    display: inline-block;
+    margin: 0 12px; }
+    #menu .body .select select {
+      width: 100%; }
   #menu .body h3 {
     padding: 8px 12px;
     opacity: 0.4; }
@@ -1167,8 +1169,7 @@ h3 {
     float: left;
     height: 24px;
     margin: -2px 6px 0 0; }
-  #menu .body > a,
-  #menu .body > .dropdown > a {
+  #menu .body > a {
     border-left: 2px solid transparent;
     color: inherit;
     cursor: pointer;
@@ -1181,40 +1182,14 @@ h3 {
     -moz-transition-duration: 0.2s;
     transition-duration: 0.2s; }
     #menu .body > a svg,
-    #menu .body > a img,
-    #menu .body > .dropdown > a svg,
-    #menu .body > .dropdown > a img {
+    #menu .body > a img {
       float: left;
       margin: 1px 3px 0 0; }
-    #menu .body > a:hover, #menu .body > a.active,
-    #menu .body > .dropdown > a:hover,
-    #menu .body > .dropdown > a.active {
+    #menu .body > a:hover, #menu .body > a.active {
       opacity: 1;
       text-decoration: none; }
-    #menu .body > a.active,
-    #menu .body > .dropdown > a.active {
+    #menu .body > a.active {
       border-color: #0A93FF; }
-  #menu .body .dropdown {
-    box-sizing: border-box;
-    display: block; }
-    #menu .body .dropdown > a:after {
-      bottom: 0;
-      content: '▾';
-      cursor: pointer;
-      font-size: 14px;
-      font-size: 1.4rem;
-      line-height: 120%;
-      pointer-events: none;
-      position: absolute;
-      right: 12px;
-      top: 50%;
-      -webkit-transform: translateY(-50%);
-      -moz-transform: translateY(-50%);
-      -ms-transform: translateY(-50%);
-      -o-transform: translateY(-50%);
-      transform: translateY(-50%); }
-    #menu .body .dropdown .options {
-      width: 116px; }
   #menu .footer {
     background: #313943;
     bottom: 0;
@@ -1246,7 +1221,7 @@ h3 {
 
 #navigation {
   background: #424a53;
-  left: 140px;
+  left: 160px;
   width: 240px; }
   #navigation .header {
     border-bottom: 1px solid #343c46;
@@ -1266,7 +1241,7 @@ h3 {
     font-size: inherit; }
 
 #content {
-  margin-left: 380px; }
+  margin-left: 400px; }
   #content input:not([type=submit]),
   #content textarea,
   #content .select select {
@@ -1279,7 +1254,7 @@ h3 {
     box-sizing: border-box;
     padding: 12px 36px;
     position: fixed;
-    left: 380px;
+    left: 400px;
     right: 0;
     top: 0;
     z-index: 999; }
