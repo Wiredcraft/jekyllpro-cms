@@ -122,7 +122,6 @@ export default class AppComponent extends React.Component {
       markdownText,
       resultMarkdown,
       schemaCanBeParsed,
-      targetContent
     } = this.state
     const { isLogin } = this.props
 
@@ -150,8 +149,6 @@ export default class AppComponent extends React.Component {
             date: { 'ui:widget': 'date' }
           }}
         />
-        { targetContent && <h3>Content</h3> }
-        { targetContent && <textarea defaultValue={targetContent} /> }
         <h3>Result</h3>
         <textarea value={resultMarkdown} />
       </div>
