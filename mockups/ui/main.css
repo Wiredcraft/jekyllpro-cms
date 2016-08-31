@@ -1193,7 +1193,8 @@ h3 {
     #menu .body > a.active {
       border-color: #0A93FF; }
   #menu .footer {
-    background: #313943;
+    background: #343c46;
+    box-shadow: 0 -1px 0 rgba(0, 0, 0, 0.1);
     bottom: 0;
     position: fixed;
     text-align: center;
@@ -1203,7 +1204,6 @@ h3 {
       content: "";
       display: table; }
     #menu .footer > * {
-      background: #2c333c;
       box-sizing: border-box;
       color: #FFF;
       cursor: pointer;
@@ -1211,7 +1211,13 @@ h3 {
       float: left;
       opacity: 0.5;
       padding: 12px 0;
-      width: 50%; }
+      width: 50%;
+      -webkit-transition-property: opacity;
+      -moz-transition-property: opacity;
+      transition-property: opacity;
+      -webkit-transition-duration: 0.2s;
+      -moz-transition-duration: 0.2s;
+      transition-duration: 0.2s; }
       #menu .footer > *:hover {
         opacity: 1;
         text-decoration: none; }

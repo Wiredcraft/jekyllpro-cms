@@ -131,14 +131,14 @@ h3 {
     }
   }
   .footer {
-    background: shade($black, 5%);
+    background: $black;
+    box-shadow: 0 -1px 0 rgba(0, 0, 0, 0.1);
     bottom: 0;
     @include clearfix;
     position: fixed;
     text-align: center;
     width: $menu;
     > * {
-      background: shade($black, 15%);
       box-sizing: border-box;
       color: #FFF;
       cursor: pointer;
@@ -147,6 +147,8 @@ h3 {
       opacity: 0.5;
       padding: $space/2 0;
       width: 50%;
+      @include transition-property(opacity);
+      @include transition-duration($ease);
       &:hover {
         opacity: 1;
         text-decoration: none;
