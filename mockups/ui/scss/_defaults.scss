@@ -232,7 +232,6 @@ textarea {
   @include button($light, true, false);
   &.primary { @include button($primary, false, false); }
   &.secondary { @include button($secondary, false, false); }
-  &.danger { @include button($red, false, false); }
 }
 
 .button,

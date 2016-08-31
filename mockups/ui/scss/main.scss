@@ -82,9 +82,9 @@ h3 {
 
 #menu {
   background: $black;
+  box-shadow: 10px 0 0 rgba(0, 0, 0, 0.1);
   left: 0;
   width: $menu;
-  box-shadow: 10px 0 0 rgba(0, 0, 0, 0.1);
   img {
     border-radius: $radius;
     box-shadow: 1px 1px 0 rgba(0, 0, 0, 0.1);
@@ -147,16 +147,17 @@ h3 {
   }
   .footer {
     background: shade($black, 10%);
-    position: absolute;
     bottom: 0;
+    position: absolute;
+    width: 100%;
     a {
       box-sizing: border-box;
       display: block;
       float: left;
       padding: 8px;
       text-align: center;
-      width: $menu/3;
       @include tooltip(top, #FFF);
+      width: 50%;
       span {
         color: $black;
       }
@@ -212,7 +213,7 @@ h3 {
   }
 }
 
-$sidebar: 240px;
+$toolbar: 54px;
 
 #content {
   margin-left: $menu + $navigation;
@@ -224,30 +225,49 @@ $sidebar: 240px;
   .description {
     color: tint($black, 40%);
   }
-  .sidebar {
+  .header {
+    background: $background;
+    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1);
     box-sizing: border-box;
     @include clearfix;
-    padding: $space;
+    padding: $space/2 1.5*$space;
     position: fixed;
+    left: $menu + $navigation;
     right: 0;
     top: 0;
-    width: $sidebar;
-    .primary {
-      width: 100%;
-      margin-bottom: $space/2;
-    }
+    z-index: 999;
     & + .body {
-      padding-right: $sidebar;
+      padding-top: $toolbar + $space;
     }
-    input,
-    .select,
-    .select select {
-      width: 100%;
+    > * {
+      vertical-align: middle;
+    }
+    .field {
+      display: inline-block;
+      margin: $space/12 0 0 $space;
+    }
+    .danger {
+      background: transparent;
+      border: 0;
+      float: right;
+      line-height: 1;
+      margin-top: $space/12;
+      padding: 0;
+      @include tooltip();
+      vertical-align: middle;
+      svg {
+        fill: rgba(0, 0, 0, 0.2);
+      }
+      &:hover {
+        svg {
+          fill: $red;
+        }
+      }
     }
   }
   .body {
     box-sizing: border-box;
-    padding: $space;
+     padding: $space 1.5*$space;
     .field {
       box-sizing: border-box;
       &.filename {
@@ -255,12 +275,12 @@ $sidebar: 240px;
         padding-right: $space;
         width: 75%;
       }
-      &.slug {
-        float: right;
-        width: 25%;
+      &.language {
+        // float: right;
+        // width: 25%;
         .select,
         .select select {
-          width: 100%;
+          // width: 100%;
         }
       }
     }
@@ -273,6 +293,7 @@ $switch_padding: 4px;
 
 .switch {
   display: inline-block;
+  float: left;
   height: $switch_size + 2*$switch_padding;
   margin: 0;
   opacity: 1;
@@ -314,6 +335,6 @@ $switch_padding: 4px;
   & + label {
     cursor: pointer;
     float: left;
-    margin: 0 $space/3 0 0;
+    margin: 0 0 0 $space/3;
   }
 }

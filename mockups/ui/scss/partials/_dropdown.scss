@@ -24,8 +24,7 @@
       white-space: nowrap;
       @include transition-property(background, color);
       @include transition-duration($ease);
-      &.active,
-      &.active:hover {
+      &.active {
         background: $light;
         color: inherit;
         font-weight: bold;

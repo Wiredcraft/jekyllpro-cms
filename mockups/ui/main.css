@@ -833,34 +833,6 @@ textarea {
       background: #DDDDDD;
       border-color: #c7c7c7;
       color: #AAAAAA; }
-  .button.danger {
-    background: #FF4136;
-    border: 0;
-    border-radius: 2px;
-    box-sizing: border-box;
-    color: #FFF;
-    display: inline-block;
-    outline: none;
-    padding: 4px 24px;
-    -webkit-transition-property: background, border, color;
-    -moz-transition-property: background, border, color;
-    transition-property: background, border, color;
-    -webkit-transition-duration: 0.2s;
-    -moz-transition-duration: 0.2s;
-    transition-duration: 0.2s;
-    border: 0; }
-    .button.danger:hover, .button.danger:focus {
-      background: #ff5e54;
-      color: #FFF;
-      text-decoration: none; }
-    .button.danger:active, .button.danger.active {
-      background: #e63b31;
-      color: #FFF;
-      text-decoration: none; }
-    .button.danger[disabled=disabled], .button.danger[disabled=true], .button.danger[disabled], .button.danger.disabled {
-      background: #DDDDDD;
-      border-color: #c7c7c7;
-      color: #AAAAAA; }
 
 .button,
 .button.primary,
@@ -1003,7 +975,7 @@ textarea {
       -webkit-transition-duration: 0.2s;
       -moz-transition-duration: 0.2s;
       transition-duration: 0.2s; }
-      .dropdown .options > *.active, .dropdown .options > *.active:hover {
+      .dropdown .options > *.active {
         background: #EEE;
         color: inherit;
         font-weight: bold; }
@@ -1119,9 +1091,9 @@ h3 {
 
 #menu {
   background: #343c46;
+  box-shadow: 10px 0 0 rgba(0, 0, 0, 0.1);
   left: 0;
-  width: 160px;
-  box-shadow: 10px 0 0 rgba(0, 0, 0, 0.1); }
+  width: 160px; }
   #menu img {
     border-radius: 2px;
     box-shadow: 1px 1px 0 rgba(0, 0, 0, 0.1);
@@ -1182,16 +1154,17 @@ h3 {
       width: 136px; }
   #menu .footer {
     background: #2f363f;
+    bottom: 0;
     position: absolute;
-    bottom: 0; }
+    width: 100%; }
     #menu .footer a {
       box-sizing: border-box;
       display: block;
       float: left;
       padding: 8px;
       text-align: center;
-      width: 53.33333px;
-      position: relative; }
+      position: relative;
+      width: 50%; }
       #menu .footer a span {
         background: #FFF;
         border-radius: 2px;
@@ -1336,45 +1309,103 @@ h3 {
     width: 100%; }
   #content .description {
     color: #858a90; }
-  #content .sidebar {
+  #content .header {
+    background: #F4F4F4;
+    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1);
     box-sizing: border-box;
-    padding: 24px;
+    padding: 12px 36px;
     position: fixed;
+    left: 400px;
     right: 0;
     top: 0;
-    width: 240px; }
-    #content .sidebar::after {
+    z-index: 999; }
+    #content .header::after {
       clear: both;
       content: "";
       display: table; }
-    #content .sidebar .primary {
-      width: 100%;
-      margin-bottom: 12px; }
-    #content .sidebar + .body {
-      padding-right: 240px; }
-    #content .sidebar input,
-    #content .sidebar .select,
-    #content .sidebar .select select {
-      width: 100%; }
+    #content .header + .body {
+      padding-top: 78px; }
+    #content .header > * {
+      vertical-align: middle; }
+    #content .header .field {
+      display: inline-block;
+      margin: 2px 0 0 24px; }
+    #content .header .danger {
+      background: transparent;
+      border: 0;
+      float: right;
+      line-height: 1;
+      margin-top: 2px;
+      padding: 0;
+      position: relative;
+      vertical-align: middle; }
+      #content .header .danger span {
+        background: #343c46;
+        border-radius: 2px;
+        color: #FFF;
+        font-size: 12px;
+        font-size: 1.2rem;
+        font-weight: 600;
+        line-height: 140%;
+        opacity: 0;
+        padding: 9px 18px;
+        position: absolute;
+        text-align: center;
+        -webkit-transition-property: margin, opacity;
+        -moz-transition-property: margin, opacity;
+        transition-property: margin, opacity;
+        -webkit-transition-duration: 0.2s;
+        -moz-transition-duration: 0.2s;
+        transition-duration: 0.2s;
+        visibility: hidden;
+        white-space: nowrap;
+        width: auto;
+        z-index: 999; }
+      #content .header .danger:hover span {
+        opacity: 1;
+        visibility: visible; }
+      #content .header .danger span {
+        bottom: 100%;
+        left: 50%;
+        -webkit-transform: translateX(-50%);
+        -moz-transform: translateX(-50%);
+        -ms-transform: translateX(-50%);
+        -o-transform: translateX(-50%);
+        transform: translateX(-50%); }
+        #content .header .danger span:after {
+          content: '';
+          position: absolute;
+          border-right: 5px solid transparent;
+          border-bottom-color: #343c46;
+          border-top: 5px solid #343c46;
+          border-left: 5px solid transparent;
+          bottom: -5px;
+          left: 50%;
+          -webkit-transform: translateX(-50%);
+          -moz-transform: translateX(-50%);
+          -ms-transform: translateX(-50%);
+          -o-transform: translateX(-50%);
+          transform: translateX(-50%); }
+      #content .header .danger:hover span {
+        margin-bottom: 8px; }
+      #content .header .danger svg {
+        fill: rgba(0, 0, 0, 0.2); }
+      #content .header .danger:hover svg {
+        fill: #FF4136; }
   #content .body {
     box-sizing: border-box;
-    padding: 24px; }
+    padding: 24px 36px; }
     #content .body .field {
       box-sizing: border-box; }
       #content .body .field.filename {
         float: left;
         padding-right: 24px;
         width: 75%; }
-      #content .body .field.slug {
-        float: right;
-        width: 25%; }
-        #content .body .field.slug .select,
-        #content .body .field.slug .select select {
-          width: 100%; }
 
 /* The switch - the box around the slider */
 .switch {
   display: inline-block;
+  float: left;
   height: 20px;
   margin: 0;
   opacity: 1;
@@ -1419,4 +1450,4 @@ h3 {
   .switch + label {
     cursor: pointer;
     float: left;
-    margin: 0 8px 0 0; }
+    margin: 0 0 0 8px; }
