@@ -12,10 +12,10 @@
 
       disable_firewall: yes
       handle_firewall: false
-      hostname: "{{ inventory_hostname }}.{{ internal_domain }}"
+      # hostname: "{{ inventory_hostname }}.{{ internal_domain }}"
 
     # Install Wiredcraft custom monitoring scripts
-    - role: wcl-zabbix-scripts
+    # - role: wcl-zabbix-scripts
       # zabbix_nginx:
       #   url: http://localhost:8001/nginx_status
       #   nginxctl: /usr/sbin/nginx

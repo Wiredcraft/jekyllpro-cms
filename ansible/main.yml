@@ -2,4 +2,4 @@
 - include: setup-base.yml
 - include: setup-jekyll.yml
 - include: setup-web.yml
-- include: setup-jekyllpro.yml
+# - include: setup-jekyllplus.yml

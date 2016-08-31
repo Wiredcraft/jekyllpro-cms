@@ -1,16 +1,20 @@
 ---
 - hosts: jekyll
   tasks:
-    - name: Install Ruby and Gems
+    - name: Install Ruby and dependencies
       apt: 
         name={{ item }}
         state=present
       with_items:
-        - ruby
-        - rubygems
+        - ruby2.0
+        - ruby2.0-dev
+        - libffi-dev 
+        - libssl-dev
+        - build-essential
 
     - name: Install jekyll
       gem:
         name=jekyll
         state=present
         user_install=no
+        executable=/usr/bin/gem2.0

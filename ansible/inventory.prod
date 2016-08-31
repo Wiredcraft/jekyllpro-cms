@@ -1,8 +1,8 @@
 [jekyll]
-prod-jekyllpro-web
+prod-jekyllplus-web
 
 [web]
-prod-jekyllpro-web
+prod-jekyllplus-web
 
 [production:children]
 jekyll

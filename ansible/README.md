@@ -1,4 +1,4 @@
 Ansible
 =======
 
-Manage the creation of the JekyllPro server
+Manage the creation of the JekyllPlus server
