@@ -1,4 +1,7 @@
+/* global API_BASE_URL */
 import React from 'react'
+import { bindActionCreators } from 'redux'
+import { connect } from 'react-redux'
 import Form from 'react-jsonschema-form'
 
 import { defaultMarkdownText, defaultSchemaText } from '../constants/defaultText'
@@ -6,22 +9,31 @@ import { SUPPORTED_TYPE } from '../constants/types'
 import { parseYamlInsideMarkdown } from '../helpers/markdown'
 import 'normalize.css/normalize.css'
 import 'styles/main.scss'
+import { confirmUserIsLogin } from '../actions/userAction'
 
 
-class AppComponent extends React.Component {
+// TODO: remove linePattern
+@connect(mapStateToProps, mapDispatchToProps)
+export default class AppComponent extends React.Component {
   constructor() {
     super()
     this.state = {
       schemaCanBeParsed: true,
       markdownText: defaultMarkdownText,
       formSchema: { type: 'object', properties: {} },
-      previousMarkdownState: '',
       resultMarkdown: ''
     }
   }
 
   componentDidMount() {
-    this.updateEditFrom()
+    const { confirmUserIsLogin } = this.props
+
+    confirmUserIsLogin()
+  }
+
+  componentDidUpdate(preProps) {
+    const { isLogin } = this.props
+    if(isLogin && !preProps.isLogin) this.updateEditFrom()
   }
 
   checkSchema() {
@@ -39,10 +51,15 @@ class AppComponent extends React.Component {
         }
       }
     } catch (e) {
-      return this.setState({ schemaCanBeParsed: false })
+      schemaCanBeParsed = false
     }
     this.setState({ schemaCanBeParsed })
     if(schemaCanBeParsed) this.updateEditFrom()
+  }
+
+  login() {
+    const url = `${API_BASE_URL}/api/auth/github`
+    window.location = url
   }
 
   updateEditFrom() {
@@ -84,7 +101,6 @@ class AppComponent extends React.Component {
     if(!docConfigObj) return
 
     const schemaObj = JSON.parse(schemaInput.value)
-    let newMarkdownText = markdownText
     if (!schemaCanBeParsed) return
     for (let i = 0; i < schemaObj.length; i++) {
       const linePattern = new RegExp(schemaObj[i].target + ': ?[\\w 、\/]*')
@@ -92,13 +108,9 @@ class AppComponent extends React.Component {
       const prePattern = new RegExp(schemaObj[i].target + ': ?')
       let newValue = formData[schemaObj[i].name]
       const preText = prePattern.exec(markdownText)[0]
-      newMarkdownText =
-        newMarkdownText.replace(linePattern, preText + newValue)
+      markdownText = markdownText.replace(linePattern, preText + newValue)
     }
-    this.setState({
-      previousMarkdownState: newMarkdownText,
-      resultMarkdown: newMarkdownText
-    })
+    this.setState({ resultMarkdown: markdownText })
   }
 
   render() {
@@ -108,8 +120,9 @@ class AppComponent extends React.Component {
       resultMarkdown,
       schemaCanBeParsed
     } = this.state
+    const { isLogin } = this.props
 
-    return (
+    return isLogin ? (
       <div>
         <h3>Schema</h3>
         <textarea
@@ -130,15 +143,24 @@ class AppComponent extends React.Component {
           schema={formSchema}
           uiSchema={{
             // Parse uiSchema dynamically
-            //
             date: { 'ui:widget': 'date' }
           }}
         />
         <h3>Result</h3>
         <textarea value={resultMarkdown} />
       </div>
+    ) : (
+      <button onClick={() => this.login()}>Login</button>
     )
   }
 }
 
-export default AppComponent
+function mapStateToProps(state) {
+  return {
+    isLogin: state.user.get('isLogin')
+  }
+}
+
+function mapDispatchToProps (dispatch) {
+  return bindActionCreators({ confirmUserIsLogin }, dispatch)
+}
