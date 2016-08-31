@@ -6,7 +6,7 @@ import Form from 'react-jsonschema-form'
 
 import { defaultMarkdownText, defaultSchemaText } from '../constants/defaultText'
 import { SUPPORTED_TYPE } from '../constants/types'
-import { parseYamlInsideMarkdown } from '../helpers/markdown'
+import { parseYamlInsideMarkdown, retriveContent } from '../helpers/markdown'
 import 'normalize.css/normalize.css'
 import 'styles/main.scss'
 import { confirmUserIsLogin } from '../actions/userAction'
@@ -21,7 +21,8 @@ export default class AppComponent extends React.Component {
       schemaCanBeParsed: true,
       markdownText: defaultMarkdownText,
       formSchema: { type: 'object', properties: {} },
-      resultMarkdown: ''
+      resultMarkdown: '',
+      targetContent: ''
     }
   }
 
@@ -80,7 +81,8 @@ export default class AppComponent extends React.Component {
         type: schemaObj[i].type
       }
     }
-    this.setState({ formSchema })
+    const targetContent = retriveContent(markdownText)
+    this.setState({ formSchema, targetContent })
   }
 
   updateMarkdown() {
@@ -110,7 +112,8 @@ export default class AppComponent extends React.Component {
       const preText = prePattern.exec(markdownText)[0]
       markdownText = markdownText.replace(linePattern, preText + newValue)
     }
-    this.setState({ resultMarkdown: markdownText })
+    const targetContent = retriveContent(markdownText)
+    this.setState({ resultMarkdown: markdownText, targetContent })
   }
 
   render() {
@@ -118,7 +121,8 @@ export default class AppComponent extends React.Component {
       formSchema,
       markdownText,
       resultMarkdown,
-      schemaCanBeParsed
+      schemaCanBeParsed,
+      targetContent
     } = this.state
     const { isLogin } = this.props
 
@@ -146,6 +150,8 @@ export default class AppComponent extends React.Component {
             date: { 'ui:widget': 'date' }
           }}
         />
+        { targetContent && <h3>Content</h3> }
+        { targetContent && <textarea defaultValue={targetContent} /> }
         <h3>Result</h3>
         <textarea value={resultMarkdown} />
       </div>
