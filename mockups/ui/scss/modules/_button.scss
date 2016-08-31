@@ -1,6 +1,5 @@
 @mixin button($color: $blue, $clear: false, $border: true) {
-  // background: $color;
-  @include background-image(linear-gradient($color, tint($color, 10%)));
+  background: $color;
   border: 0;
   border-radius: $radius;
   box-sizing: border-box;
@@ -18,13 +17,11 @@
   &:hover,
   &:focus {
     @if $clear == true {
-      // background: tint($color, 30%);
-      @include background-image(linear-gradient(tint($color, 30%), tint($color, 40%)));
+      background: tint($color, 30%);
       color: inherit;
     }
     @else {
-      // background: tint($color, 15%);
-      @include background-image(linear-gradient(tint($color, 15%), tint($color, 25%)));
+      background: tint($color, 15%);
       color: #FFF;
     }
     text-decoration: none;
@@ -32,13 +29,11 @@
   &:active,
   &.active {
     @if $clear == true {
-      // background: shade($color, 5%);
-      @include background-image(linear-gradient(shade($color, 5%), tint($color, 5%)));
+      background: shade($color, 5%);
       color: inherit;
     }
     @else {
-      // background: shade($color, 10%);
-      @include background-image(linear-gradient(shade($color, 10%), shade($color, 5%)));
+      background: shade($color, 10%);
       color: #FFF;
     }
     text-decoration: none;

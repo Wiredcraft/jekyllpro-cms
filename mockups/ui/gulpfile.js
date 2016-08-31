@@ -10,5 +10,5 @@ gulp.task('default', function() {
 
 // Prepares assets & watch for changes
 gulp.task('development', ['default'], function(callback) {
-    gulp.watch('scss/*.scss', ['default']);
+    gulp.watch('scss/**/*.scss', ['default']);
 });

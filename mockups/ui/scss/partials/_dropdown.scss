@@ -15,19 +15,30 @@
   }
   .options {
     background: #FFF;
-    border: 1px solid $line;
     border-radius: $radius;
     box-shadow: $shadow;
     box-sizing: border-box;
-    min-width: 100%;
     > * {
       display: block;
-      padding: $space/6 $space;
+      padding: $space/12 $space;
       white-space: nowrap;
-      @include transition-property(background);
+      @include transition-property(background, color);
       @include transition-duration($ease);
-      &:hover {
+      &.active,
+      &.active:hover {
         background: $light;
+        color: inherit;
+        font-weight: bold;
+      }
+      &:hover {
+        background: $blue;
+        color: #FFF;
+      }
+      &:first-child {
+        border-radius: $radius $radius 0 0;
+      }
+      &:last-child {
+        border-radius: 0 0 $radius $radius;
       }
       &.separated {
         border-top: 1px solid $line;

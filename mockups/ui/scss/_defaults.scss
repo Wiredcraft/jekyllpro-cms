@@ -191,8 +191,16 @@ label,
 
 .select {
   select {
+    box-shadow: 1px 1px 0 rgba(0, 0, 0, 0.1);
     @include button($light, true, false);
     padding: $space/6 1.5*$space $space/6 $space/2;
+    &:hover {
+      background: rgba(0, 0, 0, 0.1);
+    }
+    &:active,
+    &:focus {
+      background-color: #FFF;
+    }
   }
 }
 

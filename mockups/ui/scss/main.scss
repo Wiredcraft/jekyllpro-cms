@@ -2,13 +2,13 @@
 
 @import '_variables'; // Variables (colors, layout, spacing & typography)
 @import '_defaults'; // Styling defaults
-// @import 'partials/_dropdown';
+@import 'partials/_dropdown';
 // @import 'partials/_modal';
 // @import 'partials/_notifications';
 
 /* Custom */
 
-$menu: 120px;
+$menu: 160px;
 $navigation: 240px;
 
 body {
@@ -21,15 +21,6 @@ h3 {
   font-weight: normal;
 }
 
-#header {
-  background: $black;
-  left: 0;
-  position: fixed;
-  right: 0;
-  top: 0;
-  z-index: 999;
-}
-
 #menu,
 #navigation {
   bottom: 0;
@@ -38,15 +29,9 @@ h3 {
   position: fixed;
   top: 0;
   .select {
-    width: 100%;
     select {
-      background: $black;
-      border: 0;
-      border-radius: 0;
-      width: 100%;
-      &:hover {
-        background: shade($black, 10%);
-      }
+      @include button(shade($black, 10%));
+      padding: $space/6 $space $space/6 $space/3;
     }
   }
   .button {
@@ -74,21 +59,23 @@ h3 {
     line-height: 160%;
     margin: 0;
   }
-  h3 {
-    @include font-size($pico);
-    letter-spacing: 1px;
-  }
-  a {
-    color: inherit;
-    display: block;
-    opacity: 0.5;
-    .meta {
-      opacity: 0.5;
+  .body {
+    > h3 {
+      @include font-size($pico);
+      letter-spacing: 1px;
     }
-    &:hover,
-    &.active {
-      opacity: 1;
-      text-decoration: none;
+    > a {
+      color: inherit;
+      display: block;
+      opacity: 0.5;
+      .meta {
+        opacity: 0.5;
+      }
+      &:hover,
+      &.active {
+        opacity: 1;
+        text-decoration: none;
+      }
     }
   }
 }
@@ -97,23 +84,35 @@ h3 {
   background: $black;
   left: 0;
   width: $menu;
+  box-shadow: 10px 0 0 rgba(0, 0, 0, 0.1);
+  img {
+    border-radius: $radius;
+    box-shadow: 1px 1px 0 rgba(0, 0, 0, 0.1);
+    float: left;
+    height: $space;
+    margin: (-$space/12) $space/4 0 0;
+  }
   .body {
+    .dropdown .options {
+      color: $black;
+      left: 1.5*$space/3;
+    }
     h3 {
       padding: $space/3 1.5*$space/3;
       opacity: 0.4;
     }
-    a {
+    > a,
+    > .dropdown > a {
       border-left: 2px solid transparent;
       color: inherit;
       cursor: pointer;
       display: block;
       padding: $space/3 1.5*$space/3;
-      // padding: $space/2 1.5*$space/2;
       @include transition-property(opacity);
       @include transition-duration($ease);
       svg {
         float: left;
-        margin-right: $space/12;
+        margin: 1px $space/8 0 0;
       }
       &:hover,
       &.active {
@@ -124,16 +123,55 @@ h3 {
         border-color: $blue;
       }
     }
+    .dropdown {
+      box-sizing: border-box;
+      display: block;
+      > a {
+        &:after {
+          bottom: 0;
+          content: '▾';
+          cursor: pointer;
+          @include font-size($smaller);
+          line-height: 120%;
+          pointer-events: none;
+          position: absolute;
+          right: $space/2;
+          top: 50%;
+          @include transform(translateY(-50%));
+        }
+      }
+      .options {
+        width: $menu - $space;
+      }
+    }
   }
   .footer {
+    background: shade($black, 10%);
     position: absolute;
     bottom: 0;
-    img {
-      border-radius: $radius;
-      box-shadow: 1px 1px 0 rgba(0, 0, 0, 0.1);
+    a {
+      box-sizing: border-box;
+      display: block;
       float: left;
-      height: $space;
-      margin: (-$space/12) $space/4 0 0;
+      padding: 8px;
+      text-align: center;
+      width: $menu/3;
+      @include tooltip(top, #FFF);
+      span {
+        color: $black;
+      }
+      &:last-child {
+        border: 0;
+      }
+      &:hover {
+        background: shade($black, 20%);
+      }
+      > * {
+        display: block;
+        float: none;
+        height: $space;
+        margin: 0 auto;
+      }
     }
   }
 }
@@ -196,14 +234,36 @@ $sidebar: 240px;
     width: $sidebar;
     .primary {
       width: 100%;
+      margin-bottom: $space/2;
     }
     & + .body {
       padding-right: $sidebar;
+    }
+    input,
+    .select,
+    .select select {
+      width: 100%;
     }
   }
   .body {
     box-sizing: border-box;
     padding: $space;
+    .field {
+      box-sizing: border-box;
+      &.filename {
+        float: left;
+        padding-right: $space;
+        width: 75%;
+      }
+      &.slug {
+        float: right;
+        width: 25%;
+        .select,
+        .select select {
+          width: 100%;
+        }
+      }
+    }
   }
 }
 
@@ -213,9 +273,8 @@ $switch_padding: 4px;
 
 .switch {
   display: inline-block;
-  float: left;
   height: $switch_size + 2*$switch_padding;
-  margin: 0 $space/3 0 0;
+  margin: 0;
   opacity: 1;
   position: relative;
   width: 2*$switch_size + 2*$switch_padding;
@@ -254,6 +313,7 @@ $switch_padding: 4px;
   }
   & + label {
     cursor: pointer;
-    margin: 0;
+    float: left;
+    margin: 0 $space/3 0 0;
   }
 }
