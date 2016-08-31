@@ -3,12 +3,12 @@
 @import '_variables'; // Variables (colors, layout, spacing & typography)
 @import '_defaults'; // Styling defaults
 @import 'partials/_dropdown';
-// @import 'partials/_modal';
+@import 'partials/_modal';
 // @import 'partials/_notifications';
 
 /* Custom */
 
-$menu: 160px;
+$menu: 140px;
 $navigation: 240px;
 
 body {
@@ -85,13 +85,6 @@ h3 {
   box-shadow: 10px 0 0 rgba(0, 0, 0, 0.1);
   left: 0;
   width: $menu;
-  img {
-    border-radius: $radius;
-    box-shadow: 1px 1px 0 rgba(0, 0, 0, 0.1);
-    float: left;
-    height: $space;
-    margin: (-$space/12) $space/4 0 0;
-  }
   .body {
     .dropdown .options {
       color: $black;
@@ -100,6 +93,13 @@ h3 {
     h3 {
       padding: $space/3 1.5*$space/3;
       opacity: 0.4;
+    }
+    img {
+      border-radius: $radius;
+      box-shadow: 1px 1px 0 rgba(0, 0, 0, 0.1);
+      float: left;
+      height: $space;
+      margin: (-$space/12) $space/4 0 0;
     }
     > a,
     > .dropdown > a {
@@ -110,7 +110,8 @@ h3 {
       padding: $space/3 1.5*$space/3;
       @include transition-property(opacity);
       @include transition-duration($ease);
-      svg {
+      svg,
+      img {
         float: left;
         margin: 1px $space/8 0 0;
       }
@@ -146,32 +147,31 @@ h3 {
     }
   }
   .footer {
-    background: shade($black, 10%);
+    background: shade($black, 5%);
     bottom: 0;
+    @include clearfix;
     position: absolute;
+    text-align: center;
     width: 100%;
-    a {
+    > * {
+      background: shade($black, 15%);
       box-sizing: border-box;
+      color: #FFF;
+      cursor: pointer;
       display: block;
       float: left;
-      padding: 8px;
-      text-align: center;
-      @include tooltip(top, #FFF);
+      opacity: 0.5;
+      padding: $space/2 0;
       width: 50%;
-      span {
-        color: $black;
-      }
-      &:last-child {
-        border: 0;
-      }
       &:hover {
-        background: shade($black, 20%);
+        opacity: 1;
+        text-decoration: none;
       }
-      > * {
+      svg,
+      img {
         display: block;
-        float: none;
         height: $space;
-        margin: 0 auto;
+        margin: 0 auto $space/8;
       }
     }
   }
@@ -184,25 +184,18 @@ h3 {
   .header {
     border-bottom: 1px solid $black;
     @include font-size($small);
-    padding: $space/2 1.5*$space/2;
+    padding: $space/3 $space/2;
     input {
       border-radius: $space;
     }
     .controls {
       float: right;
-      .button {
-        @include tooltip(bottom, #FFF);
-        padding: $space/12;
-        span {
-          color: $black;
-        }
-      }
     }
   }
   .body {
     a {
       border-bottom: 1px solid $black;
-      padding: $space/2 1.5*$space/2;
+      padding: $space/3 $space/2;
       &.active {
         background: $blue;
       }
@@ -240,11 +233,32 @@ $toolbar: 54px;
       padding-top: $toolbar + $space;
     }
     > * {
-      vertical-align: middle;
+      display: block;
+      float: left;
+      margin: 0;
+      vertical-align: bottom;
     }
-    .field {
+    .filename {
+      position: relative;
+      width: 50%;
+      input {
+        padding-left: 1.5*$space;
+        width: 100%;
+      }
+      svg {
+        fill: rgba(0, 0, 0, 0.2);
+        left: $space/4;
+        position: absolute;
+        top: $space/8;
+      }
+    }
+    .primary {
+      margin-left: $space/3;
+    }
+    .published {
       display: inline-block;
-      margin: $space/12 0 0 $space;
+      margin: $space/4 0 0 $space/3;
+      vertical-align: bottom;
     }
     .danger {
       background: transparent;
@@ -267,23 +281,7 @@ $toolbar: 54px;
   }
   .body {
     box-sizing: border-box;
-     padding: $space 1.5*$space;
-    .field {
-      box-sizing: border-box;
-      &.filename {
-        float: left;
-        padding-right: $space;
-        width: 75%;
-      }
-      &.language {
-        // float: right;
-        // width: 25%;
-        .select,
-        .select select {
-          // width: 100%;
-        }
-      }
-    }
+    padding: $space 1.5*$space;
   }
 }
 
@@ -292,7 +290,6 @@ $switch_size: 12px;
 $switch_padding: 4px;
 
 .switch {
-  display: inline-block;
   float: left;
   height: $switch_size + 2*$switch_padding;
   margin: 0;
@@ -334,7 +331,8 @@ $switch_padding: 4px;
   }
   & + label {
     cursor: pointer;
-    float: left;
+    display: inline-block;
     margin: 0 0 0 $space/3;
+    vertical-align: bottom;
   }
 }

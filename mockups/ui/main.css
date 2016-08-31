@@ -989,6 +989,67 @@ textarea {
       .dropdown .options > *.separated {
         border-top: 1px solid #DDDDDD; }
 
+#overlay {
+  bottom: 0;
+  left: 0;
+  opacity: 0;
+  overflow-y: auto;
+  position: fixed;
+  right: 0;
+  text-align: center;
+  top: 0;
+  -webkit-transition-property: opacity;
+  -moz-transition-property: opacity;
+  transition-property: opacity;
+  -webkit-transition-duration: 0.2s;
+  -moz-transition-duration: 0.2s;
+  transition-duration: 0.2s;
+  visibility: hidden;
+  z-index: 1000; }
+
+#modal {
+  background: #FFF;
+  border-radius: 2px;
+  display: none;
+  margin: 96px auto 48px;
+  max-width: 600px;
+  text-align: left;
+  width: 50%;
+  z-index: 3000;
+  -webkit-animation: scale 1s ease-in, slide 2s ease;
+  -moz-animation: scale 1s ease-in, slide 2s ease;
+  animation: scale 1s ease-in, slide 2s ease;
+  -webkit-transition-property: width;
+  -moz-transition-property: width;
+  transition-property: width;
+  -webkit-transition-duration: 0.2s;
+  -moz-transition-duration: 0.2s;
+  transition-duration: 0.2s; }
+  #modal > .header {
+    border-bottom: 1px solid #DDDDDD;
+    padding: 18px 24px; }
+    #modal > .header h2 {
+      font-size: inherit;
+      line-height: inherit;
+      margin: 0; }
+    #modal > .header .close {
+      float: right; }
+  #modal .body {
+    padding: 18px 24px; }
+    #modal .body > *:last-child {
+      margin-bottom: 0; }
+
+body.modal #overlay,
+#overlay.active {
+  background: rgba(0, 0, 0, 0.8);
+  opacity: 1;
+  visibility: visible; }
+
+body.modal #modal,
+#modal.active {
+  display: block;
+  width: 90%; }
+
 /* Custom */
 body {
   font-size: 14px;
@@ -1093,19 +1154,19 @@ h3 {
   background: #343c46;
   box-shadow: 10px 0 0 rgba(0, 0, 0, 0.1);
   left: 0;
-  width: 160px; }
-  #menu img {
-    border-radius: 2px;
-    box-shadow: 1px 1px 0 rgba(0, 0, 0, 0.1);
-    float: left;
-    height: 24px;
-    margin: -2px 6px 0 0; }
+  width: 140px; }
   #menu .body .dropdown .options {
     color: #343c46;
     left: 12px; }
   #menu .body h3 {
     padding: 8px 12px;
     opacity: 0.4; }
+  #menu .body img {
+    border-radius: 2px;
+    box-shadow: 1px 1px 0 rgba(0, 0, 0, 0.1);
+    float: left;
+    height: 24px;
+    margin: -2px 6px 0 0; }
   #menu .body > a,
   #menu .body > .dropdown > a {
     border-left: 2px solid transparent;
@@ -1120,7 +1181,9 @@ h3 {
     -moz-transition-duration: 0.2s;
     transition-duration: 0.2s; }
     #menu .body > a svg,
-    #menu .body > .dropdown > a svg {
+    #menu .body > a img,
+    #menu .body > .dropdown > a svg,
+    #menu .body > .dropdown > a img {
       float: left;
       margin: 1px 3px 0 0; }
     #menu .body > a:hover, #menu .body > a.active,
@@ -1151,158 +1214,59 @@ h3 {
       -o-transform: translateY(-50%);
       transform: translateY(-50%); }
     #menu .body .dropdown .options {
-      width: 136px; }
+      width: 116px; }
   #menu .footer {
-    background: #2f363f;
+    background: #313943;
     bottom: 0;
     position: absolute;
+    text-align: center;
     width: 100%; }
-    #menu .footer a {
+    #menu .footer::after {
+      clear: both;
+      content: "";
+      display: table; }
+    #menu .footer > * {
+      background: #2c333c;
       box-sizing: border-box;
+      color: #FFF;
+      cursor: pointer;
       display: block;
       float: left;
-      padding: 8px;
-      text-align: center;
-      position: relative;
+      opacity: 0.5;
+      padding: 12px 0;
       width: 50%; }
-      #menu .footer a span {
-        background: #FFF;
-        border-radius: 2px;
-        color: #FFF;
-        font-size: 12px;
-        font-size: 1.2rem;
-        font-weight: 600;
-        line-height: 140%;
-        opacity: 0;
-        padding: 9px 18px;
-        position: absolute;
-        text-align: center;
-        -webkit-transition-property: margin, opacity;
-        -moz-transition-property: margin, opacity;
-        transition-property: margin, opacity;
-        -webkit-transition-duration: 0.2s;
-        -moz-transition-duration: 0.2s;
-        transition-duration: 0.2s;
-        visibility: hidden;
-        white-space: nowrap;
-        width: auto;
-        z-index: 999; }
-      #menu .footer a:hover span {
+      #menu .footer > *:hover {
         opacity: 1;
-        visibility: visible; }
-      #menu .footer a span {
-        bottom: 100%;
-        left: 50%;
-        -webkit-transform: translateX(-50%);
-        -moz-transform: translateX(-50%);
-        -ms-transform: translateX(-50%);
-        -o-transform: translateX(-50%);
-        transform: translateX(-50%); }
-        #menu .footer a span:after {
-          content: '';
-          position: absolute;
-          border-right: 5px solid transparent;
-          border-bottom-color: #FFF;
-          border-top: 5px solid #FFF;
-          border-left: 5px solid transparent;
-          bottom: -5px;
-          left: 50%;
-          -webkit-transform: translateX(-50%);
-          -moz-transform: translateX(-50%);
-          -ms-transform: translateX(-50%);
-          -o-transform: translateX(-50%);
-          transform: translateX(-50%); }
-      #menu .footer a:hover span {
-        margin-bottom: 8px; }
-      #menu .footer a span {
-        color: #343c46; }
-      #menu .footer a:last-child {
-        border: 0; }
-      #menu .footer a:hover {
-        background: #2a3038; }
-      #menu .footer a > * {
+        text-decoration: none; }
+      #menu .footer > * svg,
+      #menu .footer > * img {
         display: block;
-        float: none;
         height: 24px;
-        margin: 0 auto; }
+        margin: 0 auto 3px; }
 
 #navigation {
   background: #424a53;
-  left: 160px;
+  left: 140px;
   width: 240px; }
   #navigation .header {
     border-bottom: 1px solid #343c46;
     font-size: 12px;
     font-size: 1.2rem;
-    padding: 12px 18px; }
+    padding: 8px 12px; }
     #navigation .header input {
       border-radius: 24px; }
     #navigation .header .controls {
       float: right; }
-      #navigation .header .controls .button {
-        position: relative;
-        padding: 2px; }
-        #navigation .header .controls .button span {
-          background: #FFF;
-          border-radius: 2px;
-          color: #FFF;
-          font-size: 12px;
-          font-size: 1.2rem;
-          font-weight: 600;
-          line-height: 140%;
-          opacity: 0;
-          padding: 9px 18px;
-          position: absolute;
-          text-align: center;
-          -webkit-transition-property: margin, opacity;
-          -moz-transition-property: margin, opacity;
-          transition-property: margin, opacity;
-          -webkit-transition-duration: 0.2s;
-          -moz-transition-duration: 0.2s;
-          transition-duration: 0.2s;
-          visibility: hidden;
-          white-space: nowrap;
-          width: auto;
-          z-index: 999; }
-        #navigation .header .controls .button:hover span {
-          opacity: 1;
-          visibility: visible; }
-        #navigation .header .controls .button span {
-          top: 100%;
-          left: 50%;
-          -webkit-transform: translateX(-50%);
-          -moz-transform: translateX(-50%);
-          -ms-transform: translateX(-50%);
-          -o-transform: translateX(-50%);
-          transform: translateX(-50%); }
-          #navigation .header .controls .button span:after {
-            content: '';
-            position: absolute;
-            border-left: 5px solid transparent;
-            border-top-color: #FFF;
-            border-bottom: 5px solid #FFF;
-            border-right: 5px solid transparent;
-            left: 50%;
-            top: -5px;
-            -webkit-transform: translateX(-50%);
-            -moz-transform: translateX(-50%);
-            -ms-transform: translateX(-50%);
-            -o-transform: translateX(-50%);
-            transform: translateX(-50%); }
-        #navigation .header .controls .button:hover span {
-          margin-top: 8px; }
-        #navigation .header .controls .button span {
-          color: #343c46; }
   #navigation .body a {
     border-bottom: 1px solid #343c46;
-    padding: 12px 18px; }
+    padding: 8px 12px; }
     #navigation .body a.active {
       background: #0A93FF; }
   #navigation .body h2 {
     font-size: inherit; }
 
 #content {
-  margin-left: 400px; }
+  margin-left: 380px; }
   #content input:not([type=submit]),
   #content textarea,
   #content .select select {
@@ -1315,7 +1279,7 @@ h3 {
     box-sizing: border-box;
     padding: 12px 36px;
     position: fixed;
-    left: 400px;
+    left: 380px;
     right: 0;
     top: 0;
     z-index: 999; }
@@ -1326,10 +1290,27 @@ h3 {
     #content .header + .body {
       padding-top: 78px; }
     #content .header > * {
-      vertical-align: middle; }
-    #content .header .field {
+      display: block;
+      float: left;
+      margin: 0;
+      vertical-align: bottom; }
+    #content .header .filename {
+      position: relative;
+      width: 50%; }
+      #content .header .filename input {
+        padding-left: 36px;
+        width: 100%; }
+      #content .header .filename svg {
+        fill: rgba(0, 0, 0, 0.2);
+        left: 6px;
+        position: absolute;
+        top: 3px; }
+    #content .header .primary {
+      margin-left: 8px; }
+    #content .header .published {
       display: inline-block;
-      margin: 2px 0 0 24px; }
+      margin: 6px 0 0 8px;
+      vertical-align: bottom; }
     #content .header .danger {
       background: transparent;
       border: 0;
@@ -1391,20 +1372,13 @@ h3 {
       #content .header .danger svg {
         fill: rgba(0, 0, 0, 0.2); }
       #content .header .danger:hover svg {
-        fill: #FF4136; }
+        fill: #de0ca3; }
   #content .body {
     box-sizing: border-box;
     padding: 24px 36px; }
-    #content .body .field {
-      box-sizing: border-box; }
-      #content .body .field.filename {
-        float: left;
-        padding-right: 24px;
-        width: 75%; }
 
 /* The switch - the box around the slider */
 .switch {
-  display: inline-block;
   float: left;
   height: 20px;
   margin: 0;
@@ -1449,5 +1423,6 @@ h3 {
       transition-duration: 0.2s; }
   .switch + label {
     cursor: pointer;
-    float: left;
-    margin: 0 0 0 8px; }
+    display: inline-block;
+    margin: 0 0 0 8px;
+    vertical-align: bottom; }
