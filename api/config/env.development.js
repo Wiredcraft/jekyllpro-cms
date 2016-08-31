@@ -14,6 +14,7 @@ module.exports = {
     clientSecret: '93a8a77fef87f855fde202e1d72377b8792922f2',
     callbackURL: 'http://localhost:3000/api/auth/github/callback'
   },
+  redirectUrl: 'http://localhost:8000/',
   repo: {
     user: 'woodpig07',
     name: 'test'
