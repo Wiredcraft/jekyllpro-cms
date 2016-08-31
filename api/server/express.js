@@ -26,9 +26,7 @@ const initMiddleware = (app) => {
 
   app.use(cookieParser());
 
-  if (config.corsEnabled) {
-    app.use(cors())
-  }
+  app.use(cors(config.cors))
 }
 
 const initSession = (app, db) => {
@@ -103,7 +101,7 @@ const initHelmet = (app) => {
 
 const initRoutes = (app) => {
   app.get('/', function (req, res) {
-    console.log(req.session)
+    console.log(req.sessionID)
     if (req.user) {
       return res.render('index', { title: 'Hey', message: 'Hello ' + req.user.name});
     }
