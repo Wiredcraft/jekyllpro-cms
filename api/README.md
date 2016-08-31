@@ -30,7 +30,10 @@ npm run dev
 
 ```
 GET   /api/auth/github
+
 ```
+Note you need provide an redirect URL `redirectUrl` in configuration file.
+For example, if you working on `http://localhost:8000/`, please it there, after authentication, it would redirect to your url.
 
 **check if user is loggend and get user profile**
 

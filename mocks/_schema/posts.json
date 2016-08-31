@@ -1,0 +1,33 @@
+{
+	"title": "Blog post",
+	"type": "object",
+	"properties": {
+		"title": {
+			"type": "string",
+			"name": "Title"
+		},
+		"date": {
+			"type": "date",
+			"name": "Creation date"
+		},
+		"published": {
+			"type": "boolean",
+			"name": "Published",
+			"default": true
+		},
+    "category": {
+      "type": "string",
+      "enum": ["Marketing", "Lifestyle", "Business"]
+    },
+		"draft": {
+			"type": "boolean",
+			"name": "Draft",
+			"default": false
+		},
+		"body": {
+			"type": "text",
+			"name": "Body"
+		}
+	},
+	"required": ["title", "date"]
+}

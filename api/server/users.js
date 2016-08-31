@@ -22,7 +22,7 @@ const githubOauthCall = function () {
 /**
  * OAuth callback
  */
-const githubOauthCallback = function () {
+const githubOauthCallback = function (redirectUrl) {
   return function (req, res, next) {
     // Pop redirect URL from session
     var sessionRedirectURL = req.session.redirect_to;
@@ -37,7 +37,7 @@ const githubOauthCallback = function () {
         if (err) {
           return res.status(400).send(err)
         }
-        return res.redirect('/')
+        return res.redirect(redirectUrl || '/')
         // return res.redirect(info || sessionRedirectURL || '/');
       });
 
