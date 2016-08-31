@@ -1,4 +1,4 @@
-JekyllPro
+JekyllPlus
 ---------
 
 Awesome stuff there.

@@ -11,4 +11,4 @@ sandbox
 
 ansible/roles/*
 !ansible/roles/README.md
-!ansible/roles/sbux-*
+!ansible/roles/jekyllplus-*
