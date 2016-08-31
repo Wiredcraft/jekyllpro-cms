@@ -8,10 +8,14 @@ module.exports = {
     // Enable mongoose debug mode
     debug: process.env.MONGODB_DEBUG || false
   },
-  corsEnabled: true,
+  cors: {
+    origin: 'http://localhost:8000',
+    methods: 'POST,GET,OPTIONS',
+    credentials: true
+  },
   github: {
-    clientID: '425a3e66b53da5434284',
-    clientSecret: '2c6516c0e1dad55ff8e1a7e6a2e2b0322400947d',
+    clientID: '2d55b4e3be40483ac7bd',
+    clientSecret: '93a8a77fef87f855fde202e1d72377b8792922f2',
     callbackURL: 'http://localhost:3000/api/auth/github/callback'
   },
   redirectUrl: 'http://localhost:8000/',

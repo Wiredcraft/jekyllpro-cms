@@ -8,7 +8,11 @@ module.exports = {
     // Enable mongoose debug mode
     debug: process.env.MONGODB_DEBUG || false
   },
-  corsEnabled: true,
+  cors: {
+    origin: process.env.CORS_ORIGIN || 'http://localhost:8000',
+    methods: 'POST,GET,OPTIONS',
+    credentials: true
+  },
   github: {
     clientID: process.env.GITHUB_CLIENT_ID || 'APP_ID',
     clientSecret: process.env.GITHUB_CLIENT_SECRETE || 'APP_SECRETE',

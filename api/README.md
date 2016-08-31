@@ -24,6 +24,10 @@ npm run dev
 // server runs on http://0.0.0.0:3000
 ```
 
+### Configuration files
+
+In folder `/config/`, to configure options like host, port, github oauth, repository name, etc.
+
 ### API
 
 **github OAuth**
@@ -32,15 +36,18 @@ npm run dev
 GET   /api/auth/github
 
 ```
-Note you need provide an redirect URL `redirectUrl` in configuration file.
-For example, if you working on `http://localhost:8000/`, put it there, after authentication, it would redirect to your url with auth toke `http://localhost:8000/?code=5ac8e4a339f934e0b9c1aee4b8f7091be28db5f0`
+Note you need provide an redirect URL `redirectUrl` in `/config/`.
+For example, if you working on `http://localhost:8000/`, put it there, after authentication, it would redirect to your url.
+
+> **Cross-domain requests is allowed for configured origin(development setting is `http://localhost:8000`), see `cors` option setting in `/config/`**
+
+> **When making following api request, remember to set `withCredentials` to `true`**
 
 **check if user is loggend and get user profile**
 
 ```
 GET   /api/me
 ```
-It requires request to send with header `X-TOKEN <the code you get from above authentication>`, if no token or invalide token, it return 401 error.
 
 example success response body
 ```
@@ -78,12 +85,35 @@ example success response body
 }
 ```
 
+**get repo details**
+
+```
+GET    /api/repository/details
+
+// you can know which is default_branch here
+```
+example success response body
+```
+{
+  name: "test",
+  full_name: "woodpig07/test",
+  description: null,
+  private: false,
+  url: "https://api.github.com/repos/woodpig07/test",
+  default_branch: "master",
+  owner: {
+    login: "woodpig07",
+    type: "User"
+  }
+}
+```
+
 **get repo content in json format**
 
 ```
 GET    /api/repository
+// it will return content for default branch if no `?ref=<branch name>`
 ```
-It requires request to send with header `X-TOKEN <auth token>`.
 example success response body
 ```
 [
@@ -128,7 +158,6 @@ GET /api/repository?ref=[branchName]&path=[filePath]&raw=[true or false]
 
 // raw=true will return the file content in raw data instead of GitHub's normalized format
 ```
-It requires request to send with header `X-TOKEN <auth token>`.
 example
 
 `http://localhost:3000/api/repository?ref=test-dev&path=test/test.MD&raw=true`
@@ -169,7 +198,6 @@ POST   /api/repository
 // form data {branch: 'master', path: 'filename', content: 'content here', message: 'commit message here'}
 
 ```
-It requires request to send with header `X-TOKEN <auth token>`.
 
 example success response body
 ```
@@ -225,7 +253,6 @@ example success response body
 ```
 GET /api/repository/branch
 ```
-It requires request to send with header `X-TOKEN <auth token>`.
 
 Example success response body
 ```
@@ -254,7 +281,6 @@ POST /api/repository/branch
 
 // form data {oldBranch: "master", newBranch: "newBranchName"}
 ```
-It requires request to send with header `X-TOKEN <auth token>`.
 
 Example success response body
 ```

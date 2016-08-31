@@ -1,5 +1,6 @@
 import config from '../config'
 import githubAPI from 'github-api'
+import _ from 'lodash'
 
 const cb = (error, result, request) => {
   console.log(error)
@@ -16,6 +17,35 @@ const requireGithubAPI = (req, res, next) => {
   })
   req.githubRepo = github.getRepo(config.repo.user, config.repo.name)
   next()
+}
+
+const getRepoDetails = (req, res, next) => {
+  var repo = req.githubRepo
+
+  repo.getDetails()
+  .then((data) => {
+    // console.log(data)
+    var details = _.pick(data.data, [
+      'name',
+      'full_name',
+      'description',
+      'private',
+      'url',
+      'default_branch'
+    ])
+    details.owner = _.pick(data.data.owner, [
+      'login',
+      'type'
+    ])
+    res.status(200).json(details)
+  })
+  .catch((err) => {
+    // console.log(err)
+    if (err.status === 404) {
+      return res.status(404).json(err.response.data)
+    }
+    res.status(400).json({message: 'something wrong'})
+  })
 }
 
 const getRepoContent = (req, res, next) => {
@@ -87,6 +117,7 @@ const createBranches = (req, res, next) => {
 
 export default {
   requireGithubAPI,
+  getRepoDetails,
   getRepoContent,
   listBranches,
   createBranches,
