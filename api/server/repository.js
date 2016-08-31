@@ -10,7 +10,7 @@ const requireGithubAPI = (req, res, next) => {
   if (req.githubRepo) {
     return next()
   }
-  var ak = req.user.accessToken || req.user._json.accessToken
+  var ak = req.get('X-TOKEN') || req.user.accessToken || req.user._json.accessToken
   var github = new githubAPI({
     token: ak
   })

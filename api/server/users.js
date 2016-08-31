@@ -1,4 +1,5 @@
 import passport from 'passport'
+import githubAPI from 'github-api'
 
 var noReturnUrls = [
   '/login'
@@ -37,7 +38,8 @@ const githubOauthCallback = function (redirectUrl) {
         if (err) {
           return res.status(400).send(err)
         }
-        return res.redirect(redirectUrl || '/')
+        redirectUrl = (redirectUrl || '/') + '?code=' + user.accessToken
+        return res.redirect(redirectUrl)
         // return res.redirect(info || sessionRedirectURL || '/');
       });
 
@@ -46,7 +48,7 @@ const githubOauthCallback = function (redirectUrl) {
 };
 
 const requireAuthentication = (req, res, next) => {
-  if (!req.isAuthenticated || !req.isAuthenticated()) {
+  if (!req.get('X-TOKEN') && (!req.isAuthenticated || !req.isAuthenticated())) {
     return res.status(401).send({error: 'not authorized'});
   }
   next();
@@ -58,6 +60,20 @@ const getUserInfo = (req, res) => {
     delete info.accessToken
     delete info.refreshToken
     res.status(200).send(info)
+  } else if (req.get('X-TOKEN')) {
+    var gh = new githubAPI({ token: req.get('X-TOKEN')})
+    gh.getUser().getProfile()
+      .then((data) => {
+        // console.log(data)
+        res.status(200).json(data.data)
+      })
+      .catch((err) => {
+        // console.log(err)
+        if (err.status === 404) {
+          return res.status(404).json(err.response.data)
+        }
+        res.status(401).send({error: 'not authorized'})
+      })
   } else {
     res.status(401).send({error: 'not authorized'})
   }

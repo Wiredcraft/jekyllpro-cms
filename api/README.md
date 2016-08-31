@@ -33,14 +33,14 @@ GET   /api/auth/github
 
 ```
 Note you need provide an redirect URL `redirectUrl` in configuration file.
-For example, if you working on `http://localhost:8000/`, please it there, after authentication, it would redirect to your url.
+For example, if you working on `http://localhost:8000/`, put it there, after authentication, it would redirect to your url with auth toke `http://localhost:8000/?code=5ac8e4a339f934e0b9c1aee4b8f7091be28db5f0`
 
 **check if user is loggend and get user profile**
 
 ```
 GET   /api/me
 ```
-if not logged in, it return 401 error
+It requires request to send with header `X-TOKEN <the code you get from above authentication>`, if no token or invalide token, it return 401 error.
 
 example success response body
 ```
@@ -83,6 +83,7 @@ example success response body
 ```
 GET    /api/repository
 ```
+It requires request to send with header `X-TOKEN <auth token>`.
 example success response body
 ```
 [
@@ -127,6 +128,7 @@ GET /api/repository?ref=[branchName]&path=[filePath]&raw=[true or false]
 
 // raw=true will return the file content in raw data instead of GitHub's normalized format
 ```
+It requires request to send with header `X-TOKEN <auth token>`.
 example
 
 `http://localhost:3000/api/repository?ref=test-dev&path=test/test.MD&raw=true`
@@ -159,9 +161,6 @@ return
 ```
 
 
-
-
-
 **add/update files to repo**
 
 ```
@@ -170,6 +169,7 @@ POST   /api/repository
 // form data {branch: 'master', path: 'filename', content: 'content here', message: 'commit message here'}
 
 ```
+It requires request to send with header `X-TOKEN <auth token>`.
 
 example success response body
 ```
@@ -225,6 +225,8 @@ example success response body
 ```
 GET /api/repository/branch
 ```
+It requires request to send with header `X-TOKEN <auth token>`.
+
 Example success response body
 ```
 [
@@ -252,6 +254,8 @@ POST /api/repository/branch
 
 // form data {oldBranch: "master", newBranch: "newBranchName"}
 ```
+It requires request to send with header `X-TOKEN <auth token>`.
+
 Example success response body
 ```
 {

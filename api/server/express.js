@@ -103,7 +103,7 @@ const initHelmet = (app) => {
 
 const initRoutes = (app) => {
   app.get('/', function (req, res) {
-    console.log(req.isAuthenticated())
+    console.log(req.session)
     if (req.user) {
       return res.render('index', { title: 'Hey', message: 'Hello ' + req.user.name});
     }
