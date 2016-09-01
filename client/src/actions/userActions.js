@@ -1,8 +1,11 @@
 /* global API_BASE_URL */
 import request from 'superagent'
 
+import { getAllBranch, fetchRepoRootInfo } from './repoActions'
+
 
 export const CHANGE_LOGIN_STATE = 'CHANGE_LOGIN_STATE'
+
 
 export function confirmUserIsLogin() {
   return dispatch => {
@@ -11,9 +14,13 @@ export function confirmUserIsLogin() {
       .withCredentials()
       .end((err, res) => {
         if (err) {
-          console.log(err)
+          console.error(err)
         } else {
-          dispatch({ type: CHANGE_LOGIN_STATE, payload: { isLoggedIn: true } })
+          Promise.all([
+            dispatch(fetchRepoRootInfo()),
+            dispatch(getAllBranch()),
+            dispatch({ type: CHANGE_LOGIN_STATE, payload: { isLoggedIn: true } })
+          ])
         }
       })
   }

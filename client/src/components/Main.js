@@ -9,7 +9,7 @@ import { SUPPORTED_TYPE } from '../constants/types'
 import { parseYamlInsideMarkdown, retriveContent } from '../helpers/markdown'
 import 'normalize.css/normalize.css'
 import 'styles/main.scss'
-import { confirmUserIsLogin } from '../actions/userAction'
+import { confirmUserIsLogin } from '../actions/userActions'
 
 
 // TODO: remove linePattern
