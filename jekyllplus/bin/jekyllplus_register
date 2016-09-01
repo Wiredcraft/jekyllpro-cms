@@ -28,4 +28,4 @@ fi
 mkdir -p $BASE_REPO/$FULL_NAME
 cd $BASE_REPO/$FULL_NAME
 
-git clone --bare https://$TOKEN:x-oauth-basic@github.com/$FULL_NAME .
+git clone --bare --shared https://$TOKEN:x-oauth-basic@github.com/$FULL_NAME .

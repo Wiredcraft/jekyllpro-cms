@@ -27,7 +27,7 @@ if [ ! -e "$BASE_REPO/$FULL_NAME" ]; then
 fi
 
 cd $BASE_REPO/$FULL_NAME
-git fetch origin
+git fetch origin $BRANCH:$BRANCH
 
 mkdir -p $BASE_SITE/$FULL_NAME/$BRANCH
 cd $BASE_SITE/$FULL_NAME/$BRANCH
