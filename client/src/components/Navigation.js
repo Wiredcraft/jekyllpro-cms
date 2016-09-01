@@ -14,14 +14,14 @@ export default class Navigation extends Component {
   }
 
   render() {
-    const { schemas } = this.props
+    const { filesMeta } = this.props
     const { selectedItemIndex } = this.state
 
     return (
       <div id='navigation'>
         <section className='body'>
           {
-            schemas && schemas.map((d, i) => (
+            filesMeta && filesMeta.map((d, i) => (
               <a
                 className={selectedItemIndex === i ? 'active' : ''}
                 key={i}
@@ -39,6 +39,6 @@ export default class Navigation extends Component {
 
 function mapStateToProps(state) {
   return {
-    schemas: state.repo.get('schemas')
+    filesMeta: state.repo.get('filesMeta')
   }
 }

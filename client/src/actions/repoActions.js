@@ -1,7 +1,7 @@
 /* global API_BASE_URL */
 import request from 'superagent'
 
-import { parseSchemas } from '../helpers/repo'
+import { parseFilesMeta } from '../helpers/repo'
 
 
 export const CHANGE_REPO_STATE = 'CHANGE_REPO_STATE'
@@ -29,9 +29,9 @@ export function fetchFilesMeta() {
         if (err) {
           console.error(err)
         } else {
-          const schemas = parseSchemas(res.body)
+          const filesMeta = parseFilesMeta(res.body)
           dispatch({
-            payload: { schemas },
+            payload: { filesMeta },
             type: CHANGE_REPO_STATE
           })
         }
