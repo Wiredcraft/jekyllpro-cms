@@ -1059,6 +1059,7 @@ body.modal #modal,
 
 /* Custom */
 body {
+  background: #343c46;
   font-size: 14px;
   font-size: 1.4rem; }
 
@@ -1067,401 +1068,456 @@ h2,
 h3 {
   font-weight: normal; }
 
-#menu,
-#navigation {
-  bottom: 0;
-  color: #FFF;
-  overflow: auto;
-  position: fixed;
-  top: 0; }
-  #menu .select select,
-  #navigation .select select {
-    background: #2f363f;
-    border: 0;
-    border-radius: 2px;
-    box-sizing: border-box;
-    color: #FFF;
-    display: inline-block;
-    outline: none;
-    padding: 4px 24px;
-    -webkit-transition-property: background, border, color;
-    -moz-transition-property: background, border, color;
-    transition-property: background, border, color;
-    -webkit-transition-duration: 0.2s;
-    -moz-transition-duration: 0.2s;
-    transition-duration: 0.2s;
-    border: 0;
-    box-shadow: 1px 1px 0 rgba(0, 0, 0, 0.1);
-    padding: 4px 24px 4px 8px; }
-    #menu .select select:hover, #menu .select select:focus,
-    #navigation .select select:hover,
-    #navigation .select select:focus {
-      background: #4e545c;
-      color: #FFF;
-      text-decoration: none; }
-    #menu .select select:active, #menu .select select.active,
-    #navigation .select select:active,
-    #navigation .select select.active {
-      background: #2a3139;
-      color: #FFF;
-      text-decoration: none; }
-    #menu .select select[disabled=disabled], #menu .select select[disabled=true], #menu .select select[disabled], #menu .select select.disabled,
-    #navigation .select select[disabled=disabled],
-    #navigation .select select[disabled=true],
-    #navigation .select select[disabled],
-    #navigation .select select.disabled {
-      background: #DDDDDD;
-      border-color: #c7c7c7;
-      color: #AAAAAA; }
-  #menu .button,
-  #navigation .button {
-    padding: 2px 8px; }
-  #menu input,
-  #navigation input {
-    background: rgba(0, 0, 0, 0.1);
-    padding: 2px 8px; }
-    #menu input:hover,
-    #navigation input:hover {
-      background: rgba(0, 0, 0, 0.2); }
-    #menu input:focus,
-    #navigation input:focus {
-      background: #FFF;
-      color: #343c46; }
-  #menu svg,
-  #navigation svg {
-    display: block;
-    fill: #FFF;
-    height: 18px; }
-  #menu h2,
-  #menu h3,
-  #navigation h2,
-  #navigation h3 {
-    color: inherit;
-    line-height: 160%;
-    margin: 0; }
-  #menu > * > h3,
-  #navigation > * > h3 {
-    font-size: 10px;
-    font-size: 1rem;
-    letter-spacing: 1px; }
-  #menu > * > a,
-  #navigation > * > a {
-    color: inherit;
-    display: block;
-    opacity: 0.5; }
-    #menu > * > a .meta,
-    #navigation > * > a .meta {
-      opacity: 0.5; }
-    #menu > * > a:hover, #menu > * > a.active,
-    #navigation > * > a:hover,
-    #navigation > * > a.active {
-      opacity: 1;
-      text-decoration: none; }
-
-#menu {
-  background: #343c46;
-  box-shadow: 10px 0 0 rgba(0, 0, 0, 0.1);
-  left: 0;
-  padding-bottom: 74px;
-  width: 144px; }
-  #menu .body .select {
-    display: inline-block;
-    margin: 0 12px 8px; }
-    #menu .body .select select {
-      width: 100%; }
-  #menu .body h3 {
-    padding: 8px 12px;
-    opacity: 0.4; }
-  #menu .body img {
-    border-radius: 2px;
-    box-shadow: 1px 1px 0 rgba(0, 0, 0, 0.1);
-    float: left;
-    height: 24px;
-    margin: -2px 6px 0 0; }
-  #menu .body > a {
-    border-left: 2px solid transparent;
-    color: inherit;
-    cursor: pointer;
-    display: block;
-    padding: 8px 12px;
+.loading {
+  position: relative; }
+  .loading:before {
+    background: rgba(0, 0, 0, 0.8);
+    bottom: 0;
+    content: '';
+    left: 0;
+    overflow-y: auto;
+    pointer-events: none;
+    position: absolute;
+    right: 0;
+    text-align: center;
+    top: 0;
     -webkit-transition-property: opacity;
     -moz-transition-property: opacity;
     transition-property: opacity;
-    -webkit-transition-duration: 0.2s;
-    -moz-transition-duration: 0.2s;
-    transition-duration: 0.2s; }
-    #menu .body > a svg,
-    #menu .body > a img {
-      float: left;
-      margin: 1px 3px 0 0; }
-    #menu .body > a:hover, #menu .body > a.active {
-      opacity: 1;
-      text-decoration: none; }
-    #menu .body > a.active {
-      border-color: #0A93FF; }
-  #menu .footer {
-    background: #343c46;
-    box-shadow: 0 -1px 0 rgba(0, 0, 0, 0.1);
+    -webkit-transition-duration: 0.6s;
+    -moz-transition-duration: 0.6s;
+    transition-duration: 0.6s;
+    z-index: 998; }
+  .loading:after {
+    animation: spin 0.6s linear infinite;
+    border: 4px solid rgba(0, 0, 0, 0.4);
+    border-top: 4px solid #FFF;
+    border-radius: 50%;
     bottom: 0;
+    content: '';
+    height: 24px;
+    left: 0;
+    margin: auto;
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 24px;
+    z-index: 999; }
+
+#landing {
+  display: none; }
+  #landing .card {
+    background: #FFF;
+    border-radius: 4px;
+    margin: 0 auto;
+    padding: 12px 18px;
+    top: 50%;
+    width: 264px; }
+    #landing .card h1 {
+      font-size: 24px;
+      font-size: 2.4rem; }
+    #landing .card input,
+    #landing .card .primary {
+      width: 100%; }
+    #landing .card .help {
+      color: #AAAAAA;
+      float: right; }
+
+#app {
+  /* The switch - the box around the slider */ }
+  #app #menu,
+  #app #navigation {
+    bottom: 0;
+    color: #FFF;
+    overflow: auto;
     position: fixed;
-    text-align: center;
-    width: 144px; }
-    #menu .footer::after {
-      clear: both;
-      content: "";
-      display: table; }
-    #menu .footer > * {
+    top: 0; }
+    #app #menu .select select,
+    #app #navigation .select select {
+      background: #2f363f;
+      border: 0;
+      border-radius: 2px;
       box-sizing: border-box;
       color: #FFF;
+      display: inline-block;
+      outline: none;
+      padding: 4px 24px;
+      -webkit-transition-property: background, border, color;
+      -moz-transition-property: background, border, color;
+      transition-property: background, border, color;
+      -webkit-transition-duration: 0.2s;
+      -moz-transition-duration: 0.2s;
+      transition-duration: 0.2s;
+      border: 0;
+      box-shadow: 1px 1px 0 rgba(0, 0, 0, 0.1);
+      padding: 4px 24px 4px 8px; }
+      #app #menu .select select:hover, #app #menu .select select:focus,
+      #app #navigation .select select:hover,
+      #app #navigation .select select:focus {
+        background: #4e545c;
+        color: #FFF;
+        text-decoration: none; }
+      #app #menu .select select:active, #app #menu .select select.active,
+      #app #navigation .select select:active,
+      #app #navigation .select select.active {
+        background: #2a3139;
+        color: #FFF;
+        text-decoration: none; }
+      #app #menu .select select[disabled=disabled], #app #menu .select select[disabled=true], #app #menu .select select[disabled], #app #menu .select select.disabled,
+      #app #navigation .select select[disabled=disabled],
+      #app #navigation .select select[disabled=true],
+      #app #navigation .select select[disabled],
+      #app #navigation .select select.disabled {
+        background: #DDDDDD;
+        border-color: #c7c7c7;
+        color: #AAAAAA; }
+    #app #menu .button,
+    #app #navigation .button {
+      padding: 2px 8px; }
+    #app #menu input,
+    #app #navigation input {
+      background: rgba(0, 0, 0, 0.1);
+      padding: 2px 8px; }
+      #app #menu input:hover,
+      #app #navigation input:hover {
+        background: rgba(0, 0, 0, 0.2); }
+      #app #menu input:focus,
+      #app #navigation input:focus {
+        background: #FFF;
+        color: #343c46; }
+    #app #menu svg,
+    #app #navigation svg {
+      display: block;
+      fill: #FFF;
+      height: 18px; }
+    #app #menu h2,
+    #app #menu h3,
+    #app #navigation h2,
+    #app #navigation h3 {
+      color: inherit;
+      line-height: 160%;
+      margin: 0; }
+    #app #menu > * > h3,
+    #app #navigation > * > h3 {
+      font-size: 10px;
+      font-size: 1rem;
+      letter-spacing: 1px; }
+    #app #menu > * > a,
+    #app #navigation > * > a {
+      color: inherit;
+      display: block;
+      opacity: 0.5; }
+      #app #menu > * > a .meta,
+      #app #navigation > * > a .meta {
+        opacity: 0.5; }
+      #app #menu > * > a:hover, #app #menu > * > a.active,
+      #app #navigation > * > a:hover,
+      #app #navigation > * > a.active {
+        opacity: 1;
+        text-decoration: none; }
+  #app #menu {
+    background: #343c46;
+    box-shadow: 10px 0 0 rgba(0, 0, 0, 0.1);
+    left: 0;
+    padding-bottom: 74px;
+    width: 144px; }
+    #app #menu .body .select {
+      display: inline-block;
+      margin: 0 12px 8px; }
+      #app #menu .body .select select {
+        width: 100%; }
+    #app #menu .body h3 {
+      padding: 8px 12px;
+      opacity: 0.4; }
+    #app #menu .body img {
+      border-radius: 2px;
+      box-shadow: 1px 1px 0 rgba(0, 0, 0, 0.1);
+      float: left;
+      height: 24px;
+      margin: -2px 6px 0 0; }
+    #app #menu .body > a {
+      border-left: 2px solid transparent;
+      color: inherit;
       cursor: pointer;
       display: block;
-      float: left;
-      font-size: 11px;
-      font-size: 1.1rem;
-      opacity: 0.5;
-      padding: 12px 0;
-      width: 50%;
+      padding: 8px 12px;
       -webkit-transition-property: opacity;
       -moz-transition-property: opacity;
       transition-property: opacity;
       -webkit-transition-duration: 0.2s;
       -moz-transition-duration: 0.2s;
       transition-duration: 0.2s; }
-      #menu .footer > *:hover {
+      #app #menu .body > a svg,
+      #app #menu .body > a img {
+        float: left;
+        margin: 1px 3px 0 0; }
+      #app #menu .body > a:hover, #app #menu .body > a.active {
         opacity: 1;
         text-decoration: none; }
-      #menu .footer > * svg,
-      #menu .footer > * img {
+      #app #menu .body > a.active {
+        border-color: #0A93FF; }
+    #app #menu .footer {
+      background: #343c46;
+      box-shadow: 0 -1px 0 rgba(0, 0, 0, 0.1);
+      bottom: 0;
+      position: fixed;
+      text-align: center;
+      width: 144px; }
+      #app #menu .footer::after {
+        clear: both;
+        content: "";
+        display: table; }
+      #app #menu .footer > * {
+        box-sizing: border-box;
+        color: #FFF;
+        cursor: pointer;
         display: block;
-        height: 24px;
-        margin: 0 auto 4px; }
-
-#navigation {
-  background: #424a53;
-  left: 144px;
-  width: 240px; }
-  #navigation .header {
-    border-bottom: 1px solid #343c46;
-    font-size: 12px;
-    font-size: 1.2rem;
-    padding: 8px 12px; }
-    #navigation .header input {
-      border-radius: 24px;
-      padding: 2px 12px; }
-    #navigation .header .controls {
-      float: right; }
-  #navigation .body a {
-    border-bottom: 1px solid #343c46;
-    padding: 8px 12px; }
-    #navigation .body a.active {
-      background: #0A93FF; }
-  #navigation .body h2 {
-    font-size: inherit; }
-
-#content {
-  margin-left: 384px; }
-  #content input:not([type=submit]),
-  #content textarea,
-  #content .select select {
-    width: 100%; }
-  #content .description {
-    color: #858a90; }
-  #content .sidebar {
-    background: #F4F4F4;
-    bottom: 0;
-    box-sizing: border-box;
-    overflow: auto;
-    padding: 24px 36px 24px 24px;
-    position: fixed;
-    right: 0;
-    top: 0;
-    width: 288px; }
-    #content .sidebar::after {
-      clear: both;
-      content: "";
-      display: table; }
-    #content .sidebar + .body {
-      padding-right: 288px; }
-    #content .sidebar input,
-    #content .sidebar .primary,
-    #content .sidebar .select,
-    #content .sidebar .select select {
-      width: 100%; }
-    #content .sidebar .switch {
-      float: right; }
-      #content .sidebar .switch + label {
-        margin: 0 12px 0 0; }
-    #content .sidebar .primary {
-      margin-bottom: 12px; }
-    #content .sidebar .danger {
-      background: transparent;
-      border: 0;
-      float: right;
-      line-height: 1;
-      outline: none;
-      padding: 0;
-      position: relative;
-      position: relative;
-      vertical-align: middle;
-      position: relative; }
-      #content .sidebar .danger span {
-        background: #343c46;
-        border-radius: 2px;
-        color: #FFF;
-        font-size: 12px;
-        font-size: 1.2rem;
-        font-weight: 600;
-        line-height: 140%;
-        opacity: 0;
-        padding: 9px 18px;
-        position: absolute;
-        text-align: center;
-        -webkit-transition-property: margin, opacity;
-        -moz-transition-property: margin, opacity;
-        transition-property: margin, opacity;
-        -webkit-transition-duration: 0.2s;
-        -moz-transition-duration: 0.2s;
-        transition-duration: 0.2s;
-        visibility: hidden;
-        white-space: nowrap;
-        width: auto;
-        z-index: 999; }
-      #content .sidebar .danger:hover span {
-        opacity: 1;
-        visibility: visible; }
-      #content .sidebar .danger span {
-        bottom: 100%;
-        left: 50%;
-        -webkit-transform: translateX(-50%);
-        -moz-transform: translateX(-50%);
-        -ms-transform: translateX(-50%);
-        -o-transform: translateX(-50%);
-        transform: translateX(-50%); }
-        #content .sidebar .danger span:after {
-          content: '';
-          position: absolute;
-          border-right: 5px solid transparent;
-          border-bottom-color: #343c46;
-          border-top: 5px solid #343c46;
-          border-left: 5px solid transparent;
-          bottom: -5px;
-          left: 50%;
-          -webkit-transform: translateX(-50%);
-          -moz-transform: translateX(-50%);
-          -ms-transform: translateX(-50%);
-          -o-transform: translateX(-50%);
-          transform: translateX(-50%); }
-      #content .sidebar .danger:hover span {
-        margin-bottom: 8px; }
-      #content .sidebar .danger span {
-        background: #343c46;
-        border-radius: 2px;
-        color: #FFF;
-        font-size: 12px;
-        font-size: 1.2rem;
-        font-weight: 600;
-        line-height: 140%;
-        opacity: 0;
-        padding: 9px 18px;
-        position: absolute;
-        text-align: center;
-        -webkit-transition-property: margin, opacity;
-        -moz-transition-property: margin, opacity;
-        transition-property: margin, opacity;
-        -webkit-transition-duration: 0.2s;
-        -moz-transition-duration: 0.2s;
-        transition-duration: 0.2s;
-        visibility: hidden;
-        white-space: nowrap;
-        width: auto;
-        z-index: 999; }
-      #content .sidebar .danger:hover span {
-        opacity: 1;
-        visibility: visible; }
-      #content .sidebar .danger span {
-        top: 100%;
-        left: 50%;
-        -webkit-transform: translateX(-50%);
-        -moz-transform: translateX(-50%);
-        -ms-transform: translateX(-50%);
-        -o-transform: translateX(-50%);
-        transform: translateX(-50%); }
-        #content .sidebar .danger span:after {
-          content: '';
-          position: absolute;
-          border-left: 5px solid transparent;
-          border-top-color: #343c46;
-          border-bottom: 5px solid #343c46;
-          border-right: 5px solid transparent;
-          left: 50%;
-          top: -5px;
-          -webkit-transform: translateX(-50%);
-          -moz-transform: translateX(-50%);
-          -ms-transform: translateX(-50%);
-          -o-transform: translateX(-50%);
-          transform: translateX(-50%); }
-      #content .sidebar .danger:hover span {
-        margin-top: 8px; }
-      #content .sidebar .danger svg {
-        fill: rgba(0, 0, 0, 0.2);
-        -webkit-transition-property: fill;
-        -moz-transition-property: fill;
-        transition-property: fill;
+        float: left;
+        font-size: 11px;
+        font-size: 1.1rem;
+        opacity: 0.5;
+        padding: 12px 0;
+        width: 50%;
+        -webkit-transition-property: opacity;
+        -moz-transition-property: opacity;
+        transition-property: opacity;
         -webkit-transition-duration: 0.2s;
         -moz-transition-duration: 0.2s;
         transition-duration: 0.2s; }
-      #content .sidebar .danger:hover svg {
-        fill: #FC255D; }
-  #content .body {
-    box-sizing: border-box;
-    padding: 24px 36px; }
-
-/* The switch - the box around the slider */
-.switch {
-  float: left;
-  height: 20px;
-  margin: 0;
-  opacity: 1;
-  position: relative;
-  width: 32px; }
-  .switch input {
-    display: none; }
-    .switch input:checked + .slider {
-      background: #0A93FF; }
-    .switch input:checked + .slider:before {
-      -webkit-transform: translateX(12px);
-      -moz-transform: translateX(12px);
-      -ms-transform: translateX(12px);
-      -o-transform: translateX(12px);
-      transform: translateX(12px); }
-  .switch .slider {
-    background: rgba(0, 0, 0, 0.1);
-    box-shadow: 1px 1px 0 rgba(0, 0, 0, 0.1) inset;
-    border-radius: 24px;
-    bottom: 0;
-    cursor: pointer;
-    left: 0;
-    position: absolute;
-    right: 0;
-    top: 0;
-    -webkit-transition-duration: 0.2s;
-    -moz-transition-duration: 0.2s;
-    transition-duration: 0.2s; }
-    .switch .slider:before {
-      background: #FFF;
-      box-shadow: 1px 1px 0 rgba(0, 0, 0, 0.1);
-      border-radius: 50%;
-      bottom: 4px;
-      content: '';
-      height: 12px;
-      left: 4px;
+        #app #menu .footer > *:hover {
+          opacity: 1;
+          text-decoration: none; }
+        #app #menu .footer > * svg,
+        #app #menu .footer > * img {
+          display: block;
+          height: 24px;
+          margin: 0 auto 4px; }
+  #app #navigation {
+    background: #424a53;
+    left: 144px;
+    width: 240px; }
+    #app #navigation .header {
+      border-bottom: 1px solid #343c46;
+      font-size: 12px;
+      font-size: 1.2rem;
+      padding: 8px 12px; }
+      #app #navigation .header input {
+        border-radius: 24px;
+        padding: 2px 12px; }
+      #app #navigation .header .controls {
+        float: right; }
+    #app #navigation .body a {
+      border-bottom: 1px solid #343c46;
+      padding: 8px 12px; }
+      #app #navigation .body a.active {
+        background: #0A93FF; }
+    #app #navigation .body h2 {
+      font-size: inherit; }
+  #app #content {
+    background: #F4F4F4;
+    margin-left: 384px; }
+    #app #content.loading:after {
+      left: 384px;
+      position: fixed; }
+    #app #content input:not([type=submit]),
+    #app #content textarea,
+    #app #content .select select {
+      width: 100%; }
+    #app #content .description {
+      color: #858a90; }
+    #app #content .sidebar {
+      bottom: 0;
+      box-sizing: border-box;
+      overflow: auto;
+      padding: 24px 36px 24px 24px;
+      position: fixed;
+      right: 0;
+      top: 0;
+      width: 288px; }
+      #app #content .sidebar::after {
+        clear: both;
+        content: "";
+        display: table; }
+      #app #content .sidebar + .body {
+        padding-right: 288px; }
+      #app #content .sidebar input,
+      #app #content .sidebar .primary,
+      #app #content .sidebar .select,
+      #app #content .sidebar .select select {
+        width: 100%; }
+      #app #content .sidebar .switch {
+        float: right; }
+        #app #content .sidebar .switch + label {
+          margin: 0 12px 0 0; }
+      #app #content .sidebar .primary {
+        margin-bottom: 12px; }
+      #app #content .sidebar .danger {
+        background: transparent;
+        border: 0;
+        float: right;
+        line-height: 1;
+        outline: none;
+        padding: 0;
+        position: relative;
+        position: relative;
+        vertical-align: middle;
+        position: relative; }
+        #app #content .sidebar .danger span {
+          background: #343c46;
+          border-radius: 2px;
+          color: #FFF;
+          font-size: 12px;
+          font-size: 1.2rem;
+          font-weight: 600;
+          line-height: 140%;
+          opacity: 0;
+          padding: 9px 18px;
+          position: absolute;
+          text-align: center;
+          -webkit-transition-property: margin, opacity;
+          -moz-transition-property: margin, opacity;
+          transition-property: margin, opacity;
+          -webkit-transition-duration: 0.2s;
+          -moz-transition-duration: 0.2s;
+          transition-duration: 0.2s;
+          visibility: hidden;
+          white-space: nowrap;
+          width: auto;
+          z-index: 999; }
+        #app #content .sidebar .danger:hover span {
+          opacity: 1;
+          visibility: visible; }
+        #app #content .sidebar .danger span {
+          bottom: 100%;
+          left: 50%;
+          -webkit-transform: translateX(-50%);
+          -moz-transform: translateX(-50%);
+          -ms-transform: translateX(-50%);
+          -o-transform: translateX(-50%);
+          transform: translateX(-50%); }
+          #app #content .sidebar .danger span:after {
+            content: '';
+            position: absolute;
+            border-right: 5px solid transparent;
+            border-bottom-color: #343c46;
+            border-top: 5px solid #343c46;
+            border-left: 5px solid transparent;
+            bottom: -5px;
+            left: 50%;
+            -webkit-transform: translateX(-50%);
+            -moz-transform: translateX(-50%);
+            -ms-transform: translateX(-50%);
+            -o-transform: translateX(-50%);
+            transform: translateX(-50%); }
+        #app #content .sidebar .danger:hover span {
+          margin-bottom: 8px; }
+        #app #content .sidebar .danger span {
+          background: #343c46;
+          border-radius: 2px;
+          color: #FFF;
+          font-size: 12px;
+          font-size: 1.2rem;
+          font-weight: 600;
+          line-height: 140%;
+          opacity: 0;
+          padding: 9px 18px;
+          position: absolute;
+          text-align: center;
+          -webkit-transition-property: margin, opacity;
+          -moz-transition-property: margin, opacity;
+          transition-property: margin, opacity;
+          -webkit-transition-duration: 0.2s;
+          -moz-transition-duration: 0.2s;
+          transition-duration: 0.2s;
+          visibility: hidden;
+          white-space: nowrap;
+          width: auto;
+          z-index: 999; }
+        #app #content .sidebar .danger:hover span {
+          opacity: 1;
+          visibility: visible; }
+        #app #content .sidebar .danger span {
+          top: 100%;
+          left: 50%;
+          -webkit-transform: translateX(-50%);
+          -moz-transform: translateX(-50%);
+          -ms-transform: translateX(-50%);
+          -o-transform: translateX(-50%);
+          transform: translateX(-50%); }
+          #app #content .sidebar .danger span:after {
+            content: '';
+            position: absolute;
+            border-left: 5px solid transparent;
+            border-top-color: #343c46;
+            border-bottom: 5px solid #343c46;
+            border-right: 5px solid transparent;
+            left: 50%;
+            top: -5px;
+            -webkit-transform: translateX(-50%);
+            -moz-transform: translateX(-50%);
+            -ms-transform: translateX(-50%);
+            -o-transform: translateX(-50%);
+            transform: translateX(-50%); }
+        #app #content .sidebar .danger:hover span {
+          margin-top: 8px; }
+        #app #content .sidebar .danger svg {
+          fill: rgba(0, 0, 0, 0.2);
+          -webkit-transition-property: fill;
+          -moz-transition-property: fill;
+          transition-property: fill;
+          -webkit-transition-duration: 0.2s;
+          -moz-transition-duration: 0.2s;
+          transition-duration: 0.2s; }
+        #app #content .sidebar .danger:hover svg {
+          fill: #FC255D; }
+    #app #content .body {
+      box-sizing: border-box;
+      padding: 24px 36px; }
+  #app .switch {
+    float: left;
+    height: 20px;
+    margin: 0;
+    opacity: 1;
+    position: relative;
+    width: 32px; }
+    #app .switch input {
+      display: none; }
+      #app .switch input:checked + .slider {
+        background: #0A93FF; }
+      #app .switch input:checked + .slider:before {
+        -webkit-transform: translateX(12px);
+        -moz-transform: translateX(12px);
+        -ms-transform: translateX(12px);
+        -o-transform: translateX(12px);
+        transform: translateX(12px); }
+    #app .switch .slider {
+      background: rgba(0, 0, 0, 0.1);
+      box-shadow: 1px 1px 0 rgba(0, 0, 0, 0.1) inset;
+      border-radius: 24px;
+      bottom: 0;
+      cursor: pointer;
+      left: 0;
       position: absolute;
-      width: 12px;
+      right: 0;
+      top: 0;
       -webkit-transition-duration: 0.2s;
       -moz-transition-duration: 0.2s;
       transition-duration: 0.2s; }
-  .switch + label {
-    cursor: pointer;
-    display: inline-block;
-    margin: 0 0 0 8px;
-    vertical-align: bottom; }
+      #app .switch .slider:before {
+        background: #FFF;
+        box-shadow: 1px 1px 0 rgba(0, 0, 0, 0.1);
+        border-radius: 50%;
+        bottom: 4px;
+        content: '';
+        height: 12px;
+        left: 4px;
+        position: absolute;
+        width: 12px;
+        -webkit-transition-duration: 0.2s;
+        -moz-transition-duration: 0.2s;
+        transition-duration: 0.2s; }
+    #app .switch + label {
+      cursor: pointer;
+      display: inline-block;
+      margin: 0 0 0 8px;
+      vertical-align: bottom; }

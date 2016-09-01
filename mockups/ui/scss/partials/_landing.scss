@@ -1,0 +1,21 @@
+$box: 264px;
+
+.card {
+  background: #FFF;
+  border-radius: 2*$radius;
+  margin: 0 auto;
+  padding: $space/2 1.5*$space/2;
+  top: 50%;
+  width: $box;
+  h1 {
+    @include font-size($large);
+  }
+  input,
+  .primary {
+    width: 100%;
+  }
+  .help {
+    color: $grey;
+    float: right;
+  }
+}
