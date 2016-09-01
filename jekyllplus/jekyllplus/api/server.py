@@ -13,7 +13,7 @@ from concurrent.futures import ThreadPoolExecutor
 from tornado import concurrent, ioloop
 
 import tornado
-from jekyllplus.api.exec import execute
+from jekyllplus.api.command import execute
 
 def conf_logging():
     logger = logging.getLogger('applog')
