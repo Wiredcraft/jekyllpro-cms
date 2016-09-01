@@ -25,6 +25,17 @@ export default class Editor extends Component {
     this.updateEditFrom()
   }
 
+  componentDidUpdate(prevProps) {
+    const { content, fileIndex, schema } = this.props
+
+    const schemaFetched = schema && !prevProps.schema
+    const contentFetched = content && !prevProps.content
+    const fileChanged = fileIndex !== prevProps.fileIndex
+    if(schemaFetched || contentFetched || fileChanged) {
+      this.updateEditFrom()
+    }
+  }
+
   checkSchema() {
     const { schemaInput } = this.refs
     let schemaCanBeParsed = true
@@ -47,13 +58,13 @@ export default class Editor extends Component {
   }
 
   updateEditFrom() {
-    const { schemaInput } = this.refs
-    let { markdownText, schemaCanBeParsed, formSchema } = this.state
-    const docConfigObj = parseYamlInsideMarkdown(markdownText)
+    const { content, schema } = this.props
+    if(!schema || !content) return
+    let { formSchema } = this.state
+    const docConfigObj = parseYamlInsideMarkdown(content)
     if(!docConfigObj) return
 
-    const schemaObj = JSON.parse(schemaInput.value)
-    if (!schemaCanBeParsed) return
+    const schemaObj = schema.properties
     formSchema.properties = {}
     for (let i = 0; i < schemaObj.length; i++) {
       if(!schemaObj[i].name) continue
@@ -64,7 +75,7 @@ export default class Editor extends Component {
         type: schemaObj[i].type
       }
     }
-    const targetContent = retriveContent(markdownText)
+    const targetContent = retriveContent(content)
     this.setState({ formSchema, targetContent })
   }
 
@@ -100,43 +111,17 @@ export default class Editor extends Component {
   }
 
   render() {
-    const {
-      content,
-      schema
-    } = this.props
-    console.log(content);
-    console.log(schema);
-    const {
-      formSchema,
-      markdownText,
-      resultMarkdown,
-      schemaCanBeParsed
-    } = this.state
-
+    const { schema, content } = this.props
+    const { formSchema, resultMarkdown } = this.state
     return (
       <div id='content'>
-        <h3>Schema</h3>
-        <textarea
-          defaultValue={defaultSchemaText}
-          onChange={() => this.checkSchema()}
-          ref='schemaInput'
-          className={schemaCanBeParsed ? '' : 'error'}
-        />
-        <h3>Original Markdown</h3>
-        <textarea
-          defaultValue={markdownText}
-          ref='markdownInput'
-          onChange={() => this.updateMarkdown()}
-        />
-        <h3>Edit From</h3>
-        <Form
-          onSubmit={res => this.updateResult(res.formData)}
-          schema={formSchema}
-          uiSchema={{
-            // TODO: Parse uiSchema dynamically
-            date: { 'ui:widget': 'date' }
-          }}
-        />
+        { schema && content && (
+          <Form
+            onSubmit={res => this.updateResult(res.formData)}
+            schema={formSchema}
+            uiSchema={schema && schema.uiSchema}
+          />
+        )}
         <h3>Result</h3>
         <textarea value={resultMarkdown} />
       </div>
@@ -147,6 +132,7 @@ export default class Editor extends Component {
 function mapStateToProps(state) {
   return {
     content: state.editor.get('content'),
+    fileIndex: state.editor.get('targetFileIndex'),
     schema: state.editor.get('schema')
   }
 }

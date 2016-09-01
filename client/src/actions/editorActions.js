@@ -23,16 +23,17 @@ export function fetchDefaultSchema() {
   }
 }
 
-export function fetchFileContent(url) {
+export function fetchFileContent(path, index) {
   return dispatch => {
     request
-      .get(url)
+      .get(`${API_BASE_URL}/api/repository?path=${path}&raw=true`)
+      .withCredentials()
       .end((err, res) => {
         if (err) {
           console.error(err)
         } else {
           dispatch({
-            payload: { content: atob(res.body.content) },
+            payload: { content: res.body, fileIndex: index },
             type: CHANGE_EDITOR_STATE
           })
         }

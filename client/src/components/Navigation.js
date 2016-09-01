@@ -15,8 +15,7 @@ export default class Navigation extends Component {
   navigate(i) {
     const { fetchFileContent, filesMeta } = this.props
 
-    fetchFileContent(filesMeta[i].url)
-
+    fetchFileContent(filesMeta[i].path, i)
     this.setState({ selectedItemIndex: i })
   }
 
