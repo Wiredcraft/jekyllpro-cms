@@ -10,6 +10,7 @@ import { parseYamlInsideMarkdown, retriveContent } from '../helpers/markdown'
 import 'normalize.css/normalize.css'
 import 'styles/main.scss'
 import { confirmUserIsLogin } from '../actions/userActions'
+import Menu from './Menu'
 
 
 // TODO: remove linePattern
@@ -126,7 +127,8 @@ export default class AppComponent extends React.Component {
     const { isLoggedIn } = this.props
 
     return isLoggedIn ? (
-      <div>
+      <div id='app'>
+        <Menu />
         <h3>Schema</h3>
         <textarea
           defaultValue={defaultSchemaText}
