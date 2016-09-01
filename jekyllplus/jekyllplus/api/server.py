@@ -68,6 +68,10 @@ class RegisterSiteHandler(BaseHandler):
         '''
         Provide a GH repo in the Params and get a cloning process
         '''
+        log.debug('Running register')
+
+        body = tornado.escape.json_decode(self.request.body)
+
         command = 'jekyllplus_register'
         repo = body.get('repository')
         token = body.get('token')
@@ -82,7 +86,7 @@ class RegisterSiteHandler(BaseHandler):
 class BuildSiteHandler(BaseHandler):
     @gen.coroutine
     def post(self):
-        log.debug('Running pipeline')
+        log.debug('Running build')
 
         body = tornado.escape.json_decode(self.request.body)
 
