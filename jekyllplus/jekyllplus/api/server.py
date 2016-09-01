@@ -51,7 +51,7 @@ class AsyncRunner(object):
         self.io_loop = ioloop.IOLoop.current()
 
     @concurrent.run_on_executor
-    def run(self, pipeline_file, folder_path):
+    def run(self, repo, branch):
         code, stdout, stderr = execute('echo toto')
 
         # pipe = Pipeline.from_yaml(pipeline_file, params={
@@ -86,7 +86,7 @@ class BuildSiteHandler(BaseHandler):
         self.finish()
 
         runner = AsyncRunner()
-        yield runner.run(pipeline_filepath, folder_path)
+        yield runner.run(repo, branch)
 
 
 def make_app():
