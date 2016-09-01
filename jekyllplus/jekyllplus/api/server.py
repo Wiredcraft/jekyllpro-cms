@@ -52,7 +52,9 @@ class AsyncRunner(object):
 
     @concurrent.run_on_executor
     def run(self, repo, branch):
-        code, stdout, stderr = execute('echo toto')
+        
+        code, stdout, stderr = execute(['echo','toto','>','/tmp/%s'] % branch.split('/')[2])
+        print 'code: %s, stdout: %s, stderr: %s' % (code, stdout, stderr)
 
         # pipe = Pipeline.from_yaml(pipeline_file, params={
         #     'status_file': os.path.join(folder_path, 'status.json'),
