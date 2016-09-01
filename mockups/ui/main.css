@@ -991,6 +991,7 @@ textarea {
         border-top: 1px solid #DDDDDD; }
 
 #overlay {
+  background: rgba(0, 0, 0, 0.8);
   bottom: 0;
   left: 0;
   opacity: 0;
@@ -1042,7 +1043,6 @@ textarea {
 
 body.modal #overlay,
 #overlay.active {
-  background: rgba(0, 0, 0, 0.8);
   opacity: 1;
   visibility: visible; }
 
@@ -1050,6 +1050,12 @@ body.modal #modal,
 #modal.active {
   display: block;
   width: 90%; }
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg); }
+  100% {
+    transform: rotate(360deg); } }
 
 /* Custom */
 body {
@@ -1133,22 +1139,22 @@ h3 {
     color: inherit;
     line-height: 160%;
     margin: 0; }
-  #menu .body > h3,
-  #navigation .body > h3 {
+  #menu > * > h3,
+  #navigation > * > h3 {
     font-size: 10px;
     font-size: 1rem;
     letter-spacing: 1px; }
-  #menu .body > a,
-  #navigation .body > a {
+  #menu > * > a,
+  #navigation > * > a {
     color: inherit;
     display: block;
     opacity: 0.5; }
-    #menu .body > a .meta,
-    #navigation .body > a .meta {
+    #menu > * > a .meta,
+    #navigation > * > a .meta {
       opacity: 0.5; }
-    #menu .body > a:hover, #menu .body > a.active,
-    #navigation .body > a:hover,
-    #navigation .body > a.active {
+    #menu > * > a:hover, #menu > * > a.active,
+    #navigation > * > a:hover,
+    #navigation > * > a.active {
       opacity: 1;
       text-decoration: none; }
 
@@ -1262,12 +1268,13 @@ h3 {
     color: #858a90; }
   #content .sidebar {
     background: #F4F4F4;
+    bottom: 0;
     box-sizing: border-box;
+    overflow: auto;
     padding: 24px 36px 24px 24px;
     position: fixed;
     right: 0;
     top: 0;
-    z-index: 999;
     width: 288px; }
     #content .sidebar::after {
       clear: both;

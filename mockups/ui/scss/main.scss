@@ -4,6 +4,7 @@
 @import '_defaults'; // Styling defaults
 @import 'partials/_dropdown';
 @import 'partials/_modal';
+@import 'partials/_loading';
 // @import 'partials/_notifications';
 
 /* Custom */
@@ -61,7 +62,7 @@ h3 {
     line-height: 160%;
     margin: 0;
   }
-  .body {
+  > * {
     > h3 {
       @include font-size($pico);
       letter-spacing: 1px;
@@ -208,13 +209,14 @@ $sidebar: 288px;
   }
   .sidebar {
     background: $background;
+    bottom: 0;
     box-sizing: border-box;
     @include clearfix;
+    overflow: auto;
     padding: $space 1.5*$space $space $space;
     position: fixed;
     right: 0;
     top: 0;
-    z-index: 999;
     width: $sidebar;
     & + .body {
       padding-right: $sidebar;
