@@ -3,8 +3,6 @@ import Form from 'react-jsonschema-form'
 import { connect } from 'react-redux'
 
 import { parseYamlInsideMarkdown, retriveContent } from '../helpers/markdown'
-import { defaultMarkdownText, defaultSchemaText } from '../constants/defaultText'
-import { SUPPORTED_TYPE } from '../constants/types'
 
 
 // TODO: remove linePattern
@@ -13,8 +11,6 @@ export default class Editor extends Component {
   constructor() {
     super()
     this.state = {
-      schemaCanBeParsed: true,
-      markdownText: defaultMarkdownText,
       formSchema: { type: 'object', properties: {} },
       resultMarkdown: '',
       targetContent: ''
@@ -34,27 +30,6 @@ export default class Editor extends Component {
     if(schemaFetched || contentFetched || fileChanged) {
       this.updateEditFrom()
     }
-  }
-
-  checkSchema() {
-    const { schemaInput } = this.refs
-    let schemaCanBeParsed = true
-    try {
-      const obj = JSON.parse(schemaInput.value)
-      schemaCanBeParsed = (typeof obj === 'object') && obj.length > 0
-      if(schemaCanBeParsed) {
-        for (let i = 0; i < obj.length; i++) {
-          if(SUPPORTED_TYPE.every(d => obj[i].type !== d)) {
-            schemaCanBeParsed = false
-            break
-          }
-        }
-      }
-    } catch (e) {
-      schemaCanBeParsed = false
-    }
-    this.setState({ schemaCanBeParsed })
-    if(schemaCanBeParsed) this.updateEditFrom()
   }
 
   updateEditFrom() {
@@ -79,19 +54,8 @@ export default class Editor extends Component {
     this.setState({ formSchema, targetContent })
   }
 
-  updateMarkdown() {
-    const { schemaCanBeParsed } = this.state
-    const { markdownInput } = this.refs
-
-    this.setState({ markdownText: markdownInput.value })
-
-    if (schemaCanBeParsed) {
-      setTimeout(() => this.updateEditFrom(), 20)
-    }
-  }
-
   updateResult(formData) {
-    const { content, schema } = this.props
+    const { content, filesMeta, schema } = this.props
     let markdownText = content
     const docConfigObj = parseYamlInsideMarkdown(markdownText)
     if(!docConfigObj) return
@@ -107,6 +71,7 @@ export default class Editor extends Component {
     }
     const targetContent = retriveContent(markdownText)
     this.setState({ resultMarkdown: markdownText, targetContent })
+
   }
 
   render() {
@@ -121,8 +86,10 @@ export default class Editor extends Component {
             uiSchema={schema && schema.uiSchema}
           />
         )}
-        <h3>Result</h3>
-        <textarea value={resultMarkdown} />
+        <div style={{ display: 'none' }}>
+          <h3>Result</h3>
+          <textarea value={resultMarkdown} />
+        </div>
       </div>
     )
   }
@@ -131,6 +98,7 @@ export default class Editor extends Component {
 function mapStateToProps(state) {
   return {
     content: state.editor.get('content'),
+    filesMeta: state.repo.get('filesMeta'),
     fileIndex: state.editor.get('targetFileIndex'),
     schema: state.editor.get('schema')
   }
