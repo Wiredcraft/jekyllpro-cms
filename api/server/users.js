@@ -38,9 +38,8 @@ const githubOauthCallback = function (redirectUrl) {
         if (err) {
           return res.status(400).send(err)
         }
-        redirectUrl = (redirectUrl || '/') + '?code=' + user.accessToken
-        return res.redirect(redirectUrl)
-        // return res.redirect(info || sessionRedirectURL || '/')
+        // redirectUrl = (redirectUrl || '/') + '?code=' + user.accessToken
+        return res.redirect(redirectUrl || sessionRedirectURL || '/')
       })
     })(req, res, next)
   }
