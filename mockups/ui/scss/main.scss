@@ -193,7 +193,7 @@ h3 {
   }
 }
 
-$toolbar: 54px;
+$sidebar: 288px;
 
 #content {
   margin-left: $menu + $navigation;
@@ -205,52 +205,37 @@ $toolbar: 54px;
   .description {
     color: tint($black, 40%);
   }
-  .header {
+  .sidebar {
     background: $background;
-    bottom: 0;
-    box-shadow: 0 -1px 0 rgba(0, 0, 0, 0.1);
     box-sizing: border-box;
     @include clearfix;
-    padding: $space/2 1.5*$space;
+    padding: $space 1.5*$space $space $space;
     position: fixed;
-    left: $menu + $navigation;
     right: 0;
+    top: 0;
     z-index: 999;
+    width: $sidebar;
     & + .body {
-      padding-bottom: $toolbar + $space;
+      padding-right: $sidebar;
     }
-    > * {
-      display: block;
-      float: left;
-      margin: 0;
-      vertical-align: bottom;
+    input,
+    .primary,
+    .select,
+    .select select {
+      width: 100%;
     }
-    .filename {
-      margin-left: $space/3;
-      position: relative;
-      width: 50%;
-      input {
-        padding-left: 1.5*$space;
-        width: 100%;
+    .switch {
+      float: right;
+      & + label {
+        margin: 0 $space/2 0 0;
       }
-      svg {
-        fill: rgba(0, 0, 0, 0.2);
-        left: $space/4;
-        position: absolute;
-        top: $space/8;
-      }
-    }
-    .published {
-      display: inline-block;
-      margin: $space/4 0 0 $space/3;
-      vertical-align: bottom;
     }
     .danger {
       background: transparent;
       border: 0;
       float: right;
       line-height: 1;
-      margin-top: $space/12;
+      margin-top: $space/2;
       outline: none;
       padding: 0;
       position: relative;

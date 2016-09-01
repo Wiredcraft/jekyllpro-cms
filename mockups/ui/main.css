@@ -1257,56 +1257,43 @@ h3 {
     width: 100%; }
   #content .description {
     color: #858a90; }
-  #content .header {
+  #content .sidebar {
     background: #F4F4F4;
-    bottom: 0;
-    box-shadow: 0 -1px 0 rgba(0, 0, 0, 0.1);
     box-sizing: border-box;
-    padding: 12px 36px;
+    padding: 24px 36px 24px 24px;
     position: fixed;
-    left: 400px;
     right: 0;
-    z-index: 999; }
-    #content .header::after {
+    top: 0;
+    z-index: 999;
+    width: 288px; }
+    #content .sidebar::after {
       clear: both;
       content: "";
       display: table; }
-    #content .header + .body {
-      padding-bottom: 78px; }
-    #content .header > * {
-      display: block;
-      float: left;
-      margin: 0;
-      vertical-align: bottom; }
-    #content .header .filename {
-      margin-left: 8px;
-      position: relative;
-      width: 50%; }
-      #content .header .filename input {
-        padding-left: 36px;
-        width: 100%; }
-      #content .header .filename svg {
-        fill: rgba(0, 0, 0, 0.2);
-        left: 6px;
-        position: absolute;
-        top: 3px; }
-    #content .header .published {
-      display: inline-block;
-      margin: 6px 0 0 8px;
-      vertical-align: bottom; }
-    #content .header .danger {
+    #content .sidebar + .body {
+      padding-right: 288px; }
+    #content .sidebar input,
+    #content .sidebar .primary,
+    #content .sidebar .select,
+    #content .sidebar .select select {
+      width: 100%; }
+    #content .sidebar .switch {
+      float: right; }
+      #content .sidebar .switch + label {
+        margin: 0 12px 0 0; }
+    #content .sidebar .danger {
       background: transparent;
       border: 0;
       float: right;
       line-height: 1;
-      margin-top: 2px;
+      margin-top: 12px;
       outline: none;
       padding: 0;
       position: relative;
       position: relative;
       vertical-align: middle;
       position: relative; }
-      #content .header .danger span {
+      #content .sidebar .danger span {
         background: #343c46;
         border-radius: 2px;
         color: #FFF;
@@ -1328,10 +1315,10 @@ h3 {
         white-space: nowrap;
         width: auto;
         z-index: 999; }
-      #content .header .danger:hover span {
+      #content .sidebar .danger:hover span {
         opacity: 1;
         visibility: visible; }
-      #content .header .danger span {
+      #content .sidebar .danger span {
         bottom: 100%;
         left: 50%;
         -webkit-transform: translateX(-50%);
@@ -1339,7 +1326,7 @@ h3 {
         -ms-transform: translateX(-50%);
         -o-transform: translateX(-50%);
         transform: translateX(-50%); }
-        #content .header .danger span:after {
+        #content .sidebar .danger span:after {
           content: '';
           position: absolute;
           border-right: 5px solid transparent;
@@ -1353,9 +1340,9 @@ h3 {
           -ms-transform: translateX(-50%);
           -o-transform: translateX(-50%);
           transform: translateX(-50%); }
-      #content .header .danger:hover span {
+      #content .sidebar .danger:hover span {
         margin-bottom: 8px; }
-      #content .header .danger span {
+      #content .sidebar .danger span {
         background: #343c46;
         border-radius: 2px;
         color: #FFF;
@@ -1377,10 +1364,10 @@ h3 {
         white-space: nowrap;
         width: auto;
         z-index: 999; }
-      #content .header .danger:hover span {
+      #content .sidebar .danger:hover span {
         opacity: 1;
         visibility: visible; }
-      #content .header .danger span {
+      #content .sidebar .danger span {
         top: 100%;
         left: 50%;
         -webkit-transform: translateX(-50%);
@@ -1388,7 +1375,7 @@ h3 {
         -ms-transform: translateX(-50%);
         -o-transform: translateX(-50%);
         transform: translateX(-50%); }
-        #content .header .danger span:after {
+        #content .sidebar .danger span:after {
           content: '';
           position: absolute;
           border-left: 5px solid transparent;
@@ -1402,9 +1389,9 @@ h3 {
           -ms-transform: translateX(-50%);
           -o-transform: translateX(-50%);
           transform: translateX(-50%); }
-      #content .header .danger:hover span {
+      #content .sidebar .danger:hover span {
         margin-top: 8px; }
-      #content .header .danger svg {
+      #content .sidebar .danger svg {
         fill: rgba(0, 0, 0, 0.2);
         -webkit-transition-property: fill;
         -moz-transition-property: fill;
@@ -1412,7 +1399,7 @@ h3 {
         -webkit-transition-duration: 0.2s;
         -moz-transition-duration: 0.2s;
         transition-duration: 0.2s; }
-      #content .header .danger:hover svg {
+      #content .sidebar .danger:hover svg {
         fill: #FC255D; }
   #content .body {
     box-sizing: border-box;
