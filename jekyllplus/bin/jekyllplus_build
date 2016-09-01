@@ -8,7 +8,7 @@
 OWNER="$1"
 REPO="$2"
 BRANCH="$3"
-ORIG_BRANCH="$3"
+SLUG_BRANCH="$4"
 
 BASE_REPO=/opt/repos
 BASE_SITE=/var/www
@@ -33,16 +33,16 @@ if [ ! -e "$BASE_REPO/$OWNER/$REPO" ]; then
 fi
 
 cd $BASE_REPO/$OWNER/$REPO
-git fetch origin $ORIG_BRANCH:$ORIG_BRANCH
+git fetch origin $BRANCH:$BRANCH
 
-mkdir -p $BASE_SITE/$OWNER/$REPO/$BRANCH
-cd $BASE_SITE/$OWNER/$REPO/$BRANCH
+mkdir -p $BASE_SITE/$OWNER/$REPO/$SLUG_BRANCH
+cd $BASE_SITE/$OWNER/$REPO/$SLUG_BRANCH
 
 # Either update or clone
 if [ -e '.git' ]; then
     git pull
 else
-    git clone -b $ORIG_BRANCH $BASE_REPO/$OWNER/$REPO .
+    git clone -b $BRANCH $BASE_REPO/$OWNER/$REPO .
 fi
 
 # Run the jekyll build
