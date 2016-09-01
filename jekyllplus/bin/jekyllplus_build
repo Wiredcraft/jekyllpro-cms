@@ -1,0 +1,43 @@
+#!/usr/bin/env bash
+#######################
+#
+# Build/refresh a new site
+#
+#######################
+
+FULL_NAME="$1"
+BRANCH="$2"
+
+BASE_REPO=/opt/repos
+BASE_SITE=/var/www
+
+if [ -z "$FULL_NAME" ]; then
+    echo 'Missing repo name' >&2
+    exit 1
+fi
+
+if [ -z "$BRANCH" ]; then
+    echo 'Missing branch' >&2
+    exit 1
+fi
+
+if [ -e "$BASE_REPO/$FULL_NAME" ]; then
+    echo 'Repo is not registered' >&2
+    exit 1
+fi
+
+cd $BASE_REPO/$FULL_NAME
+git pull
+
+mkdir -p $BASE_SITE/$FULL_NAME/$BRANCH
+cd $BASE_SITE/$FULL_NAME/$BRANCH
+
+# Either update or clone
+if [ -e '.git' ]; then
+    git pull
+else
+    git clone -b $BRANCH $BASE_REPO/$FULL_NAME .
+fi
+
+# Run the jekyll build
+# need to see how

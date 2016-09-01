@@ -51,9 +51,9 @@ class AsyncRunner(object):
         self.io_loop = ioloop.IOLoop.current()
 
     @concurrent.run_on_executor
-    def run(self, repo, branch):
+    def run(self, command):
         
-        code, stdout, stderr = execute(['echo','toto','>','/tmp/%s'] % branch.split('/')[2])
+        code, stdout, stderr = execute(command)
         print 'code: %s, stdout: %s, stderr: %s' % (code, stdout, stderr)
 
         # pipe = Pipeline.from_yaml(pipeline_file, params={
@@ -68,8 +68,15 @@ class RegisterSiteHandler(BaseHandler):
         '''
         Provide a GH repo in the Params and get a cloning process
         '''
-        self.write(json.dumps({"message":"TBD"}))
+        command = 'jekyllplus_register'
+        repo = body.get('repository')
+        token = body.get('token')
+
         self.finish()
+
+        runner = AsyncRunner()
+        yield runner.run([command, repo, token])
+
 
 
 class BuildSiteHandler(BaseHandler):
@@ -80,15 +87,16 @@ class BuildSiteHandler(BaseHandler):
         body = tornado.escape.json_decode(self.request.body)
 
         # TODO assert the wrong types of notification
+        command = 'jekyllplus_build'
         repo = body.get('repository', {}).get('full_name', False)
-        branch = body.get('ref')
+        branch = body.get('ref').split('/')[2]
 
         print 'Gonna update repo: %s - branch: %s' % (repo, branch)
 
         self.finish()
 
         runner = AsyncRunner()
-        yield runner.run(repo, branch)
+        yield runner.run([command, repo, branch])
 
 
 def make_app():

@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+#######################
+#
+# Register a new repo on jekyllplus platform
+#
+#######################
+
+FULL_NAME="$1"
+TOKEN="$2"
+
+BASE_REPO=/opt/repos
+
+if [ -z "$FULL_NAME" ]; then
+    echo 'Missing repo name' >&2
+    exit 1
+fi
+
+if [ -z "$TOKEN" ]; then
+    echo 'Missing Oauth token' >&2
+    exit 1
+fi
+
+if [ -e "$BASE_REPO/$FULL_NAME" ]; then
+    echo 'Repo already existing' >&2
+    exit 1
+fi
+
+mkdir -p $BASE_REPO/$FULL_NAME
+cd $BASE_REPO/$FULL_NAME
+
+git clone --base https://$TOKEN:x-oauth-basic@github.com/$FULL_NAME .

@@ -26,7 +26,9 @@ setup(
         'jekyllplus.api'
     ],
     scripts=[
-        'bin/jekyllplus'
+        'bin/jekyllplus',
+        'bin/jekyllplus_build',
+        'bin/jekyllplus_register'
     ],
     install_requires = [
         'futures==3.0.5',
