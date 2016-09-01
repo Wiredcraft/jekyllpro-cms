@@ -102,14 +102,14 @@ class BuildSiteHandler(BaseHandler):
         command = 'jekyllplus_build'
         owner = slugify(body.get('repository', {}).get('owner', {}).get('name'))
         repo = slugify(body.get('repository', {}).get('name'))
-        branch = slugify(body.get('ref').split('/')[2])
+        branch = body.get('ref').split('/')[2]
 
         print 'Gonna update repo: %s/%s - branch: %s' % (owner, repo, branch)
 
         self.finish()
 
         runner = AsyncRunner()
-        yield runner.run([command, owner, repo, branch])
+        yield runner.run([command, owner, repo, branch, slugify(branch)])
 
 
 def slugify(text, delim=u'-'):
