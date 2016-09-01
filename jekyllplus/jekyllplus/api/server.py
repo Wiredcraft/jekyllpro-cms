@@ -102,7 +102,7 @@ class BuildSiteHandler(BaseHandler):
         command = 'jekyllplus_build'
         owner = slugify(body.get('repository', {}).get('owner', {}).get('name'))
         repo = slugify(body.get('repository', {}).get('name'))
-        branch = body.get('ref').split('/')[2]
+        branch = body.get('ref').split('/', 2)[2]
 
         print 'Gonna update repo: %s/%s - branch: %s' % (owner, repo, branch)
 
