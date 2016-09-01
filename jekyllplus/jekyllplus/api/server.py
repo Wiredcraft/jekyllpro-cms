@@ -13,6 +13,7 @@ from concurrent.futures import ThreadPoolExecutor
 from tornado import concurrent, ioloop
 
 import tornado
+from jekyllplus.api.exec import execute
 
 def conf_logging():
     logger = logging.getLogger('applog')
@@ -51,11 +52,13 @@ class AsyncRunner(object):
 
     @concurrent.run_on_executor
     def run(self, pipeline_file, folder_path):
-        pipe = Pipeline.from_yaml(pipeline_file, params={
-            'status_file': os.path.join(folder_path, 'status.json'),
-            'log_file': os.path.join(folder_path, 'output.log')
-        })
-        return pipe.run()
+        code, stdout, stderr = execute('echo toto')
+
+        # pipe = Pipeline.from_yaml(pipeline_file, params={
+        #     'status_file': os.path.join(folder_path, 'status.json'),
+        #     'log_file': os.path.join(folder_path, 'output.log')
+        # })
+        return stdout
 
 class RegisterSiteHandler(BaseHandler):
     @gen.coroutine
