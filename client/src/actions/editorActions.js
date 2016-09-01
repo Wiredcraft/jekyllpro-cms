@@ -40,3 +40,17 @@ export function fetchFileContent(path, index) {
       })
   }
 }
+
+export function updateFile(path, content) {
+  return dispatch => {
+    request
+      .post(`${API_BASE_URL}/api/repository`)
+      .send({ path, content, message: `update ${path}` })
+      .withCredentials()
+      .end((err, res) => {
+        if (err) {
+          console.error(err)
+        }
+      })
+  }
+}

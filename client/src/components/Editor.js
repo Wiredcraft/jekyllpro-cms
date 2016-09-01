@@ -1,12 +1,14 @@
 import React, { Component } from 'react'
 import Form from 'react-jsonschema-form'
 import { connect } from 'react-redux'
+import { bindActionCreators } from 'redux'
 
 import { parseYamlInsideMarkdown, retriveContent } from '../helpers/markdown'
+import { updateFile } from '../actions/editorActions'
 
 
 // TODO: remove linePattern
-@connect(mapStateToProps)
+@connect(mapStateToProps, mapDispatchToProps)
 export default class Editor extends Component {
   constructor() {
     super()
@@ -55,7 +57,7 @@ export default class Editor extends Component {
   }
 
   updateResult(formData) {
-    const { content, filesMeta, schema } = this.props
+    const { content, fileIndex, filesMeta, schema, updateFile } = this.props
     let markdownText = content
     const docConfigObj = parseYamlInsideMarkdown(markdownText)
     if(!docConfigObj) return
@@ -72,6 +74,7 @@ export default class Editor extends Component {
     const targetContent = retriveContent(markdownText)
     this.setState({ resultMarkdown: markdownText, targetContent })
 
+    updateFile(filesMeta[fileIndex].path, markdownText + targetContent)
   }
 
   render() {
@@ -102,4 +105,8 @@ function mapStateToProps(state) {
     fileIndex: state.editor.get('targetFileIndex'),
     schema: state.editor.get('schema')
   }
+}
+
+function mapDispatchToProps (dispatch) {
+  return bindActionCreators({ updateFile }, dispatch)
 }
