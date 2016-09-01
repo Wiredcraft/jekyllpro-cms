@@ -15,6 +15,10 @@ from tornado import concurrent, ioloop
 import tornado
 from jekyllplus.api.command import execute
 
+# For slugify
+from unicodedata import normalize
+_punct_re = re.compile(r'[\t !"#$%&\'()*\-/<=>?@\[\\\]^_`{|},.]+')
+
 def conf_logging():
     logger = logging.getLogger('applog')
     logger.setLevel(logging.DEBUG)
@@ -73,13 +77,17 @@ class RegisterSiteHandler(BaseHandler):
         body = tornado.escape.json_decode(self.request.body)
 
         command = 'jekyllplus_register'
-        repo = body.get('repository')
+        url = body.get('repository')
+
+        owner = slugify(url.split('/')[0])
+        repo = slugify(url.split('/', 0)[1])
+
         token = body.get('token')
 
         self.finish()
 
         runner = AsyncRunner()
-        yield runner.run([command, repo, token])
+        yield runner.run([command, url, token, owner, repo])
 
 
 
@@ -92,16 +100,26 @@ class BuildSiteHandler(BaseHandler):
 
         # TODO assert the wrong types of notification
         command = 'jekyllplus_build'
-        repo = body.get('repository', {}).get('full_name', False)
-        branch = body.get('ref').split('/')[2]
+        owner = slugify(body.get('repository', {}).get('owner', {}).get('name'))
+        repo = slugify(body.get('repository', {}).get('name'))
+        branch = slugify(body.get('ref').split('/')[2])
 
-        print 'Gonna update repo: %s - branch: %s' % (repo, branch)
+        print 'Gonna update repo: %s/%s - branch: %s' % (owner, repo, branch)
 
         self.finish()
 
         runner = AsyncRunner()
-        yield runner.run([command, repo, branch])
+        yield runner.run([command, owner, repo, branch])
 
+
+def slugify(text, delim=u'-'):
+    """Generates an slightly worse ASCII-only slug."""
+    result = []
+    for word in _punct_re.split(text.lower()):
+        word = normalize('NFKD', word).encode('ascii', 'ignore')
+        if word:
+            result.append(word)
+    return unicode(delim.join(result))
 
 def make_app():
     return Application([

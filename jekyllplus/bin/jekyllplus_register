@@ -5,13 +5,15 @@
 #
 #######################
 
-FULL_NAME="$1"
+URL="$1"
 TOKEN="$2"
+OWNER="$3"
+REPO="$4"
 
 BASE_REPO=/opt/repos
 
-if [ -z "$FULL_NAME" ]; then
-    echo 'Missing repo name' >&2
+if [ -z "$URL" ]; then
+    echo 'Missing repo URL' >&2
     exit 1
 fi
 
@@ -20,12 +22,23 @@ if [ -z "$TOKEN" ]; then
     exit 1
 fi
 
-if [ -e "$BASE_REPO/$FULL_NAME" ]; then
+if [ -z "$OWNER" ]; then
+    echo 'Missing owner' >&2
+    exit 1
+fi
+
+if [ -z "$REPO" ]; then
+    echo 'Missing repo name' >&2
+    exit 1
+fi
+
+
+if [ -e "$BASE_REPO/$OWNER/$REPO" ]; then
     echo 'Repo already existing' >&2
     exit 1
 fi
 
-mkdir -p $BASE_REPO/$FULL_NAME
-cd $BASE_REPO/$FULL_NAME
+mkdir -p $BASE_REPO/$OWNER/$REPO
+cd $BASE_REPO/$OWNER/$REPO
 
-git clone --bare --shared https://$TOKEN:x-oauth-basic@github.com/$FULL_NAME .
+git clone --bare --shared https://$TOKEN:x-oauth-basic@github.com/$URL .
