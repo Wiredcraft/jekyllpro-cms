@@ -8,7 +8,7 @@
 
 /* Custom */
 
-$menu: 160px;
+$menu: 144px;
 $navigation: 240px;
 $menu_footer: 74px;
 
@@ -144,6 +144,7 @@ h3 {
       cursor: pointer;
       display: block;
       float: left;
+      @include font-size($micro);
       opacity: 0.5;
       padding: $space/2 0;
       width: 50%;
@@ -230,12 +231,14 @@ $sidebar: 288px;
         margin: 0 $space/2 0 0;
       }
     }
+    .primary {
+      margin-bottom: $space/2;
+    }
     .danger {
       background: transparent;
       border: 0;
       float: right;
       line-height: 1;
-      margin-top: $space/2;
       outline: none;
       padding: 0;
       position: relative;
