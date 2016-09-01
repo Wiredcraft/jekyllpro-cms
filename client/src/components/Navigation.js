@@ -1,8 +1,11 @@
 import { connect } from 'react-redux'
+import { bindActionCreators } from 'redux'
 import React, { Component } from 'react'
 
+import { fetchFileContent } from '../actions/editorActions'
 
-@connect(mapStateToProps)
+
+@connect(mapStateToProps, mapDispatchToProps)
 export default class Navigation extends Component {
   constructor() {
     super()
@@ -10,6 +13,10 @@ export default class Navigation extends Component {
   }
 
   navigate(i) {
+    const { fetchFileContent, filesMeta } = this.props
+
+    fetchFileContent(filesMeta[i].url)
+
     this.setState({ selectedItemIndex: i })
   }
 
@@ -41,4 +48,8 @@ function mapStateToProps(state) {
   return {
     filesMeta: state.repo.get('filesMeta')
   }
+}
+
+function mapDispatchToProps (dispatch) {
+  return bindActionCreators({ fetchFileContent }, dispatch)
 }

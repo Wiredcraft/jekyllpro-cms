@@ -22,3 +22,20 @@ export function fetchDefaultSchema() {
       })
   }
 }
+
+export function fetchFileContent(url) {
+  return dispatch => {
+    request
+      .get(url)
+      .end((err, res) => {
+        if (err) {
+          console.error(err)
+        } else {
+          dispatch({
+            payload: { content: atob(res.body.content) },
+            type: CHANGE_EDITOR_STATE
+          })
+        }
+      })
+  }
+}

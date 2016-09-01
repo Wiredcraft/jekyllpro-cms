@@ -101,6 +101,12 @@ export default class Editor extends Component {
 
   render() {
     const {
+      content,
+      schema
+    } = this.props
+    console.log(content);
+    console.log(schema);
+    const {
       formSchema,
       markdownText,
       resultMarkdown,
@@ -140,5 +146,7 @@ export default class Editor extends Component {
 
 function mapStateToProps(state) {
   return {
+    content: state.editor.get('content'),
+    schema: state.editor.get('schema')
   }
 }
