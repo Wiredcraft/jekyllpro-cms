@@ -7,6 +7,9 @@
 *.swp
 *.log
 *~
+*.egg-info
+build
+dist
 sandbox
 
 ansible/roles/*
