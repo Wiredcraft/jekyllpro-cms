@@ -17,7 +17,7 @@ module.exports = {
   github: {
     clientID: '2d55b4e3be40483ac7bd',
     clientSecret: '93a8a77fef87f855fde202e1d72377b8792922f2',
-    callbackURL: process.env.SERVER_URL + '/api/auth/github/callback' || 'http://localhost:3000/api/auth/github/callback'
+    callbackURL: 'http://localhost:3000/api/auth/github/callback'
   },
   // redirectUrl should be the client service URL the github Oauth redirecting to
   redirectUrl: process.env.REDIRECT_URL || 'http://localhost:8000/',
