@@ -91,13 +91,12 @@ export default class Editor extends Component {
   }
 
   updateResult(formData) {
-    const { schemaInput } = this.refs
-    let { markdownText, schemaCanBeParsed } = this.state
+    const { content, schema } = this.props
+    let markdownText = content
     const docConfigObj = parseYamlInsideMarkdown(markdownText)
     if(!docConfigObj) return
 
-    const schemaObj = JSON.parse(schemaInput.value)
-    if (!schemaCanBeParsed) return
+    const schemaObj = schema.properties
     for (let i = 0; i < schemaObj.length; i++) {
       const linePattern = new RegExp(schemaObj[i].target + ': ?[\\w 、\/]*')
 
