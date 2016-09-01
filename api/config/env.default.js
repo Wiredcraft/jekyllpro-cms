@@ -21,7 +21,7 @@ module.exports = {
   // Lusca config
   csrf: {
     csrf: false,
-    csp: {policy: {"default-src": "*"}},
+    csp: {policy: {'default-src': '*'}},
     xframe: 'SAMEORIGIN',
     p3p: 'ABCDEF',
     xssProtection: true

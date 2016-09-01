@@ -9,18 +9,21 @@ module.exports = {
     debug: process.env.MONGODB_DEBUG || false
   },
   cors: {
+    // origin should be the client service hostname
     origin: process.env.CORS_ORIGIN || 'http://localhost:8000',
     methods: 'POST,GET,OPTIONS',
     credentials: true
   },
   github: {
-    clientID: process.env.GITHUB_CLIENT_ID || 'APP_ID',
-    clientSecret: process.env.GITHUB_CLIENT_SECRETE || 'APP_SECRETE',
-    callbackURL: 'http://localhost:3000/api/auth/github/callback'
+    clientID: process.env.GITHUB_CLIENT_ID || '2d55b4e3be40483ac7bd',
+    clientSecret: process.env.GITHUB_CLIENT_SECRETE || '93a8a77fef87f855fde202e1d72377b8792922f2',
+    callbackURL: (process.env.SERVER_URL || 'http://localhost:3000') + '/api/auth/github/callback'
   },
+  // redirectUrl should be the client service URL the github Oauth redirecting to
   redirectUrl: process.env.REDIRECT_URL || 'http://localhost:8000/',
+  // the api service will be pointing to https://github.com/Wiredcraft/marketing if not specified
   repo: {
-    user: '',
-    name: ''
+    user: process.env.REPO_ORG || 'wiredcraft',
+    name: process.env.REPO_NAME || 'marketing'
   }
 }

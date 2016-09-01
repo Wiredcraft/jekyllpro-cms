@@ -1,5 +1,5 @@
 import config from '../config'
-import githubAPI from 'github-api'
+import GithubAPI from 'github-api'
 import _ from 'lodash'
 
 const cb = (error, result, request) => {
@@ -12,7 +12,7 @@ const requireGithubAPI = (req, res, next) => {
     return next()
   }
   var ak = req.get('X-TOKEN') || req.user.accessToken || req.user._json.accessToken
-  var github = new githubAPI({
+  var github = new GithubAPI({
     token: ak
   })
   req.githubRepo = github.getRepo(config.repo.user, config.repo.name)

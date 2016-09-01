@@ -1,3 +1,5 @@
+// These constants are being used for debugging locally
+
 export const defaultMarkdownText =
 `---
 user: echo
