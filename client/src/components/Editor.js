@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import Form from 'react-jsonschema-form'
+import { connect } from 'react-redux'
 
 import { parseYamlInsideMarkdown, retriveContent } from '../helpers/markdown'
 import { defaultMarkdownText, defaultSchemaText } from '../constants/defaultText'
@@ -7,6 +8,7 @@ import { SUPPORTED_TYPE } from '../constants/types'
 
 
 // TODO: remove linePattern
+@connect(mapStateToProps)
 export default class Editor extends Component {
   constructor() {
     super()
@@ -131,8 +133,12 @@ export default class Editor extends Component {
         />
         <h3>Result</h3>
         <textarea value={resultMarkdown} />
-        <button className='button primary'>Save</button>
       </div>
     )
+  }
+}
+
+function mapStateToProps(state) {
+  return {
   }
 }
