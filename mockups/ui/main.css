@@ -1076,7 +1076,6 @@ h3 {
     content: '';
     left: 0;
     overflow-y: auto;
-    pointer-events: none;
     position: absolute;
     right: 0;
     text-align: center;
@@ -1312,7 +1311,10 @@ h3 {
       #app #navigation .body a.active {
         background: #0A93FF; }
     #app #navigation .body h2 {
-      font-size: inherit; }
+      font-size: inherit;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap; }
   #app #content {
     background: #F4F4F4;
     margin-left: 384px; }
