@@ -21,7 +21,7 @@ if [ -z "$BRANCH" ]; then
     exit 1
 fi
 
-if [ -e "$BASE_REPO/$FULL_NAME" ]; then
+if [ ! -e "$BASE_REPO/$FULL_NAME" ]; then
     echo 'Repo is not registered' >&2
     exit 1
 fi
