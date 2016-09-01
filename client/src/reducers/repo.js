@@ -1,16 +1,16 @@
 import Immutable from 'immutable'
 
-import { CHANGE_LOGIN_STATE } from '../actions/userActions'
+import { CHANGE_REPO_STATE } from '../actions/repoActions'
 
 const initialState = Immutable.fromJS({
-  isLoggedIn: false,
-  userName: ''
+  branches: undefined
 })
 
 export default function user (state = initialState, action) {
   switch (action.type) {
-  case CHANGE_LOGIN_STATE:
-    state = state.set('isLoggedIn', action.payload.isLoggedIn)
+  case CHANGE_REPO_STATE:
+    const { branches } = action.payload
+    if(branches) state = state.set('branches', branches)
     return state
   default:
     return state
