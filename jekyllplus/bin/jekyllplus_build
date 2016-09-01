@@ -5,14 +5,19 @@
 #
 #######################
 
-FULL_NAME="$1"
-BRANCH="$2"
+OWNER="$1"
+REPO="$2"
+BRANCH="$3"
 
 BASE_REPO=/opt/repos
 BASE_SITE=/var/www
 
-if [ -z "$FULL_NAME" ]; then
-    echo 'Missing repo name' >&2
+if [ -z "$OWNER" ]; then
+    echo 'Missing owner' >&2
+    exit 1
+fi
+if [ -z "$REPO" ]; then
+    echo 'Missing repo' >&2
     exit 1
 fi
 
@@ -21,22 +26,22 @@ if [ -z "$BRANCH" ]; then
     exit 1
 fi
 
-if [ ! -e "$BASE_REPO/$FULL_NAME" ]; then
+if [ ! -e "$BASE_REPO/$OWNER/$REPO" ]; then
     echo 'Repo is not registered' >&2
     exit 1
 fi
 
-cd $BASE_REPO/$FULL_NAME
+cd $BASE_REPO/$OWNER/$REPO
 git fetch origin $BRANCH:$BRANCH
 
-mkdir -p $BASE_SITE/$FULL_NAME/$BRANCH
-cd $BASE_SITE/$FULL_NAME/$BRANCH
+mkdir -p $BASE_SITE/$OWNER/$REPO/$BRANCH
+cd $BASE_SITE/$OWNER/$REPO/$BRANCH
 
 # Either update or clone
 if [ -e '.git' ]; then
     git pull
 else
-    git clone -b $BRANCH $BASE_REPO/$FULL_NAME .
+    git clone -b $BRANCH $BASE_REPO/$OWNER/$REPO .
 fi
 
 # Run the jekyll build
