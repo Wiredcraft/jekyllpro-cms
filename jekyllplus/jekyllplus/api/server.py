@@ -80,7 +80,7 @@ class RegisterSiteHandler(BaseHandler):
         url = body.get('repository')
 
         owner = slugify(url.split('/')[0])
-        repo = slugify(url.split('/', 0)[1])
+        repo = slugify(url.split('/', 1)[1])
 
         token = body.get('token')
 
