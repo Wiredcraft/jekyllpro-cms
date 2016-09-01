@@ -43,6 +43,13 @@ if [ -e '.git' ]; then
     git pull
 else
     git clone -b $BRANCH $BASE_REPO/$OWNER/$REPO .
+
+    # Register the DNS entry !
+    curl -X POST "https://api.cloudflare.com/client/v4/zones/c9af02bf08cf36cb8b4af704c539f0a8/dns_records" \
+        -H "X-Auth-Email: info@wiredcraft.com" \
+        -H "X-Auth-Key: 009d80a774051acf43d4e6196294a7221f866" \
+        -H "Content-Type: application/json" \
+        --data '{"type":"CNAME","name":"$SLUG_BRANCH.$REPO.$OWNER.sites.jekyllplus.com","content":"jekyllplus.com","ttl":120}'
 fi
 
 # Run the jekyll build
