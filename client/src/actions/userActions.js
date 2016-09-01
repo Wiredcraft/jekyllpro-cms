@@ -16,11 +16,7 @@ export function confirmUserIsLogin() {
         if (err) {
           console.error(err)
         } else {
-          Promise.all([
-            dispatch(fetchRepoRootInfo()),
-            dispatch(getAllBranch()),
-            dispatch({ type: CHANGE_LOGIN_STATE, payload: { isLoggedIn: true } })
-          ])
+          dispatch({ type: CHANGE_LOGIN_STATE, payload: { isLoggedIn: true } })
         }
       })
   }
