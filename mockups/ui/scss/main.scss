@@ -30,10 +30,10 @@ h3 {
 
 #landing {
   @import 'partials/_landing';
-  display: none;
+  // display: none;
 }
 
 #app {
   @import 'partials/_app';
-  // display: none;
+  display: none;
 }
