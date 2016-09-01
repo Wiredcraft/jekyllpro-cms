@@ -18,3 +18,7 @@
         state=present
         user_install=no
         executable=/usr/bin/gem2.0
+      with_items:
+        - github-pages
+        - jekyll
+        - jekyll-paginate
