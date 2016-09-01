@@ -12,6 +12,8 @@ from tornado.web import RequestHandler, Application, url, HTTPError
 from concurrent.futures import ThreadPoolExecutor
 from tornado import concurrent, ioloop
 
+import tornado
+
 def conf_logging():
     logger = logging.getLogger('applog')
     logger.setLevel(logging.DEBUG)
@@ -70,8 +72,13 @@ class BuildSiteHandler(BaseHandler):
     def post(self):
         log.debug('Running pipeline')
 
-        print dir(self)
-        print self.get_body_argument("")
+        body = tornado.escape.json_decode(self.request.body)
+
+        # TODO assert the wrong types of notification
+        repo = body.get('repository', {}).get('full_name', False)
+        branch = body.get('ref')
+
+        print 'Gonna update repo: %s - branch: %s' % (repo, branch)
 
         self.finish()
 
