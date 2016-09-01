@@ -2,7 +2,7 @@
 import request from 'superagent'
 
 
-export const CHANGE_REPO_STATE = 'CHANGE_LOGIN_STATE'
+export const CHANGE_REPO_STATE = 'CHANGE_REPO_STATE'
 
 export function fetchRepoRootInfo() {
   return dispatch => {
@@ -17,6 +17,10 @@ export function fetchRepoRootInfo() {
         }
       })
   }
+}
+
+export function fetchSchema() {
+  
 }
 
 export function getAllBranch() {
