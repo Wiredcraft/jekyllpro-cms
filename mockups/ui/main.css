@@ -1104,21 +1104,23 @@ h3 {
     z-index: 999; }
 
 #landing .card {
-  background: #FFF;
-  border-radius: 4px;
-  margin: 0 auto;
-  padding: 12px 18px;
-  top: 50%;
+  display: block;
+  margin: 96px auto 0;
   width: 264px; }
-  #landing .card h1 {
-    font-size: 24px;
-    font-size: 2.4rem; }
   #landing .card input,
   #landing .card .primary {
+    font-size: 18px;
+    font-size: 1.8rem;
+    line-height: 160%;
+    padding: 8px;
     width: 100%; }
-  #landing .card .help {
-    color: #AAAAAA;
-    float: right; }
+  #landing .card small {
+    color: rgba(255, 255, 255, 0.4);
+    display: block;
+    letter-spacing: 1px;
+    margin-top: 6px;
+    text-align: center;
+    text-transform: uppercase; }
 
 #app {
   /* The switch - the box around the slider */
@@ -1203,15 +1205,10 @@ h3 {
     #app #menu > * > a,
     #app #navigation > * > a {
       color: inherit;
-      display: block;
-      opacity: 0.5; }
-      #app #menu > * > a .meta,
-      #app #navigation > * > a .meta {
-        opacity: 0.5; }
+      display: block; }
       #app #menu > * > a:hover, #app #menu > * > a.active,
       #app #navigation > * > a:hover,
       #app #navigation > * > a.active {
-        opacity: 1;
         text-decoration: none; }
   #app #menu {
     background: #343c46;
@@ -1238,6 +1235,7 @@ h3 {
       color: inherit;
       cursor: pointer;
       display: block;
+      opacity: 0.5;
       padding: 8px 12px;
       -webkit-transition-property: opacity;
       -moz-transition-property: opacity;
@@ -1307,8 +1305,16 @@ h3 {
     #app #navigation .body a {
       border-bottom: 1px solid #343c46;
       padding: 8px 12px; }
+      #app #navigation .body a h2 {
+        opacity: 0.5; }
+      #app #navigation .body a small {
+        opacity: 0.25; }
       #app #navigation .body a.active {
         background: #0A93FF; }
+      #app #navigation .body a.active h2, #app #navigation .body a:hover h2 {
+        opacity: 1; }
+      #app #navigation .body a.active small, #app #navigation .body a:hover small {
+        opacity: 0.5; }
     #app #navigation .body h2 {
       font-size: inherit;
       overflow: hidden;

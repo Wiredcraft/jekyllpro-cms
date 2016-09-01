@@ -45,13 +45,8 @@
     > a {
       color: inherit;
       display: block;
-      opacity: 0.5;
-      .meta {
-        opacity: 0.5;
-      }
       &:hover,
       &.active {
-        opacity: 1;
         text-decoration: none;
       }
     }
@@ -88,6 +83,7 @@
       color: inherit;
       cursor: pointer;
       display: block;
+      opacity: 0.5;
       padding: $space/3 1.5*$space/3;
       @include transition-property(opacity);
       @include transition-duration($ease);
@@ -160,8 +156,23 @@
     a {
       border-bottom: 1px solid $black;
       padding: $space/3 $space/2;
+      h2 {
+        opacity: 0.5;
+      }
+      small {
+        opacity: 0.25;
+      }
       &.active {
         background: $blue;
+      }
+      &.active,
+      &:hover {
+        h2 {
+          opacity: 1;
+        }
+        small {
+          opacity: 0.5;
+        }
       }
     }
     h2 {
