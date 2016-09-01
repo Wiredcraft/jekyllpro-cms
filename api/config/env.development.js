@@ -9,18 +9,21 @@ module.exports = {
     debug: process.env.MONGODB_DEBUG || false
   },
   cors: {
-    origin: 'http://localhost:8000',
+    // origin should be the client service hostname
+    origin: process.env.CORS_ORIGIN || 'http://localhost:8000',
     methods: 'POST,GET,OPTIONS',
     credentials: true
   },
   github: {
     clientID: '2d55b4e3be40483ac7bd',
     clientSecret: '93a8a77fef87f855fde202e1d72377b8792922f2',
-    callbackURL: 'http://localhost:3000/api/auth/github/callback'
+    callbackURL: process.env.SERVER_URL + '/api/auth/github/callback' || 'http://localhost:3000/api/auth/github/callback'
   },
-  redirectUrl: 'http://localhost:8000/',
+  // redirectUrl should be the client service URL the github Oauth redirecting to
+  redirectUrl: process.env.REDIRECT_URL || 'http://localhost:8000/',
+  // the api service will be pointing to https://github.com/EcutDavid/test-gh-app if not specified
   repo: {
-    user: 'EcutDavid',
-    name: 'test-gh-app'
+    user: process.env.REPO_ORG || 'EcutDavid',
+    name: process.env.REPO_NAME || 'test-gh-app'
   }
 }
