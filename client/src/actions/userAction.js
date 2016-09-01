@@ -13,7 +13,7 @@ export function confirmUserIsLogin() {
         if (err) {
           console.log(err)
         } else {
-          dispatch({ type: CHANGE_LOGIN_STATE, payload: { isLogin: true } })
+          dispatch({ type: CHANGE_LOGIN_STATE, payload: { isLoggedIn: true } })
         }
       })
   }

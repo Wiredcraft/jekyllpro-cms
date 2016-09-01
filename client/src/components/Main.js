@@ -33,8 +33,8 @@ export default class AppComponent extends React.Component {
   }
 
   componentDidUpdate(preProps) {
-    const { isLogin } = this.props
-    if(isLogin && !preProps.isLogin) this.updateEditFrom()
+    const { isLoggedIn } = this.props
+    if(isLoggedIn && !preProps.isLoggedIn) this.updateEditFrom()
   }
 
   checkSchema() {
@@ -121,11 +121,11 @@ export default class AppComponent extends React.Component {
       formSchema,
       markdownText,
       resultMarkdown,
-      schemaCanBeParsed,
+      schemaCanBeParsed
     } = this.state
-    const { isLogin } = this.props
+    const { isLoggedIn } = this.props
 
-    return isLogin ? (
+    return isLoggedIn ? (
       <div>
         <h3>Schema</h3>
         <textarea
@@ -145,7 +145,7 @@ export default class AppComponent extends React.Component {
           onSubmit={res => this.updateResult(res.formData)}
           schema={formSchema}
           uiSchema={{
-            // Parse uiSchema dynamically
+            // TODO: Parse uiSchema dynamically
             date: { 'ui:widget': 'date' }
           }}
         />
@@ -160,7 +160,7 @@ export default class AppComponent extends React.Component {
 
 function mapStateToProps(state) {
   return {
-    isLogin: state.user.get('isLogin')
+    isLoggedIn: state.user.get('isLoggedIn')
   }
 }
 
