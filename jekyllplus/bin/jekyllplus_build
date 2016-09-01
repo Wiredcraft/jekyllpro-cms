@@ -54,3 +54,5 @@ fi
 
 # Run the jekyll build
 # need to see how
+
+bundle exec jekyll build --destination _site

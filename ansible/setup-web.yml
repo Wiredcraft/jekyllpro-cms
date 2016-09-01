@@ -35,7 +35,7 @@
           - error_page 404 /404.html
           - error_page 500 403 =404 /404.html
           # Prepare the path to the host
-          - if ($host ~ "(.*)\.(.*)\.(.*)\.sites.{{ domain }}") { set $root {{ baseroot }}/$3/$2/$1; }
+          - if ($host ~ "(.*)\.(.*)\.(.*)\.sites.{{ domain }}") { set $root {{ baseroot }}/$3/$2/$1/_site; }
           - location / { root $root; }
 
 
