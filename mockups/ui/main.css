@@ -1103,28 +1103,29 @@ h3 {
     width: 24px;
     z-index: 999; }
 
-#landing .card {
-  display: block;
-  margin: 96px auto 0;
-  width: 264px; }
-  #landing .card input,
-  #landing .card .primary {
-    font-size: 18px;
-    font-size: 1.8rem;
-    line-height: 160%;
-    padding: 8px;
-    width: 100%; }
-  #landing .card small {
-    color: rgba(255, 255, 255, 0.4);
+#landing {
+  display: none; }
+  #landing .card {
     display: block;
-    letter-spacing: 1px;
-    margin-top: 6px;
-    text-align: center;
-    text-transform: uppercase; }
+    margin: 96px auto 0;
+    width: 264px; }
+    #landing .card input,
+    #landing .card .primary {
+      font-size: 18px;
+      font-size: 1.8rem;
+      line-height: 160%;
+      padding: 8px;
+      width: 100%; }
+    #landing .card small {
+      color: rgba(255, 255, 255, 0.4);
+      display: block;
+      letter-spacing: 1px;
+      margin-top: 6px;
+      text-align: center;
+      text-transform: uppercase; }
 
 #app {
-  /* The switch - the box around the slider */
-  display: none; }
+  /* The switch - the box around the slider */ }
   #app #menu,
   #app #navigation {
     bottom: 0;
