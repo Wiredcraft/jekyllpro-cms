@@ -1,7 +1,7 @@
 ---
 - hosts: web
   roles:
-    - role: mongo
+    - role: mongodb
     - role: wcl-nodejs
       nodejs_install: bin
       nodejs_version: 6.5.0
