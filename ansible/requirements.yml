@@ -15,6 +15,13 @@
   name: wcl-zabbix-scripts
   version: master
 
+- src: https://github.com/wiredcraft-ops/role-wcl-nodejs.git
+  name: wcl-nodejs
+  version: master
+
+- src: Stouts.mongodb
+  name: mongodb
+
 # For dev env only - setup bind
 - src: bertvv.bind
 

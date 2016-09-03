@@ -1,1 +1,9 @@
 ---
+- hosts: web
+  roles:
+    - role: mongo
+    - role: wcl-nodejs
+      nodejs_install: bin
+      nodejs_version: 6.5.0
+      nodejs_npm_configuration:
+        prefix: /usr
