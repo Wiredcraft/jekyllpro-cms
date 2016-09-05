@@ -1,0 +1,39 @@
+/* Egg Magic */
+
+@import '_variables'; // Variables (colors, layout, spacing & typography)
+@import '_defaults'; // Styling defaults
+@import 'partials/_dropdown';
+@import 'partials/_modal';
+@import 'partials/_loading';
+// @import 'partials/_notifications';
+
+/* Custom */
+
+$menu: 144px;
+$navigation: 240px;
+$menu_footer: 74px;
+
+body {
+  background: $black;
+  @include font-size($smaller);
+}
+
+h1,
+h2,
+h3 {
+  font-weight: normal;
+}
+
+.loading {
+  @include loading;
+}
+
+#landing {
+  @import 'partials/_landing';
+  display: none;
+}
+
+#app {
+  @import 'partials/_app';
+  // display: none;
+}
