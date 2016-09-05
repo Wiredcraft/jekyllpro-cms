@@ -1058,6 +1058,13 @@ body.modal #modal,
     transform: rotate(360deg); } }
 
 /* Custom */
+@font-face {
+  font-family: "Circular";
+  src: url("assets/fonts/Circular-Black.eot");
+  src: url("assets/fonts/Circular-Black.eot?#iefix") format("embedded-opentype"), url("assets/fonts/Circular-Black.woff") format("woff"), url("assets/fonts/Circular-Black.ttf") format("truetype"), url("assets/fonts/Circular-Black.svg#Icons") format("svg");
+  font-weight: bold;
+  font-style: normal; }
+
 body {
   background: #FFF;
   text-align: center; }
@@ -1070,7 +1077,7 @@ h3 {
 
 .wrapper {
   margin: 0 auto;
-  max-width: 1040px;
+  max-width: 1080px;
   width: 90%; }
 
 #header {
@@ -1152,7 +1159,7 @@ h3 {
     #header .screenshots .website {
       bottom: 0;
       position: absolute;
-      width: 30%; }
+      width: 33.33%; }
     #header .screenshots .github {
       left: 3%; }
     #header .screenshots .website {

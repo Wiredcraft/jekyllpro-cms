@@ -5,11 +5,14 @@
 @import 'partials/_dropdown';
 @import 'partials/_modal';
 @import 'partials/_loading';
+@import 'partials/_font';
 // @import 'partials/_notifications';
 
 /* Custom */
 
-$width: 1040px;
+@include font('Circular', 'assets/fonts/Circular-Black', bold);
+
+$width: 1080px;
 
 body {
   background: #FFF;
@@ -102,7 +105,7 @@ h3 {
     .website {
       bottom: 0;
       position: absolute;
-      width: 30%;
+      width: 33.33%;
     }
     .github {
       left: 3%;
