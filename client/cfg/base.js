@@ -1,6 +1,7 @@
 'use strict'
 let path = require('path')
 let defaultSettings = require('./defaults')
+let bourbon = require('node-bourbon')
 
 let additionalPaths = []
 
@@ -34,6 +35,9 @@ module.exports = {
     }
   },
   module: {},
+  sassLoader: {
+    includePaths: bourbon.with()
+  },
   postcss: function () {
     return [
       require('precss'),

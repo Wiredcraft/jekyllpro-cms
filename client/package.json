@@ -60,6 +60,7 @@
     "js-cookie": "^2.1.2",
     "js-yaml": "^3.6.1",
     "minimist": "^1.2.0",
+    "node-bourbon": "^4.2.8",
     "node-sass": "^3.4.2",
     "normalize.css": "^4.0.0",
     "null-loader": "^0.1.1",
