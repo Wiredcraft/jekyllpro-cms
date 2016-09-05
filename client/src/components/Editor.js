@@ -87,7 +87,11 @@ export default class Editor extends Component {
             onSubmit={res => this.updateResult(res.formData)}
             schema={formSchema}
             uiSchema={schema && schema.uiSchema}
-          />
+          >
+            <div>
+              <button className='button primary' type='submit'>Save</button>
+            </div>
+          </Form>
         )}
         <div style={{ display: 'none' }}>
           <h3>Result</h3>
