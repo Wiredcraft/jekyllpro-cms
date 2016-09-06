@@ -1,0 +1,42 @@
+{
+  "JSONSchema": {
+    "type": "object",
+    "properties": {
+      "title": {
+        "type": "string",
+        "title": "Title"
+      },
+      "date": {
+        "type": "string",
+        "title": "Creation Date"
+      },
+      "category": {
+        "type": "string",
+        "title": "Category",
+        "enum": [
+          "Marketing",
+          "DevOps",
+          "Development",
+          "Operation",
+          "Design"
+        ]
+      },
+      "author": {
+        "type": "string",
+        "title": "Author"
+      },
+      "body": {
+        "type": "string",
+        "title": "Body"
+      }
+    }
+  },
+  "uiSchema": {
+    "category": {
+      "ui:widget": "select"
+    },
+    "body": {
+      "ui:widget": "textarea"      
+    }
+  }
+}

@@ -2,9 +2,11 @@ import React, { Component } from 'react'
 import Form from 'react-jsonschema-form'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
+import ReactDOM from 'react-dom'
 
-import { parseYamlInsideMarkdown, retriveContent } from '../helpers/markdown'
+import { parseYamlInsideMarkdown, retriveContent, serializeObjtoYaml } from '../helpers/markdown'
 import { updateFile } from '../actions/editorActions'
+// import DeleteIcon from './svg/DeleteIcon'
 
 
 // TODO: remove linePattern
@@ -13,7 +15,8 @@ export default class Editor extends Component {
   constructor() {
     super()
     this.state = {
-      formSchema: { type: 'object', properties: {} },
+      filePathInputClass: '',
+      formData: {},
       resultMarkdown: '',
       targetContent: ''
     }
@@ -26,9 +29,10 @@ export default class Editor extends Component {
   componentDidUpdate(prevProps) {
     const { content, fileIndex, schema } = this.props
 
-    const schemaFetched = schema && !prevProps.schema
-    const contentFetched = content && !prevProps.content
+    const schemaFetched = schema !== prevProps.schema
+    const contentFetched = content !== prevProps.content
     const fileChanged = fileIndex !== prevProps.fileIndex
+    console.log(contentFetched)
     if(schemaFetched || contentFetched || fileChanged) {
       this.updateEditFrom()
     }
@@ -36,68 +40,141 @@ export default class Editor extends Component {
 
   updateEditFrom() {
     const { content, schema } = this.props
-    if(!schema || !content) return
-    let { formSchema } = this.state
+    if(!content) return
     const docConfigObj = parseYamlInsideMarkdown(content)
-    if(!docConfigObj) return
+    let formData = {}
 
-    const schemaObj = schema.properties
-    formSchema.properties = {}
-    for (let i = 0; i < schemaObj.length; i++) {
-      if(!schemaObj[i].name) continue
-      const defaultValue = docConfigObj[schemaObj[i].target]
-      formSchema.properties[schemaObj[i].name] = {
-        default: defaultValue,
-        title: schemaObj[i].name,
-        type: schemaObj[i].type
-      }
+    if(docConfigObj) {
+      const schemaObj = schema.JSONSchema.properties
+      Object.keys(schemaObj).forEach((prop) => {
+        formData[prop] = docConfigObj[prop]
+      })      
     }
+
     const targetContent = retriveContent(content)
-    this.setState({ formSchema, targetContent })
+    formData.body = targetContent
+    this.setState({ formData, targetContent })
   }
 
-  updateResult(formData) {
-    const { content, fileIndex, filesMeta, schema, updateFile } = this.props
-    let markdownText = content
-    const docConfigObj = parseYamlInsideMarkdown(markdownText)
-    if(!docConfigObj) return
-
-    const schemaObj = schema.properties
-    for (let i = 0; i < schemaObj.length; i++) {
-      const linePattern = new RegExp(schemaObj[i].target + ': ?[\\w 、\/]*')
-
-      const prePattern = new RegExp(schemaObj[i].target + ': ?')
-      let newValue = formData[schemaObj[i].name]
-      const preText = prePattern.exec(markdownText)[0]
-      markdownText = markdownText.replace(linePattern, preText + newValue)
+  updateResult(data) {
+    const formData = Object.assign({}, data)
+    const { content, fileIndex, filesMeta, schema, updateFile, newFileMode } = this.props
+    const filePath = this.refs.filePath.value
+    if (!filePath) {
+      console.error('no file path specified')
+      this.setState({filePathInputClass: 'error'})
+      return
     }
-    const targetContent = retriveContent(markdownText)
-    this.setState({ resultMarkdown: markdownText, targetContent })
+    let newIndex = fileIndex
+    let markdownHeader = ''
+    let markdownText = formData.body
+    delete formData.body
 
-    updateFile(filesMeta[fileIndex].path, markdownText + targetContent)
+    if (newFileMode) {
+      newIndex = filesMeta.length
+      markdownHeader = serializeObjtoYaml(formData)
+      console.log(markdownHeader, markdownText)
+    } else {
+      let originalDocHeaderObj = parseYamlInsideMarkdown(content) || {}
+
+      Object.keys(formData).forEach((prop) => {
+        originalDocHeaderObj[prop] = formData[prop]
+      })
+
+      markdownHeader = serializeObjtoYaml(originalDocHeaderObj)
+
+      if (filePath !== filesMeta[fileIndex].path) {
+        //TODO 
+        // if file path changed, delete the old file first
+      }
+    }
+    updateFile(filePath, markdownHeader + markdownText, newIndex)
+
+  }
+
+  handleSaveBtn() {
+    let clickEvt = new MouseEvent('click', {
+      'view': window,
+      'bubbles': true,
+      'cancelable': true
+    })
+    ReactDOM.findDOMNode(this.refs.formSubmitBtn).dispatchEvent(clickEvt)
   }
 
   render() {
-    const { schema, content } = this.props
-    const { formSchema, resultMarkdown } = this.state
+    const { schema, content, newFileMode, filesMeta, fileIndex } = this.props
+    const { filePathInputClass, resultMarkdown, formData } = this.state
+    let currentFileName = newFileMode
+      ? ('_posts/new-file' + Date.now() + '.md')
+      : (filesMeta && filesMeta[fileIndex] && filesMeta[fileIndex].path)
+
     return (
-      <div id='content'>
-        { schema && content && (
-          <Form
-            onSubmit={res => this.updateResult(res.formData)}
-            schema={formSchema}
-            uiSchema={schema && schema.uiSchema}
-          >
-            <div>
-              <button className='button primary' type='submit'>Save</button>
+      <section id='content'>
+        { schema && (newFileMode || content) && (
+          <header className='sidebar'>
+            <div className='field language'>
+              <label>Language</label>
+              <span className='select'>
+                <select>
+                  <option>English</option>
+                  <option>Chinese</option>
+                </select>
+              </span>
+              <small className='description'>See the <a>Chinese version</a>.</small>
             </div>
-          </Form>
+
+            <div className='field filename'>
+              <label>Filename</label>
+              <input
+                className={`${filePathInputClass}`}
+                type='text'
+                ref="filePath"
+                defaultValue={currentFileName}
+                placeholder='Filename' />
+              <small className='description'>Filenames impact the generated URL.</small>
+            </div>
+
+            <div className='field published'>
+              <label className='switch'>
+                <input type='checkbox' id='published' checked/>
+                <div className='slider'></div>
+              </label>
+              <label htmlFor='published'>Published</label>
+            </div>
+
+            <div className='field draft'>
+              <label className='switch'>
+                <input type='checkbox' id='draft'/>
+                <div className='slider'></div>
+              </label>
+              <label htmlFor='draft'>draft</label>
+            </div>
+            <button className='button primary' onClick={::this.handleSaveBtn}>Save</button>
+            <button className='danger'>
+            </button>
+          </header>
         )}
-        <div style={{ display: 'none' }}>
-          <h3>Result</h3>
-          <textarea value={resultMarkdown} />
-        </div>
-      </div>
+        { schema && (newFileMode || content) && (
+          <div className='body'>
+            <Form
+              onSubmit={res => this.updateResult(res.formData)}
+              schema={schema.JSONSchema}
+              uiSchema={schema.uiSchema}
+              formData={newFileMode ? {} : formData}>
+              <button
+                type='submit'
+                ref='formSubmitBtn'
+                style={{'display': 'none'}}>
+                Submit
+              </button>
+            </Form>
+            <div style={{ display: 'none' }}>
+              <h3>Result</h3>
+              <textarea value={resultMarkdown} />
+            </div>
+          </div>
+        )}
+      </section>
     )
   }
 }
@@ -107,7 +184,8 @@ function mapStateToProps(state) {
     content: state.editor.get('content'),
     filesMeta: state.repo.get('filesMeta'),
     fileIndex: state.editor.get('targetFileIndex'),
-    schema: state.editor.get('schema')
+    schema: state.editor.get('schema'),
+    newFileMode: state.editor.get('newFileMode')
   }
 }
 

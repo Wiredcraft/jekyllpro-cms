@@ -33,7 +33,12 @@ export default class AppComponent extends React.Component {
         <Editor />
       </div>
     ) : (
-      <button onClick={() => this.login()}>Login</button>
+      <div id='landing' style={{'display': 'block'}}>
+        <div className='card'>
+          <button className='button primary' onClick={() => this.login()}>Login with GitHub</button>
+          <small>No account yet? <a>Sign up for free</a>.</small>
+        </div>
+      </div>
     )
   }
 }

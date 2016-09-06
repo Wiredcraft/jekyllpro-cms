@@ -2,7 +2,7 @@ import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import React, { Component } from 'react'
 
-import { fetchFileContent } from '../actions/editorActions'
+import { fetchFileContent, addEmptyFile } from '../actions/editorActions'
 
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -19,12 +19,22 @@ export default class Navigation extends Component {
     this.setState({ selectedItemIndex: i })
   }
 
+  createNew() {
+    this.props.addEmptyFile()
+  }
+
   render() {
     const { filesMeta } = this.props
     const { selectedItemIndex } = this.state
 
     return (
-      <div id='navigation'>
+      <nav id='navigation'>
+        <header className='header'>
+          <div className='controls'>
+            <button className='button primary' onClick={::this.createNew}>Create</button>
+          </div>
+          <input type='text' className='search' placeholder='Filter by name'/>
+        </header>
         <section className='body'>
           {
             filesMeta && filesMeta.map((d, i) => (
@@ -38,7 +48,7 @@ export default class Navigation extends Component {
             ))
           }
         </section>
-      </div>
+      </nav>
     )
   }
 }
@@ -50,5 +60,5 @@ function mapStateToProps(state) {
 }
 
 function mapDispatchToProps (dispatch) {
-  return bindActionCreators({ fetchFileContent }, dispatch)
+  return bindActionCreators({ fetchFileContent, addEmptyFile }, dispatch)
 }
