@@ -25,5 +25,11 @@ module.exports = {
     xframe: 'SAMEORIGIN',
     p3p: 'ABCDEF',
     xssProtection: true
+  },
+  cors: {
+    // origin should be the client service hostname
+    origin: process.env.CORS_ORIGIN || 'http://localhost:8000',
+    methods: 'POST,GET,OPTIONS,DELETE',
+    credentials: true
   }
 }
