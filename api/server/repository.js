@@ -84,6 +84,23 @@ const writeRepoFile = (req, res, next) => {
   })
 }
 
+const deleteRepoFile = (req, res, next) => {
+  var repo = req.githubRepo
+  var toBeDeleted = req.body
+  if (!newFile.options) {
+    newFile.options = {encode: true}
+  }
+  repo.deleteFile(toBeDeleted.branch, toBeDeleted.path, cb)
+  .then((data) => {
+    // console.log(data)
+    res.status(200).json(data.data)
+  })
+  .catch((err) => {
+    // console.log(err)
+    res.status(err.status).json(err.response.data)
+  })
+}
+
 const listBranches = (req, res, next) => {
   var repo = req.githubRepo
   repo.listBranches()
@@ -121,5 +138,6 @@ export default {
   getRepoContent,
   listBranches,
   createBranches,
-  writeRepoFile
+  writeRepoFile,
+  deleteRepoFile
 }
