@@ -5,7 +5,7 @@ import { bindActionCreators } from 'redux'
 import ReactDOM from 'react-dom'
 
 import { parseYamlInsideMarkdown, retriveContent, serializeObjtoYaml } from '../helpers/markdown'
-import { updateFile, deleteFile } from '../actions/editorActions'
+import { updateFile, deleteFile, addNewFile } from '../actions/editorActions'
 import DeleteIcon from './svg/DeleteIcon'
 import customWidgets from './Editor/CustomWidgets'
 
@@ -58,22 +58,21 @@ export default class Editor extends Component {
 
   updateResult(data) {
     const formData = Object.assign({}, data)
-    const { content, fileIndex, filesMeta, schema, updateFile, newFileMode } = this.props
+    const { content, fileIndex, filesMeta, schema, updateFile, newFileMode, addNewFile } = this.props
     const filePath = this.refs.filePath.value
     if (!filePath) {
       console.error('no file path specified')
       this.setState({filePathInputClass: 'error'})
       return
     }
-    let newIndex = fileIndex
     let markdownHeader = ''
     let markdownText = formData.body
     delete formData.body
 
     if (newFileMode) {
-      newIndex = filesMeta.length
+      let newIndex = filesMeta.length
       markdownHeader = serializeObjtoYaml(formData)
-      console.log(markdownHeader, markdownText)
+      addNewFile(filePath, markdownHeader + markdownText, newIndex )
     } else {
       let originalDocHeaderObj = parseYamlInsideMarkdown(content) || {}
 
@@ -87,8 +86,8 @@ export default class Editor extends Component {
         //TODO 
         // if file path changed, delete the old file first
       }
+      updateFile(filePath, markdownHeader + markdownText, fileIndex)
     }
-    updateFile(filePath, markdownHeader + markdownText, newIndex)
 
   }
 
@@ -200,5 +199,5 @@ function mapStateToProps(state) {
 }
 
 function mapDispatchToProps (dispatch) {
-  return bindActionCreators({ updateFile, deleteFile }, dispatch)
+  return bindActionCreators({ updateFile, deleteFile, addNewFile }, dispatch)
 }

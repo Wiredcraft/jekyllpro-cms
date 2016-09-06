@@ -6,6 +6,7 @@ import { parseFilesMeta } from '../helpers/repo'
 
 export const CHANGE_REPO_STATE = 'CHANGE_REPO_STATE'
 export const FILE_REMOVED = 'FILE_REMOVED'
+export const FILE_ADDED = 'FILE_ADDED'
 
 export function fetchRepoRootInfo() {
   return dispatch => {
@@ -49,6 +50,14 @@ export function fileRemoved(index) {
   }
 }
 
+export function fileAdded(name, path) {
+  return dispatch => {
+    dispatch({
+      payload: {name, path},
+      type: FILE_ADDED
+    })
+  }  
+}
 
 export function getAllBranch() {
   return dispatch => {

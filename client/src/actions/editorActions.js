@@ -1,6 +1,6 @@
 /* global API_BASE_URL */
 import request from 'superagent'
-import { fileRemoved } from './repoActions'
+import { fileRemoved, fileAdded } from './repoActions'
 const defaultSchema = require('../schema/posts.json')
 
 export const CHANGE_EDITOR_STATE = 'CHANGE_EDITOR_STATE'
@@ -69,11 +69,35 @@ export function updateFile(path, content, index) {
   }
 }
 
-export function addEmptyFile() {
+export function createEmptyFile() {
   return dispatch => {  
     dispatch({
       type: NEW_EMPTY_FILE
     })
+  }
+}
+
+export function addNewFile(path, content, index) {
+  
+  return dispatch => {
+    request
+      .post(`${API_BASE_URL}/api/repository`)
+      .send({ path, content, message: `update ${path}` })
+      .withCredentials()
+      .end((err, res) => {
+        if (err) {
+          console.error(err)
+        } else {
+          let newFilename = res.body.content.name
+          return Promise.all([
+            dispatch({
+              payload: { content: content, fileIndex: index },
+              type: CHANGE_EDITOR_STATE
+            }),
+            dispatch(fileAdded(newFilename, path))
+          ])
+        }
+      })
   }
 }
 
