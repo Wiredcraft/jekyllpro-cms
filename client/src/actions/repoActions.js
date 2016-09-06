@@ -5,6 +5,7 @@ import { parseFilesMeta } from '../helpers/repo'
 
 
 export const CHANGE_REPO_STATE = 'CHANGE_REPO_STATE'
+export const FILE_REMOVED = 'FILE_REMOVED'
 
 export function fetchRepoRootInfo() {
   return dispatch => {
@@ -38,6 +39,16 @@ export function fetchFilesMeta() {
       })
   }
 }
+
+export function fileRemoved(index) {
+  return dispatch => {
+    dispatch({
+      payload: { fileIndex: index },
+      type: FILE_REMOVED
+    })
+  }
+}
+
 
 export function getAllBranch() {
   return dispatch => {

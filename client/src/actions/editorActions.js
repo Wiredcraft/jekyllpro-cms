@@ -1,9 +1,11 @@
 /* global API_BASE_URL */
 import request from 'superagent'
+import { fileRemoved } from './repoActions'
 const defaultSchema = require('../schema/posts.json')
 
 export const CHANGE_EDITOR_STATE = 'CHANGE_EDITOR_STATE'
 export const NEW_EMPTY_FILE = 'NEW_EMPTY_FILE'
+export const DELETE_EXISTING_FILE = 'DELETE_EXISTING_FILE'
 
 // TODO remove this hard coding, fetch config based on current selected collection
 export function fetchDefaultSchema() {
@@ -72,6 +74,25 @@ export function addEmptyFile() {
     dispatch({
       type: NEW_EMPTY_FILE
     })
+  }
+}
+
+export function deleteFile(path, index) {
+  return dispatch => {
+    request
+      .del(`${API_BASE_URL}/api/repository`)
+      .send({ path })
+      .withCredentials()
+      .end((err, res) => {
+        if (err) {
+          console.error(err)
+        } else {
+          return Promise.all([
+            dispatch(fileRemoved(index)),
+            dispatch({type: DELETE_EXISTING_FILE})
+          ])
+        }
+      })
   }
 }
 

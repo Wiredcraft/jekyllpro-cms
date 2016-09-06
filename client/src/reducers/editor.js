@@ -1,6 +1,6 @@
 import Immutable from 'immutable'
 
-import { CHANGE_EDITOR_STATE, NEW_EMPTY_FILE } from '../actions/editorActions'
+import { CHANGE_EDITOR_STATE, NEW_EMPTY_FILE, DELETE_EXISTING_FILE } from '../actions/editorActions'
 
 const initialState = Immutable.fromJS({
   schema: undefined,
@@ -21,6 +21,11 @@ export default function repo (state = initialState, action) {
   case NEW_EMPTY_FILE:
     state = state.set('newFileMode', true)
     state = state.set('content', undefined)
+    return state
+  case DELETE_EXISTING_FILE:
+    state = state.set('content', undefined)
+    state = state.set('newFileMode', false)
+    state = state.set('targetFileIndex', undefined)
     return state
   default:
     return state

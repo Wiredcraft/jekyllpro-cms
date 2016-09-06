@@ -5,7 +5,7 @@ import { bindActionCreators } from 'redux'
 import ReactDOM from 'react-dom'
 
 import { parseYamlInsideMarkdown, retriveContent, serializeObjtoYaml } from '../helpers/markdown'
-import { updateFile } from '../actions/editorActions'
+import { updateFile, deleteFile } from '../actions/editorActions'
 import DeleteIcon from './svg/DeleteIcon'
 import customWidgets from './Editor/CustomWidgets'
 
@@ -33,7 +33,6 @@ export default class Editor extends Component {
     const contentFetched = content !== prevProps.content
     const fileChanged = fileIndex !== prevProps.fileIndex
     const modeChanged = newFileMode !== prevProps.newFileMode
-    console.log(contentFetched)
     if(modeChanged || schemaFetched || contentFetched || fileChanged) {
       this.updateEditFrom()
     }
@@ -102,6 +101,15 @@ export default class Editor extends Component {
     ReactDOM.findDOMNode(this.refs.formSubmitBtn).dispatchEvent(clickEvt)
   }
 
+  handleDeleteBtn() {
+    const { newFileMode, filesMeta, fileIndex, deleteFile } = this.props
+
+    if (newFileMode) {
+      return
+    }
+    deleteFile(filesMeta[fileIndex].path, fileIndex)
+  }
+
   render() {
     const { schema, content, newFileMode, filesMeta, fileIndex } = this.props
     const { filePathInputClass, resultMarkdown, formData } = this.state
@@ -151,7 +159,8 @@ export default class Editor extends Component {
               <label htmlFor='draft'>draft</label>
             </div>
             <button className='button primary' onClick={::this.handleSaveBtn}>Save</button>
-            <DeleteIcon />
+            <DeleteIcon
+              onClick={::this.handleDeleteBtn} />
           </header>
         )}
         { schema && (newFileMode || content) && (
@@ -191,5 +200,5 @@ function mapStateToProps(state) {
 }
 
 function mapDispatchToProps (dispatch) {
-  return bindActionCreators({ updateFile }, dispatch)
+  return bindActionCreators({ updateFile, deleteFile }, dispatch)
 }

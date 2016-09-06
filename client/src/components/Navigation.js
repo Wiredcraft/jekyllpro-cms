@@ -40,7 +40,7 @@ export default class Navigation extends Component {
             filesMeta && filesMeta.map((d, i) => (
               <a
                 className={selectedItemIndex === i ? 'active' : ''}
-                key={i}
+                key={d.path}
                 onClick={() => this.navigate(i)}
               >
                 <h2>{ d.name }</h2>
