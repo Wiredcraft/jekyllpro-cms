@@ -16,6 +16,7 @@ export default function repo (state = initialState, action) {
     if(content !== undefined) state = state.set('content', content)
     if(schema !== undefined) state = state.set('schema', schema)
     if(fileIndex !== undefined) state = state.set('targetFileIndex', fileIndex)
+    if (state.get('newFileMode')) state = state.set('newFileMode', false)
     return state
   case NEW_EMPTY_FILE:
     state = state.set('newFileMode', true)
