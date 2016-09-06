@@ -1,16 +1,19 @@
 /* Egg Magic */
 
 @import '_variables'; // Variables (colors, layout, spacing & typography)
+
+/* Custom font for headlines */
+@import 'partials/_font';
+@include font('Circular', 'assets/fonts/Circular-Black', bold);
+$headline: 'Circular', -apple-system, 'Avenir next', Avenir, Roboto, Noto, 'Helvetica neue', Helvetica, Arial, Sans-serif;
+
 @import '_defaults'; // Styling defaults
 @import 'partials/_dropdown';
 @import 'partials/_modal';
 @import 'partials/_loading';
-@import 'partials/_font';
 // @import 'partials/_notifications';
 
 /* Custom */
-
-@include font('Circular', 'assets/fonts/Circular-Black', bold);
 
 $width: 1080px;
 
@@ -19,11 +22,8 @@ body {
   text-align: center;
 }
 
-h1,
-h2,
-h3 {
-  font-family: 'Circular';
-  font-weight: 900;
+.button {
+  font-family: $headline;
 }
 
 .wrapper {
@@ -97,13 +97,12 @@ h3 {
     overflow: hidden;
     position: relative;
     img {
-      bottom: 0;
+      bottom: -5px;
       box-shadow: 0 0 10px rgba(0,0,0,0.4);
       display: block;
     }
     .github,
     .website {
-      bottom: 0;
       position: absolute;
       width: 33.33%;
     }
@@ -121,17 +120,69 @@ h3 {
   }
 }
 
+$narrow: 600px;
+
 #content {
+  strong {
+    font-family: $headline;
+    font-weight: bold;
+  }
   .section {
     padding: 2*$space 0;
     .header {
       margin: 0 auto;
-      max-width: 600px;
+      max-width: $narrow;
       h2 {
         border-bottom: 4px solid $light;
         display: inline-block;
         & + p {
           @include font-size($larger);
+        }
+        u {
+          color: $blue;
+          text-decoration: none;
+        }
+      }
+    }
+    .footer {
+      color: $grey;
+      @include font-size($smaller);
+    }
+    &.usage {
+      background: $background;
+      h2 {
+        border-color:#FFF;
+      }
+    }
+    &.pricing {
+      .body {
+        @include clearfix;
+        margin: 0 auto;
+        max-width: 840px;
+        padding: $space 0;
+      }
+      .plan {
+        border-right: 1px solid $light;
+        box-sizing: border-box;
+        float: left;
+        padding: $space;
+        width: 33.33%;
+        &:last-child {
+          border: 0;
+        }
+        h3 {
+          margin-bottom: $space/2;
+          padding-left: $space/2;
+        }
+        ul {
+          list-style: none;
+          margin: 0 0 $space/2;
+          padding: $space/2;
+        }
+        .button {
+          @include font-size($larger);
+          padding: $space/2;
+          width: 100%;
         }
       }
     }

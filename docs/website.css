@@ -5,6 +5,14 @@
 /* Fonts */
 @import 'https://fonts.googleapis.com/css?family=Roboto';
 /* Misc */
+/* Custom font for headlines */
+@font-face {
+  font-family: "Circular";
+  src: url("assets/fonts/Circular-Black.eot");
+  src: url("assets/fonts/Circular-Black.eot?#iefix") format("embedded-opentype"), url("assets/fonts/Circular-Black.woff") format("woff"), url("assets/fonts/Circular-Black.ttf") format("truetype"), url("assets/fonts/Circular-Black.svg#Icons") format("svg");
+  font-weight: bold;
+  font-style: normal; }
+
 /* 3rd parties */
 /*! normalize.css v3.0.2 | MIT License | git.io/normalize */
 /**
@@ -382,7 +390,7 @@ h3,
 h4,
 h5,
 h6 {
-  font-family: "Roboto", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-family: "Circular", -apple-system, "Avenir next", Avenir, Roboto, Noto, "Helvetica neue", Helvetica, Arial, Sans-serif;
   font-weight: bold;
   line-height: 120%;
   margin: 0 0 24px; }
@@ -710,7 +718,7 @@ label,
   -webkit-transition-duration: 0.2s;
   -moz-transition-duration: 0.2s;
   transition-duration: 0.2s;
-  border: 0;
+  border: 1px solid #d6d6d6;
   padding: 4px 36px 4px 12px; }
   .select select:hover, .select select:focus {
     background: #f3f3f3;
@@ -807,11 +815,11 @@ textarea {
       border-color: #c7c7c7;
       color: #AAAAAA; }
   .button.secondary {
-    background: #2ECC40;
+    background: #0A93FF;
     border: 0;
     border-radius: 2px;
     box-sizing: border-box;
-    color: #FFF;
+    color: inherit;
     display: inline-block;
     outline: none;
     padding: 4px 24px;
@@ -823,12 +831,12 @@ textarea {
     transition-duration: 0.2s;
     border: 0; }
     .button.secondary:hover, .button.secondary:focus {
-      background: #4dd45d;
-      color: #FFF;
+      background: #54b3ff;
+      color: inherit;
       text-decoration: none; }
     .button.secondary:active, .button.secondary.active {
-      background: #29b83a;
-      color: #FFF;
+      background: #0a8cf2;
+      color: inherit;
       text-decoration: none; }
     .button.secondary[disabled=disabled], .button.secondary[disabled=true], .button.secondary[disabled], .button.secondary.disabled {
       background: #DDDDDD;
@@ -1058,22 +1066,12 @@ body.modal #modal,
     transform: rotate(360deg); } }
 
 /* Custom */
-@font-face {
-  font-family: "Circular";
-  src: url("assets/fonts/Circular-Black.eot");
-  src: url("assets/fonts/Circular-Black.eot?#iefix") format("embedded-opentype"), url("assets/fonts/Circular-Black.woff") format("woff"), url("assets/fonts/Circular-Black.ttf") format("truetype"), url("assets/fonts/Circular-Black.svg#Icons") format("svg");
-  font-weight: bold;
-  font-style: normal; }
-
 body {
   background: #FFF;
   text-align: center; }
 
-h1,
-h2,
-h3 {
-  font-family: 'Circular';
-  font-weight: 900; }
+.button {
+  font-family: "Circular", -apple-system, "Avenir next", Avenir, Roboto, Noto, "Helvetica neue", Helvetica, Arial, Sans-serif; }
 
 .wrapper {
   margin: 0 auto;
@@ -1152,12 +1150,11 @@ h3 {
     overflow: hidden;
     position: relative; }
     #header .screenshots img {
-      bottom: 0;
+      bottom: -5px;
       box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
       display: block; }
     #header .screenshots .github,
     #header .screenshots .website {
-      bottom: 0;
       position: absolute;
       width: 33.33%; }
     #header .screenshots .github {
@@ -1168,6 +1165,10 @@ h3 {
       margin: 0 auto;
       position: relative;
       width: 50%; }
+
+#content strong {
+  font-family: "Circular", -apple-system, "Avenir next", Avenir, Roboto, Noto, "Helvetica neue", Helvetica, Arial, Sans-serif;
+  font-weight: bold; }
 
 #content .section {
   padding: 48px 0; }
@@ -1180,3 +1181,42 @@ h3 {
       #content .section .header h2 + p {
         font-size: 18px;
         font-size: 1.8rem; }
+      #content .section .header h2 u {
+        color: #0A93FF;
+        text-decoration: none; }
+  #content .section .footer {
+    color: #AAAAAA;
+    font-size: 14px;
+    font-size: 1.4rem; }
+  #content .section.usage {
+    background: #F4F4F4; }
+    #content .section.usage h2 {
+      border-color: #FFF; }
+  #content .section.pricing .body {
+    margin: 0 auto;
+    max-width: 840px;
+    padding: 24px 0; }
+    #content .section.pricing .body::after {
+      clear: both;
+      content: "";
+      display: table; }
+  #content .section.pricing .plan {
+    border-right: 1px solid #EEE;
+    box-sizing: border-box;
+    float: left;
+    padding: 24px;
+    width: 33.33%; }
+    #content .section.pricing .plan:last-child {
+      border: 0; }
+    #content .section.pricing .plan h3 {
+      margin-bottom: 12px;
+      padding-left: 12px; }
+    #content .section.pricing .plan ul {
+      list-style: none;
+      margin: 0 0 12px;
+      padding: 12px; }
+    #content .section.pricing .plan .button {
+      font-size: 18px;
+      font-size: 1.8rem;
+      padding: 12px;
+      width: 100%; }
