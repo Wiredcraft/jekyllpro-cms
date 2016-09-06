@@ -8,12 +8,6 @@ module.exports = {
     // Enable mongoose debug mode
     debug: process.env.MONGODB_DEBUG || false
   },
-  cors: {
-    // origin should be the client service hostname
-    origin: process.env.CORS_ORIGIN || 'http://localhost:8000',
-    methods: 'POST,GET,OPTIONS',
-    credentials: true
-  },
   github: {
     clientID: '2d55b4e3be40483ac7bd',
     clientSecret: '93a8a77fef87f855fde202e1d72377b8792922f2',
@@ -21,9 +15,9 @@ module.exports = {
   },
   // redirectUrl should be the client service URL the github Oauth redirecting to
   redirectUrl: process.env.REDIRECT_URL || 'http://localhost:8000/',
-  // the api service will be pointing to https://github.com/EcutDavid/test-gh-app if not specified
+  // the api service will be pointing to https://github.com/woodpig07/test-gh-app if not specified
   repo: {
-    user: process.env.REPO_ORG || 'EcutDavid',
+    user: process.env.REPO_ORG || 'woodpig07',
     name: process.env.REPO_NAME || 'test-gh-app'
   }
 }

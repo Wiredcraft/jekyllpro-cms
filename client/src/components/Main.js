@@ -7,8 +7,8 @@ import { confirmUserIsLogged } from '../actions/userActions'
 import Menu from './Menu'
 import Editor from './Editor'
 import Navigation from './Navigation'
-import 'normalize.css/normalize.css'
-import 'styles/main.scss'
+// import 'normalize.css/normalize.css'
+import 'styles/app.scss'
 
 
 @connect(mapStateToProps, mapDispatchToProps)

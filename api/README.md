@@ -248,6 +248,13 @@ example success response body
 }
 ```
 
+**delete file**
+```
+DELETE /api/repository
+
+// form data {branch: 'master', path: 'filepath'}
+```
+
 **list all branches**
 
 ```
