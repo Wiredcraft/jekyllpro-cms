@@ -17,7 +17,8 @@ export default function repo (state = initialState, action) {
   case FILE_REMOVED:
     const { fileIndex } = action.payload
     let updatedFileMeta = state.get('filesMeta')
-    updatedFileMeta = updatedFileMeta.splice(fileIndex, 1)
+    updatedFileMeta.splice(fileIndex, 1)
+    updatedFileMeta = Object.assign([], updatedFileMeta)
     state = state.set('filesMeta', updatedFileMeta)
     return state
   case FILE_ADDED:
