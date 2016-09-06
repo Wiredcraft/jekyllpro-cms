@@ -87,9 +87,7 @@ const writeRepoFile = (req, res, next) => {
 const deleteRepoFile = (req, res, next) => {
   var repo = req.githubRepo
   var toBeDeleted = req.body
-  if (!newFile.options) {
-    newFile.options = {encode: true}
-  }
+
   repo.deleteFile(toBeDeleted.branch, toBeDeleted.path, cb)
   .then((data) => {
     // console.log(data)
