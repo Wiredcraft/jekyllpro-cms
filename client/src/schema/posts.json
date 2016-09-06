@@ -33,10 +33,10 @@
   },
   "uiSchema": {
     "category": {
-      "ui:widget": "select"
+      "ui:widget": "customSelect"
     },
     "body": {
-      "ui:widget": "textarea"      
+      "ui:widget": "customTextarea"      
     }
   }
 }

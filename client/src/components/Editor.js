@@ -6,8 +6,8 @@ import ReactDOM from 'react-dom'
 
 import { parseYamlInsideMarkdown, retriveContent, serializeObjtoYaml } from '../helpers/markdown'
 import { updateFile } from '../actions/editorActions'
-// import DeleteIcon from './svg/DeleteIcon'
-
+import DeleteIcon from './svg/DeleteIcon'
+import customWidgets from './Editor/CustomWidgets'
 
 // TODO: remove linePattern
 @connect(mapStateToProps, mapDispatchToProps)
@@ -27,13 +27,14 @@ export default class Editor extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    const { content, fileIndex, schema } = this.props
+    const { content, fileIndex, schema, newFileMode } = this.props
 
     const schemaFetched = schema !== prevProps.schema
     const contentFetched = content !== prevProps.content
     const fileChanged = fileIndex !== prevProps.fileIndex
+    const modeChanged = newFileMode !== prevProps.newFileMode
     console.log(contentFetched)
-    if(schemaFetched || contentFetched || fileChanged) {
+    if(modeChanged || schemaFetched || contentFetched || fileChanged) {
       this.updateEditFrom()
     }
   }
@@ -150,8 +151,7 @@ export default class Editor extends Component {
               <label htmlFor='draft'>draft</label>
             </div>
             <button className='button primary' onClick={::this.handleSaveBtn}>Save</button>
-            <button className='danger'>
-            </button>
+            <DeleteIcon />
           </header>
         )}
         { schema && (newFileMode || content) && (
@@ -160,6 +160,7 @@ export default class Editor extends Component {
               onSubmit={res => this.updateResult(res.formData)}
               schema={schema.JSONSchema}
               uiSchema={schema.uiSchema}
+              widgets={customWidgets}
               formData={newFileMode ? {} : formData}>
               <button
                 type='submit'
