@@ -2,7 +2,7 @@
 import request from 'superagent'
 
 import { parseFilesMeta } from '../helpers/repo'
-import { fetchDefaultSchema } from './editorActions'
+import { fetchDefaultSchema, cleanEditor } from './editorActions'
 
 export const CHANGE_REPO_STATE = 'CHANGE_REPO_STATE'
 export const FILE_REMOVED = 'FILE_REMOVED'
@@ -92,7 +92,8 @@ export function checkoutBranch(branch) {
       dispatch({
         payload: { currentBranch: branch },
         type: CHANGE_REPO_STATE
-      })
+      }),
+      dispatch(cleanEditor())
     ])
   }
 }

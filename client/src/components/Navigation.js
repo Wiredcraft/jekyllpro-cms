@@ -18,6 +18,15 @@ export default class Navigation extends Component {
     fetchFilesMeta(currentBranch)
   }
 
+  componentDidUpdate(prevProps) {
+    const { filesMeta, currentBranch } = this.props
+
+    // reset highlighted item when switching branch or removing file
+    if ((currentBranch !== prevProps.currentBranch) || (prevProps.filesMeta && (prevProps.filesMeta.length > filesMeta.length))) {
+      this.setState({selectedItemIndex: null})
+    }
+  }
+
   navigate(i) {
     const { fetchFileContent, filesMeta, currentBranch } = this.props
 
@@ -62,6 +71,7 @@ export default class Navigation extends Component {
 
 function mapStateToProps(state) {
   return {
+    fileIndex: state.editor.get('targetFileIndex'),
     filesMeta: state.repo.get('filesMeta'),
     currentBranch: state.repo.get('currentBranch')
   }

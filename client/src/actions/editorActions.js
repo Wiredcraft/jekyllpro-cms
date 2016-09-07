@@ -17,7 +17,7 @@ export function fetchDefaultSchema(branch) {
     })
 
     let url = branch
-      ? `${API_BASE_URL}/api/repository?branch=${branch}&path=_schema/posts.json`
+      ? `${API_BASE_URL}/api/repository?ref=${branch}&path=_schema/posts.json`
       : `${API_BASE_URL}/api/repository?path=_schema/posts.json`
 
     request
@@ -39,7 +39,7 @@ export function fetchDefaultSchema(branch) {
 export function fetchFileContent(branch, path, index) {
   return dispatch => {
     request
-      .get(`${API_BASE_URL}/api/repository?branch=${branch}&path=${path}&raw=true`)
+      .get(`${API_BASE_URL}/api/repository?ref=${branch}&path=${path}&raw=true`)
       .withCredentials()
       .end((err, res) => {
         if (err) {
@@ -123,4 +123,14 @@ export function deleteFile(branch, path, index) {
       })
   }
 }
+
+export function cleanEditor() {
+  return dispatch => {
+    dispatch({
+      payload: { content: undefined, newFileMode: false, targetFileIndex: undefined },
+      type: CHANGE_EDITOR_STATE
+    })
+  }
+}
+
 
