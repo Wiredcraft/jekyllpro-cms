@@ -8,7 +8,7 @@ export const NEW_EMPTY_FILE = 'NEW_EMPTY_FILE'
 export const DELETE_EXISTING_FILE = 'DELETE_EXISTING_FILE'
 
 // TODO remove this hard coding, fetch config based on current selected collection
-export function fetchDefaultSchema() {
+export function fetchDefaultSchema(branch) {
   return dispatch => {
     // using local schema file for now
     return dispatch({
@@ -16,8 +16,12 @@ export function fetchDefaultSchema() {
       type: CHANGE_EDITOR_STATE      
     })
 
+    let url = branch
+      ? `${API_BASE_URL}/api/repository?branch=${branch}&path=_schema/posts.json`
+      : `${API_BASE_URL}/api/repository?path=_schema/posts.json`
+
     request
-      .get(`${API_BASE_URL}/api/repository?path=_schema/posts.json`)
+      .get(url)
       .withCredentials()
       .end((err, res) => {
         if (err) {
@@ -32,10 +36,10 @@ export function fetchDefaultSchema() {
   }
 }
 
-export function fetchFileContent(path, index) {
+export function fetchFileContent(branch, path, index) {
   return dispatch => {
     request
-      .get(`${API_BASE_URL}/api/repository?path=${path}&raw=true`)
+      .get(`${API_BASE_URL}/api/repository?branch=${branch}&path=${path}&raw=true`)
       .withCredentials()
       .end((err, res) => {
         if (err) {
@@ -50,11 +54,11 @@ export function fetchFileContent(path, index) {
   }
 }
 
-export function updateFile(path, content, index) {
+export function updateFile(branch, path, content, index) {
   return dispatch => {
     request
       .post(`${API_BASE_URL}/api/repository`)
-      .send({ path, content, message: `update ${path}` })
+      .send({ branch, path, content, message: `update ${path}` })
       .withCredentials()
       .end((err, res) => {
         if (err) {
@@ -77,12 +81,12 @@ export function createEmptyFile() {
   }
 }
 
-export function addNewFile(path, content, index) {
+export function addNewFile(branch, path, content, index) {
   
   return dispatch => {
     request
       .post(`${API_BASE_URL}/api/repository`)
-      .send({ path, content, message: `update ${path}` })
+      .send({ branch, path, content, message: `update ${path}` })
       .withCredentials()
       .end((err, res) => {
         if (err) {
@@ -101,11 +105,11 @@ export function addNewFile(path, content, index) {
   }
 }
 
-export function deleteFile(path, index) {
+export function deleteFile(branch, path, index) {
   return dispatch => {
     request
       .del(`${API_BASE_URL}/api/repository`)
-      .send({ path })
+      .send({ branch: branch, path: path })
       .withCredentials()
       .end((err, res) => {
         if (err) {

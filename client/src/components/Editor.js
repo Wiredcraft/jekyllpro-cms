@@ -58,7 +58,7 @@ export default class Editor extends Component {
 
   updateResult(data) {
     const formData = Object.assign({}, data)
-    const { content, fileIndex, filesMeta, schema, updateFile, newFileMode, addNewFile } = this.props
+    const { currentBranch, content, fileIndex, filesMeta, schema, updateFile, newFileMode, addNewFile } = this.props
     const filePath = this.refs.filePath.value
     if (!filePath) {
       console.error('no file path specified')
@@ -72,7 +72,7 @@ export default class Editor extends Component {
     if (newFileMode) {
       let newIndex = filesMeta.length
       markdownHeader = serializeObjtoYaml(formData)
-      addNewFile(filePath, markdownHeader + markdownText, newIndex )
+      addNewFile(currentBranch, filePath, markdownHeader + markdownText, newIndex )
     } else {
       let originalDocHeaderObj = parseYamlInsideMarkdown(content) || {}
 
@@ -86,7 +86,7 @@ export default class Editor extends Component {
         //TODO 
         // if file path changed, delete the old file first
       }
-      updateFile(filePath, markdownHeader + markdownText, fileIndex)
+      updateFile(currentBranch, filePath, markdownHeader + markdownText, fileIndex)
     }
 
   }
@@ -101,12 +101,12 @@ export default class Editor extends Component {
   }
 
   handleDeleteBtn() {
-    const { newFileMode, filesMeta, fileIndex, deleteFile } = this.props
+    const { currentBranch, newFileMode, filesMeta, fileIndex, deleteFile } = this.props
 
     if (newFileMode) {
       return
     }
-    deleteFile(filesMeta[fileIndex].path, fileIndex)
+    deleteFile(currentBranch, filesMeta[fileIndex].path, fileIndex)
   }
 
   render() {
@@ -190,6 +190,7 @@ export default class Editor extends Component {
 
 function mapStateToProps(state) {
   return {
+    currentBranch: state.repo.get('currentBranch'),
     content: state.editor.get('content'),
     filesMeta: state.repo.get('filesMeta'),
     fileIndex: state.editor.get('targetFileIndex'),

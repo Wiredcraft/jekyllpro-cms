@@ -1,8 +1,8 @@
 /* global API_BASE_URL */
 import request from 'superagent'
 
-import { fetchFilesMeta } from './repoActions'
-import { fetchDefaultSchema } from './editorActions'
+import { fetchRepoInfo } from './repoActions'
+// import { fetchDefaultSchema } from './editorActions'
 
 
 export const CHANGE_LOGIN_STATE = 'CHANGE_LOGIN_STATE'
@@ -17,12 +17,11 @@ export function confirmUserIsLogged() {
           console.error(err)
         } else {
           Promise.all([
-            dispatch(fetchDefaultSchema()),
-            dispatch(fetchFilesMeta()),
             dispatch({
               type: CHANGE_LOGIN_STATE,
               payload: { isLoggedIn: true }
-            })
+            }),
+            dispatch(fetchRepoInfo())
           ])
         }
       }

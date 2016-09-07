@@ -2,30 +2,37 @@
 import request from 'superagent'
 
 import { parseFilesMeta } from '../helpers/repo'
-
+import { fetchDefaultSchema } from './editorActions'
 
 export const CHANGE_REPO_STATE = 'CHANGE_REPO_STATE'
 export const FILE_REMOVED = 'FILE_REMOVED'
 export const FILE_ADDED = 'FILE_ADDED'
 
-export function fetchRepoRootInfo() {
+export function fetchRepoInfo() {
   return dispatch => {
     request
-      .get(`${API_BASE_URL}/api/repository`)
+      .get(`${API_BASE_URL}/api/repository/details`)
       .withCredentials()
       .end((err, res) => {
         if (err) {
           console.error(err)
         } else {
+          const default_branch = res.body.default_branch
+          dispatch({
+            payload: {currentBranch: default_branch},
+            type: CHANGE_REPO_STATE
+          })
         }
       })
   }
 }
 
-export function fetchFilesMeta() {
+export function fetchFilesMeta(branch) {
+  let url = branch ? `${API_BASE_URL}/api/repository?ref=${branch}&path=_posts` : `${API_BASE_URL}/api/repository?path=_posts`
+
   return dispatch => {
     request
-      .get(`${API_BASE_URL}/api/repository?path=_posts`)
+      .get(url)
       .withCredentials()
       .end((err, res) => {
         if (err) {
@@ -74,5 +81,18 @@ export function getAllBranch() {
           })
         }
       })
+  }
+}
+
+export function checkoutBranch(branch) {
+  return dispatch => {
+    Promise.all([
+      dispatch(fetchDefaultSchema(branch)),
+      dispatch(fetchFilesMeta(branch)),
+      dispatch({
+        payload: { currentBranch: branch },
+        type: CHANGE_REPO_STATE
+      })
+    ])
   }
 }

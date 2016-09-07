@@ -4,15 +4,17 @@ import { CHANGE_REPO_STATE, FILE_REMOVED, FILE_ADDED } from '../actions/repoActi
 
 const initialState = Immutable.fromJS({
   branches: undefined,
+  currentBranch: undefined,
   filesMeta: undefined
 })
 
 export default function repo (state = initialState, action) {
   switch (action.type) {
   case CHANGE_REPO_STATE:
-    const { branches, filesMeta } = action.payload
+    const { branches, filesMeta, currentBranch } = action.payload
     if(branches) state = state.set('branches', branches)
     if(filesMeta) state = state.set('filesMeta', filesMeta)
+    if(currentBranch) state = state.set('currentBranch', currentBranch)
     return state
   case FILE_REMOVED:
     const { fileIndex } = action.payload
