@@ -33,6 +33,8 @@ export default class Editor extends Component {
     const modeChanged = newFileMode !== prevProps.newFileMode
     if(modeChanged || schemaFetched || contentFetched || fileChanged) {
       this.updateEditorForm()
+      // clean previous inputed file path value
+      this.setState({newFilePath: null})
     }
   }
 
@@ -106,14 +108,18 @@ export default class Editor extends Component {
     deleteFile(currentBranch, filesMeta[fileIndex].path, fileIndex)
   }
 
+  handleFilePathInput(evt) {
+    this.setState({newFilePath: evt.target.value})
+  }
+
   render() {
     const { schema, content, newFileMode, filesMeta, fileIndex, editorUpdating } = this.props
-    const { filePathInputClass, formData } = this.state
+    const { filePathInputClass, formData, newFilePath } = this.state
     let currentFileName = newFileMode
       ? ('_posts/new-file' + Date.now() + '.md')
       : (filesMeta && filesMeta[fileIndex] && filesMeta[fileIndex].path)
 
-    // console.log(content)
+    console.log(currentFileName)
     return (
       <section id='content' className={editorUpdating ? 'spinning' : ''}>
         { schema && (newFileMode || content) && (
@@ -135,7 +141,8 @@ export default class Editor extends Component {
                 className={`${filePathInputClass}`}
                 type='text'
                 ref="filePath"
-                defaultValue={currentFileName}
+                value={newFilePath || currentFileName}
+                onChange={::this.handleFilePathInput}
                 placeholder='Filename' />
               <small className='description'>Filenames impact the generated URL.</small>
             </div>
