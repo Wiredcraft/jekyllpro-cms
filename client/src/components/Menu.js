@@ -16,7 +16,7 @@ export default class Menu extends Component {
   }
 
   render () {
-    const { branches, currentBranch } = this.props
+    const { branches, currentBranch, avatar, userName } = this.props
 
     return (
       <nav id="menu">
@@ -91,8 +91,9 @@ export default class Menu extends Component {
         </section>
 
         <footer className="footer">
-          <a>
-            Profile
+          <a onClick={evt => {this.setState({showProfileModel: true})}}>
+            <img src={avatar} />
+            {userName}
           </a>
           <a className="settings">
             <svg baseProfile="full" width="24" height="24" viewBox="0 0 24.00 24.00" enableBackground="new 0 0 24.00 24.00">
@@ -108,6 +109,8 @@ export default class Menu extends Component {
 
 function mapStateToProps(state) {
   return {
+    avatar: state.user.get('avatar'),
+    userName: state.user.get('userName'),
     branches: state.repo.get('branches'),
     currentBranch: state.repo.get('currentBranch')
   }

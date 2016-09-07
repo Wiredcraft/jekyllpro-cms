@@ -19,7 +19,7 @@ export function confirmUserIsLogged() {
           Promise.all([
             dispatch({
               type: CHANGE_LOGIN_STATE,
-              payload: { isLoggedIn: true }
+              payload: { isLoggedIn: true, userName: res.body.login, avatar: res.body.avatar_url }
             }),
             dispatch(fetchRepoInfo())
           ])
