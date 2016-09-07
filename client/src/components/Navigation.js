@@ -40,7 +40,7 @@ export default class Navigation extends Component {
   }
 
   render() {
-    const { filesMeta } = this.props
+    const { filesMeta, loading } = this.props
     const { selectedItemIndex } = this.state
 
     return (
@@ -51,9 +51,10 @@ export default class Navigation extends Component {
           </div>
           <input type='text' className='search' placeholder='Filter by name'/>
         </header>
-        <section className='body'>
+        <section className={`body ${loading ? 'spinning' : ''}`}>
+          {loading && <div>loadding</div>}
           {
-            filesMeta && filesMeta.map((d, i) => (
+            !loading && filesMeta && filesMeta.map((d, i) => (
               <a
                 className={selectedItemIndex === i ? 'active' : ''}
                 key={d.path}
@@ -71,7 +72,7 @@ export default class Navigation extends Component {
 
 function mapStateToProps(state) {
   return {
-    fileIndex: state.editor.get('targetFileIndex'),
+    loading: state.repo.get('loading'),
     filesMeta: state.repo.get('filesMeta'),
     currentBranch: state.repo.get('currentBranch')
   }

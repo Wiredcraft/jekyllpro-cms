@@ -6,6 +6,7 @@ const defaultSchema = require('../schema/posts.json')
 export const CHANGE_EDITOR_STATE = 'CHANGE_EDITOR_STATE'
 export const NEW_EMPTY_FILE = 'NEW_EMPTY_FILE'
 export const DELETE_EXISTING_FILE = 'DELETE_EXISTING_FILE'
+export const CLEAN_EDITOR = 'CLEAN_EDITOR'
 
 // TODO remove this hard coding, fetch config based on current selected collection
 export function fetchDefaultSchema(branch) {
@@ -38,15 +39,24 @@ export function fetchDefaultSchema(branch) {
 
 export function fetchFileContent(branch, path, index) {
   return dispatch => {
+    dispatch({
+      payload: { loading: true },
+      type: CHANGE_EDITOR_STATE
+    })
+
     request
       .get(`${API_BASE_URL}/api/repository?ref=${branch}&path=${path}&raw=true`)
       .withCredentials()
       .end((err, res) => {
         if (err) {
           console.error(err)
+          dispatch({
+            payload: { loading: false },
+            type: CHANGE_EDITOR_STATE
+          })
         } else {
           dispatch({
-            payload: { content: res.body, fileIndex: index },
+            payload: { content: res.body, fileIndex: index, loading: false },
             type: CHANGE_EDITOR_STATE
           })
         }
@@ -56,6 +66,11 @@ export function fetchFileContent(branch, path, index) {
 
 export function updateFile(branch, path, content, index) {
   return dispatch => {
+    dispatch({
+      payload: { loading: true },
+      type: CHANGE_EDITOR_STATE
+    })
+
     request
       .post(`${API_BASE_URL}/api/repository`)
       .send({ branch, path, content, message: `update ${path}` })
@@ -63,9 +78,13 @@ export function updateFile(branch, path, content, index) {
       .end((err, res) => {
         if (err) {
           console.error(err)
+          dispatch({
+            payload: { loading: false },
+            type: CHANGE_EDITOR_STATE
+          })
         } else {
           dispatch({
-            payload: { content: content, fileIndex: index },
+            payload: { content: content, fileIndex: index, loading: false },
             type: CHANGE_EDITOR_STATE
           })
         }
@@ -82,8 +101,12 @@ export function createEmptyFile() {
 }
 
 export function addNewFile(branch, path, content, index) {
-  
   return dispatch => {
+    dispatch({
+      payload: { loading: true },
+      type: CHANGE_EDITOR_STATE
+    })
+
     request
       .post(`${API_BASE_URL}/api/repository`)
       .send({ branch, path, content, message: `update ${path}` })
@@ -91,11 +114,15 @@ export function addNewFile(branch, path, content, index) {
       .end((err, res) => {
         if (err) {
           console.error(err)
+          dispatch({
+            payload: { loading: false },
+            type: CHANGE_EDITOR_STATE
+          })
         } else {
           let newFilename = res.body.content.name
           return Promise.all([
             dispatch({
-              payload: { content: content, fileIndex: index },
+              payload: { content: content, fileIndex: index, loading: false },
               type: CHANGE_EDITOR_STATE
             }),
             dispatch(fileAdded(newFilename, path))
@@ -127,8 +154,7 @@ export function deleteFile(branch, path, index) {
 export function cleanEditor() {
   return dispatch => {
     dispatch({
-      payload: { content: undefined, newFileMode: false, targetFileIndex: undefined },
-      type: CHANGE_EDITOR_STATE
+      type: CLEAN_EDITOR
     })
   }
 }

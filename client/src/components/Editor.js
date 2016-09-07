@@ -16,14 +16,12 @@ export default class Editor extends Component {
     super()
     this.state = {
       filePathInputClass: '',
-      formData: {},
-      resultMarkdown: '',
-      targetContent: ''
+      formData: {}
     }
   }
 
   componentDidMount() {
-    this.updateEditFrom()
+    this.updateEditorForm()
   }
 
   componentDidUpdate(prevProps) {
@@ -34,11 +32,11 @@ export default class Editor extends Component {
     const fileChanged = fileIndex !== prevProps.fileIndex
     const modeChanged = newFileMode !== prevProps.newFileMode
     if(modeChanged || schemaFetched || contentFetched || fileChanged) {
-      this.updateEditFrom()
+      this.updateEditorForm()
     }
   }
 
-  updateEditFrom() {
+  updateEditorForm() {
     const { content, schema } = this.props
     if(!content) return
     const docConfigObj = parseYamlInsideMarkdown(content)
@@ -51,9 +49,8 @@ export default class Editor extends Component {
       })      
     }
 
-    const targetContent = retriveContent(content)
-    formData.body = targetContent
-    this.setState({ formData, targetContent })
+    formData.body = retriveContent(content)
+    this.setState({ formData })
   }
 
   updateResult(data) {
@@ -110,14 +107,15 @@ export default class Editor extends Component {
   }
 
   render() {
-    const { schema, content, newFileMode, filesMeta, fileIndex } = this.props
-    const { filePathInputClass, resultMarkdown, formData } = this.state
+    const { schema, content, newFileMode, filesMeta, fileIndex, editorUpdating } = this.props
+    const { filePathInputClass, formData } = this.state
     let currentFileName = newFileMode
       ? ('_posts/new-file' + Date.now() + '.md')
       : (filesMeta && filesMeta[fileIndex] && filesMeta[fileIndex].path)
 
+    // console.log(content)
     return (
-      <section id='content'>
+      <section id='content' className={editorUpdating ? 'spinning' : ''}>
         { schema && (newFileMode || content) && (
           <header className='sidebar'>
             <div className='field language'>
@@ -177,10 +175,6 @@ export default class Editor extends Component {
                 Submit
               </button>
             </Form>
-            <div style={{ display: 'none' }}>
-              <h3>Result</h3>
-              <textarea value={resultMarkdown} />
-            </div>
           </div>
         )}
       </section>
@@ -195,7 +189,8 @@ function mapStateToProps(state) {
     filesMeta: state.repo.get('filesMeta'),
     fileIndex: state.editor.get('targetFileIndex'),
     schema: state.editor.get('schema'),
-    newFileMode: state.editor.get('newFileMode')
+    newFileMode: state.editor.get('newFileMode'),
+    editorUpdating: state.editor.get('loading')
   }
 }
 

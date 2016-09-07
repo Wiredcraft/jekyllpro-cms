@@ -31,16 +31,25 @@ export function fetchFilesMeta(branch) {
   let url = branch ? `${API_BASE_URL}/api/repository?ref=${branch}&path=_posts` : `${API_BASE_URL}/api/repository?path=_posts`
 
   return dispatch => {
+    dispatch({
+      payload: { loading: true },
+      type: CHANGE_REPO_STATE
+    })
+
     request
       .get(url)
       .withCredentials()
       .end((err, res) => {
         if (err) {
           console.error(err)
+          dispatch({
+            payload: { loading: false },
+            type: CHANGE_REPO_STATE
+          })
         } else {
           const filesMeta = parseFilesMeta(res.body)
           dispatch({
-            payload: { filesMeta },
+            payload: { filesMeta, loading: false },
             type: CHANGE_REPO_STATE
           })
         }
@@ -68,15 +77,24 @@ export function fileAdded(name, path) {
 
 export function getAllBranch() {
   return dispatch => {
+    dispatch({
+      payload: { loading: true },
+      type: CHANGE_REPO_STATE
+    })
+
     request
       .get(`${API_BASE_URL}/api/repository/branch`)
       .withCredentials()
       .end((err, res) => {
         if (err) {
           console.error(err)
+          dispatch({
+            payload: { loading: false },
+            type: CHANGE_REPO_STATE
+          })
         } else {
           dispatch({
-            payload: { branches: res.body },
+            payload: { branches: res.body, loading: false },
             type: CHANGE_REPO_STATE
           })
         }
