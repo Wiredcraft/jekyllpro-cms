@@ -15,6 +15,10 @@ $headline: 'Circular', -apple-system, 'Avenir next', Avenir, Roboto, Noto, 'Helv
 
 /* Custom */
 
+@function grayscale($value) {
+  @return #{ "grayscale(" + $value + ")" };
+}
+
 $width: 1080px;
 
 body {
@@ -148,10 +152,50 @@ $narrow: 600px;
       color: $grey;
       @include font-size($smaller);
     }
-    &.usage {
+    &.users {
       background: $background;
-      h2 {
-        border-color:#FFF;
+      padding-bottom: 0;
+      .body {
+        @include clearfix;
+        ul,
+        li {
+          list-style: none;
+          margin: 0;
+          padding: 0;
+        }
+        ul {
+          float: left;
+          width: 50%;
+        }
+        li {
+          box-sizing: border-box;
+          float: left;
+          padding: $space;
+          text-align: center;
+          width: 33.33%;
+          img {
+            @include filter(grayscale(100%));
+            display: block;
+            height: 1.5*$space;
+            margin: 0 auto;
+            opacity: 0.8;
+          }
+          &.active {
+            img {
+              @include filter(grayscale(0%));
+              opacity: 1;
+            }
+          }
+        }
+        .preview {
+          box-sizing: border-box;
+          float: right;
+          padding: 0 $space/2;
+          width: 50%;
+          img {
+            display: block;
+          }
+        }
       }
     }
     &.pricing {
@@ -185,6 +229,28 @@ $narrow: 600px;
           width: 100%;
         }
       }
+    }
+  }
+}
+
+#footer {
+  background: $light;
+  color: $grey;
+  @include font-size($smaller);
+  padding: $space 0;
+  text-align: left;
+  a {
+    color: inherit;
+    text-decoration: underline;
+    &:hover {
+      color: $black;
+      text-decoration: none;
+    }
+  }
+  .links {
+    float: right;
+    a {
+      margin-left: $space;
     }
   }
 }
