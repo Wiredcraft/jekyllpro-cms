@@ -155,6 +155,9 @@ $narrow: 600px;
     &.users {
       background: $background;
       padding-bottom: 0;
+      .header {
+        margin-bottom: 2*$space;
+      }
       .body {
         @include clearfix;
         ul,
@@ -190,12 +193,32 @@ $narrow: 600px;
         .preview {
           box-sizing: border-box;
           float: right;
+          overflow: hidden;
           padding: 0 $space/2;
+          position: relative;
           width: 50%;
           img {
+            bottom: -$space;
+            box-shadow: 0 0 10px rgba(0,0,0,0.4);
             display: block;
           }
         }
+      }
+    }
+    &.features {
+      ul,
+      li {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+      }
+      ul {
+        @include clearfix;
+      }
+      li {
+        float: left;
+        text-align: center;
+        width: 33.33%
       }
     }
     &.pricing {
