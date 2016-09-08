@@ -3,8 +3,8 @@
 @import '_variables'; // Variables (colors, layout, spacing & typography)
 
 /* Custom font for headlines */
-// @import 'partials/_font';
-// @include font('Circular', 'assets/fonts/Circular-Black', bold);
+@import 'partials/_font';
+@include font('Circular', 'assets/fonts/Circular-Black', 900);
 $headline: 'Circular', -apple-system, 'Avenir next', Avenir, Roboto, Noto, 'Helvetica neue', Helvetica, Arial, Sans-serif;
 
 @import '_defaults'; // Styling defaults
@@ -237,6 +237,24 @@ $narrow: 600px;
         padding: $space/2;
         text-align: left;
         width: 33.33%;
+        h3 {
+          margin-bottom: $space/2;
+        }
+        &.soon {
+          h3 {
+            &:after {
+              background: $green;
+              border-radius: $radius;
+              color: #FFF;
+              content: 'Soon';
+              font-family: $body;
+              @include font-size($small);
+              margin-left: $space/4;
+              padding: $space/12 $space/6;
+              vertical-align: text-bottom;
+            }
+          }
+        }
       }
     }
     &.pricing {
