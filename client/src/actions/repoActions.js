@@ -27,14 +27,15 @@ export function fetchRepoInfo() {
   }
 }
 
-export function fetchFilesMeta(branch) {
-  let url = branch ? `${API_BASE_URL}/api/repository?ref=${branch}&path=_posts` : `${API_BASE_URL}/api/repository?path=_posts`
+export function fetchFilesMeta(branch, path) {
+  let url = branch ? `${API_BASE_URL}/api/repository?ref=${branch}&path=${path}` : `${API_BASE_URL}/api/repository?path=${path}`
 
   return dispatch => {
     dispatch({
       payload: { loading: true },
       type: CHANGE_REPO_STATE
     })
+    dispatch(cleanEditor())
 
     request
       .get(url)
@@ -43,13 +44,13 @@ export function fetchFilesMeta(branch) {
         if (err) {
           console.error(err)
           dispatch({
-            payload: { loading: false },
+            payload: { loading: false, filesMeta: [], selectedFolder: path },
             type: CHANGE_REPO_STATE
           })
         } else {
           const filesMeta = parseFilesMeta(res.body)
           dispatch({
-            payload: { filesMeta, loading: false },
+            payload: { filesMeta, loading: false, selectedFolder: path },
             type: CHANGE_REPO_STATE
           })
         }
@@ -113,5 +114,36 @@ export function checkoutBranch(branch) {
       }),
       dispatch(cleanEditor())
     ])
+  }
+}
+
+export function fetchBranchSchema(branch) {
+  return dispatch => {
+    dispatch({
+      payload: { loading: true },
+      type: CHANGE_REPO_STATE
+    })
+
+    let url = branch
+      ? `${API_BASE_URL}/api/repository/schema?ref=${branch}`
+      : `${API_BASE_URL}/api/repository/schema`
+
+    request
+      .get(url)
+      .withCredentials()
+      .end((err, res) => {
+        if (err) {
+          console.error(err)
+          dispatch({
+            payload: { loading: false },
+            type: CHANGE_REPO_STATE
+          })
+        } else {
+          dispatch({
+            payload: { schema: res.body, loading: false },
+            type: CHANGE_REPO_STATE
+          })
+        }
+      })
   }
 }

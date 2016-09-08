@@ -9,6 +9,8 @@ import { updateFile, deleteFile, addNewFile } from '../actions/editorActions'
 import DeleteIcon from './svg/DeleteIcon'
 import customWidgets from './Editor/CustomWidgets'
 
+const defaultSchema = require('../schema/posts.json')
+
 // TODO: remove linePattern
 @connect(mapStateToProps, mapDispatchToProps)
 export default class Editor extends Component {
@@ -16,36 +18,56 @@ export default class Editor extends Component {
     super()
     this.state = {
       filePathInputClass: '',
-      formData: {}
+      formData: {},
+      currentSchema: null
     }
   }
 
   componentDidMount() {
-    this.updateEditorForm()
+    // this.updateEditorForm()
+    // this.getCurrentSchema()
+
   }
 
   componentDidUpdate(prevProps) {
-    const { content, fileIndex, schema, newFileMode } = this.props
+    const { content, fileIndex, schema, newFileMode, selectedFolder } = this.props
 
     const schemaFetched = schema !== prevProps.schema
     const contentFetched = content !== prevProps.content
     const fileChanged = fileIndex !== prevProps.fileIndex
     const modeChanged = newFileMode !== prevProps.newFileMode
+    const folderChanged = selectedFolder !== prevProps.selectedFolder
     if(modeChanged || schemaFetched || contentFetched || fileChanged) {
       this.updateEditorForm()
       // clean previous inputed file path value
       this.setState({newFilePath: null})
     }
+    if (schemaFetched || folderChanged) {
+      this.getCurrentSchema()
+    }
+  }
+
+  getCurrentSchema() {
+    const { schema, selectedFolder } = this.props
+    if (schema && selectedFolder) {
+      let s = schema.find(item => {
+          return item.data.jekyll.dir === selectedFolder
+        }) || {}
+      return this.setState({currentSchema: s.data})
+    }
+    // using locally defined schema
+    this.setState({ currentSchema: defaultSchema )})
   }
 
   updateEditorForm() {
-    const { content, schema } = this.props
+    const { content } = this.props
+    const { currentSchema } = this.state
     if(!content) return
     const docConfigObj = parseYamlInsideMarkdown(content)
     let formData = {}
 
     if(docConfigObj) {
-      const schemaObj = schema.JSONSchema.properties
+      const schemaObj = currentSchema.JSONSchema.properties
       Object.keys(schemaObj).forEach((prop) => {
         formData[prop] = docConfigObj[prop]
       })      
@@ -57,7 +79,7 @@ export default class Editor extends Component {
 
   updateResult(data) {
     const formData = Object.assign({}, data)
-    const { currentBranch, content, fileIndex, filesMeta, schema, updateFile, newFileMode, addNewFile } = this.props
+    const { currentBranch, content, fileIndex, filesMeta, updateFile, newFileMode, addNewFile } = this.props
     const filePath = this.refs.filePath.value
     if (!filePath) {
       console.error('no file path specified')
@@ -113,16 +135,15 @@ export default class Editor extends Component {
   }
 
   render() {
-    const { schema, content, newFileMode, filesMeta, fileIndex, editorUpdating } = this.props
-    const { filePathInputClass, formData, newFilePath } = this.state
-    let currentFileName = newFileMode
-      ? ('_posts/new-file' + Date.now() + '.md')
+    const { content, newFileMode, filesMeta, fileIndex, editorUpdating, selectedFolder } = this.props
+    const { filePathInputClass, formData, newFilePath, currentSchema } = this.state
+    let currentFileName = newFileMode && selectedFolder
+      ? (selectedFolder + '/new-file' + Date.now() + '.md')
       : (filesMeta && filesMeta[fileIndex] && filesMeta[fileIndex].path)
 
-    console.log(currentFileName)
     return (
       <section id='content' className={editorUpdating ? 'spinning' : ''}>
-        { schema && (newFileMode || content) && (
+        { currentSchema && (newFileMode || content) && (
           <header className='sidebar'>
             <div className='field language'>
               <label>Language</label>
@@ -167,12 +188,12 @@ export default class Editor extends Component {
               onClick={::this.handleDeleteBtn} />
           </header>
         )}
-        { schema && (newFileMode || content) && (
+        { currentSchema && (newFileMode || content) && (
           <div className='body'>
             <Form
               onSubmit={res => this.updateResult(res.formData)}
-              schema={schema.JSONSchema}
-              uiSchema={schema.uiSchema}
+              schema={currentSchema.JSONSchema}
+              uiSchema={currentSchema.uiSchema}
               widgets={customWidgets}
               formData={newFileMode ? {} : formData}>
               <button
@@ -192,10 +213,11 @@ export default class Editor extends Component {
 function mapStateToProps(state) {
   return {
     currentBranch: state.repo.get('currentBranch'),
-    content: state.editor.get('content'),
+    selectedFolder: state.repo.get('selectedFolder'),
+    schema: state.repo.get('schema'),
     filesMeta: state.repo.get('filesMeta'),
+    content: state.editor.get('content'),
     fileIndex: state.editor.get('targetFileIndex'),
-    schema: state.editor.get('schema'),
     newFileMode: state.editor.get('newFileMode'),
     editorUpdating: state.editor.get('loading')
   }

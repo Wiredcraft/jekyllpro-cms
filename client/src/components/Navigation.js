@@ -2,7 +2,7 @@ import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import React, { Component } from 'react'
 
-import { fetchDefaultSchema, fetchFileContent, createEmptyFile } from '../actions/editorActions'
+import { fetchFileContent, createEmptyFile } from '../actions/editorActions'
 import { fetchFilesMeta } from '../actions/repoActions'
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -10,12 +10,6 @@ export default class Navigation extends Component {
   constructor() {
     super()
     this.state = { selectedItemIndex: undefined }
-  }
-
-  componentWillMount() {
-    const { fetchDefaultSchema, fetchFilesMeta, currentBranch } = this.props
-    fetchDefaultSchema(currentBranch)
-    fetchFilesMeta(currentBranch)
   }
 
   componentDidUpdate(prevProps) {
@@ -79,5 +73,5 @@ function mapStateToProps(state) {
 }
 
 function mapDispatchToProps (dispatch) {
-  return bindActionCreators({ fetchDefaultSchema, fetchFileContent, createEmptyFile, fetchFilesMeta }, dispatch)
+  return bindActionCreators({ fetchFileContent, createEmptyFile, fetchFilesMeta }, dispatch)
 }

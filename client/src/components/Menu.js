@@ -2,41 +2,18 @@ import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import React, { Component } from 'react'
 
-import { getAllBranch, checkoutBranch } from '../actions/repoActions'
+import { getAllBranch, checkoutBranch, fetchFilesMeta } from '../actions/repoActions'
+import { parseFolderFromSchema, getDefaultFolderStructure } from '../helpers/repo'
 import CollectionIcon from './svg/CollectionIcon'
 import PageIcon from './svg/PageIcon'
 import LayoutIcon from './svg/LayoutIcon'
 
-const posts = require('../schema/posts.json')
-const team = require('../schema/team.json')
-const pages = require('../schema/pages.json')
-const layouts = require('../schema/layouts.json')
-//Hard coded folder data
-function getFolderStructure() {
-  let project = {'collection': [], 'content': [], 'others': []};
-  
-  [posts, team, pages, layouts].forEach((item) => {
-    let temp = { title: item.title, dir: item.jekyll.dir }
-    if (item.jekyll.type) {
-      switch (item.jekyll.type) {
-        case 'collection':
-          project['collection'].push(temp)
-          break;
-        case 'content':
-          project['content'].push(temp)
-          break;
-        default:
-          project['others'].push(temp)
-      }
-    } else {
-      project['others'].push(temp)
-    }
-  })
-  return project
-}
-
 @connect(mapStateToProps, mapDispatchToProps)
 export default class Menu extends Component {
+  constructor() {
+    super()
+    this.state = { selectedItem: '' }
+  }
 
   componentWillMount() {
     this.props.getAllBranch()
@@ -46,28 +23,42 @@ export default class Menu extends Component {
     this.props.checkoutBranch(evt.target.value)
   }
 
+  handleMenuItem(dir) {
+    const {currentBranch, fetchFilesMeta} = this.props
+    fetchFilesMeta(currentBranch, dir)
+
+    this.setState({ selectedItem: dir})
+  }
+
   render () {
-    const { branches, currentBranch, avatar, userName } = this.props
-    const project = getFolderStructure()
-    // console.log(team)
+    const { branches, currentBranch, avatar, userName, repoLoading, schema } = this.props
+    const { selectedItem } = this.state
+
+    let collections = schema ? parseFolderFromSchema(schema, 'collection') : getDefaultFolderStructure()['collection']
+    let content = schema ? parseFolderFromSchema(schema, 'content') : getDefaultFolderStructure()['content']
+    let others = schema ? parseFolderFromSchema(schema, 'others') : getDefaultFolderStructure()['others']
+
     return (
-      <nav id="menu">
+      <nav id="menu" className={repoLoading? 'spinning' : ''}>
         <section className="body">
           <h3>Branch</h3>
-          <span className="select">
-            <select value={currentBranch} onChange={::this.handleBranchChange}>
-              {branches && branches.map((b) => {
-                return (
-                  <option key={b.name}>{ b.name }</option>
-                )
-              })}
-            </select>
-          </span>
+          { branches && (<span className="select">
+              <select value={currentBranch} onChange={::this.handleBranchChange}>
+                {branches && branches.map((b) => {
+                  return (
+                    <option key={b.name}>{ b.name }</option>
+                  )
+                })}
+              </select>
+            </span>)
+          }
           <h3>Collections</h3>
           {
-            project['collection'].map(item => {
+            collections && collections.map((item, idx) => {
               return(
-                <a key={item.dir}>
+                <a key={item.dir}
+                  className={ selectedItem === item.dir ? 'active' : ''}
+                  onClick={this.handleMenuItem.bind(this, item.dir)}>
                   <CollectionIcon />
                   {item.title}
                 </a>
@@ -76,9 +67,11 @@ export default class Menu extends Component {
           }
           <h3>Content</h3>
           {
-            project['content'].map(item => {
+            content && content.map(item => {
               return(
-                <a key={item.dir}>
+                <a key={item.dir}
+                  className={ selectedItem === item.dir ? 'active' : ''}
+                  onClick={this.handleMenuItem.bind(this, item.dir)}>
                   <PageIcon />
                   {item.title}
                 </a>
@@ -87,9 +80,11 @@ export default class Menu extends Component {
           }
           <h3>Others</h3>
           {
-            project['others'].map(item => {
+            others && others.map(item => {
               return(
-                <a key={item.dir}>
+                <a key={item.dir}
+                  className={ selectedItem === item.dir ? 'active' : ''}
+                  onClick={this.handleMenuItem.bind(this, item.dir)}>
                   <LayoutIcon />
                   {item.title}
                 </a>
@@ -117,13 +112,15 @@ export default class Menu extends Component {
 
 function mapStateToProps(state) {
   return {
+    repoLoading: state.repo.get('loading'),
     avatar: state.user.get('avatar'),
     userName: state.user.get('userName'),
     branches: state.repo.get('branches'),
-    currentBranch: state.repo.get('currentBranch')
+    currentBranch: state.repo.get('currentBranch'),
+    schema: state.repo.get('schema')
   }
 }
 
 function mapDispatchToProps (dispatch) {
-  return bindActionCreators({ getAllBranch, checkoutBranch }, dispatch)
+  return bindActionCreators({ getAllBranch, checkoutBranch, fetchFilesMeta }, dispatch)
 }

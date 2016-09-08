@@ -1,7 +1,7 @@
 /* global API_BASE_URL */
 import request from 'superagent'
 
-import { fetchRepoInfo } from './repoActions'
+import { fetchRepoInfo, fetchBranchSchema } from './repoActions'
 // import { fetchDefaultSchema } from './editorActions'
 
 
@@ -21,7 +21,8 @@ export function confirmUserIsLogged() {
               type: CHANGE_LOGIN_STATE,
               payload: { isLoggedIn: true, userName: res.body.login, avatar: res.body.avatar_url }
             }),
-            dispatch(fetchRepoInfo())
+            dispatch(fetchRepoInfo()),
+            dispatch(fetchBranchSchema())
           ])
         }
       }
