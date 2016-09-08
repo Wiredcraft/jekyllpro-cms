@@ -3,16 +3,8 @@
 /* Colors from http://clrs.cc/ */
 /* Sizes */
 /* Fonts */
-@import 'https://fonts.googleapis.com/css?family=Roboto';
 /* Misc */
 /* Custom font for headlines */
-@font-face {
-  font-family: "Circular";
-  src: url("assets/fonts/Circular-Black.eot");
-  src: url("assets/fonts/Circular-Black.eot?#iefix") format("embedded-opentype"), url("assets/fonts/Circular-Black.woff") format("woff"), url("assets/fonts/Circular-Black.ttf") format("truetype"), url("assets/fonts/Circular-Black.svg#Icons") format("svg");
-  font-weight: bold;
-  font-style: normal; }
-
 /* 3rd parties */
 /*! normalize.css v3.0.2 | MIT License | git.io/normalize */
 /**
@@ -1070,6 +1062,14 @@ body {
   background: #FFF;
   text-align: center; }
 
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: 900; }
+
 .button {
   font-family: "Circular", -apple-system, "Avenir next", Avenir, Roboto, Noto, "Helvetica neue", Helvetica, Arial, Sans-serif; }
 
@@ -1094,7 +1094,9 @@ body {
       font-family: 'Circular';
       font-size: 24px;
       font-size: 2.4rem;
-      font-weight: 700; }
+      font-weight: 900; }
+      #header .header .logo:hover {
+        text-decoration: none; }
     #header .header .links {
       float: right; }
       #header .header .links a {
@@ -1168,7 +1170,7 @@ body {
 
 #content strong {
   font-family: "Circular", -apple-system, "Avenir next", Avenir, Roboto, Noto, "Helvetica neue", Helvetica, Arial, Sans-serif;
-  font-weight: bold; }
+  font-weight: 900; }
 
 #content .section {
   padding: 48px 0; }
@@ -1233,19 +1235,25 @@ body {
         bottom: -24px;
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
         display: block; }
-  #content .section.features ul,
-  #content .section.features li {
-    list-style: none;
-    margin: 0;
-    padding: 0; }
-  #content .section.features ul::after {
-    clear: both;
-    content: "";
-    display: table; }
-  #content .section.features li {
-    float: left;
-    text-align: center;
-    width: 33.33%; }
+  #content .section.features {
+    border-bottom: 1px solid #DDDDDD; }
+    #content .section.features .header {
+      margin-bottom: 48px; }
+    #content .section.features ul,
+    #content .section.features li {
+      list-style: none;
+      margin: 0;
+      padding: 0; }
+    #content .section.features ul::after {
+      clear: both;
+      content: "";
+      display: table; }
+    #content .section.features li {
+      box-sizing: border-box;
+      float: left;
+      padding: 12px;
+      text-align: left;
+      width: 33.33%; }
   #content .section.pricing .body {
     margin: 0 auto;
     max-width: 840px;

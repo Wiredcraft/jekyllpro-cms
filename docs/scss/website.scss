@@ -3,8 +3,8 @@
 @import '_variables'; // Variables (colors, layout, spacing & typography)
 
 /* Custom font for headlines */
-@import 'partials/_font';
-@include font('Circular', 'assets/fonts/Circular-Black', bold);
+// @import 'partials/_font';
+// @include font('Circular', 'assets/fonts/Circular-Black', bold);
 $headline: 'Circular', -apple-system, 'Avenir next', Avenir, Roboto, Noto, 'Helvetica neue', Helvetica, Arial, Sans-serif;
 
 @import '_defaults'; // Styling defaults
@@ -24,6 +24,15 @@ $width: 1080px;
 body {
   background: #FFF;
   text-align: center;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: 900;
 }
 
 .button {
@@ -48,7 +57,10 @@ body {
       float: left;
       font-family: 'Circular';
       @include font-size($large);
-      font-weight: 700;
+      font-weight: 900;
+      &:hover {
+        text-decoration: none;
+      }
     }
     .links {
       float: right;
@@ -129,7 +141,7 @@ $narrow: 600px;
 #content {
   strong {
     font-family: $headline;
-    font-weight: bold;
+    font-weight: 900;
   }
   .section {
     padding: 2*$space 0;
@@ -206,6 +218,10 @@ $narrow: 600px;
       }
     }
     &.features {
+      border-bottom: 1px solid $line;
+      .header {
+        margin-bottom: 2*$space;
+      }
       ul,
       li {
         list-style: none;
@@ -216,9 +232,11 @@ $narrow: 600px;
         @include clearfix;
       }
       li {
+        box-sizing: border-box;
         float: left;
-        text-align: center;
-        width: 33.33%
+        padding: $space/2;
+        text-align: left;
+        width: 33.33%;
       }
     }
     &.pricing {
