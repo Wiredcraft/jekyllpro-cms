@@ -141,6 +141,10 @@ const initRoutes = (app) => {
   .all(users.requireAuthentication, repository.requireGithubAPI)
   .get(repository.listBranches)
   .post(repository.createBranches)
+
+  app.route('/api/repository/schema')
+  .all(users.requireAuthentication, repository.requireGithubAPI)
+  .get(repository.getBranchSchema)
 }
 
 const initErrorHandler = (app) => {

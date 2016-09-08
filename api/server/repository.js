@@ -130,12 +130,46 @@ const createBranches = (req, res, next) => {
   })
 }
 
+const getBranchSchema = (req, res, next) => {
+  var repo = req.githubRepo
+  var { ref, path} = req.query
+  path = path || '_schema'
+
+  repo.getContents(ref, path)
+  .then((data) => {
+    let schemaFiles = data.data.filter((item) => {
+      // filter out folder files
+      return item.type === 'file'
+    })
+    .map((item) => {
+      return repo.getContents(ref, item.path, true)
+        .then((data) => {
+          return {name: item.name, data: data.data}
+        })
+    })
+
+    return Promise.all(schemaFiles)
+      .then((results) => {
+        res.status(200).json(results)
+      })
+
+  })
+  .catch((err) => {
+    console.log(err)
+    if (err.status === 404) {
+      return res.status(404).json(err.response.data)
+    }
+    res.status(400).json({message: 'something wrong'})
+  })
+}
+
 export default {
   requireGithubAPI,
   getRepoDetails,
   getRepoContent,
   listBranches,
   createBranches,
+  getBranchSchema,
   writeRepoFile,
   deleteRepoFile
 }
