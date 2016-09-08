@@ -56,7 +56,7 @@ export default class Editor extends Component {
       return this.setState({currentSchema: s.data})
     }
     // using locally defined schema
-    this.setState({ currentSchema: defaultSchema )})
+    this.setState({ currentSchema: defaultSchema })
   }
 
   updateEditorForm() {
