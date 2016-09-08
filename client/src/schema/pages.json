@@ -1,9 +1,9 @@
 { 
-  "title": "Blog post",
+  "title": "Pages",
   "jekyll": {
-    "type": "collection",
-    "id": "posts",
-    "dir": "_posts"
+    "type": "content",
+    "id": "pages",
+    "dir": "_pages"
   },
   "JSONSchema": {
     "type": "object",

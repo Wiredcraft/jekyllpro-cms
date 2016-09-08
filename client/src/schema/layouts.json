@@ -1,9 +1,9 @@
 { 
-  "title": "Blog post",
+  "title": "Layouts",
   "jekyll": {
-    "type": "collection",
-    "id": "posts",
-    "dir": "_posts"
+    "type": "others",
+    "id": "layouts",
+    "dir": "_layouts"
   },
   "JSONSchema": {
     "type": "object",
