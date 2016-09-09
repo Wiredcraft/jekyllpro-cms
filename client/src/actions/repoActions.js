@@ -106,8 +106,7 @@ export function getAllBranch() {
 export function checkoutBranch(branch) {
   return dispatch => {
     Promise.all([
-      dispatch(fetchDefaultSchema(branch)),
-      dispatch(fetchFilesMeta(branch)),
+      dispatch(fetchBranchSchema(branch)),
       dispatch({
         payload: { currentBranch: branch },
         type: CHANGE_REPO_STATE

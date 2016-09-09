@@ -1,41 +1,11 @@
 /* global API_BASE_URL */
 import request from 'superagent'
 import { fileRemoved, fileAdded } from './repoActions'
-// const defaultSchema = require('../schema/posts.json')
 
 export const CHANGE_EDITOR_STATE = 'CHANGE_EDITOR_STATE'
 export const NEW_EMPTY_FILE = 'NEW_EMPTY_FILE'
 export const DELETE_EXISTING_FILE = 'DELETE_EXISTING_FILE'
 export const CLEAN_EDITOR = 'CLEAN_EDITOR'
-
-
-// export function fetchDefaultSchema(branch) {
-//   return dispatch => {
-//     // using local schema file for now
-//     return dispatch({
-//       payload: { schema: defaultSchema },
-//       type: CHANGE_EDITOR_STATE      
-//     })
-
-//     let url = branch
-//       ? `${API_BASE_URL}/api/repository?ref=${branch}&path=_schema/posts.json`
-//       : `${API_BASE_URL}/api/repository?path=_schema/posts.json`
-
-//     request
-//       .get(url)
-//       .withCredentials()
-//       .end((err, res) => {
-//         if (err) {
-//           console.error(err)
-//         } else {
-//           dispatch({
-//             payload: { schema: JSON.parse(atob(res.body.content)) },
-//             type: CHANGE_EDITOR_STATE
-//           })
-//         }
-//       })
-//   }
-// }
 
 export function fetchFileContent(branch, path, index) {
   return dispatch => {

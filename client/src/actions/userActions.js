@@ -2,8 +2,6 @@
 import request from 'superagent'
 
 import { fetchRepoInfo, fetchBranchSchema } from './repoActions'
-// import { fetchDefaultSchema } from './editorActions'
-
 
 export const CHANGE_LOGIN_STATE = 'CHANGE_LOGIN_STATE'
 
