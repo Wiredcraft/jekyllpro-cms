@@ -1086,6 +1086,10 @@ h6 {
   max-width: 1080px;
   width: 90%; }
 
+strong {
+  font-family: "Circular", -apple-system, "Avenir next", Avenir, Roboto, Noto, "Helvetica neue", Helvetica, Arial, Sans-serif;
+  font-weight: 900; }
+
 #header {
   background-image: -webkit-linear-gradient(#3660d7, #0A93FF);
   background-image: linear-gradient(#3660d7, #0A93FF); }
@@ -1175,10 +1179,6 @@ h6 {
       margin: 0 auto;
       position: relative;
       width: 50%; }
-
-#content strong {
-  font-family: "Circular", -apple-system, "Avenir next", Avenir, Roboto, Noto, "Helvetica neue", Helvetica, Arial, Sans-serif;
-  font-weight: 900; }
 
 #content .section {
   padding: 48px 0; }

@@ -45,6 +45,11 @@ h6 {
   width: 90%;
 }
 
+strong {
+  font-family: $headline;
+  font-weight: 900;
+}
+
 #header {
   @include background-image(linear-gradient(shade(mix($blue, $purple, 70%), 10%), $blue));
   .header {
@@ -139,10 +144,6 @@ h6 {
 $narrow: 600px;
 
 #content {
-  strong {
-    font-family: $headline;
-    font-weight: 900;
-  }
   .section {
     padding: 2*$space 0;
     .header {
