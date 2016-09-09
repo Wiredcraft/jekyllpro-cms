@@ -1227,7 +1227,13 @@ h6 {
         display: block;
         height: 36px;
         margin: 0 auto;
-        opacity: 0.8; }
+        opacity: 0.6;
+        -webkit-transition-property: filter, opacity;
+        -moz-transition-property: filter, opacity;
+        transition-property: filter, opacity;
+        -webkit-transition-duration: 0.8s;
+        -moz-transition-duration: 0.8s;
+        transition-duration: 0.8s; }
       #content .section.users .body li.active img {
         -webkit-filter: grayscale(0%);
         filter: grayscale(0%);
@@ -1239,10 +1245,28 @@ h6 {
       padding: 0 12px;
       position: relative;
       width: 50%; }
-      #content .section.users .body .preview img {
+      #content .section.users .body .preview .default {
         bottom: -24px;
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
         display: block; }
+      #content .section.users .body .preview #previews {
+        left: 12px;
+        position: absolute;
+        right: 12px;
+        top: 0; }
+        #content .section.users .body .preview #previews img {
+          left: 0;
+          opacity: 0;
+          position: absolute;
+          top: 0;
+          -webkit-transition-property: opacity;
+          -moz-transition-property: opacity;
+          transition-property: opacity;
+          -webkit-transition-duration: 0.8s;
+          -moz-transition-duration: 0.8s;
+          transition-duration: 0.8s; }
+          #content .section.users .body .preview #previews img.active {
+            opacity: 1; }
   #content .section.features {
     border-bottom: 1px solid #DDDDDD; }
     #content .section.features .header {

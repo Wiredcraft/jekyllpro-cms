@@ -193,7 +193,9 @@ $narrow: 600px;
             display: block;
             height: 1.5*$space;
             margin: 0 auto;
-            opacity: 0.8;
+            opacity: 0.6;
+            @include transition-property(filter, opacity);
+            @include transition-duration(4*$ease);
           }
           &.active {
             img {
@@ -209,22 +211,27 @@ $narrow: 600px;
           padding: 0 $space/2;
           position: relative;
           width: 50%;
-          img {
+          .default {
             bottom: -$space;
             box-shadow: 0 0 10px rgba(0,0,0,0.4);
             display: block;
-            // &.screenshot {
-            //   left: 0;
-            //   opacity: 0;
-            //   position: absolute;
-            //   top: 0;
-            //   width: 0;
-            //   @include transition-property(opacity);
-            //   @include transition-duration($ease);
-            //   &.active {
-            //     opacity: 1;
-            //   }
-            // }
+          }
+          #previews {
+            left: $space/2;
+            position: absolute;
+            right: $space/2;
+            top: 0;
+            img {
+              left: 0;
+              opacity: 0;
+              position: absolute;
+              top: 0;
+              @include transition-property(opacity);
+              @include transition-duration(4*$ease);
+              &.active {
+                opacity: 1;
+              }
+            }
           }
         }
       }

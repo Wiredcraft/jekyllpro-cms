@@ -52,25 +52,26 @@
             to publish beautifl and flexible websites.</p>
         </header>
         <section class='body'>
-          <ul>
-            <li class='active'><img src='assets/images/logos/netflix.svg' class='netflix'/></li>
-            <li><img src='assets/images/logos/bootstrap.svg' class='bootstrap'/></li>
-            <li><img src='assets/images/logos/microsoft.svg' class='microsoft'/></li>
-            <li><img src='assets/images/logos/wework.svg' class='wework'/></li>
-            <li><img src='assets/images/logos/vice.svg' class='vice'/></li>
-            <li><img src='assets/images/logos/adobe.svg' class='adobe'/></li>
-            <li><img src='assets/images/logos/usa.gov.svg' class='healtcare.gov'/></li>
-            <li><img src='assets/images/logos/worldbank.svg' class='worldbank'/></li>
-            <li><img src='assets/images/logos/un.svg' class='un'/></li>
+          <ul id='companies'>
+            <li class='active'><img src='assets/images/logos/netflix.svg' rel='netflix'/></li>
+            <li><img src='assets/images/logos/wework.svg' rel='wework'/></li>
+            <li><img src='assets/images/logos/adobe.svg' rel='adobe'/></li>
+            <li><img src='assets/images/logos/usa.gov.svg' rel='healthcare.gov'/></li>
+            <li><img src='assets/images/logos/vice.svg' rel='vice'/></li>
+            <li><img src='assets/images/logos/bootstrap.svg' rel='bootstrap'/></li>
+            <li><img src='assets/images/logos/microsoft.svg' rel='microsoft'/></li>
           </ul>
           <aside class='preview'>
-            <!-- <img src='assets/images/previews/default.png' class='default'/> -->
-            <img src='assets/images/previews/netflix.png' class='screenshot netflix active'/>
-            <!-- <img src='assets/images/previews/wework.png' class='screenshot wework'/>
-            <img src='assets/images/previews/bootstrap.png' class='screenshot bootstrap'/>
-            <img src='assets/images/previews/adobe.png' class='screenshot adobe'/>
-            <img src='assets/images/previews/microsoft.png' class='screenshot microsoft'/>
-            <img src='assets/images/previews/healtcare.gov.png' class='screenshot healtcare.gov'/> -->
+            <img src='assets/images/previews/default.png' class='default'/>
+            <div id='previews'>
+              <img src='assets/images/previews/netflix.png' rel='netflix' class='active'/>
+              <img src='assets/images/previews/wework.png' rel='wework'/>
+              <img src='assets/images/previews/adobe.png' rel='adobe'/>
+              <img src='assets/images/previews/healthcare.gov.png' rel='healthcare.gov'/>
+              <img src='assets/images/previews/vice.png' rel='wework'/>
+              <img src='assets/images/previews/bootstrap.png' rel='bootstrap'/>
+              <img src='assets/images/previews/microsoft.png' rel='microsoft'/>
+            </div>
           </aside>
         </section>
       </div>
@@ -203,13 +204,17 @@
   <!-- JS -->
   <!--[if lt IE 9]><script src='https://html5shim.googlecode.com/svn/trunk/html5.js'></script><![endif]-->
   <script>
-    function hideModal() {
-      document.body.classList.remove('modal');
-      return;
-    }
-    function showModal() {
-      document.body.classList.add('modal');
-      return;
+    var logos = document.querySelectorAll('#companies li');
+    var previews = document.querySelectorAll('#previews img');
+    var currentSlide = 0;
+    var slideInterval = setInterval(nextSlide, 4000);
+
+    function nextSlide() {
+      logos[currentSlide].className = '';
+      previews[currentSlide].className = '';
+      currentSlide = (currentSlide+1)%logos.length;
+      logos[currentSlide].className = 'active';
+      previews[currentSlide].className = 'active';
     }
   </script>
 </body>
