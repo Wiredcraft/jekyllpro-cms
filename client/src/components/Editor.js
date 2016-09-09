@@ -8,8 +8,9 @@ import { parseYamlInsideMarkdown, retriveContent, serializeObjtoYaml } from '../
 import { updateFile, deleteFile, addNewFile } from '../actions/editorActions'
 import DeleteIcon from './svg/DeleteIcon'
 import customWidgets from './Editor/CustomWidgets'
+import { dateToString } from "../helpers/utils"
 
-const defaultSchema = require('../schema/posts.json')
+const defaultSchema = require('../schema')
 
 // TODO: remove linePattern
 @connect(mapStateToProps, mapDispatchToProps)
@@ -48,15 +49,15 @@ export default class Editor extends Component {
   }
 
   getCurrentSchema() {
-    const { schema, selectedFolder } = this.props
-    if (schema && selectedFolder) {
-      let s = schema.find(item => {
-          return item.data.jekyll.dir === selectedFolder
-        }) || {}
-      return this.setState({currentSchema: s.data})
-    }
-    // using locally defined schema
-    this.setState({ currentSchema: defaultSchema })
+    let { schema, selectedFolder } = this.props
+    // using locally defined schema if no schema data fetched
+    schema = schema ? schema : defaultSchema
+    selectedFolder = selectedFolder ? selectedFolder : '_posts'
+
+    let s = schema.find(item => {
+        return item.data.jekyll.dir === selectedFolder
+      }) || {}
+    return this.setState({currentSchema: s.data})
   }
 
   updateEditorForm() {
@@ -138,7 +139,7 @@ export default class Editor extends Component {
     const { content, newFileMode, filesMeta, fileIndex, editorUpdating, selectedFolder } = this.props
     const { filePathInputClass, formData, newFilePath, currentSchema } = this.state
     let currentFileName = newFileMode && selectedFolder
-      ? (selectedFolder + '/new-file' + Date.now() + '.md')
+      ? (selectedFolder + '/' + dateToString(new Date()) + '-new-file.md')
       : (filesMeta && filesMeta[fileIndex] && filesMeta[fileIndex].path)
 
     return (
@@ -170,7 +171,7 @@ export default class Editor extends Component {
 
             <div className='field published'>
               <label className='switch'>
-                <input type='checkbox' id='published' checked/>
+                <input type='checkbox' id='published' defaultChecked/>
                 <div className='slider'></div>
               </label>
               <label htmlFor='published'>Published</label>

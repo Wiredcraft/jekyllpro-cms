@@ -7,6 +7,11 @@
   },
   "JSONSchema": {
     "type": "object",
+    "required": [
+      "title",
+      "date",
+      "author"
+    ],
     "properties": {
       "title": {
         "type": "string",

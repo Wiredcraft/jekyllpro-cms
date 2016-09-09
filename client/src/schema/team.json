@@ -8,41 +8,35 @@
   "JSONSchema": {
     "type": "object",
     "properties": {
+      "user": {
+        "type": "string",
+        "title": "User"
+      },
       "title": {
         "type": "string",
-        "title": "Title"
+        "title": "name"
       },
-      "date": {
+      "position": {
         "type": "string",
-        "title": "Creation Date"
-      },
-      "category": {
-        "type": "string",
-        "title": "Category",
+        "title": "Position",
         "enum": [
-          "Marketing",
+          "Marketing stuff",
           "DevOps",
-          "Development",
-          "Operation",
-          "Design"
+          "Developer",
+          "Operation stuff",
+          "Designer"
         ]
       },
-      "author": {
-        "type": "string",
-        "title": "Author"
-      },
-      "body": {
-        "type": "string",
-        "title": "Body"
+      "featured": {
+        "type": "boolean",
+        "title": "Featured ?",
+        "default": true
       }
     }
   },
   "uiSchema": {
-    "category": {
+    "position": {
       "ui:widget": "customSelect"
-    },
-    "body": {
-      "ui:widget": "customTextarea"      
     }
   }
 }
