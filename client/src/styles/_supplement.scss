@@ -1,5 +1,7 @@
 /* special styles for react components */
 @import 'bourbon';
+@import './_variables.scss';
+@import './partials/_modal.scss';
 
 html,
 body,
@@ -53,4 +55,11 @@ fieldset {
   to {
     transform: rotate(360deg);
   }
+}
+
+.ReactModal__Content {
+  @extend #modal;
+}
+.ReactModal__Body--open {
+  @extend body.modal;
 }

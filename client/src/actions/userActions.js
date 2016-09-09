@@ -27,3 +27,21 @@ export function confirmUserIsLogged() {
     )
   }
 }
+
+export function logout() {
+  return dispatch => {
+    request
+      .get(`${API_BASE_URL}/logout`)
+      .withCredentials()
+      .end((err, res) => {
+        if (err) {
+          console.error(err)
+        } else {
+          dispatch({
+            type: 'APP_RESET'
+          })
+        }
+      }
+    )
+  }
+}

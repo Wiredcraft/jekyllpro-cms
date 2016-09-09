@@ -72,6 +72,7 @@
     "react": "^15.0.0",
     "react-dom": "^15.0.0",
     "react-jsonschema-form": "^0.39.0",
+    "react-modal": "^1.4.0",
     "react-redux": "^4.4.5",
     "redux": "^3.5.2",
     "redux-thunk": "^2.1.0",

@@ -3,16 +3,19 @@ import { bindActionCreators } from 'redux'
 import React, { Component } from 'react'
 
 import { getAllBranch, checkoutBranch, fetchFilesMeta } from '../actions/repoActions'
+import { logout } from '../actions/userActions'
 import { parseFolderFromSchema, getDefaultFolderStructure } from '../helpers/repo'
 import CollectionIcon from './svg/CollectionIcon'
 import PageIcon from './svg/PageIcon'
 import LayoutIcon from './svg/LayoutIcon'
+import Modal from 'react-modal'
+import ModalCustomStyle from './Modal'
 
 @connect(mapStateToProps, mapDispatchToProps)
 export default class Menu extends Component {
   constructor() {
     super()
-    this.state = { selectedItem: '' }
+    this.state = { selectedItem: '', showProfileModel: false }
   }
 
   componentWillMount() {
@@ -28,6 +31,10 @@ export default class Menu extends Component {
     fetchFilesMeta(currentBranch, dir)
 
     this.setState({ selectedItem: dir})
+  }
+
+  logout () {
+    this.props.logout()
   }
 
   render () {
@@ -105,6 +112,18 @@ export default class Menu extends Component {
             Settings
           </a>
         </footer>
+        <Modal
+          style={ModalCustomStyle}
+          isOpen={this.state.showProfileModel} 
+          onRequestClose={evt => {this.setState({showProfileModel: false})}} >
+          <header className='header'>
+            <a className='close' id='close-modal' onClick={evt => {this.setState({showProfileModel: false})}}>Close</a>
+            <h2>This is a modal</h2>
+          </header>
+          <section className='body'>
+            <p><button className='button primary' onClick={() => this.logout()}>Logout</button></p>
+          </section>
+        </Modal>
       </nav>
     )
   }
@@ -122,5 +141,5 @@ function mapStateToProps(state) {
 }
 
 function mapDispatchToProps (dispatch) {
-  return bindActionCreators({ getAllBranch, checkoutBranch, fetchFilesMeta }, dispatch)
+  return bindActionCreators({ getAllBranch, checkoutBranch, fetchFilesMeta, logout }, dispatch)
 }
