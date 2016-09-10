@@ -69,54 +69,75 @@ export default class Editor extends Component {
   updateEditorForm() {
     const { content } = this.props
     const { currentSchema } = this.state
-    if(!content) return
-    const docConfigObj = parseYamlInsideMarkdown(content)
-    let formData = {}
+    if (!content) return
 
-    if(docConfigObj) {
-      const schemaObj = currentSchema.JSONSchema.properties
-      Object.keys(schemaObj).forEach((prop) => {
-        formData[prop] = docConfigObj[prop]
-      })      
+    let formData = {}
+    if (typeof content === 'object') {
+      // content is json file
+      formData.body = JSON.stringify(content)
+    } else if (currentSchema.jekyll.type === 'others') {
+      // content is html or non-markdown file
+      formData.body = content
+    } else {
+      // content is markdown file
+      const docConfigObj = parseYamlInsideMarkdown(content)
+
+      if(docConfigObj) {
+        const schemaObj = currentSchema.JSONSchema.properties
+        Object.keys(schemaObj).forEach((prop) => {
+          formData[prop] = docConfigObj[prop]
+        })      
+      }
+      formData.body = retriveContent(content)
     }
 
-    formData.body = retriveContent(content)
     this.setState({ formData })
   }
 
   updateResult(data) {
     const formData = Object.assign({}, data)
-    const { currentBranch, content, fileIndex, filesMeta, updateFile, newFileMode, addNewFile } = this.props
+    const { currentSchema } = this.state
+    const {
+      currentBranch,
+      content,
+      fileIndex,
+      filesMeta,
+      newFileMode,
+      updateFile,
+      addNewFile
+    } = this.props
     const filePath = this.refs.filePath.value
     if (!filePath) {
       console.error('no file path specified')
       this.setState({filePathInputClass: 'error'})
       return
     }
-    let markdownHeader = ''
-    let markdownText = formData.body
+    let updatedContent = formData.body
     delete formData.body
 
     if (newFileMode) {
       let newIndex = filesMeta.length
-      markdownHeader = serializeObjtoYaml(formData)
-      addNewFile(currentBranch, filePath, markdownHeader + markdownText, newIndex )
-    } else {
+      if (currentSchema.jekyll.type !== 'others') {
+        updatedContent = updatedContent + serializeObjtoYaml(formData)
+      }
+
+      return addNewFile(currentBranch, filePath, updatedContent, newIndex )
+    }
+
+    if (currentSchema.jekyll.type !== 'others') {
       let originalDocHeaderObj = parseYamlInsideMarkdown(content) || {}
 
       Object.keys(formData).forEach((prop) => {
         originalDocHeaderObj[prop] = formData[prop]
       })
+      updatedContent = updatedContent + serializeObjtoYaml(originalDocHeaderObj)
+    } 
 
-      markdownHeader = serializeObjtoYaml(originalDocHeaderObj)
-
-      if (filePath !== filesMeta[fileIndex].path) {
-        //TODO 
-        // if file path changed, delete the old file first
-      }
-      updateFile(currentBranch, filePath, markdownHeader + markdownText, fileIndex)
+    if (filePath !== filesMeta[fileIndex].path) {
+      //TODO 
+      // if file path changed, delete the old file first
     }
-
+    updateFile(currentBranch, filePath, updatedContent, fileIndex)
   }
 
   handleSaveBtn() {
@@ -163,6 +184,7 @@ export default class Editor extends Component {
 
     return (
       <section id='content' className={editorUpdating ? 'spinning' : ''}>
+      <div>
         { currentSchema && (newFileMode || content) && (
           <header className='sidebar'>
             <div className='field language'>
@@ -226,6 +248,7 @@ export default class Editor extends Component {
             </Form>
           </div>
         )}
+        </div>
       </section>
     )
   }

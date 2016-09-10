@@ -124,8 +124,8 @@ export function fetchBranchSchema(branch) {
     })
 
     let url = branch
-      ? `${API_BASE_URL}/api/repository/schema?ref=${branch}`
-      : `${API_BASE_URL}/api/repository/schema`
+      ? `${API_BASE_URL}/api/repository/schema?ref=${branch}&path=_schemas`
+      : `${API_BASE_URL}/api/repository/schema?path=_schemas`
 
     request
       .get(url)
