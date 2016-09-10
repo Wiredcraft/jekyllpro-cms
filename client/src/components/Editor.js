@@ -184,71 +184,69 @@ export default class Editor extends Component {
 
     return (
       <section id='content' className={editorUpdating ? 'spinning' : ''}>
-      <div>
         { currentSchema && (newFileMode || content) && (
-          <header className='sidebar'>
-            <div className='field language'>
-              <label>Language</label>
-              <span className='select'>
-                <select>
-                  <option>English</option>
-                  <option>Chinese</option>
-                </select>
-              </span>
-              <small className='description'>See the <a>Chinese version</a>.</small>
-            </div>
+          <div>
+            <header className='sidebar'>
+              {(currentSchema.jekyll.type === 'collection') && (<div className='field language'>
+                <label>Language</label>
+                <span className='select'>
+                  <select>
+                    <option>English</option>
+                    <option>Chinese</option>
+                  </select>
+                </span>
+                <small className='description'>See the <a>Chinese version</a>.</small>
+              </div>)}
 
-            <div className='field filename'>
-              <label>Filename</label>
-              <input
-                className={`${filePathInputClass}`}
-                type='text'
-                ref="filePath"
-                value={newFilePath || currentFileName}
-                onChange={::this.handleFilePathInput}
-                placeholder='Filename' />
-              <small className='description'>Filenames impact the generated URL.</small>
-            </div>
+              <div className='field filename'>
+                <label>Filename</label>
+                <input
+                  className={`${filePathInputClass}`}
+                  type='text'
+                  ref="filePath"
+                  value={newFilePath || currentFileName}
+                  onChange={::this.handleFilePathInput}
+                  placeholder='Filename' />
+                <small className='description'>Filenames impact the generated URL.</small>
+              </div>
 
-            <div className='field published'>
-              <label className='switch'>
-                <input type='checkbox' id='published' defaultChecked/>
-                <div className='slider'></div>
-              </label>
-              <label htmlFor='published'>Published</label>
-            </div>
+              {(currentSchema.jekyll.type === 'collection') && (<div className='field published'>
+                <label className='switch'>
+                  <input type='checkbox' id='published' defaultChecked/>
+                  <div className='slider'></div>
+                </label>
+                <label htmlFor='published'>Published</label>
+              </div>)}
+              {(currentSchema.jekyll.type === 'collection') && (<div className='field draft'>
+                <label className='switch'>
+                  <input type='checkbox' id='draft'/>
+                  <div className='slider'></div>
+                </label>
+                <label htmlFor='draft'>draft</label>
+              </div>)}
 
-            <div className='field draft'>
-              <label className='switch'>
-                <input type='checkbox' id='draft'/>
-                <div className='slider'></div>
-              </label>
-              <label htmlFor='draft'>draft</label>
+              <button className='button primary' onClick={::this.handleSaveBtn}>Save</button>
+              <DeleteIcon
+                onClick={::this.handleDeleteBtn} />
+            </header>
+            <div className='body'>
+              <Form
+                onSubmit={res => this.updateResult(res.formData)}
+                schema={currentSchema.JSONSchema}
+                uiSchema={currentSchema.uiSchema}
+                widgets={customWidgets}
+                validate={::this.validateSchemaFile}
+                formData={newFileMode ? {} : formData}>
+                <button
+                  type='submit'
+                  ref='formSubmitBtn'
+                  style={{'display': 'none'}}>
+                  Submit
+                </button>
+              </Form>
             </div>
-            <button className='button primary' onClick={::this.handleSaveBtn}>Save</button>
-            <DeleteIcon
-              onClick={::this.handleDeleteBtn} />
-          </header>
-        )}
-        { currentSchema && (newFileMode || content) && (
-          <div className='body'>
-            <Form
-              onSubmit={res => this.updateResult(res.formData)}
-              schema={currentSchema.JSONSchema}
-              uiSchema={currentSchema.uiSchema}
-              widgets={customWidgets}
-              validate={::this.validateSchemaFile}
-              formData={newFileMode ? {} : formData}>
-              <button
-                type='submit'
-                ref='formSubmitBtn'
-                style={{'display': 'none'}}>
-                Submit
-              </button>
-            </Form>
           </div>
         )}
-        </div>
       </section>
     )
   }
