@@ -8,6 +8,7 @@ import { parseFolderFromSchema, getDefaultFolderStructure } from '../helpers/rep
 import CollectionIcon from './svg/CollectionIcon'
 import PageIcon from './svg/PageIcon'
 import LayoutIcon from './svg/LayoutIcon'
+import SchemaIcon from './svg/SchemaIcon'
 import Modal from 'react-modal'
 import ModalCustomStyle from './Modal'
 
@@ -98,6 +99,11 @@ export default class Menu extends Component {
               )
             })
           }
+          <a className={ selectedItem === '_schemas' ? 'active' : ''}
+            onClick={this.handleMenuItem.bind(this, '_schemas')}>
+            <SchemaIcon />
+            Schemas
+          </a>
         </section>
 
         <footer className="footer">

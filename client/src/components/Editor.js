@@ -50,14 +50,20 @@ export default class Editor extends Component {
 
   getCurrentSchema() {
     let { schema, selectedFolder } = this.props
-    // using locally defined schema if no schema data fetched
-    schema = schema ? schema : defaultSchema
+
+    schema = schema ? schema : []
     selectedFolder = selectedFolder ? selectedFolder : '_posts'
 
-    let s = schema.find(item => {
+    let folderSchema = schema.find(item => {
+        return item.data.jekyll.dir === selectedFolder
+      })
+    // using locally defined schema if no schema found in fetched data
+    if (!folderSchema) {
+      folderSchema = defaultSchema.find(item => {
         return item.data.jekyll.dir === selectedFolder
       }) || {}
-    return this.setState({currentSchema: s.data})
+    }
+    return this.setState({currentSchema: folderSchema.data})
   }
 
   updateEditorForm() {
@@ -135,6 +141,19 @@ export default class Editor extends Component {
     this.setState({newFilePath: evt.target.value})
   }
 
+  validateSchemaFile(formData, errors) {
+    if (this.props.selectedFolder === '_schemas') {
+      try {
+        JSON.parse(formData.body)
+      }
+      catch (e) {
+        errors.body.addError('Not valid JSON file')
+        return errors
+      }
+    }
+    return errors
+  }
+
   render() {
     const { content, newFileMode, filesMeta, fileIndex, editorUpdating, selectedFolder } = this.props
     const { filePathInputClass, formData, newFilePath, currentSchema } = this.state
@@ -196,6 +215,7 @@ export default class Editor extends Component {
               schema={currentSchema.JSONSchema}
               uiSchema={currentSchema.uiSchema}
               widgets={customWidgets}
+              validate={::this.validateSchemaFile}
               formData={newFileMode ? {} : formData}>
               <button
                 type='submit'
