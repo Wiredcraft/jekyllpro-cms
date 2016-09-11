@@ -6,6 +6,7 @@ import ReactDOM from 'react-dom'
 
 import { parseYamlInsideMarkdown, retriveContent, serializeObjtoYaml } from '../helpers/markdown'
 import { updateFile, deleteFile, addNewFile } from '../actions/editorActions'
+import { fetchBranchSchema } from '../actions/repoActions'
 import DeleteIcon from './svg/DeleteIcon'
 import customWidgets from './Editor/CustomWidgets'
 import { dateToString } from "../helpers/utils"
@@ -74,12 +75,9 @@ export default class Editor extends Component {
     let formData = {}
     if (typeof content === 'object') {
       // content is json file
-      formData.body = JSON.stringify(content)
-    } else if (currentSchema.jekyll.type === 'others') {
-      // content is html or non-markdown file
-      formData.body = content
+      formData.body = JSON.stringify(content, null, 2)
     } else {
-      // content is markdown file
+      // content is markdown or html
       const docConfigObj = parseYamlInsideMarkdown(content)
 
       if(docConfigObj) {
@@ -96,13 +94,14 @@ export default class Editor extends Component {
 
   updateResult(data) {
     const formData = Object.assign({}, data)
-    const { currentSchema } = this.state
     const {
+      selectedFolder,
       currentBranch,
       content,
       fileIndex,
       filesMeta,
       newFileMode,
+      fetchBranchSchema,
       updateFile,
       addNewFile
     } = this.props
@@ -117,27 +116,32 @@ export default class Editor extends Component {
 
     if (newFileMode) {
       let newIndex = filesMeta.length
-      if (currentSchema.jekyll.type !== 'others') {
-        updatedContent = updatedContent + serializeObjtoYaml(formData)
+      if (selectedFolder === '_schemas') {
+        return addNewFile(currentBranch, filePath, updatedContent, newIndex)
+          .then( res => {
+            fetchBranchSchema(currentBranch)
+          })
       }
-
-      return addNewFile(currentBranch, filePath, updatedContent, newIndex )
-    }
-
-    if (currentSchema.jekyll.type !== 'others') {
+      updatedContent = serializeObjtoYaml(formData) + updatedContent
+      addNewFile(currentBranch, filePath, updatedContent, newIndex )
+    } else if (selectedFolder === '_schemas') {
+      return updateFile(currentBranch, filePath, updatedContent, fileIndex)
+        .then( res => {
+          fetchBranchSchema(currentBranch)
+        })
+    } else {
+      if (filePath !== filesMeta[fileIndex].path) {
+        //TODO 
+        // if file path changed, delete the old file first
+      }
       let originalDocHeaderObj = parseYamlInsideMarkdown(content) || {}
 
       Object.keys(formData).forEach((prop) => {
         originalDocHeaderObj[prop] = formData[prop]
       })
-      updatedContent = updatedContent + serializeObjtoYaml(originalDocHeaderObj)
-    } 
-
-    if (filePath !== filesMeta[fileIndex].path) {
-      //TODO 
-      // if file path changed, delete the old file first
+      updatedContent = serializeObjtoYaml(originalDocHeaderObj) + updatedContent
+      updateFile(currentBranch, filePath, updatedContent, fileIndex)
     }
-    updateFile(currentBranch, filePath, updatedContent, fileIndex)
   }
 
   handleSaveBtn() {
@@ -150,12 +154,15 @@ export default class Editor extends Component {
   }
 
   handleDeleteBtn() {
-    const { currentBranch, newFileMode, filesMeta, fileIndex, deleteFile } = this.props
+    const { currentBranch, newFileMode, filesMeta, fileIndex, deleteFile, fetchBranchSchema } = this.props
 
     if (newFileMode) {
       return
     }
     deleteFile(currentBranch, filesMeta[fileIndex].path, fileIndex)
+      .then( res => {
+        fetchBranchSchema(currentBranch)
+      })
   }
 
   handleFilePathInput(evt) {
@@ -266,5 +273,5 @@ function mapStateToProps(state) {
 }
 
 function mapDispatchToProps (dispatch) {
-  return bindActionCreators({ updateFile, deleteFile, addNewFile }, dispatch)
+  return bindActionCreators({ updateFile, deleteFile, addNewFile, fetchBranchSchema }, dispatch)
 }
