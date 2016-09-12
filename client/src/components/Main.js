@@ -24,10 +24,10 @@ export default class AppComponent extends React.Component {
   }
 
   render() {
-    const { isLoggedIn } = this.props
+    const { isLoggedIn, repoLoading } = this.props
 
     return isLoggedIn ? (
-      <div id='app'>
+      <div id='app' className={repoLoading? 'spinning' : ''}>
         <Menu />
         <Navigation />
         <Editor />
@@ -45,6 +45,7 @@ export default class AppComponent extends React.Component {
 
 function mapStateToProps(state) {
   return {
+    repoLoading: state.repo.get('loading'),
     isLoggedIn: state.user.get('isLoggedIn')
   }
 }

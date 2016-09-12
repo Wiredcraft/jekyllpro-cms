@@ -39,7 +39,7 @@ export default class Menu extends Component {
   }
 
   render () {
-    const { branches, currentBranch, avatar, userName, repoLoading, schema } = this.props
+    const { branches, currentBranch, avatar, userName, schema } = this.props
     const { selectedItem } = this.state
 
     let collections = schema ? parseFolderFromSchema(schema, 'collection') : getDefaultFolderStructure()['collection']
@@ -47,7 +47,7 @@ export default class Menu extends Component {
     let others = schema ? parseFolderFromSchema(schema, 'others') : getDefaultFolderStructure()['others']
 
     return (
-      <nav id="menu" className={repoLoading? 'spinning' : ''}>
+      <nav id="menu">
         <section className="body">
           <h3>Branch</h3>
           { branches && (<span className="select">
@@ -137,7 +137,6 @@ export default class Menu extends Component {
 
 function mapStateToProps(state) {
   return {
-    repoLoading: state.repo.get('loading'),
     avatar: state.user.get('avatar'),
     userName: state.user.get('userName'),
     branches: state.repo.get('branches'),

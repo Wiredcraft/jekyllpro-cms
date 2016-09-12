@@ -45,8 +45,7 @@ export default class Navigation extends Component {
           </div>
           <input type='text' className='search' placeholder='Filter by name'/>
         </header>
-        <section className={`body ${loading ? 'spinning' : ''}`}>
-          {loading && <div>loadding</div>}
+        <section className='body'>
           {
             !loading && filesMeta && filesMeta.map((d, i) => (
               <a

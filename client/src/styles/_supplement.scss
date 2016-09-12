@@ -24,6 +24,15 @@ fieldset {
   padding: 0;
 }
 
+@include keyframes(spin) {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 .spinning {
   position: relative;
   &:before {
@@ -46,14 +55,13 @@ fieldset {
   &#content {
     opacity: 0.3;
   }
-}
 
-@include keyframes(spin) {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
+  &#app {
+    opacity: 0.5;
+    &:before {
+      left: 200px;
+      border-top: 3px solid rgba(225, 225, 225, 0.9);
+    }
   }
 }
 
