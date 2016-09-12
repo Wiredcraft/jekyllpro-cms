@@ -67,6 +67,12 @@ fieldset {
 
 .ReactModal__Content {
   @extend #modal;
+  .body {
+    text-align: center;
+    button {
+      margin: 0 8px;
+    }
+  }
 }
 .ReactModal__Body--open {
   @extend body.modal;

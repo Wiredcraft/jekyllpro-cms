@@ -10,6 +10,8 @@ import { fetchBranchSchema } from '../actions/repoActions'
 import DeleteIcon from './svg/DeleteIcon'
 import customWidgets from './Editor/CustomWidgets'
 import { dateToString } from "../helpers/utils"
+import Modal from 'react-modal'
+import ModalCustomStyle from './Modal'
 
 const defaultSchema = require('../schema')
 
@@ -22,14 +24,9 @@ export default class Editor extends Component {
       isPostPublished: true,
       filePathInputClass: '',
       formData: {},
-      currentSchema: null
+      currentSchema: null,
+      showDeleteFileModel: false
     }
-  }
-
-  componentDidMount() {
-    // this.updateEditorForm()
-    // this.getCurrentSchema()
-
   }
 
   componentDidUpdate(prevProps) {
@@ -162,7 +159,7 @@ export default class Editor extends Component {
     ReactDOM.findDOMNode(this.refs.formSubmitBtn).dispatchEvent(clickEvt)
   }
 
-  handleDeleteBtn() {
+  handleDeleteFile() {
     const { currentBranch, newFileMode, filesMeta, fileIndex, deleteFile, fetchBranchSchema } = this.props
 
     if (newFileMode) {
@@ -194,6 +191,10 @@ export default class Editor extends Component {
       }
     }
     return errors
+  }
+
+  closeDeleteFileModel () {
+    this.setState({showDeleteFileModel: false})
   }
 
   render() {
@@ -248,7 +249,22 @@ export default class Editor extends Component {
 
               <button className='button primary' onClick={::this.handleSaveBtn}>Save</button>
               <DeleteIcon
-                onClick={::this.handleDeleteBtn} />
+                onClick={evt => {this.setState({showDeleteFileModel: true})}} />
+              <Modal
+                style={ModalCustomStyle}
+                isOpen={this.state.showDeleteFileModel} 
+                onRequestClose={::this.closeDeleteFileModel} >
+                <header className='header'>
+                  <a className='close' id='close-modal' onClick={::this.closeDeleteFileModel}>Close</a>
+                  <h2>Are you sure to delete this file?</h2>
+                </header>
+                <section className='body'>
+                  <p>
+                    <button className='button primary' onClick={::this.handleDeleteFile}>Yes</button>
+                    <button className='button' onClick={::this.closeDeleteFileModel}>Cancel</button>
+                  </p>
+                </section>
+              </Modal>
             </header>
             <div className='body'>
               <Form
