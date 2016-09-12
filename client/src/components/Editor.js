@@ -19,6 +19,7 @@ export default class Editor extends Component {
   constructor() {
     super()
     this.state = {
+      isPostPublished: true,
       filePathInputClass: '',
       formData: {},
       currentSchema: null
@@ -84,12 +85,15 @@ export default class Editor extends Component {
         const schemaObj = currentSchema.JSONSchema.properties
         Object.keys(schemaObj).forEach((prop) => {
           formData[prop] = docConfigObj[prop]
-        })      
+        })
+        formData.published = docConfigObj.published
       }
       formData.body = retriveContent(content)
     }
-
-    this.setState({ formData })
+    this.setState({
+      formData,
+      isPostPublished: (formData.published !== undefined) ? formData.published : true
+    })
   }
 
   updateResult(data) {
@@ -105,6 +109,7 @@ export default class Editor extends Component {
       updateFile,
       addNewFile
     } = this.props
+    const { currentSchema, isPostPublished } = this.state
     const filePath = this.refs.filePath.value
     if (!filePath) {
       console.error('no file path specified')
@@ -113,6 +118,10 @@ export default class Editor extends Component {
     }
     let updatedContent = formData.body
     delete formData.body
+
+    if (currentSchema.jekyll.type === 'collection') {
+      formData.published = isPostPublished
+    }
 
     if (newFileMode) {
       let newIndex = filesMeta.length
@@ -169,6 +178,11 @@ export default class Editor extends Component {
     this.setState({newFilePath: evt.target.value})
   }
 
+  handlePublishInput(evt) {
+    const { isPostPublished } = this.state
+    this.setState({ isPostPublished: !isPostPublished })
+  }
+
   validateSchemaFile(formData, errors) {
     if (this.props.selectedFolder === '_schemas') {
       try {
@@ -186,7 +200,7 @@ export default class Editor extends Component {
     const { content, newFileMode, filesMeta, fileIndex, editorUpdating, selectedFolder } = this.props
     const { filePathInputClass, formData, newFilePath, currentSchema } = this.state
     let currentFileName = newFileMode && selectedFolder
-      ? (selectedFolder + '/' + dateToString(new Date()) + '-new-file.md')
+      ? (selectedFolder + '/' + dateToString(new Date()) + '-new-file')
       : (filesMeta && filesMeta[fileIndex] && filesMeta[fileIndex].path)
 
     return (
@@ -219,7 +233,7 @@ export default class Editor extends Component {
 
               {(currentSchema.jekyll.type === 'collection') && (<div className='field published'>
                 <label className='switch'>
-                  <input type='checkbox' id='published' defaultChecked/>
+                  <input type='checkbox' id='published' checked={this.state.isPostPublished} onChange={::this.handlePublishInput}/>
                   <div className='slider'></div>
                 </label>
                 <label htmlFor='published'>Published</label>
