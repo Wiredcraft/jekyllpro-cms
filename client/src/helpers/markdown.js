@@ -55,3 +55,7 @@ export function retriveContent(text) {
   }
   return ''
 }
+
+export function serializeObjtoYaml(obj) {
+  return '---\n' + yaml.safeDump(obj) + '---\n'
+}

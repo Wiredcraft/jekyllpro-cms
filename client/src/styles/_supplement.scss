@@ -1,0 +1,73 @@
+/* special styles for react components */
+@import 'bourbon';
+@import './_variables.scss';
+@import './partials/_modal.scss';
+
+html,
+body,
+#js-app,
+#app{
+  height: 100%;
+}
+
+#content {
+  min-height: 100%;
+}
+
+.field textarea {
+  height: 448px;
+}
+
+fieldset {
+  border: none;
+  margin: 0;
+  padding: 0;
+}
+
+@include keyframes(spin) {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.spinning {
+  position: relative;
+  &:before {
+    @include animation(spin 1s infinite linear);
+    border-bottom: 3px solid rgba(0, 0, 0, .1);
+    border-left: 3px solid rgba(0, 0, 0, .1);
+    border-right: 3px solid rgba(0, 0, 0, .1);
+    border-top: 3px solid rgba(0, 0, 0, .4);
+    border-radius: 100%;
+    content: '';
+    height: 40px;
+    left: 50%;
+    margin: -13px 0 0 -13px;
+    top: 50%;
+    width: 40px;
+    position: absolute;
+    z-index: 1;
+  }
+
+  &#content {
+    opacity: 0.3;
+  }
+
+  &#app {
+    opacity: 0.5;
+    &:before {
+      left: 200px;
+      border-top: 3px solid rgba(225, 225, 225, 0.9);
+    }
+  }
+}
+
+.ReactModal__Content {
+  @extend #modal;
+}
+.ReactModal__Body--open {
+  @extend body.modal;
+}

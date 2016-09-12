@@ -7,7 +7,7 @@ const initialState = Immutable.fromJS({
 
 export default function app (state = initialState, action) {
   switch (action.type) {
-  default:
-    return state
+    default:
+      return state
   }
 }

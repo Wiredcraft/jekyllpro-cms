@@ -1,0 +1,25 @@
+{ 
+  "title": "Pages",
+  "jekyll": {
+    "type": "content",
+    "id": "pages",
+    "dir": "_pages"
+  },
+  "JSONSchema": {
+    "type": "object",
+    "required": [
+      "body"
+    ],
+    "properties": {
+      "body": {
+        "type": "string",
+        "title": "Body"
+      }
+    }
+  },
+  "uiSchema": {
+    "body": {
+      "ui:widget": "customTextarea"      
+    }
+  }
+}

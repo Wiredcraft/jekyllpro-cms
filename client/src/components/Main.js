@@ -7,8 +7,8 @@ import { confirmUserIsLogged } from '../actions/userActions'
 import Menu from './Menu'
 import Editor from './Editor'
 import Navigation from './Navigation'
-// import 'normalize.css/normalize.css'
 import 'styles/app.scss'
+import 'styles/_supplement.scss'
 
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -24,22 +24,28 @@ export default class AppComponent extends React.Component {
   }
 
   render() {
-    const { isLoggedIn } = this.props
+    const { isLoggedIn, repoLoading } = this.props
 
     return isLoggedIn ? (
-      <div id='app'>
+      <div id='app' className={repoLoading? 'spinning' : ''}>
         <Menu />
         <Navigation />
         <Editor />
       </div>
     ) : (
-      <button onClick={() => this.login()}>Login</button>
+      <div id='landing' style={{'display': 'block'}}>
+        <div className='card'>
+          <button className='button primary' onClick={() => this.login()}>Login with GitHub</button>
+          <small>No account yet? <a>Sign up for free</a>.</small>
+        </div>
+      </div>
     )
   }
 }
 
 function mapStateToProps(state) {
   return {
+    repoLoading: state.repo.get('loading'),
     isLoggedIn: state.user.get('isLoggedIn')
   }
 }
