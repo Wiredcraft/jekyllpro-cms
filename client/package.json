@@ -7,7 +7,7 @@
   "scripts": {
     "clean": "rimraf dist/*",
     "copy": "copyfiles -f ./src/index.html",
-    "dist": "npm run copy & webpack --env=dist",
+    "dist": "webpack --env=dist",
     "lint": "eslint ./src",
     "posttest": "npm run lint",
     "serve": "node server.js --env=dev",
@@ -23,6 +23,8 @@
     "chai": "^3.2.0",
     "eslint": "^2.2.0",
     "eslint-plugin-react": "^5.0.0",
+    "extract-text-webpack-plugin": "^1.0.1",
+    "html-webpack-plugin": "^2.22.0",
     "json-loader": "^0.5.4",
     "karma": "^0.13.9",
     "karma-chai": "^0.1.0",
