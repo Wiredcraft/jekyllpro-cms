@@ -19,7 +19,7 @@
   },
   "uiSchema": {
     "body": {
-      "ui:widget": "customTextarea"      
+      "ui:widget": "customCodeMirror"      
     }
   }
 }

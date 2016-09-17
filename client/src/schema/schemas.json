@@ -20,7 +20,7 @@
   },
   "uiSchema": {
     "body": {
-      "ui:widget": "textarea"      
+      "ui:widget": "JSONCode"      
     }
   }
 }

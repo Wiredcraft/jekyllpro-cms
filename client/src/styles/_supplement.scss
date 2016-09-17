@@ -3,6 +3,10 @@
 @import './_variables.scss';
 @import './partials/_modal.scss';
 
+* {
+  box-sizing: border-box;
+}
+
 html,
 body,
 #js-app,
@@ -76,4 +80,9 @@ fieldset {
 }
 .ReactModal__Body--open {
   @extend body.modal;
+}
+
+.ReactCodeMirror {
+  line-height: normal;
+  font-size: 14px;
 }
