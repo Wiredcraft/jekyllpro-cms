@@ -7,6 +7,7 @@ import { fetchDefaultSchema, cleanEditor } from './editorActions'
 export const CHANGE_REPO_STATE = 'CHANGE_REPO_STATE'
 export const FILE_REMOVED = 'FILE_REMOVED'
 export const FILE_ADDED = 'FILE_ADDED'
+export const FILE_REPLACED = 'FILE_REPLACED'
 
 export function fetchRepoInfo() {
   return dispatch => {
@@ -74,6 +75,15 @@ export function fileAdded(name, path) {
       type: FILE_ADDED
     })
   }  
+}
+
+export function fileReplaced(name, path, index) {
+  return dispatch => {
+    dispatch({
+      payload: {name: name, path: path, fileIndex: index },
+      type: FILE_REPLACED
+    })
+  }
 }
 
 export function getAllBranch() {

@@ -1,6 +1,6 @@
 /* global API_BASE_URL */
 import request from 'superagent'
-import { fileRemoved, fileAdded } from './repoActions'
+import { fileRemoved, fileAdded, fileReplaced } from './repoActions'
 
 export const CHANGE_EDITOR_STATE = 'CHANGE_EDITOR_STATE'
 export const NEW_EMPTY_FILE = 'NEW_EMPTY_FILE'
@@ -63,6 +63,58 @@ export function updateFile(branch, path, content, index) {
             return resolve()
           }
         })
+    })
+  }
+}
+
+export function replaceFile(branch, oldPath, newPath, content, fileIndex) {
+  return (dispatch) => {
+    let apiUrl = `${API_BASE_URL}/api/repository`
+
+    dispatch({
+      payload: { loading: true },
+      type: CHANGE_EDITOR_STATE
+    })
+    let addFileRequest = new Promise((resolve, reject) => {
+      request
+        .post(`${API_BASE_URL}/api/repository`)
+        .send({ branch, path: newPath, content, message: `update ${newPath}` })
+        .withCredentials()
+        .end((err, res) => {
+          if (err) {
+            console.error(err)
+            dispatch({
+              payload: { loading: false },
+              type: CHANGE_EDITOR_STATE
+            })
+            return reject(err)
+          }
+          let newFilename = res.body.content.name
+
+          return resolve(Promise.all([
+              dispatch({
+                payload: { content: content, loading: false },
+                type: CHANGE_EDITOR_STATE
+              }),
+              dispatch(fileReplaced(newFilename, newPath, fileIndex))
+            ]))
+        })
+    })
+
+    return addFileRequest.then( res => {
+      return new Promise((resolve, reject) => {
+        request
+          .del(apiUrl)
+          .send({ branch: branch, path: oldPath })
+          .withCredentials()
+          .end((err, res) => {
+            if (err) {
+              console.error(err)
+              return reject(err)
+            }
+            return resolve()
+          })        
+      })
     })
   }
 }

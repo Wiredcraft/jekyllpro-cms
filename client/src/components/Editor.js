@@ -5,7 +5,7 @@ import { bindActionCreators } from 'redux'
 import ReactDOM from 'react-dom'
 
 import { parseYamlInsideMarkdown, retriveContent, serializeObjtoYaml } from '../helpers/markdown'
-import { updateFile, deleteFile, addNewFile } from '../actions/editorActions'
+import { updateFile, deleteFile, addNewFile, replaceFile } from '../actions/editorActions'
 import { fetchBranchSchema } from '../actions/repoActions'
 import DeleteIcon from './svg/DeleteIcon'
 import customWidgets from './Editor/CustomWidgets'
@@ -107,6 +107,8 @@ export default class Editor extends Component {
       newFileMode,
       fetchBranchSchema,
       updateFile,
+      deleteFile,
+      replaceFile,
       addNewFile
     } = this.props
     const { currentSchema, isPostPublished, isDraft } = this.state
@@ -119,41 +121,70 @@ export default class Editor extends Component {
     let updatedContent = formData.body
     delete formData.body
 
-    if (currentSchema.jekyll.type === 'collection') {
-      formData.published = isPostPublished
-      if (isDraft) {
-        formData.draft = isDraft
-      }
+    if ((currentSchema.jekyll.type === 'collection') && (isPostPublished === false)) {
+      formData.published = false
+    } else {
+      delete formData.published
     }
+    if ((currentSchema.jekyll.type === 'collection') && (isDraft === true)) {
+      formData.draft = true
+    } else {
+      delete formData.draft
+    }
+    if (selectedFolder === '_schemas') {
+      return this.updateSchemasFolder(filePath, updatedContent)
+    }
+    if (newFileMode) {
+      let newIndex = filesMeta.length
+      updatedContent = serializeObjtoYaml(formData) + updatedContent
+      addNewFile(currentBranch, filePath, updatedContent, newIndex )
+    } else if (filePath !== filesMeta[fileIndex].path) {
+      // file path changed
+      let oldPath = filesMeta[fileIndex].path
+      updatedContent = this.updateFileFrontMatter(content, formData) + updatedContent
+      replaceFile(currentBranch, oldPath, filePath, updatedContent, fileIndex)
+    } else {
+      updatedContent = this.updateFileFrontMatter(content, formData) + updatedContent
+      updateFile(currentBranch, filePath, updatedContent, fileIndex)
+    }
+  }
+
+  updateFileFrontMatter(originalFile, editorFormData) {
+    let originalDocHeaderObj = parseYamlInsideMarkdown(originalFile) || {}
+
+    Object.keys(editorFormData).forEach((prop) => {
+      originalDocHeaderObj[prop] = editorFormData[prop]
+    })
+    return serializeObjtoYaml(originalDocHeaderObj)
+  }
+
+  updateSchemasFolder(filePath, updatedContent) {
+    const {
+      currentBranch,
+      fileIndex,
+      filesMeta,
+      newFileMode,
+      fetchBranchSchema,
+      updateFile,
+      replaceFile,
+      addNewFile
+    } = this.props
+    let actionPromise = Promise.resolve()
 
     if (newFileMode) {
       let newIndex = filesMeta.length
-      if (selectedFolder === '_schemas') {
-        return addNewFile(currentBranch, filePath, updatedContent, newIndex)
-          .then( res => {
-            fetchBranchSchema(currentBranch)
-          })
-      }
-      updatedContent = serializeObjtoYaml(formData) + updatedContent
-      addNewFile(currentBranch, filePath, updatedContent, newIndex )
-    } else if (selectedFolder === '_schemas') {
-      return updateFile(currentBranch, filePath, updatedContent, fileIndex)
-        .then( res => {
-          fetchBranchSchema(currentBranch)
-        })
-    } else {
-      if (filePath !== filesMeta[fileIndex].path) {
-        //TODO 
-        // if file path changed, delete the old file first
-      }
-      let originalDocHeaderObj = parseYamlInsideMarkdown(content) || {}
+      actionPromise = addNewFile(currentBranch, filePath, updatedContent, newIndex)
+    } else if (filePath !== filesMeta[fileIndex].path) {
+      // file path changed
+      let oldPath = filesMeta[fileIndex].path
+      actionPromise = replaceFile(currentBranch, oldPath, filePath, updatedContent, fileIndex)
 
-      Object.keys(formData).forEach((prop) => {
-        originalDocHeaderObj[prop] = formData[prop]
-      })
-      updatedContent = serializeObjtoYaml(originalDocHeaderObj) + updatedContent
-      updateFile(currentBranch, filePath, updatedContent, fileIndex)
+    } else {
+      actionPromise = updateFile(currentBranch, filePath, updatedContent, fileIndex)
     }
+    actionPromise.then( res => {
+      fetchBranchSchema(currentBranch)
+    })
   }
 
   handleSaveBtn() {
@@ -314,5 +345,5 @@ function mapStateToProps(state) {
 }
 
 function mapDispatchToProps (dispatch) {
-  return bindActionCreators({ updateFile, deleteFile, addNewFile, fetchBranchSchema }, dispatch)
+  return bindActionCreators({ updateFile, deleteFile, addNewFile, fetchBranchSchema, replaceFile }, dispatch)
 }
