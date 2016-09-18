@@ -22,6 +22,7 @@ export default class Editor extends Component {
     super()
     this.state = {
       isPostPublished: true,
+      isDraft: false,
       filePathInputClass: '',
       formData: {},
       currentSchema: null,
@@ -84,12 +85,14 @@ export default class Editor extends Component {
           formData[prop] = docConfigObj[prop]
         })
         formData.published = docConfigObj.published
+        formData.draft = docConfigObj.draft
       }
       formData.body = retriveContent(content)
     }
     this.setState({
       formData,
-      isPostPublished: (formData.published !== undefined) ? formData.published : true
+      isPostPublished: (formData.published !== undefined) ? formData.published : true,
+      isDraft: (formData.draft !== undefined) ? formData.draft : false
     })
   }
 
@@ -106,7 +109,7 @@ export default class Editor extends Component {
       updateFile,
       addNewFile
     } = this.props
-    const { currentSchema, isPostPublished } = this.state
+    const { currentSchema, isPostPublished, isDraft } = this.state
     const filePath = this.refs.filePath.value
     if (!filePath) {
       console.error('no file path specified')
@@ -118,6 +121,9 @@ export default class Editor extends Component {
 
     if (currentSchema.jekyll.type === 'collection') {
       formData.published = isPostPublished
+      if (isDraft) {
+        formData.draft = isDraft
+      }
     }
 
     if (newFileMode) {
@@ -178,6 +184,11 @@ export default class Editor extends Component {
   handlePublishInput(evt) {
     const { isPostPublished } = this.state
     this.setState({ isPostPublished: !isPostPublished })
+  }
+
+  handleDraftInput(evt) {
+    const { isDraft } = this.state
+    this.setState({ isDraft: !isDraft })
   }
 
   validateSchemaFile(formData, errors) {
@@ -241,7 +252,7 @@ export default class Editor extends Component {
               </div>)}
               {(currentSchema.jekyll.type === 'collection') && (<div className='field draft'>
                 <label className='switch'>
-                  <input type='checkbox' id='draft'/>
+                  <input type='checkbox' id='draft' checked={this.state.isDraft} onChange={::this.handleDraftInput}/>
                   <div className='slider'></div>
                 </label>
                 <label htmlFor='draft'>draft</label>
