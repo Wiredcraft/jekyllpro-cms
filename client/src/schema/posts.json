@@ -1,0 +1,53 @@
+{ 
+  "title": "Blog post",
+  "jekyll": {
+    "type": "collection",
+    "id": "posts",
+    "dir": "_posts"
+  },
+  "JSONSchema": {
+    "type": "object",
+    "required": [
+      "title",
+      "date",
+      "author"
+    ],
+    "properties": {
+      "title": {
+        "type": "string",
+        "title": "Title"
+      },
+      "date": {
+        "type": "string",
+        "title": "Creation Date"
+      },
+      "category": {
+        "type": "string",
+        "title": "Category",
+        "enum": [
+          "Marketing",
+          "DevOps",
+          "Development",
+          "Operation",
+          "Design"
+        ]
+      },
+      "author": {
+        "type": "string",
+        "title": "Author"
+      },
+      "body": {
+        "type": "string",
+        "title": "Body"
+      }
+    }
+  },
+  "uiSchema": {
+    "category": {
+      "ui:widget": "customSelect"
+    },
+    "body": {
+      "ui:widget": "customTextarea"      
+    }
+  }
+}

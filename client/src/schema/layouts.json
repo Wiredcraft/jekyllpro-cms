@@ -1,0 +1,25 @@
+{ 
+  "title": "Layouts",
+  "jekyll": {
+    "type": "others",
+    "id": "layouts",
+    "dir": "_layouts"
+  },
+  "JSONSchema": {
+    "type": "object",
+    "required": [
+      "body"
+    ],
+    "properties": {
+      "body": {
+        "type": "string",
+        "title": "Body"
+      }
+    }
+  },
+  "uiSchema": {
+    "body": {
+      "ui:widget": "customTextarea"      
+    }
+  }
+}

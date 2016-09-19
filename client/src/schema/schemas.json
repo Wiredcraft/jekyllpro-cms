@@ -1,0 +1,26 @@
+{ 
+  "title": "Schemas",
+  "jekyll": {
+    "type": "others",
+    "id": "schemas",
+    "dir": "_schemas"
+  },
+  "JSONSchema": {
+    "type": "object",
+    "required": [
+      "body"
+    ],
+    "properties": {
+      "body": {
+        "type": "string",
+        "title": "Body",
+        "default": "{ \r\n  \"title\": \"SchemasFileTemplate\",\r\n  \"jekyll\": {\r\n    \"type\": \"others\",\r\n    \"id\": \"fileId\",\r\n    \"dir\": \"folderName\"\r\n  },\r\n  \"JSONSchema\": {\r\n    \"type\": \"object\",\r\n    \"required\": [\r\n      \"body\"\r\n    ],\r\n    \"properties\": {\r\n      \"body\": {\r\n        \"type\": \"string\",\r\n        \"title\": \"Body\"\r\n      }\r\n    }\r\n  },\r\n  \"uiSchema\": {\r\n    \"body\": {\r\n      \"ui:widget\": \"textarea\"      \r\n    }\r\n  }\r\n}"
+      }
+    }
+  },
+  "uiSchema": {
+    "body": {
+      "ui:widget": "textarea"      
+    }
+  }
+}

@@ -17,6 +17,9 @@ function getDefaultModules() {
       }, {
         test: /\.(mp4|ogg|svg|eot)(\?v=\d+\.\d+\.\d+)?$/,
         loader: 'file-loader'
+      }, {
+        test: /\.json$/,
+        loader: 'json'
       }
     ]
   }

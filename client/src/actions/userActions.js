@@ -1,9 +1,7 @@
 /* global API_BASE_URL */
 import request from 'superagent'
 
-import { fetchFilesMeta } from './repoActions'
-import { fetchDefaultSchema } from './editorActions'
-
+import { fetchRepoInfo, fetchBranchSchema } from './repoActions'
 
 export const CHANGE_LOGIN_STATE = 'CHANGE_LOGIN_STATE'
 
@@ -17,13 +15,31 @@ export function confirmUserIsLogged() {
           console.error(err)
         } else {
           Promise.all([
-            dispatch(fetchDefaultSchema()),
-            dispatch(fetchFilesMeta()),
             dispatch({
               type: CHANGE_LOGIN_STATE,
-              payload: { isLoggedIn: true }
-            })
+              payload: { isLoggedIn: true, userName: res.body.login, avatar: res.body.avatar_url }
+            }),
+            dispatch(fetchRepoInfo()),
+            dispatch(fetchBranchSchema())
           ])
+        }
+      }
+    )
+  }
+}
+
+export function logout() {
+  return dispatch => {
+    request
+      .get(`${API_BASE_URL}/logout`)
+      .withCredentials()
+      .end((err, res) => {
+        if (err) {
+          console.error(err)
+        } else {
+          dispatch({
+            type: 'APP_RESET'
+          })
         }
       }
     )

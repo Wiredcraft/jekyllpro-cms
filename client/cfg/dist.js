@@ -2,14 +2,41 @@
 
 let path = require('path')
 let webpack = require('webpack')
+let HtmlWebpackPlugin = require('html-webpack-plugin')
+let ExtractTextPlugin = require('extract-text-webpack-plugin')
 
 let baseConfig = require('./base')
 let defaultSettings = require('./defaults')
 
+let prodLoaders = [
+  {
+    test: /\.css$/,
+    loader: ExtractTextPlugin.extract("style-loader", "css-loader")
+  }, {
+    test: /\.scss/,
+    loader: ExtractTextPlugin.extract('style-loader', 'css-loader!postcss-loader!sass-loader')
+  }, {
+    test: /\.(png|jpg|gif|woff|woff2|ttf)(\?v=\d+\.\d+\.\d+)?$/,
+    loader: 'url-loader?limit=8192'
+  }, {
+    test: /\.(mp4|ogg|svg|eot)(\?v=\d+\.\d+\.\d+)?$/,
+    loader: 'file-loader'
+  }, {
+    test: /\.json$/,
+    loader: 'json'
+  }
+]
+
 let config = Object.assign({}, baseConfig, {
   entry: path.join(__dirname, '../src/index'),
   cache: false,
-  devtool: 'sourcemap',
+  debug: false,
+  devtool: null,
+  output: {
+    path: path.join(__dirname, '/../dist'),
+    filename: '/assets/app.js',
+    publicPath: `.${defaultSettings.publicPath}`
+  },
   plugins: [
     new webpack.optimize.DedupePlugin(),
     new webpack.DefinePlugin({
@@ -20,9 +47,14 @@ let config = Object.assign({}, baseConfig, {
     new webpack.optimize.UglifyJsPlugin(),
     new webpack.optimize.OccurenceOrderPlugin(),
     new webpack.optimize.AggressiveMergingPlugin(),
+    new HtmlWebpackPlugin({
+      inject: false,
+      template: path.join(__dirname, '../src/index.html')
+    }),
+    new ExtractTextPlugin('/assets/app.css'),
     new webpack.NoErrorsPlugin()
   ],
-  module: defaultSettings.getDefaultModules()
+  module: {loaders: prodLoaders}
 })
 
 // Add needed loaders to the defaults here
