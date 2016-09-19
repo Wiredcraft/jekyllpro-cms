@@ -99,6 +99,9 @@ export function fetchPageFilesMeta(branch) {
                 var dirData = res.body.filter( item => {
                   return (item.type === 'file') && (/\.(html|HTML)$/.test(item.name))
                 })
+                if (dirData.length === 0) {
+                  return resolve({name: dir.name})
+                }
                 dirData = parseFilesMeta(dirData)
                 return resolve({name: dir.name, children: dirData})
               })            
