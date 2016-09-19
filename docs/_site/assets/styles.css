@@ -1139,7 +1139,7 @@ h3 {
       margin-bottom: 8px; }
   #app #header {
     background: #343c46;
-    border-bottom: #313943;
+    border-bottom: 1px solid #2a3038;
     box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1);
     color: #FFF;
     left: 0;
@@ -1151,21 +1151,80 @@ h3 {
       clear: both;
       content: "";
       display: table; }
+    #app #header > *:hover {
+      background: #2f363f; }
     #app #header svg,
     #app #header img {
       fill: #FFF;
       height: 18px;
       margin-right: 6px; }
     #app #header .logo {
-      padding: 8px 12px 6px; }
-    #app #header .profile {
-      float: right; }
+      padding: 8px 8px 6px 12px; }
     #app #header .logo,
     #app #header .repo,
     #app #header .branch {
+      border-right: 1px solid #2a3038;
       float: left; }
     #app #header .repo,
-    #app #header .profile {
+    #app #header .branch {
+      position: relative; }
+      #app #header .repo span,
+      #app #header .branch span {
+        background: #2f363f;
+        border-radius: 2px;
+        color: #FFF;
+        font-size: 12px;
+        font-size: 1.2rem;
+        font-weight: 600;
+        line-height: 140%;
+        opacity: 0;
+        padding: 9px 18px;
+        position: absolute;
+        text-align: center;
+        -webkit-transition-property: margin, opacity;
+        -moz-transition-property: margin, opacity;
+        transition-property: margin, opacity;
+        -webkit-transition-duration: 0.2s;
+        -moz-transition-duration: 0.2s;
+        transition-duration: 0.2s;
+        visibility: hidden;
+        white-space: nowrap;
+        width: auto;
+        z-index: 999; }
+      #app #header .repo:hover span,
+      #app #header .branch:hover span {
+        opacity: 1;
+        visibility: visible; }
+      #app #header .repo span,
+      #app #header .branch span {
+        top: 100%;
+        left: 50%;
+        -webkit-transform: translateX(-50%);
+        -moz-transform: translateX(-50%);
+        -ms-transform: translateX(-50%);
+        -o-transform: translateX(-50%);
+        transform: translateX(-50%); }
+        #app #header .repo span:after,
+        #app #header .branch span:after {
+          content: '';
+          position: absolute;
+          border-left: 5px solid transparent;
+          border-top-color: #2f363f;
+          border-bottom: 5px solid #2f363f;
+          border-right: 5px solid transparent;
+          left: 50%;
+          top: -5px;
+          -webkit-transform: translateX(-50%);
+          -moz-transform: translateX(-50%);
+          -ms-transform: translateX(-50%);
+          -o-transform: translateX(-50%);
+          transform: translateX(-50%); }
+      #app #header .repo:hover span,
+      #app #header .branch:hover span {
+        margin-top: 8px; }
+    #app #header .repo,
+    #app #header .profile,
+    #app #header .branch {
       color: inherit;
       display: block;
       opacity: 0.5;
@@ -1177,24 +1236,36 @@ h3 {
       -moz-transition-duration: 0.2s;
       transition-duration: 0.2s; }
       #app #header .repo:hover,
-      #app #header .profile:hover {
+      #app #header .profile:hover,
+      #app #header .branch:hover {
         opacity: 1;
         text-decoration: None; }
       #app #header .repo svg,
       #app #header .repo img,
       #app #header .profile svg,
-      #app #header .profile img {
+      #app #header .profile img,
+      #app #header .branch svg,
+      #app #header .branch img {
         float: left;
         margin: 1px 3px 0 0; }
+    #app #header .profile {
+      border-left: 1px solid #2a3038;
+      float: right; }
+      #app #header .profile img {
+        border-radius: 2px;
+        margin-right: 8px; }
+    #app #header .branch {
+      padding-bottom: 2px;
+      padding-right: 0; }
     #app #header .select {
       display: inline-block;
-      margin: 4px 0 0; }
+      margin-top: -4px; }
       #app #header .select select {
-        background: #2f363f;
-        border-color: #2a3038;
-        width: 120px; }
+        background: none;
+        border-color: transparent;
+        padding-left: 0; }
         #app #header .select select:hover, #app #header .select select:active, #app #header .select select:focus {
-          background: #2a3038; }
+          background: none; }
   #app #menu,
   #app #navigation {
     bottom: 0;

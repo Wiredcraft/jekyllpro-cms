@@ -23,7 +23,7 @@ textarea {
 
 #header {
   background: $black;
-  border-bottom: shade($black, 5%);
+  border-bottom: 1px solid shade($black, 20%);
   box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1);
   @include clearfix;
   color: #FFF;
@@ -32,6 +32,11 @@ textarea {
   right: 0;
   top: 0;
   z-index: 999;
+  > * {
+    &:hover  {
+      background: shade($black, 10%);
+    }
+  }
   svg,
   img {
     fill: #FFF;
@@ -39,18 +44,21 @@ textarea {
     margin-right: $space/4;
   }
   .logo {
-    padding: $space/3 1.5*$space/3 ($space/3-2);
-  }
-  .profile {
-    float: right;
+    padding: $space/3 $space/3 ($space/3-2) 1.5*$space/3;
   }
   .logo,
   .repo,
   .branch {
+    border-right: 1px solid shade($black, 20%);
     float: left;
   }
   .repo,
-  .profile {
+  .branch {
+    @include tooltip(bottom, shade($black, 10%));
+  }
+  .repo,
+  .profile,
+  .branch {
     color: inherit;
     display: block;
     opacity: 0.5;
@@ -67,17 +75,29 @@ textarea {
       margin: 1px $space/8 0 0;
     }
   }
+  .profile {
+    border-left: 1px solid shade($black, 20%);
+    float: right;
+    img {
+      border-radius: $radius;
+      margin-right: $space/3;
+    }
+  }
+  .branch {
+    padding-bottom: $space/12;
+    padding-right: 0;
+  }
   .select {
     display: inline-block;
-    margin: $space/6 0 0;
+    margin-top: -$space/6;
     select {
-      background: shade($black, 10%);
-      border-color: shade($black, 20%);
-      width: $menu - $space;
+      background: none;
+      border-color: transparent;
+      padding-left: 0;
       &:hover,
       &:active,
       &:focus {
-        background: shade($black, 20%);
+        background: none;
       }
     }
   }
