@@ -5,6 +5,7 @@ import { CHANGE_REPO_STATE, FILE_REMOVED, FILE_ADDED, FILE_REPLACED } from '../a
 const initialState = Immutable.fromJS({
   branches: undefined,
   currentBranch: undefined,
+  repoName: undefined,
   filesMeta: undefined,
   pagesMeta: undefined,
   loading: false,
@@ -17,7 +18,7 @@ export default function repo (state = initialState, action) {
 
   switch (action.type) {
   case CHANGE_REPO_STATE:
-    var { branches, filesMeta, currentBranch, loading, schema, selectedFolder, pagesMeta } = action.payload
+    var { branches, filesMeta, currentBranch, loading, schema, selectedFolder, pagesMeta, repoName } = action.payload
     if(branches) state = state.set('branches', branches)
     if(selectedFolder) state = state.set('selectedFolder', selectedFolder)
     if(filesMeta) state = state.set('filesMeta', filesMeta)
@@ -25,6 +26,7 @@ export default function repo (state = initialState, action) {
     if(loading !== undefined) state = state.set('loading', loading)
     if(schema) state = state.set('schema', schema)
     if(pagesMeta) state = state.set('pagesMeta', pagesMeta)
+    if(repoName) state = state.set('repoName', repoName)
     return state
   case FILE_REMOVED:
     var { path } = action.payload

@@ -2,29 +2,18 @@ import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import React, { Component } from 'react'
 
-import { getAllBranch, checkoutBranch, fetchFilesMeta, fetchPageFilesMeta } from '../actions/repoActions'
-import { logout } from '../actions/userActions'
+import { fetchFilesMeta, fetchPageFilesMeta } from '../actions/repoActions'
 import { parseFolderFromSchema, getDefaultFolderStructure } from '../helpers/repo'
 import CollectionIcon from './svg/CollectionIcon'
 import PageIcon from './svg/PageIcon'
 import LayoutIcon from './svg/LayoutIcon'
 import SchemaIcon from './svg/SchemaIcon'
-import Modal from 'react-modal'
-import ModalCustomStyle from './Modal'
 
 @connect(mapStateToProps, mapDispatchToProps)
 export default class Menu extends Component {
   constructor() {
     super()
-    this.state = { selectedItem: '', showProfileModel: false }
-  }
-
-  componentWillMount() {
-    this.props.getAllBranch()
-  }
-
-  handleBranchChange(evt) {
-    this.props.checkoutBranch(evt.target.value)
+    this.state = { selectedItem: '' }
   }
 
   handleMenuItem(dir) {
@@ -40,12 +29,8 @@ export default class Menu extends Component {
     this.setState({ selectedItem: 'pages'})
   }
 
-  logout () {
-    this.props.logout()
-  }
-
   render () {
-    const { branches, currentBranch, avatar, userName, schema } = this.props
+    const { currentBranch, schema } = this.props
     const { selectedItem } = this.state
 
     let collections = schema ? parseFolderFromSchema(schema, 'collection') : getDefaultFolderStructure()['collection']
@@ -55,17 +40,6 @@ export default class Menu extends Component {
     return (
       <nav id="menu">
         <section className="body">
-          <h3>Branch</h3>
-          { branches && (<span className="select">
-              <select value={currentBranch} onChange={::this.handleBranchChange}>
-                {branches && branches.map((b) => {
-                  return (
-                    <option key={b.name}>{ b.name }</option>
-                  )
-                })}
-              </select>
-            </span>)
-          }
           <h3>Collections</h3>
           {
             collections && collections.map((item, idx) => {
@@ -110,17 +84,11 @@ export default class Menu extends Component {
               )
             })
           }
+          <h3>Configure</h3>
           <a className={ selectedItem === '_schemas' ? 'active' : ''}
             onClick={this.handleMenuItem.bind(this, '_schemas')}>
             <SchemaIcon />
             Schemas
-          </a>
-        </section>
-
-        <footer className="footer">
-          <a onClick={evt => {this.setState({showProfileModel: true})}}>
-            <img src={avatar} />
-            {userName}
           </a>
           <a className="settings">
             <svg baseProfile="full" width="24" height="24" viewBox="0 0 24.00 24.00" enableBackground="new 0 0 24.00 24.00">
@@ -128,19 +96,7 @@ export default class Menu extends Component {
             </svg>
             Settings
           </a>
-        </footer>
-        <Modal
-          style={ModalCustomStyle}
-          isOpen={this.state.showProfileModel} 
-          onRequestClose={evt => {this.setState({showProfileModel: false})}} >
-          <header className='header'>
-            <a className='close' id='close-modal' onClick={evt => {this.setState({showProfileModel: false})}}>Close</a>
-            <h2>This is a modal</h2>
-          </header>
-          <section className='body'>
-            <p><button className='button primary' onClick={() => this.logout()}>Logout</button></p>
-          </section>
-        </Modal>
+        </section>
       </nav>
     )
   }
@@ -148,14 +104,11 @@ export default class Menu extends Component {
 
 function mapStateToProps(state) {
   return {
-    avatar: state.user.get('avatar'),
-    userName: state.user.get('userName'),
-    branches: state.repo.get('branches'),
     currentBranch: state.repo.get('currentBranch'),
     schema: state.repo.get('schema')
   }
 }
 
 function mapDispatchToProps (dispatch) {
-  return bindActionCreators({ getAllBranch, checkoutBranch, fetchFilesMeta, logout, fetchPageFilesMeta }, dispatch)
+  return bindActionCreators({ fetchFilesMeta, fetchPageFilesMeta }, dispatch)
 }

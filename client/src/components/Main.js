@@ -4,10 +4,11 @@ import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 
 import { confirmUserIsLogged } from '../actions/userActions'
+import Header from './Header'
 import Menu from './Menu'
 import Editor from './Editor'
 import Navigation from './Navigation'
-import 'styles/app.scss'
+import 'styles/styles.css'
 import 'styles/_supplement.scss'
 
 
@@ -28,6 +29,7 @@ export default class AppComponent extends React.Component {
 
     return isLoggedIn ? (
       <div id='app' className={repoLoading? 'spinning' : ''}>
+        <Header />
         <Menu />
         <Navigation />
         <Editor />

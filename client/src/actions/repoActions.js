@@ -18,9 +18,8 @@ export function fetchRepoInfo() {
         if (err) {
           console.error(err)
         } else {
-          const default_branch = res.body.default_branch
           dispatch({
-            payload: {currentBranch: default_branch},
+            payload: {currentBranch: res.body.default_branch, repoName: res.body.full_name},
             type: CHANGE_REPO_STATE
           })
         }
