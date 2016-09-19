@@ -31,11 +31,11 @@ export default class Editor extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    const { content, fileIndex, schema, newFileMode, selectedFolder } = this.props
+    const { content, targetFile, schema, newFileMode, selectedFolder } = this.props
 
     const schemaFetched = schema !== prevProps.schema
     const contentFetched = content !== prevProps.content
-    const fileChanged = fileIndex !== prevProps.fileIndex
+    const fileChanged = targetFile !== prevProps.targetFile
     const modeChanged = newFileMode !== prevProps.newFileMode
     const folderChanged = selectedFolder !== prevProps.selectedFolder
     if(modeChanged || schemaFetched || contentFetched || fileChanged) {
@@ -55,12 +55,12 @@ export default class Editor extends Component {
     selectedFolder = selectedFolder ? selectedFolder : '_posts'
 
     let folderSchema = schema.find(item => {
-        return item.data.jekyll.dir === selectedFolder
+        return (item.data.jekyll.dir === selectedFolder) || (item.data.jekyll.id === selectedFolder)
       })
     // using locally defined schema if no schema found in fetched data
     if (!folderSchema) {
       folderSchema = defaultSchema.find(item => {
-        return item.data.jekyll.dir === selectedFolder
+        return (item.data.jekyll.dir === selectedFolder) || item.data.jekyll.id === selectedFolder
       }) || {}
     }
     return this.setState({currentSchema: folderSchema.data})
@@ -102,7 +102,7 @@ export default class Editor extends Component {
       selectedFolder,
       currentBranch,
       content,
-      fileIndex,
+      targetFile,
       filesMeta,
       newFileMode,
       fetchBranchSchema,
@@ -135,17 +135,16 @@ export default class Editor extends Component {
       return this.updateSchemasFolder(filePath, updatedContent)
     }
     if (newFileMode) {
-      let newIndex = filesMeta.length
       updatedContent = serializeObjtoYaml(formData) + updatedContent
-      addNewFile(currentBranch, filePath, updatedContent, newIndex )
-    } else if (filePath !== filesMeta[fileIndex].path) {
+      addNewFile(currentBranch, filePath, updatedContent)
+    } else if (filePath !== targetFile) {
       // file path changed
-      let oldPath = filesMeta[fileIndex].path
+      let oldPath = targetFile
       updatedContent = this.updateFileFrontMatter(content, formData) + updatedContent
-      replaceFile(currentBranch, oldPath, filePath, updatedContent, fileIndex)
+      replaceFile(currentBranch, oldPath, filePath, updatedContent)
     } else {
       updatedContent = this.updateFileFrontMatter(content, formData) + updatedContent
-      updateFile(currentBranch, filePath, updatedContent, fileIndex)
+      updateFile(currentBranch, filePath, updatedContent)
     }
   }
 
@@ -161,7 +160,7 @@ export default class Editor extends Component {
   updateSchemasFolder(filePath, updatedContent) {
     const {
       currentBranch,
-      fileIndex,
+      targetFile,
       filesMeta,
       newFileMode,
       fetchBranchSchema,
@@ -172,15 +171,15 @@ export default class Editor extends Component {
     let actionPromise = Promise.resolve()
 
     if (newFileMode) {
-      let newIndex = filesMeta.length
-      actionPromise = addNewFile(currentBranch, filePath, updatedContent, newIndex)
-    } else if (filePath !== filesMeta[fileIndex].path) {
+      // let newIndex = filesMeta.length
+      actionPromise = addNewFile(currentBranch, filePath, updatedContent)
+    } else if (filePath !== targetFile) {
       // file path changed
-      let oldPath = filesMeta[fileIndex].path
-      actionPromise = replaceFile(currentBranch, oldPath, filePath, updatedContent, fileIndex)
+      let oldPath = targetFile
+      actionPromise = replaceFile(currentBranch, oldPath, filePath, updatedContent)
 
     } else {
-      actionPromise = updateFile(currentBranch, filePath, updatedContent, fileIndex)
+      actionPromise = updateFile(currentBranch, filePath, updatedContent)
     }
     actionPromise.then( res => {
       fetchBranchSchema(currentBranch)
@@ -197,12 +196,12 @@ export default class Editor extends Component {
   }
 
   handleDeleteFile() {
-    const { currentBranch, newFileMode, filesMeta, fileIndex, deleteFile, fetchBranchSchema } = this.props
+    const { currentBranch, newFileMode, filesMeta, targetFile, deleteFile, fetchBranchSchema } = this.props
 
     if (newFileMode) {
       return
     }
-    deleteFile(currentBranch, filesMeta[fileIndex].path, fileIndex)
+    deleteFile(currentBranch, targetFile)
       .then( res => {
         fetchBranchSchema(currentBranch)
       })
@@ -240,11 +239,11 @@ export default class Editor extends Component {
   }
 
   render() {
-    const { content, newFileMode, filesMeta, fileIndex, editorUpdating, selectedFolder } = this.props
+    const { content, newFileMode, filesMeta, editorUpdating, selectedFolder, targetFile } = this.props
     const { filePathInputClass, formData, newFilePath, currentSchema } = this.state
     let currentFileName = newFileMode && selectedFolder
       ? (selectedFolder + '/' + dateToString(new Date()) + '-new-file')
-      : (filesMeta && filesMeta[fileIndex] && filesMeta[fileIndex].path)
+      : targetFile
 
     return (
       <section id='content' className={editorUpdating ? 'spinning' : ''}>
@@ -338,7 +337,7 @@ function mapStateToProps(state) {
     schema: state.repo.get('schema'),
     filesMeta: state.repo.get('filesMeta'),
     content: state.editor.get('content'),
-    fileIndex: state.editor.get('targetFileIndex'),
+    targetFile: state.editor.get('targetFile'),
     newFileMode: state.editor.get('newFileMode'),
     editorUpdating: state.editor.get('loading')
   }

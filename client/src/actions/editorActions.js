@@ -26,7 +26,7 @@ export function fetchFileContent(branch, path, index) {
           })
         } else {
           dispatch({
-            payload: { content: res.body, fileIndex: index, loading: false },
+            payload: { content: res.body, targetFile: path, loading: false },
             type: CHANGE_EDITOR_STATE
           })
         }
@@ -34,7 +34,7 @@ export function fetchFileContent(branch, path, index) {
   }
 }
 
-export function updateFile(branch, path, content, index) {
+export function updateFile(branch, path, content) {
   return dispatch => {
     dispatch({
       payload: { loading: true },
@@ -57,7 +57,7 @@ export function updateFile(branch, path, content, index) {
             return reject(err)
           } else {
             dispatch({
-              payload: { content: content, fileIndex: index, loading: false },
+              payload: { content: content, targetFile: path, loading: false },
               type: CHANGE_EDITOR_STATE
             })
             return resolve()
@@ -67,7 +67,7 @@ export function updateFile(branch, path, content, index) {
   }
 }
 
-export function replaceFile(branch, oldPath, newPath, content, fileIndex) {
+export function replaceFile(branch, oldPath, newPath, content) {
   return (dispatch) => {
     let apiUrl = `${API_BASE_URL}/api/repository`
 
@@ -93,10 +93,10 @@ export function replaceFile(branch, oldPath, newPath, content, fileIndex) {
 
           return resolve(Promise.all([
               dispatch({
-                payload: { content: content, loading: false },
+                payload: { content: content, targetFile: newPath, loading: false },
                 type: CHANGE_EDITOR_STATE
               }),
-              dispatch(fileReplaced(newFilename, newPath, fileIndex))
+              dispatch(fileReplaced(newFilename, oldPath, newPath))
             ]))
         })
     })
@@ -127,7 +127,7 @@ export function createEmptyFile() {
   }
 }
 
-export function addNewFile(branch, path, content, index) {
+export function addNewFile(branch, path, content) {
   return dispatch => {
     dispatch({
       payload: { loading: true },
@@ -151,7 +151,7 @@ export function addNewFile(branch, path, content, index) {
             let newFilename = res.body.content.name
             return resolve(Promise.all([
                 dispatch({
-                  payload: { content: content, fileIndex: index, loading: false },
+                  payload: { content: content, targetFile: path, loading: false },
                   type: CHANGE_EDITOR_STATE
                 }),
                 dispatch(fileAdded(newFilename, path))
@@ -163,7 +163,7 @@ export function addNewFile(branch, path, content, index) {
   }
 }
 
-export function deleteFile(branch, path, index) {
+export function deleteFile(branch, path) {
   return dispatch => {
     return new Promise((resolve, reject) => {
       request
@@ -176,7 +176,7 @@ export function deleteFile(branch, path, index) {
             return reject(err)
           } else {
             return resolve(Promise.all([
-                dispatch(fileRemoved(index)),
+                dispatch(fileRemoved(path)),
                 dispatch({type: DELETE_EXISTING_FILE})
               ]))
           }

@@ -86,3 +86,19 @@ fieldset {
   line-height: normal;
   font-size: 14px;
 }
+
+#navigation .body {
+  a {
+    display: block;
+    &:hover {
+      text-decoration: none;
+    }
+  }
+  .folder {
+
+  }
+  .child {
+    padding-left: 25px !important;
+    color: inherit;
+  }
+}

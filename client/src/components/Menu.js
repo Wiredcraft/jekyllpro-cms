@@ -2,7 +2,7 @@ import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import React, { Component } from 'react'
 
-import { getAllBranch, checkoutBranch, fetchFilesMeta } from '../actions/repoActions'
+import { getAllBranch, checkoutBranch, fetchFilesMeta, fetchPageFilesMeta } from '../actions/repoActions'
 import { logout } from '../actions/userActions'
 import { parseFolderFromSchema, getDefaultFolderStructure } from '../helpers/repo'
 import CollectionIcon from './svg/CollectionIcon'
@@ -32,6 +32,12 @@ export default class Menu extends Component {
     fetchFilesMeta(currentBranch, dir)
 
     this.setState({ selectedItem: dir})
+  }
+
+  handlePagesMenuItem() {
+    const {currentBranch, fetchPageFilesMeta} = this.props
+    fetchPageFilesMeta(currentBranch)
+    this.setState({ selectedItem: 'pages'})
   }
 
   logout () {
@@ -86,6 +92,11 @@ export default class Menu extends Component {
               )
             })
           }
+          <a className={ selectedItem === 'pages' ? 'active': '' }
+            onClick={::this.handlePagesMenuItem}>
+            <PageIcon />
+            pages
+          </a>
           <h3>Others</h3>
           {
             others && others.map(item => {
@@ -146,5 +157,5 @@ function mapStateToProps(state) {
 }
 
 function mapDispatchToProps (dispatch) {
-  return bindActionCreators({ getAllBranch, checkoutBranch, fetchFilesMeta, logout }, dispatch)
+  return bindActionCreators({ getAllBranch, checkoutBranch, fetchFilesMeta, logout, fetchPageFilesMeta }, dispatch)
 }

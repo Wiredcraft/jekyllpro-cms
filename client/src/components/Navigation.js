@@ -9,33 +9,33 @@ import { fetchFilesMeta } from '../actions/repoActions'
 export default class Navigation extends Component {
   constructor() {
     super()
-    this.state = { selectedItemIndex: undefined }
+    this.state = { selectedItem: undefined }
   }
 
   componentDidUpdate(prevProps) {
-    const { filesMeta, currentBranch } = this.props
+    const { currentBranch, selectedFolder } = this.props
 
-    // reset highlighted item when switching branch or removing file
-    if ((currentBranch !== prevProps.currentBranch) || (prevProps.filesMeta && (prevProps.filesMeta.length > filesMeta.length))) {
-      this.setState({selectedItemIndex: null})
+    // reset highlighted item when switching branch or folders
+    if ((currentBranch !== prevProps.currentBranch) || (selectedFolder !== prevProps.selectedFolder)) {
+      this.setState({selectedItem: null})
     }
   }
 
-  navigate(i) {
-    const { fetchFileContent, filesMeta, currentBranch } = this.props
-
-    fetchFileContent(currentBranch, filesMeta[i].path, i)
-    this.setState({ selectedItemIndex: i })
+  navigateByPath(path) {
+    console.log(path)
+    const { fetchFileContent, currentBranch} = this.props
+    this.setState({ selectedItem: path})
+    fetchFileContent(currentBranch, path)
   }
 
   createNew() {
     this.props.createEmptyFile()
-    this.setState({selectedItemIndex: null})
+    this.setState({selectedItem: null})
   }
 
   render() {
-    const { filesMeta, loading } = this.props
-    const { selectedItemIndex } = this.state
+    const { filesMeta, loading, selectedFolder, pagesMeta } = this.props
+    const { selectedItem } = this.state
 
     return (
       <nav id='navigation'>
@@ -47,15 +47,44 @@ export default class Navigation extends Component {
         </header>
         <section className='body'>
           {
-            !loading && filesMeta && filesMeta.map((d, i) => (
+            !loading && (selectedFolder !== 'pages') && filesMeta && filesMeta.map((d, i) => (
               <a
-                className={selectedItemIndex === i ? 'active' : ''}
+                className={selectedItem === d.path ? 'active' : ''}
                 key={d.path}
-                onClick={() => this.navigate(i)}
+                onClick={() => this.navigateByPath(d.path)}
               >
                 <h2>{ d.name }</h2>
               </a>
             ))
+          }
+          {
+            !loading && (selectedFolder === 'pages') && pagesMeta && pagesMeta.map((node, i) => {
+              if (node.children) {                
+                return (
+                  <div key={node.name+i}>
+                    <a className='folder'>{ node.name } /</a>
+                    {
+                      node.children.map((node, n) => {
+                        return (
+                          <a className={selectedItem === node.path ? 'active child': 'child'}
+                            key={node.name+n+'child'}
+                            onClick={() => this.navigateByPath(node.path)}>
+                            <h2>|_ { node.name }</h2>
+                          </a>
+                        )
+                      })
+                    }
+                  </div>
+                )
+              }
+              return (
+                <a className={selectedItem === node.path ? 'active': ''}
+                  key={node.name+i}
+                  onClick={() => this.navigateByPath(node.path)}>
+                  <h2>{ node.name }</h2>
+                </a>
+              )
+            })
           }
         </section>
       </nav>
@@ -66,7 +95,9 @@ export default class Navigation extends Component {
 function mapStateToProps(state) {
   return {
     loading: state.repo.get('loading'),
+    selectedFolder: state.repo.get('selectedFolder'),
     filesMeta: state.repo.get('filesMeta'),
+    pagesMeta: state.repo.get('pagesMeta'),
     currentBranch: state.repo.get('currentBranch')
   }
 }

@@ -6,6 +6,7 @@ const initialState = Immutable.fromJS({
   branches: undefined,
   currentBranch: undefined,
   filesMeta: undefined,
+  pagesMeta: undefined,
   loading: false,
   schema: undefined,
   selectedFolder: undefined
@@ -16,19 +17,21 @@ export default function repo (state = initialState, action) {
 
   switch (action.type) {
   case CHANGE_REPO_STATE:
-    var { branches, filesMeta, currentBranch, loading, schema, selectedFolder } = action.payload
+    var { branches, filesMeta, currentBranch, loading, schema, selectedFolder, pagesMeta } = action.payload
     if(branches) state = state.set('branches', branches)
     if(selectedFolder) state = state.set('selectedFolder', selectedFolder)
     if(filesMeta) state = state.set('filesMeta', filesMeta)
     if(currentBranch) state = state.set('currentBranch', currentBranch)
     if(loading !== undefined) state = state.set('loading', loading)
     if(schema) state = state.set('schema', schema)
+    if(pagesMeta) state = state.set('pagesMeta', pagesMeta)
     return state
   case FILE_REMOVED:
-    var { fileIndex } = action.payload
+    var { path } = action.payload
     updatedFileMeta = state.get('filesMeta')
-    updatedFileMeta.splice(fileIndex, 1)
-    updatedFileMeta = Object.assign([], updatedFileMeta)
+    updatedFileMeta = updatedFileMeta.filter((item) => {
+      return item.path !== path
+    })
     state = state.set('filesMeta', updatedFileMeta)
     return state
   case FILE_ADDED:
@@ -39,9 +42,12 @@ export default function repo (state = initialState, action) {
     state = state.set('filesMeta', updatedFileMeta)
     return state
   case FILE_REPLACED:
-    var { name, path, fileIndex } = action.payload
+    var { name, oldPath, newPath } = action.payload
     updatedFileMeta = state.get('filesMeta')
-    updatedFileMeta[fileIndex] = {name: name, path: path}
+    var i = updatedFileMeta.findIndex((item) => {
+      return item.path === oldPath
+    })
+    updatedFileMeta[i] = {name: name, path: newPath}
     updatedFileMeta = Object.assign([], updatedFileMeta)
     state = state.set('filesMeta', updatedFileMeta)
     return state  

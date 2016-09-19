@@ -59,10 +59,72 @@ export function fetchFilesMeta(branch, path) {
   }
 }
 
-export function fileRemoved(index) {
+export function fetchPageFilesMeta(branch) {
+  var pages = []
   return dispatch => {
     dispatch({
-      payload: { fileIndex: index },
+      payload: { loading: true },
+      type: CHANGE_REPO_STATE
+    })
+    dispatch(cleanEditor())
+
+    request
+      .get(`${API_BASE_URL}/api/repository?ref=${branch}`)
+      .withCredentials()
+      .end((err, res) => {
+        if (err) {
+          console.error(err)
+          return dispatch({
+            payload: { loading: false, pagesMeta: [], selectedFolder: 'pages' },
+            type: CHANGE_REPO_STATE
+          })
+        } 
+        var branchData = res.body
+        pages = branchData.filter( item => {
+          return (item.type === 'file') && (/\.(html|HTML)$/.test(item.name))
+        })
+        pages = parseFilesMeta(pages)
+
+        var folderRequests = branchData.filter( item => {
+          return (item.type === 'dir') && (/^[a-zA-Z0-9]/.test(item.name))
+        }).map( dir => {
+          return new Promise((resolve, reject) => {
+            request
+              .get(`${API_BASE_URL}/api/repository?ref=${branch}&path=${dir.path}`)
+              .withCredentials()
+              .end((err, res) => {
+                if (err) {
+                  console.log(err)
+                  return resolve({name: dir.name})
+                }
+                var dirData = res.body.filter( item => {
+                  return (item.type === 'file') && (/\.(html|HTML)$/.test(item.name))
+                })
+                dirData = parseFilesMeta(dirData)
+                return resolve({name: dir.name, children: dirData})
+              })            
+          })          
+        })
+        return Promise.all(folderRequests)
+          .then( resultArray => {
+            resultArray = resultArray.filter( item => {
+              return !!item.children
+            })
+            pages = pages.concat(resultArray)
+            console.log(pages)
+            dispatch({
+              payload: { pagesMeta: pages, loading: false, selectedFolder: 'pages' },
+              type: CHANGE_REPO_STATE
+            })
+          })
+      })
+  }
+}
+
+export function fileRemoved(path) {
+  return dispatch => {
+    dispatch({
+      payload: { path },
       type: FILE_REMOVED
     })
   }
@@ -77,10 +139,10 @@ export function fileAdded(name, path) {
   }  
 }
 
-export function fileReplaced(name, path, index) {
+export function fileReplaced(name, oldPath, newPath) {
   return dispatch => {
     dispatch({
-      payload: {name: name, path: path, fileIndex: index },
+      payload: { name, oldPath, newPath },
       type: FILE_REPLACED
     })
   }

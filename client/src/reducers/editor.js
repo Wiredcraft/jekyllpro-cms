@@ -6,6 +6,7 @@ const initialState = Immutable.fromJS({
   schema: undefined,
   content: undefined,
   targetFileIndex: undefined,
+  targetFile: undefined,
   newFileMode: false,
   loading: false
 })
@@ -13,10 +14,11 @@ const initialState = Immutable.fromJS({
 export default function repo (state = initialState, action) {
   switch (action.type) {
   case CHANGE_EDITOR_STATE:
-    const { content, fileIndex, schema, loading } = action.payload
+    const { content, fileIndex, schema, loading, targetFile } = action.payload
     if (content !== undefined) state = state.set('content', content)
     if(schema !== undefined) state = state.set('schema', schema)
     if(fileIndex !== undefined) state = state.set('targetFileIndex', fileIndex)
+    if(targetFile !== undefined) state = state.set('targetFile', targetFile)
     if (state.get('newFileMode')) state = state.set('newFileMode', false)
     if(loading !== undefined) state = state.set('loading', loading)
     return state
@@ -27,12 +29,12 @@ export default function repo (state = initialState, action) {
   case DELETE_EXISTING_FILE:
     state = state.set('content', undefined)
     state = state.set('newFileMode', false)
-    state = state.set('targetFileIndex', undefined)
+    state = state.set('targetFile', undefined)
     return state
   case CLEAN_EDITOR:
     state = state.set('content', undefined)
     state = state.set('newFileMode', false)
-    state = state.set('targetFileIndex', undefined)
+    state = state.set('targetFile', undefined)
     return state
   default:
     return state
