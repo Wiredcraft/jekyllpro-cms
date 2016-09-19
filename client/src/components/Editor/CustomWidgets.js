@@ -13,7 +13,7 @@ const cmOptions = {
   height: "auto",
   viewportMargin: Infinity,
   mode: 'markdown',
-  lineNumbers: true,
+  lineNumbers: false,
   lineWrapping: true,
   indentWithTabs: false,
   tabSize: 2
