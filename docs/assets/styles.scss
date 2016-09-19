@@ -1,0 +1,62 @@
+---
+---
+
+// Loading normalize & bourbon, you could load them from somewhere else
+@import '../bower_components/bourbon/app/assets/stylesheets/_bourbon';
+@import '../bower_components/normalize-scss/_normalize';
+
+/*** VARIABLES (colors, layout, spacing & typography) ***/
+
+@import '../bower_components/egg/_variables';
+@import '_variables';
+
+/*** MIXINS ***/
+
+@import '../bower_components/egg/modules/_font-size';
+@import '../bower_components/egg/modules/_button';
+@import '../bower_components/egg/modules/_arrow';
+@import '../bower_components/egg/modules/_tooltip';
+@import '../bower_components/egg/modules/_responsive';
+@import '../bower_components/egg/modules/_dropdown';
+
+
+/*** PARTIALS ***/
+
+@import '../bower_components/egg/partials/_base';
+@import '../bower_components/egg/partials/_button';
+@import '../bower_components/egg/partials/_form';
+@import '../bower_components/egg/partials/_modal';
+@import '../bower_components/egg/partials/_menu';
+@import '../bower_components/egg/partials/_tooltip';
+
+/*** CUSTOM ***/
+
+$menu: 144px;
+$navigation: 240px;
+$header: 38px;
+
+body {
+  background: $black;
+  @include font-size($smaller);
+}
+
+h1,
+h2,
+h3 {
+  font-weight: normal;
+}
+
+@import 'partials/_loading';
+
+.loading {
+  @include loading;
+}
+
+#landing {
+  @import 'partials/_landing';
+  display: none;
+}
+
+#app {
+  @import 'partials/_app';
+}

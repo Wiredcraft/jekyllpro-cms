@@ -1,0 +1,6 @@
+.*
+!.gitignore
+!.gitmodules
+*~
+
+bower_components
