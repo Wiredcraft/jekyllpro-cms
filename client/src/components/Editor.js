@@ -121,12 +121,12 @@ export default class Editor extends Component {
     let updatedContent = formData.body
     delete formData.body
 
-    if ((currentSchema.jekyll.type === 'collection') && (isPostPublished === false)) {
+    if ((currentSchema.jekyll.id === 'posts') && (isPostPublished === false)) {
       formData.published = false
     } else {
       delete formData.published
     }
-    if ((currentSchema.jekyll.type === 'collection') && (isDraft === true)) {
+    if ((currentSchema.jekyll.id === 'posts') && (isDraft === true)) {
       formData.draft = true
     } else {
       delete formData.draft
@@ -250,7 +250,7 @@ export default class Editor extends Component {
         { currentSchema && (newFileMode || content) && (
           <div>
             <header className='sidebar'>
-              {(currentSchema.jekyll.type === 'collection') && (<div className='field language'>
+              {(currentSchema.jekyll.type === 'posts') && (<div className='field language'>
                 <label>Language</label>
                 <span className='select'>
                   <select>
@@ -273,14 +273,14 @@ export default class Editor extends Component {
                 <small className='description'>Filenames impact the generated URL.</small>
               </div>
 
-              {(currentSchema.jekyll.type === 'collection') && (<div className='field published'>
+              {(currentSchema.jekyll.id === 'posts') && (<div className='field published'>
                 <label className='switch'>
                   <input type='checkbox' id='published' checked={this.state.isPostPublished} onChange={::this.handlePublishInput}/>
                   <div className='slider'></div>
                 </label>
                 <label htmlFor='published'>Published</label>
               </div>)}
-              {(currentSchema.jekyll.type === 'collection') && (<div className='field draft'>
+              {(currentSchema.jekyll.id === 'posts') && (<div className='field draft'>
                 <label className='switch'>
                   <input type='checkbox' id='draft' checked={this.state.isDraft} onChange={::this.handleDraftInput}/>
                   <div className='slider'></div>

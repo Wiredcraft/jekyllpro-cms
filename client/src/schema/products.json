@@ -1,9 +1,9 @@
 { 
-  "title": "Posts",
+  "title": "Products",
   "jekyll": {
     "type": "content",
-    "id": "posts",
-    "dir": "_posts"
+    "id": "products",
+    "dir": "_products"
   },
   "JSONSchema": {
     "type": "object",
@@ -21,21 +21,6 @@
         "type": "string",
         "title": "Creation Date"
       },
-      "category": {
-        "type": "string",
-        "title": "Category",
-        "enum": [
-          "Marketing",
-          "DevOps",
-          "Development",
-          "Operation",
-          "Design"
-        ]
-      },
-      "author": {
-        "type": "string",
-        "title": "Author"
-      },
       "body": {
         "type": "string",
         "title": "Body"
@@ -43,9 +28,6 @@
     }
   },
   "uiSchema": {
-    "category": {
-      "ui:widget": "customSelect"
-    },
     "body": {
       "ui:widget": "customCodeMirror"      
     }

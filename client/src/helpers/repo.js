@@ -1,3 +1,5 @@
+const defaultSchema = require('../schema')
+
 export function parseFilesMeta(rawSchemas) {
   return rawSchemas.map(d => ({
     name: d.name.replace('.json', ''),
@@ -16,7 +18,7 @@ export function parseFolderFromSchema(schema, type) {
         return obj.data.jekyll.type === type
       })
       .map((obj) => {
-        return {title: obj.data.title, dir: obj.data.jekyll.dir}
+        return {title: obj.data.title, id: obj.data.jekyll.id, dir: obj.data.jekyll.dir}
       })
     return items
   }
@@ -26,16 +28,9 @@ export function parseFolderFromSchema(schema, type) {
 //Hard coded folder data
 export function getDefaultFolderStructure() {
   let project = {
-    'collection': [
-      { title: 'posts', dir: '_posts'}
-    ],
-    'content': [
-      { title: 'pages', dir: '_pages'},
-      { title: 'team', dir: '_team'}
-    ],
-    'others': [
-      { title: 'layouts', dir: '_layouts'}
-    ]
+    'content': parseFolderFromSchema(defaultSchema, 'content'),
+    'others': parseFolderFromSchema(defaultSchema, 'others'),
+    'configure': parseFolderFromSchema(defaultSchema, 'configure'),
   };
   return project
 }
