@@ -11,6 +11,7 @@ textarea {
 
 .button {
   box-shadow: rgba(0, 0, 0, 0.04) 0 1px 0 0;
+  font-weight: normal;
 }
 
 .icon {
@@ -39,9 +40,7 @@ textarea {
   }
   svg,
   img {
-    fill: #FFF;
     height: 1.5*$space/2;
-    margin-right: $space/4;
   }
   .logo {
     padding: $space/3 $space/3 ($space/3-2) 1.5*$space/3;
@@ -55,6 +54,14 @@ textarea {
   .repo,
   .branch {
     @include tooltip(bottom, shade($black, 10%));
+    span {
+      font-weight: normal;
+    }
+    svg,
+    img {
+      fill: #FFF;
+      margin-right: $space/4;
+    }
   }
   .repo,
   .profile,
@@ -407,17 +414,38 @@ $switch_padding: 4px;
 
 #modal {
   .search {
+    position: relative;
+    svg {
+      fill: $grey;
+      left: $space/3;
+      position: absolute;
+      top: $space/6;
+    }
     input {
       background: $background;
       border-radius: $space;
-      padding-left: $space/2;
+      padding-left: 4*$space/3;
       padding-right: $space/2;
       width: 100%;
+      &:focus {
+        & + svg {
+          fill: $blue;
+        }
+      }
     }
+  }
+  .default,
+  .empty {
+    background: $background;
+    border-radius: $radius;
+    color: $grey;
+    margin-top: $space/2;
+    padding: $space/2 1.5*$space/2;
+    text-align: center;
   }
   .results {
     list-style: none;
-    margin: $space/2 0 0 0;
+    margin: $space/2 0 0;
     li {
       border: 1px solid $line;
       border-radius: $radius;
@@ -425,6 +453,9 @@ $switch_padding: 4px;
       cursor: pointer;
       margin-bottom: $space/3;
       padding: $space/2 1.5*$space/2;
+      &:last-child {
+        margin: 0;
+      }
       &:hover {
         border-color: $blue;
       }
@@ -440,6 +471,7 @@ $switch_padding: 4px;
       border-radius: $radius;
       color: $grey;
       @include font-size($small);
+      font-weight: normal;
       padding: $space/12 $space/4;
       &.private {
         background: $blue;

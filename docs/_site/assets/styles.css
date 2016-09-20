@@ -16,7 +16,7 @@
  * 3. Corrects text resizing oddly in IE 6/7 when body `font-size` is set using
  *  `em` units.
  */
-@import "https://fonts.googleapis.com/css?family=Roboto";
+@import "https://fonts.googleapis.com/css?family=Roboto:400,700";
 html {
   font-family: sans-serif;
   /* 1 */
@@ -1081,7 +1081,8 @@ h3 {
     background: #FFF;
     box-shadow: rgba(0, 0, 0, 0.04) 0 1px 0 0; }
   #app .button {
-    box-shadow: rgba(0, 0, 0, 0.04) 0 1px 0 0; }
+    box-shadow: rgba(0, 0, 0, 0.04) 0 1px 0 0;
+    font-weight: normal; }
   #app .icon {
     background: none;
     border: 0;
@@ -1155,9 +1156,7 @@ h3 {
       background: #2f363f; }
     #app #header svg,
     #app #header img {
-      fill: #FFF;
-      height: 18px;
-      margin-right: 6px; }
+      height: 18px; }
     #app #header .logo {
       padding: 8px 8px 6px 12px; }
     #app #header .logo,
@@ -1222,6 +1221,15 @@ h3 {
       #app #header .repo:hover span,
       #app #header .branch:hover span {
         margin-top: 8px; }
+      #app #header .repo span,
+      #app #header .branch span {
+        font-weight: normal; }
+      #app #header .repo svg,
+      #app #header .repo img,
+      #app #header .branch svg,
+      #app #header .branch img {
+        fill: #FFF;
+        margin-right: 6px; }
     #app #header .repo,
     #app #header .profile,
     #app #header .branch {
@@ -1630,15 +1638,32 @@ h3 {
       display: inline-block;
       margin: 0 0 0 8px;
       vertical-align: bottom; }
-  #app #modal .search input {
+  #app #modal .search {
+    position: relative; }
+    #app #modal .search svg {
+      fill: #AAAAAA;
+      left: 8px;
+      position: absolute;
+      top: 4px; }
+    #app #modal .search input {
+      background: #F4F4F4;
+      border-radius: 24px;
+      padding-left: 32px;
+      padding-right: 12px;
+      width: 100%; }
+      #app #modal .search input:focus + svg {
+        fill: #0A93FF; }
+  #app #modal .default,
+  #app #modal .empty {
     background: #F4F4F4;
-    border-radius: 24px;
-    padding-left: 12px;
-    padding-right: 12px;
-    width: 100%; }
+    border-radius: 2px;
+    color: #AAAAAA;
+    margin-top: 12px;
+    padding: 12px 18px;
+    text-align: center; }
   #app #modal .results {
     list-style: none;
-    margin: 12px 0 0 0; }
+    margin: 12px 0 0; }
     #app #modal .results li {
       border: 1px solid #DDDDDD;
       border-radius: 2px;
@@ -1646,6 +1671,8 @@ h3 {
       cursor: pointer;
       margin-bottom: 8px;
       padding: 12px 18px; }
+      #app #modal .results li:last-child {
+        margin: 0; }
       #app #modal .results li:hover {
         border-color: #0A93FF; }
     #app #modal .results h3 {
@@ -1659,6 +1686,7 @@ h3 {
       color: #AAAAAA;
       font-size: 12px;
       font-size: 1.2rem;
+      font-weight: normal;
       padding: 2px 6px; }
       #app #modal .results .type.private {
         background: #0A93FF;
