@@ -7,6 +7,7 @@ textarea {
 .select select {
   background: #FFF;
   box-shadow: rgba(0, 0, 0, 0.04) 0 1px 0 0;
+  min-height: 32px; // HACK!!!! Dunno why but from Google Chrome 53, select is effed up
 }
 
 .button {
@@ -81,7 +82,7 @@ textarea {
     @include transition-duration($ease);
     &:hover {
       opacity: 1;
-      text-decoration: None;
+      text-decoration: none;
     }
     svg,
     img {
