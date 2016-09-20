@@ -103,7 +103,6 @@ export default class Editor extends Component {
       currentBranch,
       content,
       targetFile,
-      filesMeta,
       newFileMode,
       fetchBranchSchema,
       updateFile,
@@ -161,7 +160,6 @@ export default class Editor extends Component {
     const {
       currentBranch,
       targetFile,
-      filesMeta,
       newFileMode,
       fetchBranchSchema,
       updateFile,
@@ -171,7 +169,6 @@ export default class Editor extends Component {
     let actionPromise = Promise.resolve()
 
     if (newFileMode) {
-      // let newIndex = filesMeta.length
       actionPromise = addNewFile(currentBranch, filePath, updatedContent)
     } else if (filePath !== targetFile) {
       // file path changed
@@ -196,7 +193,7 @@ export default class Editor extends Component {
   }
 
   handleDeleteFile() {
-    const { currentBranch, newFileMode, filesMeta, targetFile, deleteFile, fetchBranchSchema } = this.props
+    const { currentBranch, newFileMode, targetFile, deleteFile, fetchBranchSchema } = this.props
 
     if (newFileMode) {
       return
@@ -239,7 +236,7 @@ export default class Editor extends Component {
   }
 
   render() {
-    const { content, newFileMode, filesMeta, editorUpdating, selectedFolder, targetFile } = this.props
+    const { content, newFileMode, editorUpdating, selectedFolder, targetFile } = this.props
     const { filePathInputClass, formData, newFilePath, currentSchema } = this.state
     let currentFileName = newFileMode && selectedFolder
       ? (selectedFolder + '/' + dateToString(new Date()) + '-new-file')
@@ -260,18 +257,6 @@ export default class Editor extends Component {
                 </span>
                 <small className='description'>See the <a>Chinese version</a>.</small>
               </div>)}
-
-              <div className='field filename'>
-                <label>Filename</label>
-                <input
-                  className={`${filePathInputClass}`}
-                  type='text'
-                  ref="filePath"
-                  value={newFilePath || currentFileName}
-                  onChange={::this.handleFilePathInput}
-                  placeholder='Filename' />
-                <small className='description'>Filenames impact the generated URL.</small>
-              </div>
 
               {(currentSchema.jekyll.id === 'posts') && (<div className='field published'>
                 <label className='switch'>
@@ -308,6 +293,17 @@ export default class Editor extends Component {
               </Modal>
             </header>
             <div className='body'>
+              <div className='field filename'>
+                <label>Filename</label>
+                <input
+                  className={`${filePathInputClass}`}
+                  type='text'
+                  ref="filePath"
+                  value={newFilePath || currentFileName}
+                  onChange={::this.handleFilePathInput}
+                  placeholder='Filename' />
+                <small className='description'>Filenames impact the generated URL.</small>
+              </div>
               <Form
                 onSubmit={res => this.updateResult(res.formData)}
                 schema={currentSchema.JSONSchema}
@@ -335,7 +331,6 @@ function mapStateToProps(state) {
     currentBranch: state.repo.get('currentBranch'),
     selectedFolder: state.repo.get('selectedFolder'),
     schema: state.repo.get('schema'),
-    filesMeta: state.repo.get('filesMeta'),
     content: state.editor.get('content'),
     targetFile: state.editor.get('targetFile'),
     newFileMode: state.editor.get('newFileMode'),
