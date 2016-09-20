@@ -42,30 +42,37 @@ textarea {
   img {
     height: 1.5*$space/2;
   }
+  svg {
+    fill: #FFF;
+  }
   .logo {
     padding: $space/3 $space/3 ($space/3-2) 1.5*$space/3;
   }
   .logo,
   .repo,
-  .branch {
+  .branch,
+  .settings {
     border-right: 1px solid shade($black, 20%);
     float: left;
   }
   .repo,
   .branch {
-    @include tooltip(bottom, shade($black, 10%));
-    span {
-      font-weight: normal;
-    }
-    svg,
-    img {
-      fill: #FFF;
+    svg {
       margin-right: $space/4;
     }
   }
   .repo,
+  .branch,
+  .settings {
+    @include tooltip(bottom, shade($black, 10%));
+    span {
+      font-weight: normal;
+    }
+  }
+  .repo,
   .profile,
-  .branch {
+  .branch,
+  .settings {
     color: inherit;
     display: block;
     opacity: 0.5;
@@ -79,7 +86,7 @@ textarea {
     svg,
     img {
       float: left;
-      margin: 1px $space/8 0 0;
+      margin-top: 1px;
     }
   }
   .profile {
