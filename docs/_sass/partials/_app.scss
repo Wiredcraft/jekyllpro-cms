@@ -7,7 +7,6 @@ textarea {
 .select select {
   background: #FFF;
   box-shadow: rgba(0, 0, 0, 0.04) 0 1px 0 0;
-  min-height: 32px; // HACK!!!! Dunno why but from Google Chrome 53, select is effed up
 }
 
 .button {
@@ -39,12 +38,13 @@ textarea {
       background: shade($black, 10%);
     }
   }
-  svg,
-  img {
-    height: 1.5*$space/2;
-  }
   svg {
     fill: #FFF;
+    height: 1.5*$space/2;
+    width: 1.5*$space/2;
+  }
+  img {
+    height: 1.5*$space/2;
   }
   .logo {
     padding: $space/3 $space/3 ($space/3-2) 1.5*$space/3;
@@ -57,14 +57,14 @@ textarea {
     float: left;
   }
   .repo,
-  .branch {
+  .branch,
+  .settings {
     svg {
       margin-right: $space/4;
     }
   }
   .repo,
-  .branch,
-  .settings {
+  .branch {
     @include tooltip(bottom, shade($black, 10%));
     span {
       font-weight: normal;
@@ -108,6 +108,7 @@ textarea {
     select {
       background: none;
       border-color: transparent;
+      min-height: 32px; // HACK!!!! Dunno why but from Google Chrome 53, select is effed up
       padding-left: 0;
       &:hover,
       &:active,
@@ -307,6 +308,9 @@ $sidebar: 288px;
   textarea,
   .select select {
     width: 100%;
+  }
+  .select select {
+    min-height: 32px; // HACK!!!! Dunno why but from Google Chrome 53, select is effed up
   }
   .description {
     color: tint($black, 40%);

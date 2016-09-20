@@ -1079,8 +1079,7 @@ h3 {
     box-shadow: rgba(0, 0, 0, 0.04) 0 1px 0 0 inset; }
   #app .select select {
     background: #FFF;
-    box-shadow: rgba(0, 0, 0, 0.04) 0 1px 0 0;
-    min-height: 32px; }
+    box-shadow: rgba(0, 0, 0, 0.04) 0 1px 0 0; }
   #app .button {
     box-shadow: rgba(0, 0, 0, 0.04) 0 1px 0 0;
     font-weight: normal; }
@@ -1155,11 +1154,12 @@ h3 {
       display: table; }
     #app #header > *:hover {
       background: #2f363f; }
-    #app #header svg,
+    #app #header svg {
+      fill: #FFF;
+      height: 18px;
+      width: 18px; }
     #app #header img {
       height: 18px; }
-    #app #header svg {
-      fill: #FFF; }
     #app #header .logo {
       padding: 8px 8px 6px 12px; }
     #app #header .logo,
@@ -1169,15 +1169,14 @@ h3 {
       border-right: 1px solid #2a3038;
       float: left; }
     #app #header .repo svg,
-    #app #header .branch svg {
+    #app #header .branch svg,
+    #app #header .settings svg {
       margin-right: 6px; }
     #app #header .repo,
-    #app #header .branch,
-    #app #header .settings {
+    #app #header .branch {
       position: relative; }
       #app #header .repo span,
-      #app #header .branch span,
-      #app #header .settings span {
+      #app #header .branch span {
         background: #2f363f;
         border-radius: 2px;
         color: #FFF;
@@ -1200,13 +1199,11 @@ h3 {
         width: auto;
         z-index: 999; }
       #app #header .repo:hover span,
-      #app #header .branch:hover span,
-      #app #header .settings:hover span {
+      #app #header .branch:hover span {
         opacity: 1;
         visibility: visible; }
       #app #header .repo span,
-      #app #header .branch span,
-      #app #header .settings span {
+      #app #header .branch span {
         top: 100%;
         left: 50%;
         -webkit-transform: translateX(-50%);
@@ -1215,8 +1212,7 @@ h3 {
         -o-transform: translateX(-50%);
         transform: translateX(-50%); }
         #app #header .repo span:after,
-        #app #header .branch span:after,
-        #app #header .settings span:after {
+        #app #header .branch span:after {
           content: '';
           position: absolute;
           border-left: 5px solid transparent;
@@ -1231,12 +1227,10 @@ h3 {
           -o-transform: translateX(-50%);
           transform: translateX(-50%); }
       #app #header .repo:hover span,
-      #app #header .branch:hover span,
-      #app #header .settings:hover span {
+      #app #header .branch:hover span {
         margin-top: 8px; }
       #app #header .repo span,
-      #app #header .branch span,
-      #app #header .settings span {
+      #app #header .branch span {
         font-weight: normal; }
     #app #header .repo,
     #app #header .profile,
@@ -1283,6 +1277,7 @@ h3 {
       #app #header .select select {
         background: none;
         border-color: transparent;
+        min-height: 32px;
         padding-left: 0; }
         #app #header .select select:hover, #app #header .select select:active, #app #header .select select:focus {
           background: none; }
@@ -1452,6 +1447,8 @@ h3 {
     #app #content textarea,
     #app #content .select select {
       width: 100%; }
+    #app #content .select select {
+      min-height: 32px; }
     #app #content .description {
       color: #858a90; }
     #app #content .sidebar {
