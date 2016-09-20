@@ -404,3 +404,50 @@ $switch_padding: 4px;
     vertical-align: bottom;
   }
 }
+
+#modal {
+  .search {
+    input {
+      background: $background;
+      border-radius: $space;
+      padding-left: $space/2;
+      padding-right: $space/2;
+      width: 100%;
+    }
+  }
+  .results {
+    list-style: none;
+    margin: $space/2 0 0 0;
+    li {
+      border: 1px solid $line;
+      border-radius: $radius;
+      box-shadow: $shadow;
+      cursor: pointer;
+      margin-bottom: $space/3;
+      padding: $space/2 1.5*$space/2;
+      &:hover {
+        border-color: $blue;
+      }
+    }
+    h3 {
+      font-size: inherit;
+      font-weight: bold;
+      margin: 0;
+      text-transform: none;
+    }
+    .type {
+      background: $background;
+      border-radius: $radius;
+      color: $grey;
+      @include font-size($small);
+      padding: $space/12 $space/4;
+      &.private {
+        background: $blue;
+        color: #FFF;
+      }
+    }
+    small {
+      color: $grey;
+    }
+  }
+}

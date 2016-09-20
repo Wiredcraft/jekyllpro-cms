@@ -1630,3 +1630,38 @@ h3 {
       display: inline-block;
       margin: 0 0 0 8px;
       vertical-align: bottom; }
+  #app #modal .search input {
+    background: #F4F4F4;
+    border-radius: 24px;
+    padding-left: 12px;
+    padding-right: 12px;
+    width: 100%; }
+  #app #modal .results {
+    list-style: none;
+    margin: 12px 0 0 0; }
+    #app #modal .results li {
+      border: 1px solid #DDDDDD;
+      border-radius: 2px;
+      box-shadow: rgba(0, 0, 0, 0.05) 0 1px 0 0;
+      cursor: pointer;
+      margin-bottom: 8px;
+      padding: 12px 18px; }
+      #app #modal .results li:hover {
+        border-color: #0A93FF; }
+    #app #modal .results h3 {
+      font-size: inherit;
+      font-weight: bold;
+      margin: 0;
+      text-transform: none; }
+    #app #modal .results .type {
+      background: #F4F4F4;
+      border-radius: 2px;
+      color: #AAAAAA;
+      font-size: 12px;
+      font-size: 1.2rem;
+      padding: 2px 6px; }
+      #app #modal .results .type.private {
+        background: #0A93FF;
+        color: #FFF; }
+    #app #modal .results small {
+      color: #AAAAAA; }
