@@ -2,11 +2,14 @@ import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import React, { Component } from 'react'
 
-import { fetchFilesMeta, fetchPageFilesMeta } from '../actions/repoActions'
+import { fetchFilesMeta, fetchPageFilesMeta, fetchNestedFilesMeta } from '../actions/repoActions'
 import { parseFolderFromSchema, getDefaultFolderStructure } from '../helpers/repo'
 import CollectionIcon from './svg/CollectionIcon'
 import PageIcon from './svg/PageIcon'
 import LayoutIcon from './svg/LayoutIcon'
+import IncludeIcon from './svg/IncludeIcon'
+import DataIcon from './svg/DataIcon'
+import MediaIcon from './svg/MediaIcon'
 import SchemaIcon from './svg/SchemaIcon'
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -17,20 +20,22 @@ export default class Menu extends Component {
   }
 
   handleMenuItem(id, dir) {
-    const {currentBranch, fetchFilesMeta, fetchPageFilesMeta} = this.props
+    const {currentBranch, fetchFilesMeta, fetchPageFilesMeta, fetchNestedFilesMeta} = this.props
     this.setState({ selectedItem: id})
-    if (id === 'pages') {
-      return fetchPageFilesMeta(currentBranch)
+    switch (id) {
+      case 'pages':
+        fetchPageFilesMeta(currentBranch)
+        break
+      case 'layouts':
+      case 'includes':
+      case 'data':
+      case 'media':
+        fetchNestedFilesMeta(currentBranch, dir)
+        break
+      default:
+        fetchFilesMeta(currentBranch, dir)
     }
-    return fetchFilesMeta(currentBranch, dir)
-
   }
-
-  // handlePagesMenuItem() {
-  //   const {currentBranch, fetchPageFilesMeta} = this.props
-  //   fetchPageFilesMeta(currentBranch)
-  //   this.setState({ selectedItem: 'pages'})
-  // }
 
   render () {
     const { currentBranch, schema } = this.props
@@ -60,7 +65,20 @@ export default class Menu extends Component {
                 <a key={item.id}
                   className={ selectedItem === item.id ? 'active' : ''}
                   onClick={this.handleMenuItem.bind(this, item.id, item.dir)}>
-                  <LayoutIcon />
+                  {(() => {
+                    switch (item.id) {
+                      case 'layouts':
+                        return <LayoutIcon />
+                      case 'includes':
+                        return <IncludeIcon />
+                      case 'data':
+                        return <DataIcon />
+                      case 'media':
+                        return <MediaIcon />
+                      default:
+                        return <LayoutIcon />
+                    }
+                  })()}
                   {item.title}
                 </a>
               )
@@ -99,5 +117,5 @@ function mapStateToProps(state) {
 }
 
 function mapDispatchToProps (dispatch) {
-  return bindActionCreators({ fetchFilesMeta, fetchPageFilesMeta }, dispatch)
+  return bindActionCreators({ fetchFilesMeta, fetchPageFilesMeta, fetchNestedFilesMeta }, dispatch)
 }

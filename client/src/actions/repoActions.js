@@ -74,7 +74,7 @@ export function fetchPageFilesMeta(branch) {
         if (err) {
           console.error(err)
           return dispatch({
-            payload: { loading: false, pagesMeta: [], selectedFolder: 'pages' },
+            payload: { loading: false, filesMeta: [], selectedFolder: 'pages' },
             type: CHANGE_REPO_STATE
           })
         } 
@@ -115,7 +115,65 @@ export function fetchPageFilesMeta(branch) {
             pages = pages.concat(resultArray)
             console.log(pages)
             dispatch({
-              payload: { pagesMeta: pages, loading: false, selectedFolder: 'pages' },
+              payload: { filesMeta: pages, loading: false, selectedFolder: 'pages' },
+              type: CHANGE_REPO_STATE
+            })
+          })
+      })
+  }
+}
+
+const makeRequest = (branch, path) => {
+  return new Promise((resolve, reject) => {
+    request
+      .get(`${API_BASE_URL}/api/repository?ref=${branch}&path=${path}`)
+      .withCredentials()
+      .end((err, res) => {
+        if (err) {
+          return reject(err)
+        }
+        return resolve(res.body)
+      })     
+  })
+}
+const makeNestedRequest = (branch, path, name) => {
+  return makeRequest(branch, path)
+    .then(list => {
+      return list.map((item) => {
+        if (item.type === 'file') {
+          return Promise.resolve({ name: item.name, path: item.path, url: item.url })
+        }
+        if (item.type === 'dir') {
+          var dirRequest = makeRequest(branch, item.path)
+            .then(resultArray => {
+              return Promise.resolve({name: item.name, children: resultArray })
+            })
+          return dirRequest
+        }
+      })
+    })
+    .catch( err => {
+      console.log(err)
+      return Promise.resolve([{name: name}])
+    })
+}
+
+export function fetchNestedFilesMeta(branch, path) {
+  return dispatch => {
+    dispatch({
+      payload: { loading: true },
+      type: CHANGE_REPO_STATE
+    })
+    dispatch(cleanEditor())
+
+    makeNestedRequest(branch, path, path)
+      .then( promiseArray => {
+        console.log(promiseArray)
+        Promise.all(promiseArray)
+          .then( resultArray => {
+            console.log(resultArray)
+            dispatch({
+              payload: { filesMeta: resultArray, loading: false, selectedFolder: path },
               type: CHANGE_REPO_STATE
             })
           })

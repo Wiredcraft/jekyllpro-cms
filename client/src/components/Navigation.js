@@ -34,7 +34,7 @@ export default class Navigation extends Component {
   }
 
   render() {
-    const { filesMeta, loading, selectedFolder, pagesMeta } = this.props
+    const { filesMeta, loading, selectedFolder } = this.props
     const { selectedItem } = this.state
 
     return (
@@ -47,18 +47,7 @@ export default class Navigation extends Component {
         </header>
         <section className='body'>
           {
-            !loading && (selectedFolder !== 'pages') && filesMeta && filesMeta.map((d, i) => (
-              <a
-                className={selectedItem === d.path ? 'active' : ''}
-                key={d.path}
-                onClick={() => this.navigateByPath(d.path)}
-              >
-                <h2>{ d.name }</h2>
-              </a>
-            ))
-          }
-          {
-            !loading && (selectedFolder === 'pages') && pagesMeta && pagesMeta.map((node, i) => {
+            !loading && filesMeta && filesMeta.map((node, i) => {
               if (node.children) {                
                 return (
                   <div key={node.name+i}>
@@ -97,7 +86,6 @@ function mapStateToProps(state) {
     loading: state.repo.get('loading'),
     selectedFolder: state.repo.get('selectedFolder'),
     filesMeta: state.repo.get('filesMeta'),
-    pagesMeta: state.repo.get('pagesMeta'),
     currentBranch: state.repo.get('currentBranch')
   }
 }

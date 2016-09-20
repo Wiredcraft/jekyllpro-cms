@@ -7,7 +7,6 @@ const initialState = Immutable.fromJS({
   currentBranch: undefined,
   repoName: undefined,
   filesMeta: undefined,
-  pagesMeta: undefined,
   loading: false,
   schema: undefined,
   selectedFolder: undefined
@@ -18,21 +17,30 @@ export default function repo (state = initialState, action) {
 
   switch (action.type) {
   case CHANGE_REPO_STATE:
-    var { branches, filesMeta, currentBranch, loading, schema, selectedFolder, pagesMeta, repoName } = action.payload
+    var { branches, filesMeta, currentBranch, loading, schema, selectedFolder, repoName } = action.payload
     if(branches) state = state.set('branches', branches)
     if(selectedFolder) state = state.set('selectedFolder', selectedFolder)
     if(filesMeta) state = state.set('filesMeta', filesMeta)
     if(currentBranch) state = state.set('currentBranch', currentBranch)
     if(loading !== undefined) state = state.set('loading', loading)
     if(schema) state = state.set('schema', schema)
-    if(pagesMeta) state = state.set('pagesMeta', pagesMeta)
     if(repoName) state = state.set('repoName', repoName)
     return state
   case FILE_REMOVED:
     var { path } = action.payload
     updatedFileMeta = state.get('filesMeta')
+    updatedFileMeta.forEach((item) => {
+      if (item.children) {
+        item.children = item.children.filter((i) => {
+          return i.path !== path
+        })
+      }   
+    })
     updatedFileMeta = updatedFileMeta.filter((item) => {
-      return item.path !== path
+      if (item.path) {
+        return item.path !== path
+      }
+      return true
     })
     state = state.set('filesMeta', updatedFileMeta)
     return state
@@ -46,11 +54,22 @@ export default function repo (state = initialState, action) {
   case FILE_REPLACED:
     var { name, oldPath, newPath } = action.payload
     updatedFileMeta = state.get('filesMeta')
-    var i = updatedFileMeta.findIndex((item) => {
-      return item.path === oldPath
+    updatedFileMeta = updatedFileMeta.map((item, i) => {
+      if (item.path && item.path === oldPath) {
+        return {name: name, path: newPath}
+      } else if (item.children) {
+        item.children = item.children.map((i) => {
+          if (i.path === oldPath) {
+            return {name: name, path: newPath}
+          } else {
+            return i
+          }
+        })
+        return item
+      } else {
+        return item
+      }
     })
-    updatedFileMeta[i] = {name: name, path: newPath}
-    updatedFileMeta = Object.assign([], updatedFileMeta)
     state = state.set('filesMeta', updatedFileMeta)
     return state  
   default:
