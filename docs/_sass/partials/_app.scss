@@ -143,6 +143,7 @@ textarea {
     display: block;
     fill: #FFF;
     height: 1.5*$space/2;
+    width: 1.5*$space/2;
   }
   h2,
   h3 {
@@ -198,7 +199,7 @@ textarea {
       svg,
       img {
         float: left;
-        margin: 1px $space/8 0 0;
+        margin: 1px $space/4 0 0;
       }
       &:hover,
       &.active {

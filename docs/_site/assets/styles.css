@@ -1305,7 +1305,8 @@ h3 {
     #app #navigation svg {
       display: block;
       fill: #FFF;
-      height: 18px; }
+      height: 18px;
+      width: 18px; }
     #app #menu h2,
     #app #menu h3,
     #app #navigation h2,
@@ -1360,7 +1361,7 @@ h3 {
         #app #menu .body > a svg,
         #app #menu .body > a img {
           float: left;
-          margin: 1px 3px 0 0; }
+          margin: 1px 6px 0 0; }
         #app #menu .body > a:hover, #app #menu .body > a.active {
           opacity: 1;
           text-decoration: none; }
