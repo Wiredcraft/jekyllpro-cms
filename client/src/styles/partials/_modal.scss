@@ -23,7 +23,7 @@
   text-align: left;
   width: 50%;
   z-index: 3000;
-  @include animation(scale 1.0s ease-in, slide 2.0s ease);
+  @include animation(slide 0.2s ease);
   @include transition-property(width);
   @include transition-duration($ease);
   > .header {

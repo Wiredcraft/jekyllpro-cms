@@ -81,6 +81,9 @@ fieldset {
 .ReactModal__Body--open {
   @extend body.modal;
 }
+.ReactModal__Overlay {
+  @extend #overlay;
+}
 
 .ReactCodeMirror {
   line-height: normal;
