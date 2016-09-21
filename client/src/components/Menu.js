@@ -2,7 +2,7 @@ import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import React, { Component } from 'react'
 
-import { fetchFilesMeta, fetchPageFilesMeta, fetchNestedFilesMeta } from '../actions/repoActions'
+import { fetchFilesMeta, fetchPageFilesMeta, fetchNestedFilesMeta, fetchBranchSchema } from '../actions/repoActions'
 import { parseFolderFromSchema, getDefaultFolderStructure } from '../helpers/repo'
 import CollectionIcon from './svg/CollectionIcon'
 import PageIcon from './svg/PageIcon'
@@ -17,6 +17,11 @@ export default class Menu extends Component {
   constructor() {
     super()
     this.state = { selectedItem: '' }
+  }
+
+  componentWillMount () {
+    const { currentBranch, fetchBranchSchema } = this.props
+    fetchBranchSchema(currentBranch)
   }
 
   handleMenuItem(id, dir) {
@@ -41,13 +46,14 @@ export default class Menu extends Component {
     const { currentBranch, schema } = this.props
     const { selectedItem } = this.state
     const defaultMenuList = getDefaultFolderStructure()
+    const contentMenuList = parseFolderFromSchema(schema, 'content')
 
     return (
       <nav id="menu">
         <section className="body">
           <h3>Content</h3>
           {
-            defaultMenuList['content'].map(item => {
+            schema && contentMenuList.map(item => {
               return(
                 <a key={item.id}
                   className={ selectedItem === item.id ? 'active' : ''}
@@ -117,5 +123,5 @@ function mapStateToProps(state) {
 }
 
 function mapDispatchToProps (dispatch) {
-  return bindActionCreators({ fetchFilesMeta, fetchPageFilesMeta, fetchNestedFilesMeta }, dispatch)
+  return bindActionCreators({ fetchFilesMeta, fetchPageFilesMeta, fetchNestedFilesMeta, fetchBranchSchema }, dispatch)
 }

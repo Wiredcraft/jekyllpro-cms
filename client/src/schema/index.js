@@ -1,8 +1,6 @@
 const schema = [
   {name: 'pages', data: require('./pages.json')},
   {name: 'posts', data: require('./posts.json')},
-  {name: 'team', data: require('./team.json')},
-  {name: 'products', data: require('./products.json')},
   {name: 'media', data: require('./media.json')},
   {name: 'data', data: require('./data.json')},
   {name: 'layouts', data: require('./layouts.json')},
