@@ -23,9 +23,12 @@ class Navigation extends Component {
   }
 
   navigateByPath(path) {
-    console.log(path)
-    const { fetchFileContent, currentBranch} = this.props
+    const { fetchFileContent, currentBranch, selectedFolder } = this.props
     this.setState({ selectedItem: path})
+    // Do not render editor if click on any media files
+    if (selectedFolder === 'media') {
+      return
+    }
     fetchFileContent(currentBranch, path)
   }
 

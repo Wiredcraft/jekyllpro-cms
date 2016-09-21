@@ -14,5 +14,9 @@
       }
     }
   },
-  "uiSchema": {}
+  "uiSchema": {
+    "body": {
+      "ui:widget": "textarea"      
+    }
+  }
 }
