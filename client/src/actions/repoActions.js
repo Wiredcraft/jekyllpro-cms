@@ -1,5 +1,6 @@
 /* global API_BASE_URL */
 import request from 'superagent'
+import { push } from 'react-router-redux'
 
 import { parseFilesMeta } from '../helpers/repo'
 import { fetchDefaultSchema, cleanEditor } from './editorActions'
@@ -77,7 +78,7 @@ export function fetchPageFilesMeta(branch) {
             payload: { loading: false, filesMeta: [], selectedFolder: 'pages' },
             type: CHANGE_REPO_STATE
           })
-        } 
+        }
         var branchData = res.body
         pages = branchData.filter( item => {
           return (item.type === 'file') && (/\.(html|HTML)$/.test(item.name))
@@ -104,8 +105,8 @@ export function fetchPageFilesMeta(branch) {
                 }
                 dirData = parseFilesMeta(dirData)
                 return resolve({name: dir.name, children: dirData})
-              })            
-          })          
+              })
+          })
         })
         return Promise.all(folderRequests)
           .then( resultArray => {
@@ -196,7 +197,7 @@ export function fileAdded(name, path) {
       payload: {name, path},
       type: FILE_ADDED
     })
-  }  
+  }
 }
 
 export function fileReplaced(name, oldPath, newPath) {
@@ -235,10 +236,12 @@ export function getAllBranch() {
   }
 }
 
-export function checkoutBranch(branch) {
+export function checkoutBranch({ collectionType, splat: filePath}, branch) {
   return dispatch => {
     Promise.all([
       dispatch(fetchBranchSchema(branch)),
+      dispatch(
+        push(`/${collectionType || 'pages'}/${branch}/${filePath || ''}`)),
       dispatch({
         payload: { currentBranch: branch },
         type: CHANGE_REPO_STATE

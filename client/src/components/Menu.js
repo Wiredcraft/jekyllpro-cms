@@ -109,9 +109,11 @@ export default class Menu extends Component {
   }
 }
 
-function mapStateToProps(state) {
+function mapStateToProps(state, { params:
+  { collectionType, branch, splat: path } }) {
+
   return {
-    currentBranch: state.repo.get('currentBranch'),
+    currentBranch: branch || 'master',
     schema: state.repo.get('schema')
   }
 }

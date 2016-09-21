@@ -29,10 +29,10 @@ export default class AppComponent extends React.Component {
 
     return isLoggedIn ? (
       <div id='app' className={repoLoading? 'spinning' : ''}>
-        <Header />
-        <Menu />
-        <Navigation />
-        <Editor />
+        <Header params={this.props.params} />
+        <Menu params={this.props.params} />
+        <Navigation params={this.props.params} />
+        <Editor params={this.props.params} />
       </div>
     ) : (
       <div id='landing' style={{'display': 'block'}}>

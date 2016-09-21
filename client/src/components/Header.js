@@ -22,7 +22,7 @@ export default class Header extends Component {
   }
 
   handleBranchChange(evt) {
-    this.props.checkoutBranch(evt.target.value)
+    this.props.checkoutBranch(this.props.params, evt.target.value)
   }
 
   logout () {
@@ -40,7 +40,7 @@ export default class Header extends Component {
         </a>
         <Modal
           style={ModalCustomStyle}
-          isOpen={this.state.showProfileModel} 
+          isOpen={this.state.showProfileModel}
           onRequestClose={evt => {this.setState({showProfileModel: false})}} >
           <header className='header'>
             <a className='close' id='close-modal' onClick={evt => {this.setState({showProfileModel: false})}}>Close</a>
@@ -81,12 +81,14 @@ export default class Header extends Component {
   }
 }
 
-function mapStateToProps(state) {
+function mapStateToProps(state, { params:
+  { collectionType, branch, splat: path } }) {
+
   return {
+    currentBranch: branch || 'master',
     avatar: state.user.get('avatar'),
     userName: state.user.get('userName'),
     branches: state.repo.get('branches'),
-    currentBranch: state.repo.get('currentBranch'),
     repoName: state.repo.get('repoName')
   }
 }

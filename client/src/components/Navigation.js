@@ -1,12 +1,13 @@
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import React, { Component } from 'react'
+import { withRouter } from 'react-router'
 
 import { fetchFileContent, createEmptyFile } from '../actions/editorActions'
 import { fetchFilesMeta } from '../actions/repoActions'
 
-@connect(mapStateToProps, mapDispatchToProps)
-export default class Navigation extends Component {
+
+class Navigation extends Component {
   constructor() {
     super()
     this.state = { selectedItem: undefined }
@@ -48,7 +49,7 @@ export default class Navigation extends Component {
         <section className='body'>
           {
             !loading && filesMeta && filesMeta.map((node, i) => {
-              if (node.children) {                
+              if (node.children) {
                 return (
                   <div key={node.name+i}>
                     <a className='folder'>{ node.name } /</a>
@@ -81,15 +82,19 @@ export default class Navigation extends Component {
   }
 }
 
-function mapStateToProps(state) {
+function mapStateToProps(state, { params:
+  { collectionType, branch, splat: path } }) {
   return {
     loading: state.repo.get('loading'),
     selectedFolder: state.repo.get('selectedFolder'),
     filesMeta: state.repo.get('filesMeta'),
-    currentBranch: state.repo.get('currentBranch')
+    pagesMeta: state.repo.get('pagesMeta'),
+    currentBranch: branch || 'master'
   }
 }
 
 function mapDispatchToProps (dispatch) {
   return bindActionCreators({ fetchFileContent, createEmptyFile, fetchFilesMeta }, dispatch)
 }
+
+export default connect(mapStateToProps, mapDispatchToProps)(Navigation)

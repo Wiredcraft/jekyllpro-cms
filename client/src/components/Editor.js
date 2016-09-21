@@ -16,8 +16,7 @@ import ModalCustomStyle from './Modal'
 const defaultSchema = require('../schema')
 
 // TODO: remove linePattern
-@connect(mapStateToProps, mapDispatchToProps)
-export default class Editor extends Component {
+class Editor extends Component {
   constructor() {
     super()
     this.state = {
@@ -280,7 +279,7 @@ export default class Editor extends Component {
                 onClick={evt => {this.setState({showDeleteFileModel: true})}} />
               <Modal
                 style={ModalCustomStyle}
-                isOpen={this.state.showDeleteFileModel} 
+                isOpen={this.state.showDeleteFileModel}
                 onRequestClose={::this.closeDeleteFileModel} >
                 <header className='header'>
                   <a className='close' id='close-modal' onClick={::this.closeDeleteFileModel}>Close</a>
@@ -327,9 +326,11 @@ export default class Editor extends Component {
   }
 }
 
-function mapStateToProps(state) {
+function mapStateToProps(state, { params:
+  { collectionType, branch, splat: path } }) {
+    
   return {
-    currentBranch: state.repo.get('currentBranch'),
+    currentBranch: branch || 'master',
     selectedFolder: state.repo.get('selectedFolder'),
     schema: state.repo.get('schema'),
     content: state.editor.get('content'),
@@ -342,3 +343,5 @@ function mapStateToProps(state) {
 function mapDispatchToProps (dispatch) {
   return bindActionCreators({ updateFile, deleteFile, addNewFile, fetchBranchSchema, replaceFile }, dispatch)
 }
+
+export default connect(mapStateToProps, mapDispatchToProps)(Editor)
