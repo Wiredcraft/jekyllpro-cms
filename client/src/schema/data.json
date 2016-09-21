@@ -10,7 +10,7 @@
     "properties": {
       "body": {
         "type": "string",
-        "title": "Body"
+        "title": "Content"
       }
     }
   },
