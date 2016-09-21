@@ -23,13 +23,15 @@ class Navigation extends Component {
   }
 
   navigateByPath(path) {
-    const { fetchFileContent, currentBranch, selectedFolder } = this.props
+    const { fetchFileContent, currentBranch, selectedFolder, collectionType } = this.props
     this.setState({ selectedItem: path})
     // Do not render editor if click on any media files
     if (selectedFolder === 'media') {
       return
     }
-    fetchFileContent(currentBranch, path)
+
+    let routingUrl = `/${collectionType || 'pages'}/${currentBranch}/${path}`
+    fetchFileContent(currentBranch, path, routingUrl)
   }
 
   createNew() {
@@ -90,6 +92,8 @@ function mapStateToProps(state, { params:
   return {
     loading: state.repo.get('loading'),
     selectedFolder: state.repo.get('selectedFolder'),
+    collectionType: state.repo.get('collectionType'),
+    schema: state.repo.get('schema'),
     filesMeta: state.repo.get('filesMeta'),
     pagesMeta: state.repo.get('pagesMeta'),
     currentBranch: branch || 'master'

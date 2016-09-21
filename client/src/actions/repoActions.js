@@ -28,7 +28,7 @@ export function fetchRepoInfo() {
   }
 }
 
-export function fetchFilesMeta(branch, path) {
+export function fetchFilesMeta(branch, path, collectionType) {
   let url = branch ? `${API_BASE_URL}/api/repository?ref=${branch}&path=${path}` : `${API_BASE_URL}/api/repository?path=${path}`
 
   return dispatch => {
@@ -37,6 +37,9 @@ export function fetchFilesMeta(branch, path) {
       type: CHANGE_REPO_STATE
     })
     dispatch(cleanEditor())
+    if (collectionType) {
+      dispatch(push(`/${collectionType}/${branch}/`))
+    }
 
     request
       .get(url)
@@ -45,13 +48,13 @@ export function fetchFilesMeta(branch, path) {
         if (err) {
           console.error(err)
           dispatch({
-            payload: { loading: false, filesMeta: [], selectedFolder: path },
+            payload: { loading: false, filesMeta: [], selectedFolder: path, collectionType },
             type: CHANGE_REPO_STATE
           })
         } else {
           const filesMeta = parseFilesMeta(res.body)
           dispatch({
-            payload: { filesMeta, loading: false, selectedFolder: path },
+            payload: { filesMeta, collectionType, loading: false, selectedFolder: path },
             type: CHANGE_REPO_STATE
           })
         }
@@ -67,6 +70,7 @@ export function fetchPageFilesMeta(branch) {
       type: CHANGE_REPO_STATE
     })
     dispatch(cleanEditor())
+    dispatch(push(`/pages/${branch}/`))
 
     request
       .get(`${API_BASE_URL}/api/repository?ref=${branch}`)
@@ -159,13 +163,16 @@ const makeNestedRequest = (branch, path, name) => {
     })
 }
 
-export function fetchNestedFilesMeta(branch, path) {
+export function fetchNestedFilesMeta(branch, path, collectionType) {
   return dispatch => {
     dispatch({
       payload: { loading: true },
       type: CHANGE_REPO_STATE
     })
     dispatch(cleanEditor())
+    if (collectionType) {
+      dispatch(push(`/${collectionType}/${branch}/`))
+    }
 
     makeNestedRequest(branch, path, path)
       .then( promiseArray => {
@@ -174,7 +181,7 @@ export function fetchNestedFilesMeta(branch, path) {
           .then( resultArray => {
             console.log(resultArray)
             dispatch({
-              payload: { filesMeta: resultArray, loading: false, selectedFolder: path },
+              payload: { filesMeta: resultArray, loading: false, selectedFolder: path, collectionType },
               type: CHANGE_REPO_STATE
             })
           })

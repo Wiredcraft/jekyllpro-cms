@@ -19,8 +19,7 @@ export function confirmUserIsLogged() {
               type: CHANGE_LOGIN_STATE,
               payload: { isLoggedIn: true, userName: res.body.login, avatar: res.body.avatar_url }
             }),
-            dispatch(fetchRepoInfo()),
-            dispatch(fetchBranchSchema())
+            dispatch(fetchRepoInfo())
           ])
         }
       }

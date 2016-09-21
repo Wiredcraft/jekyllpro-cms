@@ -9,7 +9,8 @@ const initialState = Immutable.fromJS({
   filesMeta: undefined,
   loading: false,
   schema: undefined,
-  selectedFolder: undefined
+  selectedFolder: undefined,
+  collectionType: undefined
 })
 
 export default function repo (state = initialState, action) {
@@ -17,7 +18,7 @@ export default function repo (state = initialState, action) {
 
   switch (action.type) {
   case CHANGE_REPO_STATE:
-    var { branches, filesMeta, currentBranch, loading, schema, selectedFolder, repoName } = action.payload
+    var { branches, filesMeta, currentBranch, loading, schema, selectedFolder, repoName, collectionType } = action.payload
     if(branches) state = state.set('branches', branches)
     if(selectedFolder) state = state.set('selectedFolder', selectedFolder)
     if(filesMeta) state = state.set('filesMeta', filesMeta)
@@ -25,6 +26,7 @@ export default function repo (state = initialState, action) {
     if(loading !== undefined) state = state.set('loading', loading)
     if(schema) state = state.set('schema', schema)
     if(repoName) state = state.set('repoName', repoName)
+    if(collectionType) state = state.set('collectionType', collectionType)
     return state
   case FILE_REMOVED:
     var { path } = action.payload

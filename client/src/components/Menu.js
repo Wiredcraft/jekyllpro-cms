@@ -21,7 +21,7 @@ export default class Menu extends Component {
 
   componentWillMount () {
     const { currentBranch, fetchBranchSchema } = this.props
-    fetchBranchSchema(currentBranch)
+    currentBranch && fetchBranchSchema(currentBranch)
   }
 
   handleMenuItem(id, dir) {
@@ -35,10 +35,10 @@ export default class Menu extends Component {
       case 'includes':
       case 'data':
       case 'media':
-        fetchNestedFilesMeta(currentBranch, dir)
+        fetchNestedFilesMeta(currentBranch, dir, id)
         break
       default:
-        fetchFilesMeta(currentBranch, dir)
+        fetchFilesMeta(currentBranch, dir, id)
     }
   }
 
