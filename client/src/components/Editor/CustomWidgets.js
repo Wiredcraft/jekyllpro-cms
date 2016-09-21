@@ -30,10 +30,7 @@ const customSelect= (props) => {
 const customTextarea = (props) => {
   let newProps = Object.assign({rows: '20'}, props)
   return (
-    <div>
-      <TextareaWidget {...newProps} />
-      <small className='description'>The format of this field depends on the extension of the filename (HTML if .html and markdown if .md).</small>
-    </div>
+    <TextareaWidget {...newProps} />
   )
 }
 
@@ -57,7 +54,6 @@ class customCodeMirror extends React.Component {
           </select>
         </div>
         <Codemirror value={value} required={required} onChange={(code) => onChange(code)} options={opts} />
-        <small className='description'>The format of this field depends on the extension of the filename (HTML if .html and markdown if .md).</small>
       </div>
     )
   }

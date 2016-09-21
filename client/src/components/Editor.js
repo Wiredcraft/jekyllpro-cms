@@ -86,8 +86,10 @@ export default class Editor extends Component {
         })
         formData.published = docConfigObj.published
         formData.draft = docConfigObj.draft
+        formData.body = retriveContent(content)
+      } else {
+        formData.body = content
       }
-      formData.body = retriveContent(content)
     }
     this.setState({
       formData,
@@ -302,7 +304,6 @@ export default class Editor extends Component {
                   value={newFilePath || currentFileName}
                   onChange={::this.handleFilePathInput}
                   placeholder='Filename' />
-                <small className='description'>Filenames impact the generated URL.</small>
               </div>
               <Form
                 onSubmit={res => this.updateResult(res.formData)}
