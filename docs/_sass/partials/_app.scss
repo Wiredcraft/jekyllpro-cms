@@ -1,27 +1,3 @@
-input:not([type=submit]),
-textarea {
-  background: #FFF;
-  box-shadow: rgba(0, 0, 0, 0.04) 0 1px 0 0 inset;
-}
-
-.select select {
-  background: #FFF;
-  box-shadow: rgba(0, 0, 0, 0.04) 0 1px 0 0;
-}
-
-.button {
-  box-shadow: rgba(0, 0, 0, 0.04) 0 1px 0 0;
-  font-weight: normal;
-}
-
-.icon {
-  background: none;
-  border: 0;
-  color: inherit;
-  padding: 0;
-  @include tooltip;
-}
-
 #header {
   background: $black;
   border-bottom: 1px solid shade($black, 20%);
@@ -148,6 +124,7 @@ textarea {
   h2,
   h3 {
     color: inherit;
+    font-weight: normal;
     line-height: 160%;
     margin: 0;
   }
@@ -169,7 +146,6 @@ textarea {
 
 #menu {
   background: $black;
-  box-shadow: 10px 0 0 rgba(0, 0, 0, 0.1);
   left: 0;
   width: $menu;
   .body {
@@ -297,9 +273,14 @@ textarea {
 
 $sidebar: 288px;
 
+#navigation + #content {
+  margin-left: $menu + $navigation;
+}
+
 #content {
   background: $background;
-  margin-left: $menu + $navigation;
+  height: 100%;
+  margin-left: $menu;
   padding-top: $header;
   &.loading:after {
     left: $menu + $navigation;
@@ -370,6 +351,25 @@ $sidebar: 288px;
   .body {
     box-sizing: border-box;
     padding: $space 1.5*$space;
+  }
+  .empty {
+    text-align: center;
+    .box {
+      background: #FFF;
+      border: 1px solid $line;
+      border-radius: $radius;
+      box-shadow: $shadow;
+      bottom: 0;
+      margin: auto;
+      padding: $space;
+      position: absolute;
+      display: table;
+      height: auto;
+      left: 0;
+      right: 0;
+      top: 0;
+      width: 240px;
+    }
   }
 }
 
@@ -460,8 +460,6 @@ $switch_padding: 4px;
   .selected {
     padding: $space/2 1.5*$space/2;
     h3 {
-      font-size: inherit;
-      font-weight: bold;
       margin: 0;
       text-transform: none;
     }

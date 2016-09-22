@@ -35,15 +35,50 @@ $menu: 144px;
 $navigation: 240px;
 $header: 38px;
 
+html,
 body {
-  background: $black;
+  height: 100%;
+}
+
+body {
   @include font-size($smaller);
 }
 
-h1,
-h2,
+h1 {
+  @include font-size($larger);
+}
+
+h2 {
+  @include font-size($regular);
+}
+
 h3 {
+  @include font-size($smaller);
+  font-weight: bold;
+}
+
+input:not([type=submit]),
+textarea {
+  background: #FFF;
+  box-shadow: rgba(0, 0, 0, 0.04) 0 1px 0 0 inset;
+}
+
+.select select {
+  background: #FFF;
+  box-shadow: rgba(0, 0, 0, 0.04) 0 1px 0 0;
+}
+
+.button {
+  box-shadow: rgba(0, 0, 0, 0.04) 0 1px 0 0;
   font-weight: normal;
+}
+
+.icon {
+  background: none;
+  border: 0;
+  color: inherit;
+  padding: 0;
+  @include tooltip;
 }
 
 @import 'partials/_loading';
