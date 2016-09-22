@@ -287,7 +287,7 @@ Stay tuned for the next team building update from Wiredcraft! Beach day is going
         </header>
         <section class='body'>
           <ul class='list branches'>
-            <li class='active'>
+            <li>
               <h3>master <span class='type warning'>Public</span></h3>
               <section class='details'>
                 <div class='setting'>
@@ -318,21 +318,43 @@ Stay tuned for the next team building update from Wiredcraft! Beach day is going
                 </div>
               </section>
             </li>
-            <li>
-              <h3>gh-pages <span class='type'>Private</span> <span class='type info'>Variant</span></h3>
+            <li class='active'>
+              <h3>gh-pages <span class='type ok'>Private</span> <span class='type info'>Variant</span></h3>
               <section class='details'>
-                <label class='switch'>
-                  <input type='checkbox' id='branch-master-private' checked/>
-                  <div class='slider'></div>
-                </label>
-                <label for='branch-master-private'>Private</label>
+                <div class='setting'>
+                  <div class='field'>
+                    <label class='switch'>
+                      <input type='checkbox' id='branch-gh-pages-private' checked/>
+                      <div class='slider'></div>
+                    </label>
+                    <label for='branch-gh-pages-private'><strong>Private</strong></label>
+                    <small class='description'></small>
+                  </div>
+                </div>
+                <div class='setting'>
+                  <div class='field'>
+                    <label class='switch'>
+                      <input type='checkbox' id='branch-gh-pages-variant' checked/>
+                      <div class='slider'></div>
+                    </label>
+                    <label for='branch-gh-pages-variant'><strong>Variant</strong></label>
+                  </div>
+                  <div class='field'>
+                    <label>Only generate variants for the following paths:</label>
+                    <textarea>/teavana-promotion
+/en/teavana-promotion
+/mocha-promotion
+/en/mocha-promotion</textarea>
+                  </div>
+                </div>
               </section>
             </li>
             <li>
-              <h3>exp-fp-1</h3>
+              <h3>exp-fp-1 <span class='type ok'>Private</span></h3>
+              <h3></h3>
             </li>
             <li>
-              <h3>super-long-branch-name-for-testing</h3>
+              <h3>super-long-branch-name-for-testing <span class='type ok'>Private</span></h3>
             </li>
           </ul>
         </section>

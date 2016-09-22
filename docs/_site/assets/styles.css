@@ -1693,9 +1693,13 @@ h3 {
       #app #modal .selected .type.info {
         background: #0A93FF;
         color: #FFF; }
+      #app #modal .list li .type.ok,
+      #app #modal .selected .type.ok {
+        background: #2ECC40;
+        color: #FFF; }
       #app #modal .list li .type.warning,
       #app #modal .selected .type.warning {
-        background: #2ECC40;
+        background: #FF851B;
         color: #FFF; }
     #app #modal .list li small,
     #app #modal .selected small {

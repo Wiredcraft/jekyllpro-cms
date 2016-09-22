@@ -476,8 +476,12 @@ $switch_padding: 4px;
         background: $blue;
         color: #FFF;
       }
-      &.warning {
+      &.ok {
         background: $green;
+        color: #FFF;
+      }
+      &.warning {
+        background: $orange;
         color: #FFF;
       }
     }
