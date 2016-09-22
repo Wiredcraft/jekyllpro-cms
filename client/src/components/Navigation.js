@@ -40,20 +40,24 @@ class Navigation extends Component {
   }
 
   render() {
-    const { filesMeta, loading, selectedFolder } = this.props
+    const { filesMeta, loading, selectedFolder, collectionType } = this.props
     const { selectedItem } = this.state
 
     return (
       <nav id='navigation'>
-        <header className='header'>
-          <div className='controls'>
-            <button className='button primary' onClick={::this.createNew}>Create</button>
-          </div>
-          <input type='text' className='search' placeholder='Filter by name'/>
-        </header>
+        {
+          collectionType && collectionType !=='media' && (
+            <header className='header'>
+              <div className='controls'>
+                <button className='button primary' onClick={::this.createNew}>Create</button>
+              </div>
+              <input type='text' className='search' placeholder='Filter by name'/>
+            </header>
+          )
+        }
         <section className='body'>
           {
-            !loading && filesMeta && filesMeta.map((node, i) => {
+            !loading && collectionType !=='media' && filesMeta && filesMeta.map((node, i) => {
               if (node.children) {
                 return (
                   <div key={node.name+i}>

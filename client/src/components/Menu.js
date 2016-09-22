@@ -34,7 +34,6 @@ export default class Menu extends Component {
       case 'layouts':
       case 'includes':
       case 'data':
-      case 'media':
         fetchNestedFilesMeta(currentBranch, dir, id)
         break
       default:

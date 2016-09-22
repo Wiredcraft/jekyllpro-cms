@@ -32,14 +32,18 @@ export function fetchFilesMeta(branch, path, collectionType) {
   let url = branch ? `${API_BASE_URL}/api/repository?ref=${branch}&path=${path}` : `${API_BASE_URL}/api/repository?path=${path}`
 
   return dispatch => {
+    if (collectionType === 'media') {
+      return dispatch({
+        payload: { collectionType: 'media' },
+        type: CHANGE_REPO_STATE
+      })
+    }
     dispatch({
       payload: { loading: true },
       type: CHANGE_REPO_STATE
     })
     dispatch(cleanEditor())
-    if (collectionType) {
-      dispatch(push(`/${collectionType}/${branch}/`))
-    }
+    dispatch(push(`/${collectionType}/${branch}/`))
 
     request
       .get(url)
