@@ -10,7 +10,8 @@
   top: 0;
   z-index: 999;
   > * {
-    &:hover  {
+    &:hover,
+    &.active  {
       background: shade($black, 10%);
     }
   }
@@ -28,13 +29,15 @@
   .logo,
   .repo,
   .branch,
-  .settings {
+  .settings,
+  .website {
     border-right: 1px solid shade($black, 20%);
     float: left;
   }
   .repo,
   .branch,
-  .settings {
+  .settings,
+  .website {
     svg {
       margin-right: $space/4;
     }
@@ -49,14 +52,16 @@
   .repo,
   .profile,
   .branch,
-  .settings {
+  .settings,
+  .website {
     color: inherit;
     display: block;
     opacity: 0.5;
     padding: $space/3 1.5*$space/3;
     @include transition-property(opacity);
     @include transition-duration($ease);
-    &:hover {
+    &:hover,
+    &.active {
       opacity: 1;
       text-decoration: none;
     }

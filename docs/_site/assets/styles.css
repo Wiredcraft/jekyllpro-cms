@@ -1172,7 +1172,7 @@ textarea {
       clear: both;
       content: "";
       display: table; }
-    #app #header > *:hover {
+    #app #header > *:hover, #app #header > *.active {
       background: #2f363f; }
     #app #header svg {
       fill: #FFF;
@@ -1185,12 +1185,14 @@ textarea {
     #app #header .logo,
     #app #header .repo,
     #app #header .branch,
-    #app #header .settings {
+    #app #header .settings,
+    #app #header .website {
       border-right: 1px solid #2a3038;
       float: left; }
     #app #header .repo svg,
     #app #header .branch svg,
-    #app #header .settings svg {
+    #app #header .settings svg,
+    #app #header .website svg {
       margin-right: 6px; }
     #app #header .repo,
     #app #header .branch {
@@ -1255,7 +1257,8 @@ textarea {
     #app #header .repo,
     #app #header .profile,
     #app #header .branch,
-    #app #header .settings {
+    #app #header .settings,
+    #app #header .website {
       color: inherit;
       display: block;
       opacity: 0.5;
@@ -1266,10 +1269,15 @@ textarea {
       -webkit-transition-duration: 0.2s;
       -moz-transition-duration: 0.2s;
       transition-duration: 0.2s; }
-      #app #header .repo:hover,
+      #app #header .repo:hover, #app #header .repo.active,
       #app #header .profile:hover,
+      #app #header .profile.active,
       #app #header .branch:hover,
-      #app #header .settings:hover {
+      #app #header .branch.active,
+      #app #header .settings:hover,
+      #app #header .settings.active,
+      #app #header .website:hover,
+      #app #header .website.active {
         opacity: 1;
         text-decoration: none; }
       #app #header .repo svg,
@@ -1279,7 +1287,9 @@ textarea {
       #app #header .branch svg,
       #app #header .branch img,
       #app #header .settings svg,
-      #app #header .settings img {
+      #app #header .settings img,
+      #app #header .website svg,
+      #app #header .website img {
         float: left;
         margin-top: 1px; }
     #app #header .profile {
