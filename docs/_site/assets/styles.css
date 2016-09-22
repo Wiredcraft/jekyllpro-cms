@@ -1675,22 +1675,26 @@ h3 {
     list-style: none;
     margin: 12px 0 0; }
     #app #modal .results li {
-      border: 1px solid #DDDDDD;
-      border-radius: 2px;
-      box-shadow: rgba(0, 0, 0, 0.05) 0 1px 0 0;
-      cursor: pointer;
-      margin-bottom: 8px;
-      padding: 12px 18px; }
+      margin-bottom: 8px; }
       #app #modal .results li:last-child {
         margin: 0; }
       #app #modal .results li:hover {
         border-color: #0A93FF; }
-    #app #modal .results h3 {
+  #app #modal .results li,
+  #app #modal .selected {
+    border: 1px solid #DDDDDD;
+    border-radius: 2px;
+    box-shadow: rgba(0, 0, 0, 0.05) 0 1px 0 0;
+    cursor: pointer;
+    padding: 12px 18px; }
+    #app #modal .results li h3,
+    #app #modal .selected h3 {
       font-size: inherit;
       font-weight: bold;
       margin: 0;
       text-transform: none; }
-    #app #modal .results .type {
+    #app #modal .results li .type,
+    #app #modal .selected .type {
       background: #F4F4F4;
       border-radius: 2px;
       color: #AAAAAA;
@@ -1698,8 +1702,13 @@ h3 {
       font-size: 1.2rem;
       font-weight: normal;
       padding: 2px 6px; }
-      #app #modal .results .type.private {
+      #app #modal .results li .type.private,
+      #app #modal .selected .type.private {
         background: #0A93FF;
         color: #FFF; }
-    #app #modal .results small {
+    #app #modal .results li small,
+    #app #modal .selected small {
       color: #AAAAAA; }
+  #app #modal .selected {
+    background: #EEE;
+    margin-bottom: 12px; }

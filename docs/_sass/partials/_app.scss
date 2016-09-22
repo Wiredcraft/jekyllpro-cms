@@ -460,12 +460,7 @@ $switch_padding: 4px;
     list-style: none;
     margin: $space/2 0 0;
     li {
-      border: 1px solid $line;
-      border-radius: $radius;
-      box-shadow: $shadow;
-      cursor: pointer;
       margin-bottom: $space/3;
-      padding: $space/2 1.5*$space/2;
       &:last-child {
         margin: 0;
       }
@@ -473,6 +468,14 @@ $switch_padding: 4px;
         border-color: $blue;
       }
     }
+  }
+  .results li,
+  .selected {
+    border: 1px solid $line;
+    border-radius: $radius;
+    box-shadow: $shadow;
+    cursor: pointer;
+    padding: $space/2 1.5*$space/2;
     h3 {
       font-size: inherit;
       font-weight: bold;
@@ -494,5 +497,9 @@ $switch_padding: 4px;
     small {
       color: $grey;
     }
+  }
+  .selected {
+    background: $light;
+    margin-bottom: $space/2;
   }
 }
