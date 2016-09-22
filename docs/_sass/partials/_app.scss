@@ -274,6 +274,65 @@
       white-space: nowrap;
     }
   }
+  .tree {
+    list-style: none;
+    margin: 0;
+    ul {
+      list-style: none;
+      margin: 0;
+      > li > a {
+        padding-left: $space/2 + $space/2;
+        > ul > li > a {
+          padding-left: $space + $space/2;
+          > ul > li > a {
+            margin-left: 1.5*$space + $space/2;
+            > ul > li > a {
+              margin-left: 2*$space + $space/2;
+              > ul > li > a {
+                margin-left: 2.5*$space + $space/2;
+                > ul > li > a {
+                  margin-left: 3*$space + $space/2;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    li {
+      margin: 0;
+      padding: 0;
+    }
+    a {
+      border: 0;
+      color: #FFF;
+      display: block;
+      padding: $space/4 $space/2;
+      opacity: 0.5;
+      @include transition-property(opacity);
+      @include transition-duration($ease);
+      svg {
+        fill: #FFF;
+        float: left;
+        margin: 1px $space/4 0 0;
+      }
+      span {
+        display: block;
+        margin-left: $space;
+      }
+      &.open {
+        opacity: 2;
+      }
+      &:hover,
+      &.active {
+        opacity: 1;
+        text-decoration: none;
+      }
+      &.active {
+
+      }
+    }
+  }
 }
 
 $sidebar: 288px;

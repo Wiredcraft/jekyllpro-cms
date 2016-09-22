@@ -1467,6 +1467,51 @@ textarea {
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap; }
+    #app #navigation .tree {
+      list-style: none;
+      margin: 0; }
+      #app #navigation .tree ul {
+        list-style: none;
+        margin: 0; }
+        #app #navigation .tree ul > li > a {
+          padding-left: 24px; }
+          #app #navigation .tree ul > li > a > ul > li > a {
+            padding-left: 36px; }
+            #app #navigation .tree ul > li > a > ul > li > a > ul > li > a {
+              margin-left: 48px; }
+              #app #navigation .tree ul > li > a > ul > li > a > ul > li > a > ul > li > a {
+                margin-left: 60px; }
+                #app #navigation .tree ul > li > a > ul > li > a > ul > li > a > ul > li > a > ul > li > a {
+                  margin-left: 72px; }
+                  #app #navigation .tree ul > li > a > ul > li > a > ul > li > a > ul > li > a > ul > li > a > ul > li > a {
+                    margin-left: 84px; }
+      #app #navigation .tree li {
+        margin: 0;
+        padding: 0; }
+      #app #navigation .tree a {
+        border: 0;
+        color: #FFF;
+        display: block;
+        padding: 6px 12px;
+        opacity: 0.5;
+        -webkit-transition-property: opacity;
+        -moz-transition-property: opacity;
+        transition-property: opacity;
+        -webkit-transition-duration: 0.2s;
+        -moz-transition-duration: 0.2s;
+        transition-duration: 0.2s; }
+        #app #navigation .tree a svg {
+          fill: #FFF;
+          float: left;
+          margin: 1px 6px 0 0; }
+        #app #navigation .tree a span {
+          display: block;
+          margin-left: 24px; }
+        #app #navigation .tree a.open {
+          opacity: 2; }
+        #app #navigation .tree a:hover, #app #navigation .tree a.active {
+          opacity: 1;
+          text-decoration: none; }
   #app #navigation + #content {
     margin-left: 384px; }
   #app #content {
