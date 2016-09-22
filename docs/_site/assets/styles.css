@@ -1526,6 +1526,18 @@ textarea {
     #app #content textarea,
     #app #content .select select {
       width: 100%; }
+    #app #content .controls {
+      float: right; }
+      #app #content .controls a {
+        color: #AAAAAA;
+        font-size: 12px;
+        font-size: 1.2rem;
+        margin-left: 12px; }
+        #app #content .controls a:hover, #app #content .controls a.active {
+          color: inherit;
+          text-decoration: none; }
+      #app #content .controls + label {
+        float: left; }
     #app #content .description {
       color: #858a90; }
     #app #content .sidebar {

@@ -355,6 +355,22 @@ $sidebar: 288px;
   .select select {
     width: 100%;
   }
+  .controls {
+    float: right;
+    a {
+      color: $grey;
+      @include font-size($small);
+      margin-left: $space/2;
+      &:hover,
+      &.active {
+        color: inherit;
+        text-decoration: none;
+      }
+    }
+    & + label {
+      float: left;
+    }
+  }
   .description {
     color: tint($black, 40%);
   }
