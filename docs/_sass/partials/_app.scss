@@ -291,9 +291,6 @@ $sidebar: 288px;
   .select select {
     width: 100%;
   }
-  .select select {
-    min-height: 32px; // HACK!!!! Dunno why but from Google Chrome 53, select is effed up
-  }
   .description {
     color: tint($black, 40%);
   }

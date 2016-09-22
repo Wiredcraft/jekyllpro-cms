@@ -1016,10 +1016,13 @@ h2 {
   font-size: 16px;
   font-size: 1.6rem; }
 
-h3 {
+h3,
+h4,
+h5,
+h6 {
   font-size: 14px;
   font-size: 1.4rem;
-  font-weight: bold; }
+  text-transform: none; }
 
 input:not([type=submit]),
 textarea {
@@ -1028,7 +1031,8 @@ textarea {
 
 .select select {
   background: #FFF;
-  box-shadow: rgba(0, 0, 0, 0.04) 0 1px 0 0; }
+  box-shadow: rgba(0, 0, 0, 0.04) 0 1px 0 0;
+  min-height: 32px; }
 
 .button {
   box-shadow: rgba(0, 0, 0, 0.04) 0 1px 0 0;
@@ -1466,8 +1470,6 @@ textarea {
     #app #content textarea,
     #app #content .select select {
       width: 100%; }
-    #app #content .select select {
-      min-height: 32px; }
     #app #content .description {
       color: #858a90; }
     #app #content .sidebar {

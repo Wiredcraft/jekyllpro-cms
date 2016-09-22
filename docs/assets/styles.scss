@@ -52,9 +52,12 @@ h2 {
   @include font-size($regular);
 }
 
-h3 {
+h3,
+h4,
+h5,
+h6 {
   @include font-size($smaller);
-  font-weight: bold;
+  text-transform: none;
 }
 
 input:not([type=submit]),
@@ -66,6 +69,7 @@ textarea {
 .select select {
   background: #FFF;
   box-shadow: rgba(0, 0, 0, 0.04) 0 1px 0 0;
+  min-height: 32px; // HACK!!!! Dunno why but from Google Chrome 53, select is effed up
 }
 
 .button {
