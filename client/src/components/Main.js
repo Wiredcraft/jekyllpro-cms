@@ -8,8 +8,8 @@ import Header from './Header'
 import Menu from './Menu'
 import Editor from './Editor'
 import Navigation from './Navigation'
-import 'styles/styles.css'
 import 'styles/_supplement.scss'
+import 'styles/styles.css'
 
 
 @connect(mapStateToProps, mapDispatchToProps)

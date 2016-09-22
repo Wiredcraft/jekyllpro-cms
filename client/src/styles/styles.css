@@ -267,9 +267,28 @@ body.modal #modal, #modal.active { display: block; width: 90%; }
 .tooltip:hover span { margin-bottom: 8px; }
 
 /*** CUSTOM ***/
-body { background: #343c46; font-size: 14px; font-size: 1.4rem; }
+html, body { height: 100%; }
 
-h1, h2, h3 { font-weight: normal; }
+body { font-size: 14px; font-size: 1.4rem; }
+
+h1 { font-size: 18px; font-size: 1.8rem; }
+
+h2 { font-size: 16px; font-size: 1.6rem; }
+
+h3, h4, h5, h6 { font-size: 14px; font-size: 1.4rem; text-transform: none; }
+
+input:not([type=submit]), textarea { background: #FFF; box-shadow: rgba(0, 0, 0, 0.04) 0 1px 0 0 inset; }
+
+.select select { background: #FFF; box-shadow: rgba(0, 0, 0, 0.04) 0 1px 0 0; min-height: 32px; }
+
+.button { box-shadow: rgba(0, 0, 0, 0.04) 0 1px 0 0; font-weight: normal; }
+
+.icon { background: none; border: 0; color: inherit; padding: 0; position: relative; }
+.icon span { background: #343c46; border-radius: 2px; color: #FFF; font-size: 12px; font-size: 1.2rem; font-weight: 600; line-height: 140%; opacity: 0; padding: 9px 18px; position: absolute; text-align: center; -webkit-transition-property: margin, opacity; -moz-transition-property: margin, opacity; transition-property: margin, opacity; -webkit-transition-duration: 0.2s; -moz-transition-duration: 0.2s; transition-duration: 0.2s; visibility: hidden; white-space: nowrap; width: auto; z-index: 999; }
+.icon:hover span { opacity: 1; visibility: visible; }
+.icon span { bottom: 100%; left: 50%; -webkit-transform: translateX(-50%); -moz-transform: translateX(-50%); -ms-transform: translateX(-50%); -o-transform: translateX(-50%); transform: translateX(-50%); }
+.icon span:after { content: ''; position: absolute; border-right: 5px solid transparent; border-bottom-color: #343c46; border-top: 5px solid #343c46; border-left: 5px solid transparent; bottom: -5px; left: 50%; -webkit-transform: translateX(-50%); -moz-transform: translateX(-50%); -ms-transform: translateX(-50%); -o-transform: translateX(-50%); transform: translateX(-50%); }
+.icon:hover span { margin-bottom: 8px; }
 
 @keyframes spin { 0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); } }
@@ -283,15 +302,6 @@ h1, h2, h3 { font-weight: normal; }
 #landing .card small { color: rgba(255, 255, 255, 0.4); display: block; letter-spacing: 1px; margin-top: 6px; text-align: center; text-transform: uppercase; }
 
 #app { /* The switch - the box around the slider */ }
-#app input:not([type=submit]), #app textarea { background: #FFF; box-shadow: rgba(0, 0, 0, 0.04) 0 1px 0 0 inset; }
-#app .select select { background: #FFF; box-shadow: rgba(0, 0, 0, 0.04) 0 1px 0 0; }
-#app .button { box-shadow: rgba(0, 0, 0, 0.04) 0 1px 0 0; font-weight: normal; }
-#app .icon { background: none; border: 0; color: inherit; padding: 0; position: relative; }
-#app .icon span { background: #343c46; border-radius: 2px; color: #FFF; font-size: 12px; font-size: 1.2rem; font-weight: 600; line-height: 140%; opacity: 0; padding: 9px 18px; position: absolute; text-align: center; -webkit-transition-property: margin, opacity; -moz-transition-property: margin, opacity; transition-property: margin, opacity; -webkit-transition-duration: 0.2s; -moz-transition-duration: 0.2s; transition-duration: 0.2s; visibility: hidden; white-space: nowrap; width: auto; z-index: 999; }
-#app .icon:hover span { opacity: 1; visibility: visible; }
-#app .icon span { bottom: 100%; left: 50%; -webkit-transform: translateX(-50%); -moz-transform: translateX(-50%); -ms-transform: translateX(-50%); -o-transform: translateX(-50%); transform: translateX(-50%); }
-#app .icon span:after { content: ''; position: absolute; border-right: 5px solid transparent; border-bottom-color: #343c46; border-top: 5px solid #343c46; border-left: 5px solid transparent; bottom: -5px; left: 50%; -webkit-transform: translateX(-50%); -moz-transform: translateX(-50%); -ms-transform: translateX(-50%); -o-transform: translateX(-50%); transform: translateX(-50%); }
-#app .icon:hover span { margin-bottom: 8px; }
 #app #header { background: #343c46; border-bottom: 1px solid #2a3038; box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1); color: #FFF; left: 0; position: fixed; right: 0; top: 0; z-index: 999; }
 #app #header::after { clear: both; content: ""; display: table; }
 #app #header > *:hover { background: #2f363f; }
@@ -321,17 +331,17 @@ h1, h2, h3 { font-weight: normal; }
 #app #menu input, #app #navigation input { background: rgba(0, 0, 0, 0.1); padding: 2px 8px; }
 #app #menu input:hover, #app #navigation input:hover { background: rgba(0, 0, 0, 0.2); }
 #app #menu input:focus, #app #navigation input:focus { background: #FFF; color: #343c46; }
-#app #menu svg, #app #navigation svg { display: block; fill: #FFF; height: 18px; }
-#app #menu h2, #app #menu h3, #app #navigation h2, #app #navigation h3 { color: inherit; line-height: 160%; margin: 0; }
+#app #menu svg, #app #navigation svg { display: block; fill: #FFF; height: 18px; width: 18px; }
+#app #menu h2, #app #menu h3, #app #navigation h2, #app #navigation h3 { color: inherit; font-weight: normal; line-height: 160%; margin: 0; }
 #app #menu > * > h3, #app #navigation > * > h3 { font-size: 10px; font-size: 1rem; letter-spacing: 1px; }
 #app #menu > * > a, #app #navigation > * > a { color: inherit; display: block; }
 #app #menu > * > a:hover, #app #menu > * > a.active, #app #navigation > * > a:hover, #app #navigation > * > a.active { text-decoration: none; }
-#app #menu { background: #343c46; box-shadow: 10px 0 0 rgba(0, 0, 0, 0.1); left: 0; width: 144px; }
+#app #menu { background: #343c46; left: 0; width: 144px; }
 #app #menu .body { height: 100%; overflow: auto; padding-top: 4px; }
 #app #menu .body h3 { padding: 8px 12px; opacity: 0.4; }
 #app #menu .body img { border-radius: 2px; box-shadow: 1px 1px 0 rgba(0, 0, 0, 0.1); float: left; height: 24px; margin: -2px 6px 0 0; }
 #app #menu .body > a { border-left: 2px solid transparent; color: inherit; cursor: pointer; display: block; opacity: 0.5; padding: 8px 12px 8px 10px; -webkit-transition-property: opacity; -moz-transition-property: opacity; transition-property: opacity; -webkit-transition-duration: 0.2s; -moz-transition-duration: 0.2s; transition-duration: 0.2s; }
-#app #menu .body > a svg, #app #menu .body > a img { float: left; margin: 1px 3px 0 0; }
+#app #menu .body > a svg, #app #menu .body > a img { float: left; margin: 1px 6px 0 0; }
 #app #menu .body > a:hover, #app #menu .body > a.active { opacity: 1; text-decoration: none; }
 #app #menu .body > a.active { border-color: #0A93FF; }
 #app #menu .footer { background: #343c46; box-shadow: 0 -1px 0 rgba(0, 0, 0, 0.1); bottom: 0; position: fixed; text-align: center; width: 144px; }
@@ -350,10 +360,10 @@ h1, h2, h3 { font-weight: normal; }
 #app #navigation .body a.active h2, #app #navigation .body a:hover h2 { opacity: 1; }
 #app #navigation .body a.active small, #app #navigation .body a:hover small { opacity: 0.5; }
 #app #navigation .body h2 { font-size: inherit; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-#app #content { background: #F4F4F4; margin-left: 384px; padding-top: 38px; }
+#app #navigation + #content { margin-left: 384px; }
+#app #content { background: #F4F4F4; height: 100%; margin-left: 144px; padding-top: 38px; }
 #app #content.loading:after { left: 384px; position: fixed; }
 #app #content input:not([type=submit]), #app #content textarea, #app #content .select select { width: 100%; }
-#app #content .select select { min-height: 32px; }
 #app #content .description { color: #858a90; }
 #app #content .sidebar { bottom: 0; box-sizing: border-box; overflow: auto; padding: 24px 36px 24px 24px; position: fixed; right: 0; top: 38px; width: 288px; }
 #app #content .sidebar::after { clear: both; content: ""; display: table; }
@@ -376,6 +386,8 @@ h1, h2, h3 { font-weight: normal; }
 #app #content .sidebar .danger svg { fill: rgba(0, 0, 0, 0.2); -webkit-transition-property: fill; -moz-transition-property: fill; transition-property: fill; -webkit-transition-duration: 0.2s; -moz-transition-duration: 0.2s; transition-duration: 0.2s; }
 #app #content .sidebar .danger:hover svg { fill: #FC255D; }
 #app #content .body { box-sizing: border-box; padding: 24px 36px; }
+#app #content .empty { text-align: center; }
+#app #content .empty .box { background: #FFF; border: 1px solid #DDDDDD; border-radius: 2px; box-shadow: rgba(0, 0, 0, 0.05) 0 1px 0 0; bottom: 0; margin: auto; padding: 24px; position: absolute; display: table; height: auto; left: 0; right: 0; top: 0; width: 240px; }
 #app .switch { float: left; height: 20px; margin: 0; opacity: 1; position: relative; width: 32px; }
 #app .switch input { display: none; }
 #app .switch input:checked + .slider { background: #0A93FF; }
@@ -388,11 +400,26 @@ h1, h2, h3 { font-weight: normal; }
 #app #modal .search input { background: #F4F4F4; border-radius: 24px; padding-left: 32px; padding-right: 12px; width: 100%; }
 #app #modal .search input:focus + svg { fill: #0A93FF; }
 #app #modal .default, #app #modal .empty { background: #F4F4F4; border-radius: 2px; color: #AAAAAA; margin-top: 12px; padding: 12px 18px; text-align: center; }
-#app #modal .results { list-style: none; margin: 12px 0 0; }
-#app #modal .results li { border: 1px solid #DDDDDD; border-radius: 2px; box-shadow: rgba(0, 0, 0, 0.05) 0 1px 0 0; cursor: pointer; margin-bottom: 8px; padding: 12px 18px; }
-#app #modal .results li:last-child { margin: 0; }
-#app #modal .results li:hover { border-color: #0A93FF; }
-#app #modal .results h3 { font-size: inherit; font-weight: bold; margin: 0; text-transform: none; }
-#app #modal .results .type { background: #F4F4F4; border-radius: 2px; color: #AAAAAA; font-size: 12px; font-size: 1.2rem; font-weight: normal; padding: 2px 6px; }
-#app #modal .results .type.private { background: #0A93FF; color: #FFF; }
-#app #modal .results small { color: #AAAAAA; }
+#app #modal .list li, #app #modal .selected { padding: 12px 18px; }
+#app #modal .list li h3, #app #modal .selected h3 { margin: 0; text-transform: none; }
+#app #modal .list li .type, #app #modal .selected .type { background: #F4F4F4; border-radius: 2px; color: #AAAAAA; font-size: 12px; font-size: 1.2rem; font-weight: normal; padding: 2px 6px; }
+#app #modal .list li .type.info, #app #modal .selected .type.info { background: #0A93FF; color: #FFF; }
+#app #modal .list li .type.ok, #app #modal .selected .type.ok { background: #2ECC40; color: #FFF; }
+#app #modal .list li .type.warning, #app #modal .selected .type.warning { background: #FF851B; color: #FFF; }
+#app #modal .list li small, #app #modal .selected small { color: #AAAAAA; }
+#app #modal .list { box-shadow: rgba(0, 0, 0, 0.05) 0 1px 0 0; cursor: pointer; list-style: none; margin-left: 0; }
+#app #modal .list li { border: 1px solid #DDDDDD; border-width: 1px 1px 0; margin-bottom: 0; }
+#app #modal .list li:first-child { border-radius: 2px 2px 0 0; }
+#app #modal .list li:last-child { border-radius: 0 0 2px 2px; border-width: 1px; }
+#app #modal .list li:hover, #app #modal .list li.active { border-color: #0A93FF; }
+#app #modal .list li:hover + li, #app #modal .list li.active + li { border-top-color: #0A93FF; }
+#app #modal .selected { background: #EEE; border: 1px solid #DDDDDD; border-radius: 2px; box-shadow: rgba(0, 0, 0, 0.05) 0 1px 0 0; margin-bottom: 12px; }
+#app #modal .results { margin: 12px 0 0; }
+#app #modal .branches li { cursor: default; padding: 0; }
+#app #modal .branches li h3 { cursor: pointer; padding: 12px 18px; }
+#app #modal .branches li h3 small { color: #AAAAAA; font-size: inherit; font-weight: normal; }
+#app #modal .branches li .details { background: #EEE; display: none; }
+#app #modal .branches li .details .setting { border-top: 1px solid #DDDDDD; padding: 12px 18px; }
+#app #modal .branches li .details .setting .field:last-child { margin: 0; }
+#app #modal .branches li .details .setting textarea { max-width: 100%; width: 100%; }
+#app #modal .branches li.active .details { display: block; }

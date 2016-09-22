@@ -77,7 +77,7 @@ class Editor extends Component {
     } else {
       // content is markdown or html
       const docConfigObj = parseYamlInsideMarkdown(content)
-
+      console.log(docConfigObj)
       if(docConfigObj) {
         const schemaObj = currentSchema.JSONSchema.properties
         Object.keys(schemaObj).forEach((prop) => {

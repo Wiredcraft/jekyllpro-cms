@@ -11,7 +11,6 @@ let config = Object.assign({}, baseConfig, {
     'webpack/hot/only-dev-server',
     './src/index'
   ],
-  bail: true,
   cache: true,
   devtool: 'eval-source-map',
   plugins: [
