@@ -1156,6 +1156,7 @@ textarea {
       text-transform: uppercase; }
 
 #app {
+  height: 100%;
   /* The switch - the box around the slider */ }
   #app #header {
     background: #343c46;
@@ -1788,3 +1789,9 @@ textarea {
           width: 100%; }
     #app #modal .branches li.active .details {
       display: block; }
+  #app #preview {
+    border: 0;
+    display: block;
+    height: 100%;
+    margin-top: 38px;
+    width: 100%; }

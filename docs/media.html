@@ -156,8 +156,8 @@
         </header>
         <section class='body'>
           <ul class='list branches'>
-            <li>
-              <h3>master <span class='type warning'>Public</span></h3>
+            <li class='active'>
+              <h3>master <span class='type ok'>Public</span> <span class='type info'>Variants</span></h3>
               <section class='details'>
                 <div class='setting'>
                   <div class='field'>
@@ -170,59 +170,39 @@
                   </div>
                 </div>
                 <div class='setting'>
+                  <h4>Make the following branches available as variants:</h4>
                   <div class='field'>
                     <label class='switch'>
-                      <input type='checkbox' id='branch-master-variant'/>
+                      <input type='checkbox' id='branch-master-variant-gh-pages' checked/>
                       <div class='slider'></div>
                     </label>
-                    <label for='branch-master-variant'><strong>Variant</strong></label>
+                    <label for='branch-master-variant-gh-pages'>gh-pages</label>
                   </div>
-                  <div class='field'>
-                    <label>Only generate variants for the following paths:</label>
-                    <textarea>/teavana-promotion
-/en/teavana-promotion
-/mocha-promotion
-/en/mocha-promotion</textarea>
-                  </div>
-                </div>
-              </section>
-            </li>
-            <li class='active'>
-              <h3>gh-pages <span class='type ok'>Private</span> <span class='type info'>Variant</span></h3>
-              <section class='details'>
-                <div class='setting'>
                   <div class='field'>
                     <label class='switch'>
-                      <input type='checkbox' id='branch-gh-pages-private' checked/>
+                      <input type='checkbox' id='branch-master-variant-exp-fp-1'/>
                       <div class='slider'></div>
                     </label>
-                    <label for='branch-gh-pages-private'><strong>Private</strong></label>
-                    <small class='description'></small>
+                    <label for='branch-master-variant-exp-fp-1'>exp-fp-1</label>
                   </div>
-                </div>
-                <div class='setting'>
                   <div class='field'>
                     <label class='switch'>
-                      <input type='checkbox' id='branch-gh-pages-variant' checked/>
+                      <input type='checkbox' id='branch-master-variant-super-long-branch-name-for-testing'/>
                       <div class='slider'></div>
                     </label>
-                    <label for='branch-gh-pages-variant'><strong>Variant</strong></label>
-                  </div>
-                  <div class='field'>
-                    <label>Only generate variants for the following paths:</label>
-                    <textarea>/teavana-promotion
-/en/teavana-promotion
-/mocha-promotion
-/en/mocha-promotion</textarea>
+                    <label for='branch-master-variant-super-long-branch-name-for-testing'>super-long-branch-name-for-testing</label>
                   </div>
                 </div>
               </section>
             </li>
             <li>
-              <h3>exp-fp-1 <span class='type ok'>Private</span></h3>
+              <h3>gh-pages <span class='type'>Private</span></h3>
             </li>
             <li>
-              <h3>super-long-branch-name-for-testing <span class='type ok'>Private</span></h3>
+              <h3>exp-fp-1 <span class='type'>Private</span></h3>
+            </li>
+            <li>
+              <h3>super-long-branch-name-for-testing <span class='type'>Private</span></h3>
             </li>
           </ul>
         </section>
