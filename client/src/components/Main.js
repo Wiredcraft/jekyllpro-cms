@@ -8,6 +8,7 @@ import Header from './Header'
 import Menu from './Menu'
 import Editor from './Editor'
 import Navigation from './Navigation'
+import Media from './Media'
 import 'styles/_supplement.scss'
 import 'styles/styles.css'
 
@@ -25,14 +26,15 @@ export default class AppComponent extends React.Component {
   }
 
   render() {
-    const { isLoggedIn, repoLoading } = this.props
+    const { isLoggedIn, repoLoading, collectionType } = this.props
 
     return isLoggedIn ? (
       <div id='app' className={repoLoading? 'spinning' : ''}>
         <Header params={this.props.params} />
         <Menu params={this.props.params} />
-        <Navigation params={this.props.params} />
-        <Editor params={this.props.params} />
+        { collectionType !== 'media' && <Navigation params={this.props.params} /> }
+        { collectionType !== 'media' && <Editor params={this.props.params} /> }
+        { collectionType === 'media' && <Media />}
       </div>
     ) : (
       <div id='landing' style={{'display': 'block'}}>
@@ -48,6 +50,7 @@ export default class AppComponent extends React.Component {
 function mapStateToProps(state) {
   return {
     repoLoading: state.repo.get('loading'),
+    collectionType: state.repo.get('collectionType'),
     isLoggedIn: state.user.get('isLoggedIn')
   }
 }
