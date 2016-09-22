@@ -1671,29 +1671,16 @@ h3 {
     margin-top: 12px;
     padding: 12px 18px;
     text-align: center; }
-  #app #modal .results {
-    list-style: none;
-    margin: 12px 0 0; }
-    #app #modal .results li {
-      margin-bottom: 8px; }
-      #app #modal .results li:last-child {
-        margin: 0; }
-      #app #modal .results li:hover {
-        border-color: #0A93FF; }
-  #app #modal .results li,
+  #app #modal .list li,
   #app #modal .selected {
-    border: 1px solid #DDDDDD;
-    border-radius: 2px;
-    box-shadow: rgba(0, 0, 0, 0.05) 0 1px 0 0;
-    cursor: pointer;
     padding: 12px 18px; }
-    #app #modal .results li h3,
+    #app #modal .list li h3,
     #app #modal .selected h3 {
       font-size: inherit;
       font-weight: bold;
       margin: 0;
       text-transform: none; }
-    #app #modal .results li .type,
+    #app #modal .list li .type,
     #app #modal .selected .type {
       background: #F4F4F4;
       border-radius: 2px;
@@ -1702,13 +1689,63 @@ h3 {
       font-size: 1.2rem;
       font-weight: normal;
       padding: 2px 6px; }
-      #app #modal .results li .type.private,
-      #app #modal .selected .type.private {
+      #app #modal .list li .type.info,
+      #app #modal .selected .type.info {
         background: #0A93FF;
         color: #FFF; }
-    #app #modal .results li small,
+      #app #modal .list li .type.warning,
+      #app #modal .selected .type.warning {
+        background: #2ECC40;
+        color: #FFF; }
+    #app #modal .list li small,
     #app #modal .selected small {
       color: #AAAAAA; }
+  #app #modal .list {
+    box-shadow: rgba(0, 0, 0, 0.05) 0 1px 0 0;
+    cursor: pointer;
+    list-style: none;
+    margin-left: 0; }
+    #app #modal .list li {
+      border: 1px solid #DDDDDD;
+      border-width: 1px 1px 0;
+      margin-bottom: 0; }
+      #app #modal .list li:first-child {
+        border-radius: 2px 2px 0 0; }
+      #app #modal .list li:last-child {
+        border-radius: 0 0 2px 2px;
+        border-width: 1px; }
+      #app #modal .list li:hover, #app #modal .list li.active {
+        border-color: #0A93FF; }
+        #app #modal .list li:hover + li, #app #modal .list li.active + li {
+          border-top-color: #0A93FF; }
   #app #modal .selected {
     background: #EEE;
+    border: 1px solid #DDDDDD;
+    border-radius: 2px;
+    box-shadow: rgba(0, 0, 0, 0.05) 0 1px 0 0;
     margin-bottom: 12px; }
+  #app #modal .results {
+    margin: 12px 0 0; }
+  #app #modal .branches li {
+    cursor: default;
+    padding: 0; }
+    #app #modal .branches li h3 {
+      cursor: pointer;
+      padding: 12px 18px; }
+      #app #modal .branches li h3 small {
+        color: #AAAAAA;
+        font-size: inherit;
+        font-weight: normal; }
+    #app #modal .branches li .details {
+      background: #EEE;
+      display: none; }
+      #app #modal .branches li .details .setting {
+        border-top: 1px solid #DDDDDD;
+        padding: 12px 18px; }
+        #app #modal .branches li .details .setting .field:last-child {
+          margin: 0; }
+        #app #modal .branches li .details .setting textarea {
+          max-width: 100%;
+          width: 100%; }
+    #app #modal .branches li.active .details {
+      display: block; }

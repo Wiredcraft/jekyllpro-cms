@@ -25,7 +25,7 @@
   <link rel='stylesheet' href='assets/styles.css'>
 </head>
 
-<body>
+<body class='modal'>
   <!-- LOGIN SCREEN -->
   <div id='landing'>
     <div class='card'>
@@ -280,6 +280,63 @@ Stay tuned for the next team building update from Wiredcraft! Beach day is going
     </section>
 
     <div id='overlay'>
+      <div id='modal' class='settings'>
+        <header class='header'>
+          <a class='close' onclick='hideModal()'>Close</a>
+          <h2>Settings</h2>
+        </header>
+        <section class='body'>
+          <ul class='list branches'>
+            <li class='active'>
+              <h3>master <span class='type warning'>Public</span></h3>
+              <section class='details'>
+                <div class='setting'>
+                  <div class='field'>
+                    <label class='switch'>
+                      <input type='checkbox' id='branch-master-private'/>
+                      <div class='slider'></div>
+                    </label>
+                    <label for='branch-master-private'><strong>Private</strong></label>
+                    <small class='description'></small>
+                  </div>
+                </div>
+                <div class='setting'>
+                  <div class='field'>
+                    <label class='switch'>
+                      <input type='checkbox' id='branch-master-variant'/>
+                      <div class='slider'></div>
+                    </label>
+                    <label for='branch-master-variant'><strong>Variant</strong></label>
+                  </div>
+                  <div class='field'>
+                    <label>Only generate variants for the following paths:</label>
+                    <textarea>/teavana-promotion
+/en/teavana-promotion
+/mocha-promotion
+/en/mocha-promotion</textarea>
+                  </div>
+                </div>
+              </section>
+            </li>
+            <li>
+              <h3>gh-pages <span class='type'>Private</span> <span class='type info'>Variant</span></h3>
+              <section class='details'>
+                <label class='switch'>
+                  <input type='checkbox' id='branch-master-private' checked/>
+                  <div class='slider'></div>
+                </label>
+                <label for='branch-master-private'>Private</label>
+              </section>
+            </li>
+            <li>
+              <h3>exp-fp-1</h3>
+            </li>
+            <li>
+              <h3>super-long-branch-name-for-testing</h3>
+            </li>
+          </ul>
+        </section>
+      </div>
       <div id='modal' class='repository'>
         <header class='header'>
           <a class='close' onclick='hideModal()'>Close</a>
@@ -287,7 +344,7 @@ Stay tuned for the next team building update from Wiredcraft! Beach day is going
         </header>
         <section class='body'>
           <header class='selected'>
-            <h3>Wiredcraft/beta.starbucks.com.cn <span class='type private'>Private</span></h3>
+            <h3>Wiredcraft/beta.starbucks.com.cn <span class='type info'>Private</span></h3>
             <small>Updated just now</small>
           </header>
 
@@ -300,25 +357,25 @@ Stay tuned for the next team building update from Wiredcraft! Beach day is going
           </header>
           <!-- <div class='empty'>We couldn’t find any matching repositories.</div> -->
           <div class='default'>Search repositories by keywords</div>
-          <!-- <ul class='results'>
+          <!-- <ul class='list results'>
             <li>
-              <h3>Wiredcraft/jekyllplus <span class='type private'>Private</span></h3>
+              <h3>Wiredcraft/jekyllplus <span class='type info'>Private</span></h3>
               <small>Updated 6 hours ago</small>
             </li>
             <li>
-              <h3>Wiredcraft/jekyllpro <span class='type private'>Private</span></h3>
+              <h3>Wiredcraft/jekyllpro <span class='type info'>Private</span></h3>
               <small>Updated 6 hours ago</small>
             </li>
             <li>
-              <h3>Wiredcraft/not-empty-object <span class='type public'>Public</span></h3>
+              <h3>Wiredcraft/not-empty-object <span class='type'>Public</span></h3>
               <small>Updated 6 hours ago</small>
             </li>
             <li>
-              <h3>Wiredcraft/mixable-object <span class='type public'>Public</span></h3>
+              <h3>Wiredcraft/mixable-object <span class='type'>Public</span></h3>
               <small>Updated 6 hours ago</small>
             </li>
             <li>
-              <h3>Wiredcraft/param-injection <span class='type public'>Public</span></h3>
+              <h3>Wiredcraft/param-injection <span class='type'>Public</span></h3>
               <small>Updated 6 hours ago</small>
             </li>
           </ul> -->
@@ -330,7 +387,7 @@ Stay tuned for the next team building update from Wiredcraft! Beach day is going
   <!-- JS -->
   <!--[if lt IE 9]><script src='https://html5shim.googlecode.com/svn/trunk/html5.js'></script><![endif]-->
   <script>
-    function hideModal() {
+    function hideModal(type) {
       document.body.classList.remove('modal');
       return;
     }
