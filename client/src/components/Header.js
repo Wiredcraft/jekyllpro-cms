@@ -2,7 +2,7 @@ import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import React, { Component } from 'react'
 
-import { getAllBranch, checkoutBranch, fetchFilesMeta, fetchPageFilesMeta } from '../actions/repoActions'
+import { getAllBranch, checkoutBranch, fetchFilesMeta, fetchPageFilesMeta, isBranchPrivate } from '../actions/repoActions'
 import { logout } from '../actions/userActions'
 
 import RepoIcon from './svg/RepoIcon'
@@ -48,7 +48,7 @@ export default class Header extends Component {
   }
 
   render () {
-    const { branches, currentBranch, avatar, userName, repoName } = this.props
+    const { branches, currentBranch, avatar, userName, repoName, isBranchPrivate } = this.props
 
     return (
       <header id='header'>
@@ -101,6 +101,8 @@ export default class Header extends Component {
           Settings
         </a>
         <SettingModal
+          isBranchPrivate={isBranchPrivate}
+          branches={branches}
           isOpen={this.state.showSettingModal}
           afterOpen={::this.afterOpenModal}
           onclose={::this.onCloseSettingModal} />
@@ -122,5 +124,5 @@ function mapStateToProps(state, { params:
 }
 
 function mapDispatchToProps (dispatch) {
-  return bindActionCreators({ getAllBranch, checkoutBranch, logout}, dispatch)
+  return bindActionCreators({ getAllBranch, checkoutBranch, logout, isBranchPrivate}, dispatch)
 }

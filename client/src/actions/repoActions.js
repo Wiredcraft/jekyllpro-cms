@@ -292,3 +292,40 @@ export function fetchBranchSchema(branch) {
       })
   }
 }
+
+export function isBranchPrivate(branch) {
+  return dispatch => {
+    dispatch({
+      payload: { loading: true },
+      type: CHANGE_REPO_STATE
+    })
+
+    return new Promise((resolve, reject) => {
+      request
+        .get(`${API_BASE_URL}/api/repository?ref=${branch}&path=PROTECTED&raw=true`)
+        .withCredentials()
+        .end((err, res) => {
+          if (err) {
+            console.error(err)
+            dispatch({
+              payload: { loading: false },
+              type: CHANGE_REPO_STATE
+            })
+            if (err.statusCode === 404) {
+              resolve({isPrivate: false})
+            } else {
+              reject('error')
+            }
+
+          } else {
+            dispatch({
+              payload: { loading: false },
+              type: CHANGE_REPO_STATE
+            })
+            resolve({isPrivate: true})
+          }
+        })
+    })
+  }
+}
+
