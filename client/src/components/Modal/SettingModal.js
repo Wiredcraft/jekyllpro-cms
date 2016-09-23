@@ -78,8 +78,8 @@ export default class SettingModal extends Component {
                     <li key={i}>
                     <h3>
                       {b.name}
-                      {this.state && this.state[b.name] && <span className="type ok">Public</span>}
-                      {this.state && !this.state[b.name] && <span className="type">Private</span>}                      
+                      {this.state && !this.state[b.name] && <span className="type ok">Public</span>}
+                      {this.state && this.state[b.name] && <span className="type">Private</span>}                      
                     </h3>
                     </li>
                   )
