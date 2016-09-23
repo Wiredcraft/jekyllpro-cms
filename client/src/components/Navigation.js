@@ -110,7 +110,7 @@ function mapStateToProps(state, { params:
   return {
     loading: state.repo.get('loading'),
     selectedFolder: state.repo.get('selectedFolder'),
-    collectionType: state.repo.get('collectionType'),
+    collectionType: collectionType || state.repo.get('collectionType'),
     schema: state.repo.get('schema'),
     filesMeta: state.repo.get('filesMeta'),
     pagesMeta: state.repo.get('pagesMeta'),

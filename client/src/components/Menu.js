@@ -21,24 +21,34 @@ export default class Menu extends Component {
 
   componentWillMount () {
     const { currentBranch, fetchBranchSchema } = this.props
+    const { collectionType, branch, splat: path } = this.props.params
     currentBranch && fetchBranchSchema(currentBranch)
+    // routing
+    if (collectionType && branch && path) {
+      this.fetchFiles(branch, path, collectionType)
+      this.setState({ selectedItem: collectionType})
+    }
   }
 
   handleMenuItem(id, dir) {
-    const {currentBranch, fetchFilesMeta, fetchPageFilesMeta, fetchNestedFilesMeta} = this.props
+    const {currentBranch} = this.props
     this.setState({ selectedItem: id})
-    switch (id) {
+    this.fetchFiles(currentBranch, dir, id)
+  }
+
+  fetchFiles (branch, path, collectionType) {
+    const {fetchFilesMeta, fetchPageFilesMeta, fetchNestedFilesMeta} = this.props
+
+    switch (collectionType) {
       case 'pages':
-        fetchPageFilesMeta(currentBranch)
+        fetchPageFilesMeta(branch)
         break
-      case 'layouts':
-      case 'includes':
-      case 'data':
-        fetchNestedFilesMeta(currentBranch, dir, id)
+      case 'media':
+        fetchFilesMeta(branch, path, collectionType)
         break
       default:
-        fetchFilesMeta(currentBranch, dir, id)
-    }
+        fetchNestedFilesMeta(branch, path, collectionType)
+    }    
   }
 
   render () {

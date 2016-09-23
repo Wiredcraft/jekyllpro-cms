@@ -174,9 +174,7 @@ export function fetchNestedFilesMeta(branch, path, collectionType) {
       type: CHANGE_REPO_STATE
     })
     dispatch(cleanEditor())
-    if (collectionType) {
-      dispatch(push(`/${collectionType}/${branch}/`))
-    }
+    dispatch(push(`/${collectionType}/${branch}/${path}`))
 
     makeNestedRequest(branch, path, path)
       .then( promiseArray => {
@@ -185,7 +183,7 @@ export function fetchNestedFilesMeta(branch, path, collectionType) {
           .then( resultArray => {
             console.log(resultArray)
             dispatch({
-              payload: { filesMeta: resultArray, loading: false, selectedFolder: path, collectionType },
+              payload: { filesMeta: resultArray, loading: false, selectedFolder: path, collectionType: collectionType },
               type: CHANGE_REPO_STATE
             })
           })
@@ -249,6 +247,7 @@ export function getAllBranch() {
 
 export function checkoutBranch({ collectionType, splat: filePath}, branch) {
   return dispatch => {
+    console.log('checkoutBranch')
     Promise.all([
       dispatch(fetchBranchSchema(branch)),
       dispatch(
