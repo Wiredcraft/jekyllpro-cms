@@ -301,15 +301,15 @@ input:not([type=submit]), textarea { background: #FFF; box-shadow: rgba(0, 0, 0,
 #landing .card input, #landing .card .primary { font-size: 18px; font-size: 1.8rem; line-height: 160%; padding: 8px; width: 100%; }
 #landing .card small { color: rgba(255, 255, 255, 0.4); display: block; letter-spacing: 1px; margin-top: 6px; text-align: center; text-transform: uppercase; }
 
-#app { /* The switch - the box around the slider */ }
+#app { height: 100%; /* The switch - the box around the slider */ }
 #app #header { background: #343c46; border-bottom: 1px solid #2a3038; box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1); color: #FFF; left: 0; position: fixed; right: 0; top: 0; z-index: 999; }
 #app #header::after { clear: both; content: ""; display: table; }
-#app #header > *:hover { background: #2f363f; }
+#app #header > *:hover, #app #header > *.active { background: #2f363f; }
 #app #header svg { fill: #FFF; height: 18px; width: 18px; }
 #app #header img { height: 18px; }
 #app #header .logo { padding: 8px 8px 6px 12px; }
-#app #header .logo, #app #header .repo, #app #header .branch, #app #header .settings { border-right: 1px solid #2a3038; float: left; }
-#app #header .repo svg, #app #header .branch svg, #app #header .settings svg { margin-right: 6px; }
+#app #header .logo, #app #header .repo, #app #header .branch, #app #header .settings, #app #header .website { border-right: 1px solid #2a3038; float: left; }
+#app #header .repo svg, #app #header .branch svg, #app #header .settings svg, #app #header .website svg { margin-right: 6px; }
 #app #header .repo, #app #header .branch { position: relative; }
 #app #header .repo span, #app #header .branch span { background: #2f363f; border-radius: 2px; color: #FFF; font-size: 12px; font-size: 1.2rem; font-weight: 600; line-height: 140%; opacity: 0; padding: 9px 18px; position: absolute; text-align: center; -webkit-transition-property: margin, opacity; -moz-transition-property: margin, opacity; transition-property: margin, opacity; -webkit-transition-duration: 0.2s; -moz-transition-duration: 0.2s; transition-duration: 0.2s; visibility: hidden; white-space: nowrap; width: auto; z-index: 999; }
 #app #header .repo:hover span, #app #header .branch:hover span { opacity: 1; visibility: visible; }
@@ -317,9 +317,9 @@ input:not([type=submit]), textarea { background: #FFF; box-shadow: rgba(0, 0, 0,
 #app #header .repo span:after, #app #header .branch span:after { content: ''; position: absolute; border-left: 5px solid transparent; border-top-color: #2f363f; border-bottom: 5px solid #2f363f; border-right: 5px solid transparent; left: 50%; top: -5px; -webkit-transform: translateX(-50%); -moz-transform: translateX(-50%); -ms-transform: translateX(-50%); -o-transform: translateX(-50%); transform: translateX(-50%); }
 #app #header .repo:hover span, #app #header .branch:hover span { margin-top: 8px; }
 #app #header .repo span, #app #header .branch span { font-weight: normal; }
-#app #header .repo, #app #header .profile, #app #header .branch, #app #header .settings { color: inherit; display: block; opacity: 0.5; padding: 8px 12px; -webkit-transition-property: opacity; -moz-transition-property: opacity; transition-property: opacity; -webkit-transition-duration: 0.2s; -moz-transition-duration: 0.2s; transition-duration: 0.2s; }
-#app #header .repo:hover, #app #header .profile:hover, #app #header .branch:hover, #app #header .settings:hover { opacity: 1; text-decoration: none; }
-#app #header .repo svg, #app #header .repo img, #app #header .profile svg, #app #header .profile img, #app #header .branch svg, #app #header .branch img, #app #header .settings svg, #app #header .settings img { float: left; margin-top: 1px; }
+#app #header .repo, #app #header .profile, #app #header .branch, #app #header .settings, #app #header .website { color: inherit; display: block; opacity: 0.5; padding: 8px 12px; -webkit-transition-property: opacity; -moz-transition-property: opacity; transition-property: opacity; -webkit-transition-duration: 0.2s; -moz-transition-duration: 0.2s; transition-duration: 0.2s; }
+#app #header .repo:hover, #app #header .repo.active, #app #header .profile:hover, #app #header .profile.active, #app #header .branch:hover, #app #header .branch.active, #app #header .settings:hover, #app #header .settings.active, #app #header .website:hover, #app #header .website.active { opacity: 1; text-decoration: none; }
+#app #header .repo svg, #app #header .repo img, #app #header .profile svg, #app #header .profile img, #app #header .branch svg, #app #header .branch img, #app #header .settings svg, #app #header .settings img, #app #header .website svg, #app #header .website img { float: left; margin-top: 1px; }
 #app #header .profile { border-left: 1px solid #2a3038; float: right; }
 #app #header .profile img { border-radius: 2px; margin-right: 8px; }
 #app #header .branch { padding-bottom: 2px; padding-right: 0; }
@@ -360,10 +360,28 @@ input:not([type=submit]), textarea { background: #FFF; box-shadow: rgba(0, 0, 0,
 #app #navigation .body a.active h2, #app #navigation .body a:hover h2 { opacity: 1; }
 #app #navigation .body a.active small, #app #navigation .body a:hover small { opacity: 0.5; }
 #app #navigation .body h2 { font-size: inherit; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+#app #navigation .tree { list-style: none; margin: 0; }
+#app #navigation .tree ul { list-style: none; margin: 0; }
+#app #navigation .tree ul > li > a { padding-left: 24px; }
+#app #navigation .tree ul > li > a > ul > li > a { padding-left: 36px; }
+#app #navigation .tree ul > li > a > ul > li > a > ul > li > a { margin-left: 48px; }
+#app #navigation .tree ul > li > a > ul > li > a > ul > li > a > ul > li > a { margin-left: 60px; }
+#app #navigation .tree ul > li > a > ul > li > a > ul > li > a > ul > li > a > ul > li > a { margin-left: 72px; }
+#app #navigation .tree ul > li > a > ul > li > a > ul > li > a > ul > li > a > ul > li > a > ul > li > a { margin-left: 84px; }
+#app #navigation .tree li { margin: 0; padding: 0; }
+#app #navigation .tree a { border: 0; color: #FFF; display: block; padding: 6px 12px; opacity: 0.5; -webkit-transition-property: opacity; -moz-transition-property: opacity; transition-property: opacity; -webkit-transition-duration: 0.2s; -moz-transition-duration: 0.2s; transition-duration: 0.2s; }
+#app #navigation .tree a svg { fill: #FFF; float: left; margin: 1px 6px 0 0; }
+#app #navigation .tree a span { display: block; margin-left: 24px; }
+#app #navigation .tree a.open { opacity: 2; }
+#app #navigation .tree a:hover, #app #navigation .tree a.active { opacity: 1; text-decoration: none; }
 #app #navigation + #content { margin-left: 384px; }
 #app #content { background: #F4F4F4; height: 100%; margin-left: 144px; padding-top: 38px; }
 #app #content.loading:after { left: 384px; position: fixed; }
 #app #content input:not([type=submit]), #app #content textarea, #app #content .select select { width: 100%; }
+#app #content .controls { float: right; }
+#app #content .controls a { color: #AAAAAA; font-size: 12px; font-size: 1.2rem; margin-left: 12px; }
+#app #content .controls a:hover, #app #content .controls a.active { color: inherit; text-decoration: none; }
+#app #content .controls + label { float: left; }
 #app #content .description { color: #858a90; }
 #app #content .sidebar { bottom: 0; box-sizing: border-box; overflow: auto; padding: 24px 36px 24px 24px; position: fixed; right: 0; top: 38px; width: 288px; }
 #app #content .sidebar::after { clear: both; content: ""; display: table; }
@@ -423,3 +441,4 @@ input:not([type=submit]), textarea { background: #FFF; box-shadow: rgba(0, 0, 0,
 #app #modal .branches li .details .setting .field:last-child { margin: 0; }
 #app #modal .branches li .details .setting textarea { max-width: 100%; width: 100%; }
 #app #modal .branches li.active .details { display: block; }
+#app #preview { border: 0; display: block; height: 100%; margin-top: 38px; width: 100%; }

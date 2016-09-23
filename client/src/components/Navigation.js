@@ -2,6 +2,8 @@ import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import React, { Component } from 'react'
 import { withRouter } from 'react-router'
+import FileIcon from './svg/FileIcon'
+import FolderIcon from './svg/FolderIcon'
 
 import { fetchFileContent, createEmptyFile } from '../actions/editorActions'
 import { fetchFilesMeta } from '../actions/repoActions'
@@ -56,35 +58,47 @@ class Navigation extends Component {
           )
         }
         <section className='body'>
+          <ul className='tree'>
           {
             !loading && collectionType !=='media' && filesMeta && filesMeta.map((node, i) => {
               if (node.children) {
                 return (
-                  <div key={node.name+i}>
-                    <a className='folder'>{ node.name } /</a>
-                    {
-                      node.children.map((node, n) => {
-                        return (
-                          <a className={selectedItem === node.path ? 'active child': 'child'}
-                            key={node.name+n+'child'}
-                            onClick={() => this.navigateByPath(node.path)}>
-                            <h2>|_ { node.name }</h2>
-                          </a>
-                        )
-                      })
-                    }
-                  </div>
+                  <li key={node.name+i}>
+                    <a>
+                      <FolderIcon />
+                      { node.name }
+                    </a>
+                    <ul>
+                      {
+                        node.children.map((node, n) => {
+                          return (
+                            <li key={node.name+n+'child'}
+                              onClick={() => this.navigateByPath(node.path)}>
+                              <a className={selectedItem === node.path ? 'active': ''}> 
+                                <FileIcon />
+                                { node.name }
+                              </a>
+                            </li>
+                          )
+                        })
+                      }
+                    </ul>
+                  </li>
                 )
               }
               return (
-                <a className={selectedItem === node.path ? 'active': ''}
+                <li
                   key={node.name+i}
                   onClick={() => this.navigateByPath(node.path)}>
-                  <h2>{ node.name }</h2>
-                </a>
+                  <a className={selectedItem === node.path ? 'active': ''}>
+                    <FileIcon />
+                    <h2>{ node.name }</h2>
+                  </a>
+                </li>
               )
             })
           }
+          </ul>
         </section>
       </nav>
     )

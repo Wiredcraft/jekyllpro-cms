@@ -76,6 +76,7 @@ fieldset {
 .ReactCodeMirror {
   line-height: normal;
   font-size: 14px;
+  border: 1px solid #c0c0c0;
 }
 
 #navigation .body {
@@ -291,4 +292,16 @@ fieldset {
 }
 .ReactModal__Overlay {
   @extend #overlay;
+}
+
+#app #navigation .tree {
+  .svg {
+    display: inline !important;
+    margin: 0 !important;
+  }
+}
+fieldset {
+  border: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
 }
