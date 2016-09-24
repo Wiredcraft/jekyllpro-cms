@@ -3,9 +3,10 @@ import Form from 'react-jsonschema-form'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import ReactDOM from 'react-dom'
+// import { Link } from 'react-router'
 
 import { parseYamlInsideMarkdown, retriveContent, serializeObjtoYaml } from '../helpers/markdown'
-import { updateFile, deleteFile, addNewFile, replaceFile } from '../actions/editorActions'
+import { updateFile, deleteFile, addNewFile, replaceFile, fetchFileContent, createEmptyFile } from '../actions/editorActions'
 import { fetchBranchSchema } from '../actions/repoActions'
 import DeleteIcon from './svg/DeleteIcon'
 import customWidgets from './Editor/CustomWidgets'
@@ -22,6 +23,7 @@ class Editor extends Component {
     this.state = {
       isPostPublished: true,
       isDraft: false,
+      language: 'cn',
       filePathInputClass: '',
       formData: {},
       currentSchema: null,
@@ -85,6 +87,7 @@ class Editor extends Component {
         })
         formData.published = docConfigObj.published
         formData.draft = docConfigObj.draft
+        formData.lang = docConfigObj.lang
         formData.body = retriveContent(content)
       } else {
         formData.body = content
@@ -93,7 +96,8 @@ class Editor extends Component {
     this.setState({
       formData,
       isPostPublished: (formData.published !== undefined) ? formData.published : true,
-      isDraft: (formData.draft !== undefined) ? formData.draft : false
+      isDraft: (formData.draft !== undefined) ? formData.draft : false,
+      language: formData.lang ? formData.lang : 'cn'
     })
   }
 
@@ -111,7 +115,7 @@ class Editor extends Component {
       replaceFile,
       addNewFile
     } = this.props
-    const { currentSchema, isPostPublished, isDraft } = this.state
+    const { currentSchema, isPostPublished, isDraft, language } = this.state
     const filePath = this.refs.filePath.value
     if (!filePath) {
       console.error('no file path specified')
@@ -120,6 +124,10 @@ class Editor extends Component {
     }
     let updatedContent = formData.body
     delete formData.body
+
+    if (currentSchema.jekyll.type === 'content') {
+      formData.lang = language
+    }
 
     if ((currentSchema.jekyll.id === 'posts') && (isPostPublished === false)) {
       formData.published = false
@@ -197,8 +205,9 @@ class Editor extends Component {
     const { currentBranch, newFileMode, targetFile, deleteFile, fetchBranchSchema } = this.props
 
     if (newFileMode) {
-      return
+      return this.closeDeleteFileModel()
     }
+    this.closeDeleteFileModel()
     deleteFile(currentBranch, targetFile)
       .then( res => {
         fetchBranchSchema(currentBranch)
@@ -236,6 +245,36 @@ class Editor extends Component {
     this.setState({showDeleteFileModel: false})
   }
 
+  switchFileByLang() {
+    // const {language} = this.state
+    const { fetchFileContent, createEmptyFile } = this.props
+    const filePath = this.refs.filePath.value
+    const { collectionType, branch } = this.props.params
+    if (!filePath) return
+    let pathArray = filePath.split('/')
+    let len = pathArray.length
+    let anotherFilePath = ''
+    if (len >= 2 && pathArray[pathArray.length - 2] === 'en') {
+      pathArray.splice(pathArray.length - 2, 1)
+    } else {
+      pathArray.splice(pathArray.length - 1, 0 , 'en')
+    }
+    anotherFilePath = pathArray.join('/')
+
+    let toUrl = `/${collectionType}/${branch}/${anotherFilePath}`
+    fetchFileContent(branch, anotherFilePath, toUrl)
+      .catch(err => {
+        //newFileMode is true
+        console.log(err.message)
+        createEmptyFile()
+        this.setState({ newFilePath: anotherFilePath})
+      })
+  }
+
+  changeLanguage(evt) {
+    this.setState({language: evt.target.value})
+  }
+
   render() {
     const { content, newFileMode, editorUpdating, selectedFolder, targetFile } = this.props
     const { filePathInputClass, formData, newFilePath, currentSchema } = this.state
@@ -243,21 +282,24 @@ class Editor extends Component {
       ? (selectedFolder + '/' + dateToString(new Date()) + '-new-file')
       : targetFile
 
+
     return (
       <section id='content' className={editorUpdating ? 'spinning' : ''}>
         { currentSchema && (newFileMode || content) && (
           <div>
             <header className='sidebar'>
-              {(currentSchema.jekyll.type === 'posts') && (<div className='field language'>
+              {(currentSchema.jekyll.type === 'content') && <div className='field language'>
                 <label>Language</label>
                 <span className='select'>
-                  <select>
-                    <option>English</option>
-                    <option>Chinese</option>
+                  <select value={this.state.language || 'cn'} onChange={::this.changeLanguage}>
+                    <option value='en'>English</option>
+                    <option value='cn'>Chinese</option>
                   </select>
                 </span>
-                <small className='description'>See the <a>Chinese version</a>.</small>
-              </div>)}
+                <small className='description'>See the 
+                  <a onClick={::this.switchFileByLang}>{this.state.language === 'en' ? 'Chinese version' : 'English version'}</a>
+                </small>
+              </div>}
 
               {(currentSchema.jekyll.id === 'posts') && (<div className='field published'>
                 <label className='switch'>
@@ -333,6 +375,8 @@ function mapStateToProps(state, { params:
     currentBranch: branch || 'master',
     selectedFolder: state.repo.get('selectedFolder'),
     schema: state.repo.get('schema'),
+    filesMeta: state.repo.get('filesMeta'),
+    pagesMeta: state.repo.get('pagesMeta'),
     content: state.editor.get('content'),
     targetFile: state.editor.get('targetFile'),
     newFileMode: state.editor.get('newFileMode'),
@@ -341,7 +385,7 @@ function mapStateToProps(state, { params:
 }
 
 function mapDispatchToProps (dispatch) {
-  return bindActionCreators({ updateFile, deleteFile, addNewFile, fetchBranchSchema, replaceFile }, dispatch)
+  return bindActionCreators({ updateFile, deleteFile, addNewFile, fetchBranchSchema, replaceFile, fetchFileContent, createEmptyFile }, dispatch)
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Editor)

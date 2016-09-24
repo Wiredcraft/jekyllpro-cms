@@ -53,7 +53,7 @@ class customCodeMirror extends React.Component {
             <option value='htmlmixed'>HTML</option>
           </select>
         </div>
-        <Codemirror value={value} required={required} onChange={(code) => onChange(code)} options={opts} />
+        <Codemirror value={value || ''} required={required} onChange={(code) => onChange(code)} options={opts} />
       </div>
     )
   }

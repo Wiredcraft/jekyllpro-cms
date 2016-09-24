@@ -17,24 +17,27 @@ export function fetchFileContent(branch, path, routingUrl) {
     if (routingUrl) {      
       dispatch(push(routingUrl))
     }
-
-    request
-      .get(`${API_BASE_URL}/api/repository?ref=${branch}&path=${path}&raw=true`)
-      .withCredentials()
-      .end((err, res) => {
-        if (err) {
-          console.error(err)
-          dispatch({
-            payload: { loading: false },
-            type: CHANGE_EDITOR_STATE
-          })
-        } else {
-          dispatch({
-            payload: { content: res.body, targetFile: path, loading: false },
-            type: CHANGE_EDITOR_STATE
-          })
-        }
-      })
+    return new Promise((resolve, reject) => {
+      request
+        .get(`${API_BASE_URL}/api/repository?ref=${branch}&path=${path}&raw=true`)
+        .withCredentials()
+        .end((err, res) => {
+          if (err) {
+            console.error(err)
+            dispatch({
+              payload: { loading: false },
+              type: CHANGE_EDITOR_STATE
+            })
+            reject(err)
+          } else {
+            dispatch({
+              payload: { content: res.body, targetFile: path, loading: false },
+              type: CHANGE_EDITOR_STATE
+            })
+            resolve()
+          }
+        })      
+    })
   }
 }
 
@@ -196,5 +199,3 @@ export function cleanEditor() {
     })
   }
 }
-
-
