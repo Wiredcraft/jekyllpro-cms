@@ -40,6 +40,7 @@ let config = Object.assign({}, baseConfig, {
   plugins: [
     new webpack.optimize.DedupePlugin(),
     new webpack.DefinePlugin({
+      '__DEV__': false,
       API_BASE_URL:
         JSON.stringify(process.env.API_BASE_URL || 'http://localhost:3000'),
       'process.env.NODE_ENV': '"production"'

@@ -7,25 +7,24 @@ import FolderIcon from './svg/FolderIcon'
 
 import { fetchFileContent, createEmptyFile } from '../actions/editorActions'
 import { fetchFilesMeta } from '../actions/repoActions'
-
+import { toRoute } from '../actions/routeActions'
 
 class Navigation extends Component {
-  constructor() {
-    super()
-    this.state = { selectedItem: undefined }
+  constructor(props) {
+    super(props)
+    this.state = { selectedItem: props.params ? props.params.splat : undefined }
   }
 
   componentDidUpdate(prevProps) {
-    const { currentBranch, selectedFolder } = this.props
+    const { params } = this.props
 
-    // reset highlighted item when switching branch or folders
-    if ((currentBranch !== prevProps.currentBranch) || (selectedFolder !== prevProps.selectedFolder)) {
-      this.setState({selectedItem: null})
+    if (params.splat !== prevProps.params.splat) {
+      this.setState({selectedItem: params.splat})
     }
   }
 
   navigateByPath(path) {
-    const { fetchFileContent, currentBranch, selectedFolder, collectionType } = this.props
+    const { fetchFileContent, currentBranch, selectedFolder, collectionType, toRoute } = this.props
     this.setState({ selectedItem: path})
     // Do not render editor if click on any media files
     if (selectedFolder === 'media') {
@@ -33,7 +32,10 @@ class Navigation extends Component {
     }
 
     let routingUrl = `/${collectionType || 'pages'}/${currentBranch}/${path}`
-    fetchFileContent(currentBranch, path, routingUrl)
+    fetchFileContent(currentBranch, path)
+      .then(() =>{
+        toRoute(routingUrl)
+      })
   }
 
   createNew() {
@@ -119,7 +121,7 @@ function mapStateToProps(state, { params:
 }
 
 function mapDispatchToProps (dispatch) {
-  return bindActionCreators({ fetchFileContent, createEmptyFile, fetchFilesMeta }, dispatch)
+  return bindActionCreators({ fetchFileContent, createEmptyFile, fetchFilesMeta, toRoute }, dispatch)
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Navigation)

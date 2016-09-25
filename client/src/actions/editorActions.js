@@ -1,7 +1,6 @@
 /* global API_BASE_URL */
 import request from 'superagent'
 import { fileRemoved, fileAdded, fileReplaced } from './repoActions'
-import { push } from 'react-router-redux'
 
 export const CHANGE_EDITOR_STATE = 'CHANGE_EDITOR_STATE'
 export const NEW_EMPTY_FILE = 'NEW_EMPTY_FILE'
@@ -14,9 +13,7 @@ export function fetchFileContent(branch, path, routingUrl) {
       payload: { loading: true },
       type: CHANGE_EDITOR_STATE
     })
-    if (routingUrl) {      
-      dispatch(push(routingUrl))
-    }
+
     return new Promise((resolve, reject) => {
       request
         .get(`${API_BASE_URL}/api/repository?ref=${branch}&path=${path}&raw=true`)

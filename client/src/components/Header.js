@@ -4,6 +4,7 @@ import React, { Component } from 'react'
 
 import { getAllBranch, checkoutBranch, fetchFilesMeta, fetchPageFilesMeta, isBranchPrivate } from '../actions/repoActions'
 import { logout } from '../actions/userActions'
+import { toRoute } from '../actions/routeActions'
 
 import RepoIcon from './svg/RepoIcon'
 import BranchIcon from './svg/BranchIcon'
@@ -28,7 +29,11 @@ export default class Header extends Component {
   }
 
   handleBranchChange(evt) {
-    this.props.checkoutBranch(this.props.params, evt.target.value)
+    const newBranch = evt.target.value
+    const {checkoutBranch, toRoute} = this.props
+    const { collectionType, branch, splat: filePath} = this.props.params
+    checkoutBranch(newBranch)
+    toRoute(`/${collectionType}/${newBranch}/${filePath || ''}`)
   }
 
   logout () {
@@ -124,5 +129,5 @@ function mapStateToProps(state, { params:
 }
 
 function mapDispatchToProps (dispatch) {
-  return bindActionCreators({ getAllBranch, checkoutBranch, logout, isBranchPrivate}, dispatch)
+  return bindActionCreators({ getAllBranch, checkoutBranch, logout, isBranchPrivate, toRoute}, dispatch)
 }

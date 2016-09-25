@@ -1,7 +1,5 @@
 /* global API_BASE_URL */
 import request from 'superagent'
-import { push } from 'react-router-redux'
-
 import { parseFilesMeta } from '../helpers/repo'
 import { fetchDefaultSchema, cleanEditor } from './editorActions'
 
@@ -43,26 +41,29 @@ export function fetchFilesMeta(branch, path, collectionType) {
       type: CHANGE_REPO_STATE
     })
     dispatch(cleanEditor())
-    dispatch(push(`/${collectionType}/${branch}/`))
 
-    request
-      .get(url)
-      .withCredentials()
-      .end((err, res) => {
-        if (err) {
-          console.error(err)
-          dispatch({
-            payload: { loading: false, filesMeta: [], selectedFolder: path, collectionType },
-            type: CHANGE_REPO_STATE
-          })
-        } else {
-          const filesMeta = parseFilesMeta(res.body)
-          dispatch({
-            payload: { filesMeta, collectionType, loading: false, selectedFolder: path },
-            type: CHANGE_REPO_STATE
-          })
-        }
-      })
+    return new Promise((resolve, reject) => {      
+      request
+        .get(url)
+        .withCredentials()
+        .end((err, res) => {
+          if (err) {
+            console.error(err)
+            dispatch({
+              payload: { loading: false, filesMeta: [], selectedFolder: path, collectionType },
+              type: CHANGE_REPO_STATE
+            })
+            reject(err)
+          } else {
+            const filesMeta = parseFilesMeta(res.body)
+            dispatch({
+              payload: { filesMeta, collectionType, loading: false, selectedFolder: path },
+              type: CHANGE_REPO_STATE
+            })
+            resolve()
+          }
+        })
+    })
   }
 }
 
@@ -74,7 +75,6 @@ export function fetchPageFilesMeta(branch) {
       type: CHANGE_REPO_STATE
     })
     dispatch(cleanEditor())
-    dispatch(push(`/pages/${branch}/`))
 
     request
       .get(`${API_BASE_URL}/api/repository?ref=${branch}`)
@@ -174,9 +174,8 @@ export function fetchNestedFilesMeta(branch, path, collectionType) {
       type: CHANGE_REPO_STATE
     })
     dispatch(cleanEditor())
-    dispatch(push(`/${collectionType}/${branch}/${path}`))
 
-    makeNestedRequest(branch, path, path)
+    return makeNestedRequest(branch, path, path)
       .then( promiseArray => {
         console.log(promiseArray)
         Promise.all(promiseArray)
@@ -245,13 +244,10 @@ export function getAllBranch() {
   }
 }
 
-export function checkoutBranch({ collectionType, splat: filePath}, branch) {
+export function checkoutBranch(branch) {
   return dispatch => {
-    console.log('checkoutBranch')
     Promise.all([
       dispatch(fetchBranchSchema(branch)),
-      dispatch(
-        push(`/${collectionType || 'pages'}/${branch}/${filePath || ''}`)),
       dispatch({
         payload: { currentBranch: branch },
         type: CHANGE_REPO_STATE

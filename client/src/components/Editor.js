@@ -3,10 +3,10 @@ import Form from 'react-jsonschema-form'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import ReactDOM from 'react-dom'
-// import { Link } from 'react-router'
 
 import { parseYamlInsideMarkdown, retriveContent, serializeObjtoYaml } from '../helpers/markdown'
 import { updateFile, deleteFile, addNewFile, replaceFile, fetchFileContent, createEmptyFile } from '../actions/editorActions'
+import { toRoute } from '../actions/routeActions'
 import { fetchBranchSchema } from '../actions/repoActions'
 import DeleteIcon from './svg/DeleteIcon'
 import customWidgets from './Editor/CustomWidgets'
@@ -33,27 +33,33 @@ class Editor extends Component {
 
   componentDidUpdate(prevProps) {
     const { content, targetFile, schema, newFileMode, selectedFolder } = this.props
+    const { currentSchema } = this.state
 
     const schemaFetched = schema !== prevProps.schema
     const contentFetched = content !== prevProps.content
     const fileChanged = targetFile !== prevProps.targetFile
     const modeChanged = newFileMode !== prevProps.newFileMode
     const folderChanged = selectedFolder !== prevProps.selectedFolder
-    if(modeChanged || schemaFetched || contentFetched || fileChanged) {
+    if (schemaFetched || folderChanged) {
+      this.getCurrentSchema(() => {
+        if (selectedFolder) {
+          this.updateEditorForm()
+        }
+      })
+    }
+    if(modeChanged || contentFetched || fileChanged) {
+      if (!currentSchema) return
       this.updateEditorForm()
       // clean previous inputed file path value
       this.setState({newFilePath: null})
     }
-    if (schemaFetched || folderChanged) {
-      this.getCurrentSchema()
-    }
   }
 
-  getCurrentSchema() {
+  getCurrentSchema(callback) {
     let { schema, selectedFolder } = this.props
 
     schema = schema ? schema : []
-    selectedFolder = selectedFolder ? selectedFolder : '_posts'
+    // selectedFolder = selectedFolder ? selectedFolder : '_posts'
 
     let folderSchema = schema.find(item => {
         return (item.data.jekyll.dir === selectedFolder) || (item.data.jekyll.id === selectedFolder)
@@ -64,14 +70,17 @@ class Editor extends Component {
         return (item.data.jekyll.dir === selectedFolder) || item.data.jekyll.id === selectedFolder
       }) || {}
     }
-    return this.setState({currentSchema: folderSchema.data})
+    return this.setState({currentSchema: folderSchema.data}, (callback) => {
+      if (callback) {
+        callback()
+      }
+    })
   }
 
   updateEditorForm() {
     const { content } = this.props
     const { currentSchema } = this.state
     if (!content) return
-
     let formData = {}
     if (typeof content === 'object') {
       // content is json file
@@ -247,7 +256,7 @@ class Editor extends Component {
 
   switchFileByLang() {
     // const {language} = this.state
-    const { fetchFileContent, createEmptyFile } = this.props
+    const { fetchFileContent, createEmptyFile, toRoute } = this.props
     const filePath = this.refs.filePath.value
     const { collectionType, branch } = this.props.params
     if (!filePath) return
@@ -262,7 +271,10 @@ class Editor extends Component {
     anotherFilePath = pathArray.join('/')
 
     let toUrl = `/${collectionType}/${branch}/${anotherFilePath}`
-    fetchFileContent(branch, anotherFilePath, toUrl)
+    fetchFileContent(branch, anotherFilePath)
+      .then(() => {
+        toRoute(toUrl)
+      })
       .catch(err => {
         //newFileMode is true
         console.log(err.message)
@@ -385,7 +397,16 @@ function mapStateToProps(state, { params:
 }
 
 function mapDispatchToProps (dispatch) {
-  return bindActionCreators({ updateFile, deleteFile, addNewFile, fetchBranchSchema, replaceFile, fetchFileContent, createEmptyFile }, dispatch)
+  return bindActionCreators({
+    toRoute,
+    updateFile,
+    deleteFile,
+    addNewFile,
+    fetchBranchSchema,
+    replaceFile,
+    fetchFileContent,
+    createEmptyFile
+  }, dispatch)
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Editor)
