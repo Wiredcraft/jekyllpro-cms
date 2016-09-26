@@ -17,17 +17,14 @@ const addEditButtonsSrc = (branch, url) => `(function() {
   function changeOpacity (element, child, opacity) {
     child.style.opacity = opacity;
   }
-
   function extractCollectionTypeLink (string, branch, url) {
       var collectionType = 'pages';
       if (string[0] === '_') {
         var indexOfSlash = string.indexOf('/');
         collectionType = string.slice(1, indexOfSlash);
       }
-
       return url + collectionType + '/' + branch + '/' + string;
     }
-
   function addEditableElements(elements) {
     elements.forEach(function(element) {
       var editableElement = document.createElement('a');
@@ -39,7 +36,6 @@ const addEditButtonsSrc = (branch, url) => `(function() {
       editableElement.style.fontSize = '12px';
       editableElement.style.fontWeight = 'normal';
       editableElement.style.padding = '1px 10px';
-
       editableElement.addEventListener('mouseenter', function () {
         editableElement.style.opacity = 1;
       });
@@ -56,7 +52,6 @@ const addEditButtonsSrc = (branch, url) => `(function() {
         changeOpacity(element, editableElement, 0);
         element.style.outline = '';
       });
-
       editableElement.setAttribute('href', extractCollectionTypeLink(element.getAttribute('data-source'), ${branch}, ${url}));
       editableElement.setAttribute('target', '_parent');
       editableElement.innerHTML = 'Edit';
@@ -65,7 +60,6 @@ const addEditButtonsSrc = (branch, url) => `(function() {
     })
     console.log("injected edit links");
   }
-
   addEditableElements(document.querySelectorAll('[data-source]'));
 })()`
 
@@ -93,10 +87,10 @@ export default class AppComponent extends React.Component {
           collectionType !== 'media' && <Editor key='editor' params={this.props.params} /> ,
           collectionType === 'media' && <Media key='media' />] :
           <iframe onLoad={() => {
-            window.frames[0].window.eval(addEditButtonsSrc(this.props.params.branch, 'http://localhost:8000'))
+            window.frames[0].window.eval(addEditButtonsSrc(this.props.params.branch, 'http://app.jekyllpro.com/'))
           }}
           style={{width: "100%", minHeight: "2000px", paddingTop: "39px"}}
-          src={`http://localhost:8000`} />
+          src={`http://${this.props.params.branch}.beta-starbucks-com-cn.wiredcraft.jekyllpro.com`} />
         }
 
       </div>
