@@ -93,7 +93,7 @@ export default class AppComponent extends React.Component {
           collectionType === 'media' && <Media key='media' />] :
           <iframe onLoad={() => window.frames[0].window.eval(addEditButtonsSrc(this.props.params.branch, 'https://app.jekyllpro.com/'))}
           style={{width: "100%", minHeight: "2000px", paddingTop: "39px"}}
-          src={`http://${this.props.params.branch}.beta-starbucks-com-cn.wiredcraft.jekyllpro.com`} />
+          src={`https://${this.props.params.branch}.beta-starbucks-com-cn.wiredcraft.jekyllpro.com`} />
         }
 
       </div>
