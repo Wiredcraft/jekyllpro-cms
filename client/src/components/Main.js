@@ -67,7 +67,6 @@ const addEditButtonsSrc = (branch, url) => `(function() {
 
   addEditableElements(document.querySelectorAll('[data-source]'))
 })()`
-
 @connect(mapStateToProps, mapDispatchToProps)
 export default class AppComponent extends React.Component {
   componentDidMount() {
@@ -91,7 +90,10 @@ export default class AppComponent extends React.Component {
           collectionType !== 'media' && <Navigation key='nav' params={this.props.params} /> ,
           collectionType !== 'media' && <Editor key='editor' params={this.props.params} /> ,
           collectionType === 'media' && <Media key='media' />] :
-          <iframe onLoad={() => window.frames[0].window.eval(addEditButtonsSrc(this.props.params.branch, 'http://app.jekyllpro.com/'))}
+          <iframe onLoad={() => {
+            document.domain = 'jekyllpro.com'
+            window.frames[0].window.eval(addEditButtonsSrc(this.props.params.branch, 'http://app.jekyllpro.com/'))
+          }}
           style={{width: "100%", minHeight: "2000px", paddingTop: "39px"}}
           src={`http://${this.props.params.branch}.beta-starbucks-com-cn.wiredcraft.jekyllpro.com`} />
         }
