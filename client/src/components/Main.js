@@ -57,11 +57,11 @@ const addEditButtonsSrc = (branch, url) => `(function() {
       editableElement.innerHTML = 'Edit';
       window.document.body.appendChild(editableElement);
       console.log('link added');
-    })
+    });
     console.log("injected edit links");
   }
   addEditableElements(document.querySelectorAll('[data-source]'));
-})()`
+})();`
 
 @connect(mapStateToProps, mapDispatchToProps)
 export default class AppComponent extends React.Component {
