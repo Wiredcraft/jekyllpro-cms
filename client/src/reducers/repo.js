@@ -48,8 +48,25 @@ export default function repo (state = initialState, action) {
     return state
   case FILE_ADDED:
     var { name, path } = action.payload
+    var pathArray = path.split('/')
     updatedFileMeta = state.get('filesMeta')
-    updatedFileMeta.push({name: name, path: path})
+
+    if (pathArray.length <= 2) {      
+      updatedFileMeta.push({name: name, path: path})
+    } else {
+      // file is in subfolder
+      var folderName = pathArray[1]
+      var fileName = pathArray[pathArray.length - 1]
+      var matchedFolderIdx = updatedFileMeta.findIndex((item, i) => {
+        return (item.name === folderName)
+      })
+      if (matchedFolderIdx > -1) {
+        updatedFileMeta[matchedFolderIdx].children.push({name: fileName, path: path})
+      } else {
+        updatedFileMeta.push({name: folderName, children: [{name: fileName, path: path}]})
+      }
+    }
+
     updatedFileMeta = Object.assign([], updatedFileMeta)
     state = state.set('filesMeta', updatedFileMeta)
     return state
