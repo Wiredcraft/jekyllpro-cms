@@ -7,7 +7,7 @@ export const CHANGE_REPO_STATE = 'CHANGE_REPO_STATE'
 export const FILE_REMOVED = 'FILE_REMOVED'
 export const FILE_ADDED = 'FILE_ADDED'
 export const FILE_REPLACED = 'FILE_REPLACED'
-export const VIEW_IFRAME = 'VIEW_IFRAME'
+
 export function fetchRepoInfo() {
   return dispatch => {
     request

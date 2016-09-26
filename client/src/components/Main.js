@@ -11,15 +11,24 @@ import Navigation from './Navigation'
 import Media from './Media'
 import 'styles/_supplement.scss'
 import 'styles/styles.css'
-const addEditButtonsSrc = `(function() {
+
+const addEditButtonsSrc = (branch, url) => `(function() {
   function changeOpacity (element, child, opacity) {
     child.style.opacity = opacity;
   }
 
+  function extractCollectionTypeLink(string, branch, url) {
+    var collectionType = 'pages'
+    if (string[0] === '_') {
+      var indexOfSlash = string.indexOf('/')
+      collectionType = string.slice(1, indexOfSlash)
+    }
+
+    return url + collectionType + '/' + branch + '/' + string
+  }
+
   function addEditableElements(elements) {
     elements.forEach(function(element) {
-
-
       var editableElement = document.createElement('a');
       editableElement.style.opacity = 0;
       editableElement.style.position = 'absolute';
@@ -47,7 +56,8 @@ const addEditButtonsSrc = `(function() {
         element.style.outline = '';
       });
 
-      editableElement.setAttribute('href', element.getAttribute('data-source'));
+      editableElement.setAttribute('href', extractCollectionTypeLink(element.getAttribute('data-source'), ${branch}, ${url}));
+      editableElement.setAttribute('target', '_parent');
       editableElement.innerHTML = 'Edit';
       window.document.body.appendChild(editableElement);
       console.log('link added')
@@ -81,8 +91,9 @@ export default class AppComponent extends React.Component {
           collectionType !== 'media' && <Navigation key='nav' params={this.props.params} /> ,
           collectionType !== 'media' && <Editor key='editor' params={this.props.params} /> ,
           collectionType === 'media' && <Media key='media' />] :
-          <iframe onLoad={() => window.frames[0].window.eval(addEditButtonsSrc)}
-          style={{width: "100%", minHeight: "2000px", paddingTop: "39px"}} src={`http://${this.props.params.branch}.beta-starbucks-com-cn.wiredcraft.jekyllpro.com`} />
+          <iframe onLoad={() => window.frames[0].window.eval(addEditButtonsSrc(this.props.params.branch, 'https://app.jekyllpro.com/'))}
+          style={{width: "100%", minHeight: "2000px", paddingTop: "39px"}}
+          src={`http://${this.props.params.branch}.beta-starbucks-com-cn.wiredcraft.jekyllpro.com`} />
         }
 
       </div>

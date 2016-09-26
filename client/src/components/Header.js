@@ -3,7 +3,7 @@ import { bindActionCreators } from 'redux'
 import React, { Component } from 'react'
 
 import { getAllBranch, checkoutBranch, fetchFilesMeta,
-  fetchPageFilesMeta, isBranchPrivate, openSiteInIframe } from '../actions/repoActions'
+  fetchPageFilesMeta, isBranchPrivate } from '../actions/repoActions'
 import { logout } from '../actions/userActions'
 import { toRoute } from '../actions/routeActions'
 
