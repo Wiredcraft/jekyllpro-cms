@@ -77,7 +77,7 @@ export default class Header extends Component {
             <p><button className='button primary' onClick={() => this.logout()}>Logout</button></p>
           </section>
         </Modal>
-        <a className='logo'><img src='./assets/logo-small.svg'/></a>
+        <a className='logo'><img src={require('file?name=/assets/logo-small.svg!../assets/logo-small.svg')} /></a>
         <a className='repo' onClick={evt => {this.setState({showRepoModal: true})}}>
           <RepoIcon />
           {repoName}
