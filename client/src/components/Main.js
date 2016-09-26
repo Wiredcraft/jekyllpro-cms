@@ -52,7 +52,7 @@ const addEditButtonsSrc = (branch, url) => `(function() {
         changeOpacity(element, editableElement, 0);
         element.style.outline = '';
       });
-      editableElement.setAttribute('href', extractCollectionTypeLink(element.getAttribute('data-source'), ${branch}, ${url}));
+      editableElement.setAttribute('href', extractCollectionTypeLink(element.getAttribute('data-source'),` + branch `, ` + url + `}));
       editableElement.setAttribute('target', '_parent');
       editableElement.innerHTML = 'Edit';
       window.document.body.appendChild(editableElement);
