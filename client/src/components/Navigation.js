@@ -94,7 +94,7 @@ class Navigation extends Component {
                   onClick={() => this.navigateByPath(node.path)}>
                   <a className={selectedItem === node.path ? 'active': ''}>
                     <FileIcon />
-                    <h2>{ node.name }</h2>
+                    <span>{ node.name }</span>
                   </a>
                 </li>
               )

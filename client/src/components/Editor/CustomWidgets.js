@@ -47,13 +47,13 @@ class customCodeMirror extends React.Component {
     const opts = Object.assign(cmOptions, this.state)
     return (
       <div>
-        <div style={{textAlign: 'right', marginBottom: '5px'}}>
+        <Codemirror value={value || ''} required={required} onChange={(code) => onChange(code)} options={opts} />
+        <span className='select'>
           <select onChange={::this.changeMode} value={this.state.mode}>
             <option value='markdown'>Markdown</option>
             <option value='htmlmixed'>HTML</option>
           </select>
-        </div>
-        <Codemirror value={value || ''} required={required} onChange={(code) => onChange(code)} options={opts} />
+        </span>
       </div>
     )
   }
