@@ -308,7 +308,7 @@ class Editor extends Component {
                     <option value='cn'>Chinese</option>
                   </select>
                 </span>
-                <small className='description'>See the 
+                <small className='description'>See the&nbsp; 
                   <a onClick={::this.switchFileByLang}>{this.state.language === 'en' ? 'Chinese version' : 'English version'}</a>
                 </small>
               </div>}
@@ -382,7 +382,7 @@ class Editor extends Component {
 
 function mapStateToProps(state, { params:
   { collectionType, branch, splat: path } }) {
-    
+
   return {
     currentBranch: branch || 'master',
     selectedFolder: state.repo.get('selectedFolder'),
