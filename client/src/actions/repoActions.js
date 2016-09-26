@@ -7,7 +7,7 @@ export const CHANGE_REPO_STATE = 'CHANGE_REPO_STATE'
 export const FILE_REMOVED = 'FILE_REMOVED'
 export const FILE_ADDED = 'FILE_ADDED'
 export const FILE_REPLACED = 'FILE_REPLACED'
-
+export const VIEW_IFRAME = 'VIEW_IFRAME'
 export function fetchRepoInfo() {
   return dispatch => {
     request
@@ -42,7 +42,7 @@ export function fetchFilesMeta(branch, path, collectionType) {
     })
     dispatch(cleanEditor())
 
-    return new Promise((resolve, reject) => {      
+    return new Promise((resolve, reject) => {
       request
         .get(url)
         .withCredentials()
@@ -142,7 +142,7 @@ const makeRequest = (branch, path) => {
           return reject(err)
         }
         return resolve(res.body)
-      })     
+      })
   })
 }
 const makeNestedRequest = (branch, path, name) => {
@@ -323,4 +323,3 @@ export function isBranchPrivate(branch) {
     })
   }
 }
-

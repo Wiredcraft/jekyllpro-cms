@@ -76,7 +76,7 @@ class Navigation extends Component {
                           return (
                             <li key={node.name+n+'child'}
                               onClick={() => this.navigateByPath(node.path)}>
-                              <a className={selectedItem === node.path ? 'active': ''}> 
+                              <a className={selectedItem === node.path ? 'active': ''}>
                                 <FileIcon />
                                 { node.name }
                               </a>

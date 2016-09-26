@@ -2,7 +2,8 @@ import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import React, { Component } from 'react'
 
-import { getAllBranch, checkoutBranch, fetchFilesMeta, fetchPageFilesMeta, isBranchPrivate } from '../actions/repoActions'
+import { getAllBranch, checkoutBranch, fetchFilesMeta,
+  fetchPageFilesMeta, isBranchPrivate, openSiteInIframe } from '../actions/repoActions'
 import { logout } from '../actions/userActions'
 import { toRoute } from '../actions/routeActions'
 
@@ -53,7 +54,8 @@ export default class Header extends Component {
   }
 
   render () {
-    const { branches, currentBranch, avatar, userName, repoName, isBranchPrivate } = this.props
+    const { branches, currentBranch, avatar, userName, repoName, isBranchPrivate,
+    params: { collectionType, branch, splat: filePath} } = this.props
 
     return (
       <header id='header'>
@@ -111,6 +113,18 @@ export default class Header extends Component {
           isOpen={this.state.showSettingModal}
           afterOpen={::this.afterOpenModal}
           onclose={::this.onCloseSettingModal} />
+          <a className="website"
+          onClick={evt =>
+            this.props.toRoute({
+              pathname: `/${collectionType || 'pages' }/${branch || 'master' }/${filePath || ''}`,
+              query: { viewing: 'site' }}
+            )}>
+            <svg height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+              <path d="M0 0h24v24H0z" fill="none"></path>
+              <path d="M10.09 15.59L11.5 17l5-5-5-5-1.41 1.41L12.67 11H3v2h9.67l-2.58 2.59zM19 3H5c-1.11 0-2 .9-2 2v4h2V5h14v14H5v-4H3v4c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"></path>
+            </svg>
+            View website
+          </a>
       </header>
     )
   }
@@ -129,5 +143,6 @@ function mapStateToProps(state, { params:
 }
 
 function mapDispatchToProps (dispatch) {
-  return bindActionCreators({ getAllBranch, checkoutBranch, logout, isBranchPrivate, toRoute}, dispatch)
+  return bindActionCreators({ getAllBranch, checkoutBranch, logout,
+    isBranchPrivate, toRoute }, dispatch)
 }
