@@ -1,5 +1,6 @@
 import passport from 'passport'
 import GithubAPI from 'github-api'
+import _ from 'lodash'
 
 var noReturnUrls = [
   '/login'
@@ -83,10 +84,59 @@ const logout = (req, res) => {
   res.status(200).json({status: 'ok'})
 }
 
+const listUserOrgs = (req, res) => {
+  var gh = new GithubAPI({ token: req.user.accessToken })
+  gh.getUser().listOrgs()
+    .then(data => {
+      res.status(200).json(data.data)
+    })
+    .catch(err => {
+      console.log(err)
+      res.status(400).json({message: 'something wrong'})
+    })
+}
+
+const listUserRepos = (req, res) => {
+  var { type, sort, direction } = req.query
+  var gh = new GithubAPI({ token: req.user.accessToken })
+  gh.getUser().listRepos(req.query)
+    .then(data => {
+      let list = data.data.map(item => {
+        let newItem = _.pick(item, [
+          'id',
+          'name',
+          'full_name',
+          'private',
+          'description',
+          'url',
+          'created_at',
+          'updated_at',
+          'default_branch',
+          'permissions'
+        ])
+        newItem.owner = _.pick(item.owner, [
+          'login',
+          'avatar_url',
+          'url',
+          'type',
+          'site_admin'
+        ])
+        return newItem
+      })
+      res.status(200).json(list)
+    })
+    .catch(err => {
+      console.log(err)
+      res.status(400).json({message: 'something wrong'})
+    })
+}
+
 export default {
   githubOauthCall,
   githubOauthCallback,
   requireAuthentication,
   getUserInfo,
+  listUserOrgs,
+  listUserRepos,
   logout
 }
