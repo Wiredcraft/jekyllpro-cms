@@ -46,10 +46,7 @@ const getRepoDetails = (req, res, next) => {
   })
   .catch((err) => {
     // console.log(err)
-    if (err.status === 404) {
-      return res.status(404).json(err.response.data)
-    }
-    res.status(400).json({message: 'something wrong'})
+    res.status(err.status).json(err.response.data)
   })
 }
 
@@ -64,10 +61,7 @@ const getRepoContent = (req, res, next) => {
   })
   .catch((err) => {
     // console.log(err)
-    if (err.status === 404) {
-      return res.status(404).json(err.response.data)
-    }
-    res.status(400).json({message: 'something wrong'})
+    res.status(err.status).json(err.response.data)
   })
 }
 
@@ -85,7 +79,6 @@ const writeRepoFile = (req, res, next) => {
   .catch((err) => {
     // console.log(err)
     res.status(err.status).json(err.response.data)
-    // res.status(400).json({message: 'something wrong'})
   })
 }
 
@@ -113,10 +106,7 @@ const listBranches = (req, res, next) => {
   })
   .catch((err) => {
     // console.log(err)
-    if (err.status === 404) {
-      return res.status(404).json(err.response.data)
-    }
-    res.status(400).json({message: 'something wrong'})
+    res.status(err.status).json(err.response.data)
   })
 }
 
@@ -161,10 +151,7 @@ const getBranchSchema = (req, res, next) => {
   })
   .catch((err) => {
     console.log(err)
-    if (err.status === 404) {
-      return res.status(404).json(err.response.data)
-    }
-    res.status(400).json({message: 'something wrong'})
+    res.status(err.status).json(err.response.data)
   })
 }
 

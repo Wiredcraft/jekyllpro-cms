@@ -92,7 +92,7 @@ const listUserOrgs = (req, res) => {
     })
     .catch(err => {
       console.log(err)
-      res.status(400).json({message: 'something wrong'})
+      res.status(err.status).json(err.response.data)
     })
 }
 
@@ -127,7 +127,7 @@ const listUserRepos = (req, res) => {
     })
     .catch(err => {
       console.log(err)
-      res.status(400).json({message: 'something wrong'})
+      res.status(err.status).json(err.response.data)
     })
 }
 
