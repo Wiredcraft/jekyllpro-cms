@@ -1,5 +1,5 @@
 /* global API_BASE_URL */
-import request from 'superagent'
+import { getRepoDetails, getRepoMeta, getRepoBranchList, getBranchSchema } from '../helpers/api'
 import { parseFilesMeta } from '../helpers/repo'
 import { fetchDefaultSchema, cleanEditor } from './editorActions'
 
@@ -7,28 +7,21 @@ export const CHANGE_REPO_STATE = 'CHANGE_REPO_STATE'
 export const FILE_REMOVED = 'FILE_REMOVED'
 export const FILE_ADDED = 'FILE_ADDED'
 export const FILE_REPLACED = 'FILE_REPLACED'
+export const RESET_REPO_DATA = 'RESET_REPO_DATA'
 
 export function fetchRepoInfo() {
   return dispatch => {
-    request
-      .get(`${API_BASE_URL}/api/repository/details`)
-      .withCredentials()
-      .end((err, res) => {
-        if (err) {
-          console.error(err)
-        } else {
-          dispatch({
-            payload: {currentBranch: res.body.default_branch, repoName: res.body.full_name},
-            type: CHANGE_REPO_STATE
-          })
-        }
+    return getRepoDetails()
+      .then(data => {        
+        dispatch({
+          payload: {currentBranch: data.default_branch, repoName: data.full_name},
+          type: CHANGE_REPO_STATE
+        })
       })
   }
 }
 
 export function fetchFilesMeta(branch, path, collectionType) {
-  let url = branch ? `${API_BASE_URL}/api/repository?ref=${branch}&path=${path}` : `${API_BASE_URL}/api/repository?path=${path}`
-
   return dispatch => {
     if (collectionType === 'media') {
       return dispatch({
@@ -42,28 +35,21 @@ export function fetchFilesMeta(branch, path, collectionType) {
     })
     dispatch(cleanEditor())
 
-    return new Promise((resolve, reject) => {
-      request
-        .get(url)
-        .withCredentials()
-        .end((err, res) => {
-          if (err) {
-            console.error(err)
-            dispatch({
-              payload: { loading: false, filesMeta: [], selectedFolder: path, collectionType },
-              type: CHANGE_REPO_STATE
-            })
-            reject(err)
-          } else {
-            const filesMeta = parseFilesMeta(res.body)
-            dispatch({
-              payload: { filesMeta, collectionType, loading: false, selectedFolder: path },
-              type: CHANGE_REPO_STATE
-            })
-            resolve()
-          }
+    return getRepoMeta({ branch, path })
+      .then(data => {
+        const filesMeta = parseFilesMeta(data)
+
+        dispatch({
+          payload: { filesMeta, collectionType, loading: false, selectedFolder: path },
+          type: CHANGE_REPO_STATE
         })
-    })
+      })
+      .catch(err =>{        
+        dispatch({
+          payload: { loading: false, filesMeta: [], selectedFolder: path, collectionType },
+          type: CHANGE_REPO_STATE
+        })
+      })
   }
 }
 
@@ -76,46 +62,31 @@ export function fetchPageFilesMeta(branch) {
     })
     dispatch(cleanEditor())
 
-    request
-      .get(`${API_BASE_URL}/api/repository?ref=${branch}`)
-      .withCredentials()
-      .end((err, res) => {
-        if (err) {
-          console.error(err)
-          return dispatch({
-            payload: { loading: false, filesMeta: [], selectedFolder: 'pages' },
-            type: CHANGE_REPO_STATE
-          })
-        }
-        var branchData = res.body
-        pages = branchData.filter( item => {
+    return getRepoMeta({ branch })
+      .then(data => {
+        pages = data.filter( item => {
           return (item.type === 'file') && (/\.(html|HTML)$/.test(item.name))
         })
         pages = parseFilesMeta(pages)
 
-        var folderRequests = branchData.filter( item => {
+        var folderRequests = data.filter( item => {
           return (item.type === 'dir') && (/^[a-zA-Z0-9]/.test(item.name))
-        }).map( dir => {
-          return new Promise((resolve, reject) => {
-            request
-              .get(`${API_BASE_URL}/api/repository?ref=${branch}&path=${dir.path}`)
-              .withCredentials()
-              .end((err, res) => {
-                if (err) {
-                  console.log(err)
-                  return resolve({name: dir.name})
-                }
-                var dirData = res.body.filter( item => {
+          }).map( dir => {
+            return getRepoMeta({ branch, path: `${dir.path}` })
+              .then(subData => {
+                var dirData = subData.filter( item => {
                   return (item.type === 'file') && (/\.(html|HTML)$/.test(item.name))
                 })
                 if (dirData.length === 0) {
-                  return resolve({name: dir.name})
+                  return {name: dir.name}
                 }
                 dirData = parseFilesMeta(dirData)
-                return resolve({name: dir.name, children: dirData})
+                return {name: dir.name, children: dirData}
+              })
+              .catch(err => {
+                return {name: dir.name}
               })
           })
-        })
         return Promise.all(folderRequests)
           .then( resultArray => {
             resultArray = resultArray.filter( item => {
@@ -129,31 +100,24 @@ export function fetchPageFilesMeta(branch) {
             })
           })
       })
+      .catch(err => {
+        return dispatch({
+          payload: { loading: false, filesMeta: [], selectedFolder: 'pages' },
+          type: CHANGE_REPO_STATE
+        })
+      })
   }
 }
 
-const makeRequest = (branch, path) => {
-  return new Promise((resolve, reject) => {
-    request
-      .get(`${API_BASE_URL}/api/repository?ref=${branch}&path=${path}`)
-      .withCredentials()
-      .end((err, res) => {
-        if (err) {
-          return reject(err)
-        }
-        return resolve(res.body)
-      })
-  })
-}
 const makeNestedRequest = (branch, path, name) => {
-  return makeRequest(branch, path)
+  return getRepoMeta({ branch, path })
     .then(list => {
       return list.map((item) => {
         if (item.type === 'file') {
           return Promise.resolve({ name: item.name, path: item.path, url: item.url })
         }
         if (item.type === 'dir') {
-          var dirRequest = makeRequest(branch, item.path)
+          var dirRequest = getRepoMeta({ branch, path: item.path })
             .then(resultArray => {
               return Promise.resolve({name: item.name, children: resultArray })
             })
@@ -224,22 +188,18 @@ export function getAllBranch() {
       type: CHANGE_REPO_STATE
     })
 
-    request
-      .get(`${API_BASE_URL}/api/repository/branch`)
-      .withCredentials()
-      .end((err, res) => {
-        if (err) {
-          console.error(err)
-          dispatch({
-            payload: { loading: false },
-            type: CHANGE_REPO_STATE
-          })
-        } else {
-          dispatch({
-            payload: { branches: res.body, loading: false },
-            type: CHANGE_REPO_STATE
-          })
-        }
+    return getRepoBranchList()
+      .then(data => {
+        dispatch({
+          payload: { branches: data, loading: false },
+          type: CHANGE_REPO_STATE
+        })
+      })
+      .catch(() => {
+        dispatch({
+          payload: { loading: false },
+          type: CHANGE_REPO_STATE
+        })        
       })
   }
 }
@@ -264,26 +224,18 @@ export function fetchBranchSchema(branch) {
       type: CHANGE_REPO_STATE
     })
 
-    let url = branch
-      ? `${API_BASE_URL}/api/repository/schema?ref=${branch}&path=_schemas`
-      : `${API_BASE_URL}/api/repository/schema?path=_schemas`
-
-    request
-      .get(url)
-      .withCredentials()
-      .end((err, res) => {
-        if (err) {
-          console.error(err)
-          dispatch({
-            payload: { loading: false },
-            type: CHANGE_REPO_STATE
-          })
-        } else {
-          dispatch({
-            payload: { schema: res.body, loading: false },
-            type: CHANGE_REPO_STATE
-          })
-        }
+    return getBranchSchema({ branch, path: '_schemas'})
+      .then(data => {
+        dispatch({
+          payload: { schema: data, loading: false },
+          type: CHANGE_REPO_STATE
+        })
+      })
+      .catch(err => {
+        dispatch({
+          payload: { loading: false },
+          type: CHANGE_REPO_STATE
+        })
       })
   }
 }
@@ -295,31 +247,28 @@ export function isBranchPrivate(branch) {
       type: CHANGE_REPO_STATE
     })
 
-    return new Promise((resolve, reject) => {
-      request
-        .get(`${API_BASE_URL}/api/repository?ref=${branch}&path=PROTECTED&raw=true`)
-        .withCredentials()
-        .end((err, res) => {
-          if (err) {
-            console.error(err)
-            dispatch({
-              payload: { loading: false },
-              type: CHANGE_REPO_STATE
-            })
-            if (err.statusCode === 404) {
-              resolve({isPrivate: false})
-            } else {
-              reject('error')
-            }
-
-          } else {
-            dispatch({
-              payload: { loading: false },
-              type: CHANGE_REPO_STATE
-            })
-            resolve({isPrivate: true})
-          }
+    return getRepoMeta({ branch, path: 'PROTECTED', raw: true })
+      .then(data => {
+        dispatch({
+          payload: { loading: false },
+          type: CHANGE_REPO_STATE
         })
+        return {isPrivate: true}
+      })
+      .catch(err => {
+        dispatch({
+          payload: { loading: false },
+          type: CHANGE_REPO_STATE
+        })
+        return {isPrivate: false}
+      })
+  }
+}
+
+export function resetRepoData () {
+  return dispatch => {
+    dispatch({
+      type: RESET_REPO_DATA
     })
   }
 }

@@ -11,11 +11,16 @@ const requireGithubAPI = (req, res, next) => {
   if (req.githubRepo) {
     return next()
   }
+  var repoOwner = req.get('X-REPO-OWNER')
+  var repoName = req.get('X-REPO-NAME')
+  if (!repoName || !repoOwner) {
+    res.status(401).send({message: 'repository undefined'})
+  }
   var ak = req.get('X-TOKEN') || req.user.accessToken || req.user._json.accessToken
   var github = new GithubAPI({
     token: ak
   })
-  req.githubRepo = github.getRepo(config.repo.user, config.repo.name)
+  req.githubRepo = github.getRepo(repoOwner, repoName)
   next()
 }
 
@@ -41,10 +46,7 @@ const getRepoDetails = (req, res, next) => {
   })
   .catch((err) => {
     // console.log(err)
-    if (err.status === 404) {
-      return res.status(404).json(err.response.data)
-    }
-    res.status(400).json({message: 'something wrong'})
+    res.status(err.status).json(err.response.data)
   })
 }
 
@@ -59,10 +61,7 @@ const getRepoContent = (req, res, next) => {
   })
   .catch((err) => {
     // console.log(err)
-    if (err.status === 404) {
-      return res.status(404).json(err.response.data)
-    }
-    res.status(400).json({message: 'something wrong'})
+    res.status(err.status).json(err.response.data)
   })
 }
 
@@ -80,7 +79,6 @@ const writeRepoFile = (req, res, next) => {
   .catch((err) => {
     // console.log(err)
     res.status(err.status).json(err.response.data)
-    // res.status(400).json({message: 'something wrong'})
   })
 }
 
@@ -108,10 +106,7 @@ const listBranches = (req, res, next) => {
   })
   .catch((err) => {
     // console.log(err)
-    if (err.status === 404) {
-      return res.status(404).json(err.response.data)
-    }
-    res.status(400).json({message: 'something wrong'})
+    res.status(err.status).json(err.response.data)
   })
 }
 
@@ -156,10 +151,7 @@ const getBranchSchema = (req, res, next) => {
   })
   .catch((err) => {
     console.log(err)
-    if (err.status === 404) {
-      return res.status(404).json(err.response.data)
-    }
-    res.status(400).json({message: 'something wrong'})
+    res.status(err.status).json(err.response.data)
   })
 }
 
