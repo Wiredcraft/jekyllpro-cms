@@ -6,6 +6,7 @@ export const CHANGE_EDITOR_STATE = 'CHANGE_EDITOR_STATE'
 export const NEW_EMPTY_FILE = 'NEW_EMPTY_FILE'
 export const DELETE_EXISTING_FILE = 'DELETE_EXISTING_FILE'
 export const CLEAN_EDITOR = 'CLEAN_EDITOR'
+export const RESET_EDITOR_DATA = 'RESET_EDITOR_DATA'
 
 export function fetchFileContent(branch, path) {
   return dispatch => {
@@ -138,6 +139,14 @@ export function cleanEditor() {
   return dispatch => {
     dispatch({
       type: CLEAN_EDITOR
+    })
+  }
+}
+
+export function resetEditorData () {
+  return dispatch => {
+    dispatch({
+      type: RESET_EDITOR_DATA
     })
   }
 }

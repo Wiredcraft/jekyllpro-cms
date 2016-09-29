@@ -51,8 +51,8 @@ export function getUserOrgs () {
   })
 }
 
-export function getUserRepos ({ type, sort, direction }) {
-  var requestUrl = `${API_BASE_URL}/api/me/repos` + setQueryParam({ type, sort, direction })
+export function getUserRepos (opts) {
+  var requestUrl = `${API_BASE_URL}/api/me/repos` + setQueryParam(opts || {})
   return new Promise((resolve, reject) => {
     request('GET', requestUrl)
       .end(generalResponseHandler(resolve, reject))

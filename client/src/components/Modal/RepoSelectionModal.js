@@ -10,6 +10,7 @@ export default class RepoSelectionModal extends Component {
   constructor() {
     super()
     this.state = {
+      loading: false,
       repos: [],
       filteredRepos: [],
       selectedRepo: {owner: Cookie.get('repoOwner') || 'n', name: Cookie.get('repoName') || 'a'}
@@ -18,9 +19,10 @@ export default class RepoSelectionModal extends Component {
 
   componentDidMount () {
     if (this.state.repos.length > 0) return
-    getUserRepos({})
+    this.setState({loading: true})
+    getUserRepos({type: 'all', sort: 'updated'})
       .then(list => {
-        this.setState({repos: list, filteredRepos: list}, () => {
+        this.setState({loading: false, repos: list, filteredRepos: list}, () => {
           this.getRepoInfoFromList(list)
         })
       })
@@ -34,28 +36,40 @@ export default class RepoSelectionModal extends Component {
     this.setState({selectedRepoUpdatedAt: repo.updated_at, selectedRepoIsPrivate: repo.private})
   }
 
-  saveSelectedRepoToCookie () {
-    Cookie.set('repoOwner', this.state.owner)
-    Cookie.set('repoName', this.state.name)
-  }
-
   handleInput (evt) {
     if (searchTimeout) {
       clearTimeout(searchTimeout)
     }
 
-    // let inputText = evt.target.value
     searchTimeout = setTimeout(this.searchRepo.bind(this, evt.target.value), 500)
 
   }
 
   searchRepo (text) {
     let list = this.state.repos
+    if (text === '') {
+      this.setState({filteredRepos: list})
+    }
     
     let filtered = list.filter(l => {
       return l.full_name.indexOf(text) > -1
     })
     this.setState({filteredRepos: filtered})
+  }
+
+  selectRepo (repoOwner, repoName, branch) {
+    const { getAllBranch, fetchBranchSchema, resetRepoData, resetEditorData, toRoute, fetchRepoInfo } = this.props
+
+    Cookie.set('repoOwner', repoOwner, { expires: 100 })
+    Cookie.set('repoName', repoName, { expires: 100 })
+    this.setState({selectedRepo: {owner: repoOwner, name: repoName}})
+    toRoute('/')
+    resetEditorData()
+    resetRepoData()
+    fetchRepoInfo().then(() => {
+      fetchBranchSchema(branch)
+      getAllBranch()
+    })
   }
 
   render () {
@@ -91,11 +105,12 @@ export default class RepoSelectionModal extends Component {
             </svg>
           </header>
           <div className="default">Search repositories by keywords</div>
-          <ul className='list results'>
+          <ul className={this.state.loading ? 'list results loading' : 'list results'}>
           {
             this.state.filteredRepos.map(repo => {
               return (
-                <li key={repo.id}>
+                <li key={repo.id}
+                  onClick={this.selectRepo.bind(this, repo.owner.login, repo.name, repo.default_branch)}>
                   <h3>
                     {repo.full_name }
                     {repo.private ? <span className="type info">Private</span> : <span className="type">Public</span>}
