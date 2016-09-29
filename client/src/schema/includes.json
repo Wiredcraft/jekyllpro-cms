@@ -1,9 +1,9 @@
 { 
-  "title": "Pages",
+  "title": "Includes",
   "jekyll": {
-    "type": "content",
-    "id": "pages",
-    "dir": "_pages"
+    "type": "others",
+    "id": "includes",
+    "dir": "_includes"
   },
   "JSONSchema": {
     "type": "object",
@@ -13,7 +13,7 @@
     "properties": {
       "body": {
         "type": "string",
-        "title": "Body"
+        "title": "Content"
       }
     }
   },

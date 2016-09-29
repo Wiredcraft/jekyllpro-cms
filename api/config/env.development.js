@@ -15,9 +15,9 @@ module.exports = {
   },
   // redirectUrl should be the client service URL the github Oauth redirecting to
   redirectUrl: process.env.REDIRECT_URL || 'http://localhost:8000/',
-  // the api service will be pointing to https://github.com/woodpig07/test-gh-app if not specified
+  // the api service will be pointing to https://github.com/wiredcraft/beta.starbucks.com.cn if not specified
   repo: {
-    user: process.env.REPO_ORG || 'woodpig07',
-    name: process.env.REPO_NAME || 'test-gh-app'
+    user: process.env.REPO_ORG || 'wiredcraft',
+    name: process.env.REPO_NAME || 'beta.starbucks.com.cn'
   }
 }

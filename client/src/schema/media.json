@@ -1,15 +1,12 @@
 { 
-  "title": "Layouts",
+  "title": "media",
   "jekyll": {
     "type": "others",
-    "id": "layouts",
-    "dir": "_layouts"
+    "id": "media",
+    "dir": "media"
   },
   "JSONSchema": {
     "type": "object",
-    "required": [
-      "body"
-    ],
     "properties": {
       "body": {
         "type": "string",
@@ -17,9 +14,5 @@
       }
     }
   },
-  "uiSchema": {
-    "body": {
-      "ui:widget": "customCodeMirror"      
-    }
-  }
+  "uiSchema": {}
 }

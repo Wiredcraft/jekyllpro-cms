@@ -16,11 +16,8 @@ let prodLoaders = [
     test: /\.scss/,
     loader: ExtractTextPlugin.extract('style-loader', 'css-loader!postcss-loader!sass-loader')
   }, {
-    test: /\.(png|jpg|gif|woff|woff2|ttf)(\?v=\d+\.\d+\.\d+)?$/,
-    loader: 'url-loader?limit=8192'
-  }, {
-    test: /\.(mp4|ogg|svg|eot)(\?v=\d+\.\d+\.\d+)?$/,
-    loader: 'file-loader'
+    test: /\.(png|jpg|gif|ico|ttf|eot|svg|woff(2)?)(\?[a-z0-9]+)?$/,
+    loader: 'file?name=[name].[ext]?[hash:6]'
   }, {
     test: /\.json$/,
     loader: 'json'
@@ -40,6 +37,7 @@ let config = Object.assign({}, baseConfig, {
   plugins: [
     new webpack.optimize.DedupePlugin(),
     new webpack.DefinePlugin({
+      '__DEV__': false,
       API_BASE_URL:
         JSON.stringify(process.env.API_BASE_URL || 'http://localhost:3000'),
       'process.env.NODE_ENV': '"production"'

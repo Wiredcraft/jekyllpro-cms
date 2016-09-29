@@ -11,7 +11,7 @@
 
 $menu: 144px;
 $navigation: 240px;
-$menu_footer: 74px;
+$footer: 74px;
 
 body {
   background: $black;
@@ -35,5 +35,4 @@ h3 {
 
 #app {
   @import 'partials/_app';
-  // display: none;
 }
