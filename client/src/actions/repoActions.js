@@ -7,6 +7,7 @@ export const CHANGE_REPO_STATE = 'CHANGE_REPO_STATE'
 export const FILE_REMOVED = 'FILE_REMOVED'
 export const FILE_ADDED = 'FILE_ADDED'
 export const FILE_REPLACED = 'FILE_REPLACED'
+export const RESET_REPO_DATA = 'RESET_REPO_DATA'
 
 export function fetchRepoInfo() {
   return dispatch => {
@@ -261,5 +262,13 @@ export function isBranchPrivate(branch) {
         })
         return {isPrivate: false}
       })
+  }
+}
+
+export function resetRepoData () {
+  return dispatch => {
+    dispatch({
+      type: RESET_REPO_DATA
+    })
   }
 }

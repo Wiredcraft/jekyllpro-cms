@@ -2,8 +2,16 @@ import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import React, { Component } from 'react'
 
-import { getAllBranch, checkoutBranch, fetchFilesMeta, fetchBranchSchema,
-  fetchPageFilesMeta, isBranchPrivate, fetchRepoInfo, resetRepoData } from '../actions/repoActions'
+import {
+  getAllBranch,
+  checkoutBranch,
+  fetchFilesMeta,
+  fetchBranchSchema,
+  fetchPageFilesMeta,
+  isBranchPrivate,
+  fetchRepoInfo,
+  resetRepoData 
+} from '../actions/repoActions'
 import { resetEditorData } from '../actions/editorActions'
 import { logout } from '../actions/userActions'
 import { toRoute } from '../actions/routeActions'
@@ -152,6 +160,15 @@ function mapStateToProps(state, { params:
 }
 
 function mapDispatchToProps (dispatch) {
-  return bindActionCreators({ getAllBranch, checkoutBranch, logout, fetchBranchSchema, resetEditorData, resetRepoData,
-    isBranchPrivate, toRoute, fetchRepoInfo }, dispatch)
+  return bindActionCreators({
+    getAllBranch,
+    checkoutBranch,
+    logout,
+    fetchBranchSchema,
+    resetEditorData,
+    resetRepoData,
+    isBranchPrivate,
+    toRoute,
+    fetchRepoInfo
+  }, dispatch)
 }
