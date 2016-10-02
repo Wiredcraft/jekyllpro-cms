@@ -13,7 +13,7 @@
 /*** MIXINS ***/
 
 @import '../bower_components/egg/modules/_font-size';
-@import '../bower_components/egg/modules/_button';
+@import 'modules/_button';
 @import '../bower_components/egg/modules/_arrow';
 @import '../bower_components/egg/modules/_tooltip';
 @import '../bower_components/egg/modules/_responsive';
@@ -32,17 +32,17 @@
 /*** CUSTOM ***/
 
 $menu: 144px;
-$navigation: 240px;
-$header: 38px;
+$sidebar: 25%;
+$header: 42px;
 
 html,
 body {
   height: 100%;
 }
 
-body {
-  @include font-size($smaller);
-}
+// body {
+//   @include font-size($smaller);
+// }
 
 h1 {
   @include font-size($larger);
@@ -69,12 +69,19 @@ textarea {
 .select select {
   background: #FFF;
   box-shadow: rgba(0, 0, 0, 0.04) 0 1px 0 0;
-  min-height: 32px; // HACK!!!! Dunno why but from Google Chrome 53, select is effed up
+  min-height: 35px; // HACK!!!! Dunno why but from Google Chrome 53, select is effed up
 }
 
 .button {
   box-shadow: rgba(0, 0, 0, 0.04) 0 1px 0 0;
   font-weight: normal;
+  svg {
+    display: inline-block;
+    fill: #FFF;
+    height: 1.5*$space/2;
+    vertical-align: text-top;
+    width: 1.5*$space/2;
+  }
 }
 
 .icon {
@@ -98,5 +105,10 @@ textarea {
 
 #app {
   height: 100%;
-  @import 'partials/_app';
+  @import 'partials/_layout';
+  @import 'partials/_header';
+  @import 'partials/_sidebar';
+  @import 'partials/_modal';
+  @import 'partials/_content';
+  @import 'partials/_preview';
 }

@@ -1,0 +1,22 @@
+{ 
+  "title": "Data",
+  "jekyll": {
+    "type": "others",
+    "id": "data",
+    "dir": "_data"
+  },
+  "JSONSchema": {
+    "type": "object",
+    "properties": {
+      "body": {
+        "type": "string",
+        "title": "Content"
+      }
+    }
+  },
+  "uiSchema": {
+    "body": {
+      "ui:widget": "textarea"      
+    }
+  }
+}

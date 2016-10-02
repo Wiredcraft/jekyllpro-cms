@@ -1,0 +1,25 @@
+{ 
+  "title": "Includes",
+  "jekyll": {
+    "type": "others",
+    "id": "includes",
+    "dir": "_includes"
+  },
+  "JSONSchema": {
+    "type": "object",
+    "required": [
+      "body"
+    ],
+    "properties": {
+      "body": {
+        "type": "string",
+        "title": "Content"
+      }
+    }
+  },
+  "uiSchema": {
+    "body": {
+      "ui:widget": "customCodeMirror"      
+    }
+  }
+}

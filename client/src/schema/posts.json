@@ -1,7 +1,7 @@
 { 
-  "title": "Blog post",
+  "title": "Posts",
   "jekyll": {
-    "type": "collection",
+    "type": "content",
     "id": "posts",
     "dir": "_posts"
   },
@@ -47,7 +47,7 @@
       "ui:widget": "customSelect"
     },
     "body": {
-      "ui:widget": "customTextarea"      
+      "ui:widget": "customCodeMirror"      
     }
   }
 }

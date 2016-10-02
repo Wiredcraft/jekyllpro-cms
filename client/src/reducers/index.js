@@ -1,4 +1,5 @@
 import { combineReducers } from 'redux'
+import { routerReducer } from 'react-router-redux'
 
 import app from './app'
 import editor from './editor'
@@ -10,5 +11,6 @@ export default combineReducers({
   app,
   editor,
   repo,
-  user
+  user,
+  routing: routerReducer
 })

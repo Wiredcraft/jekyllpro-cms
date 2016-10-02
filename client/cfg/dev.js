@@ -17,6 +17,7 @@ let config = Object.assign({}, baseConfig, {
     new webpack.HotModuleReplacementPlugin(),
     new webpack.NoErrorsPlugin(),
     new webpack.DefinePlugin({
+      '__DEV__': true,
       API_BASE_URL:
         JSON.stringify(process.env.API_BASE_URL || 'http://localhost:3000')
     })
@@ -27,7 +28,7 @@ let config = Object.assign({}, baseConfig, {
 // Add needed loaders to the defaults here
 config.module.loaders.push({
   test: /\.(js|jsx)$/,
-  loader: 'react-hot!babel-loader',
+  loader: 'react-hot!babel',
   include: [].concat(
     config.additionalPaths,
     [ path.join(__dirname, '/../src') ]

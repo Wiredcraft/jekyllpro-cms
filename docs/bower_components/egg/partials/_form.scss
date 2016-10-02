@@ -9,9 +9,9 @@
 
 label,
 .label {
-  @include font-size($smaller);
+  @include font-size($small);
   display: block;
-  margin: 0 0 $space/6;
+  font-weight: bold;
 }
 
 input,

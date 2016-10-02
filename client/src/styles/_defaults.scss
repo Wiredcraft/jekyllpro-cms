@@ -192,7 +192,7 @@ label,
 .select {
   select {
     box-shadow: 1px 1px 0 rgba(0, 0, 0, 0.1);
-    @include button($light, true, false);
+    @include button($light, true);
     padding: $space/6 1.5*$space $space/6 $space/2;
     &:hover {
       background: rgba(0, 0, 0, 0.1);
@@ -231,7 +231,7 @@ textarea {
 .button {
   @include button($light, true, false);
   &.primary { @include button($primary, false, false); }
-  &.secondary { @include button($secondary, false, false); }
+  &.secondary { @include button($primary, true, false); }
 }
 
 .button,

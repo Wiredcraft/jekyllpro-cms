@@ -1,0 +1,18 @@
+{ 
+  "title": "media",
+  "jekyll": {
+    "type": "others",
+    "id": "media",
+    "dir": "media"
+  },
+  "JSONSchema": {
+    "type": "object",
+    "properties": {
+      "body": {
+        "type": "string",
+        "title": "Content"
+      }
+    }
+  },
+  "uiSchema": {}
+}

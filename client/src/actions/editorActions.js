@@ -1,68 +1,89 @@
 /* global API_BASE_URL */
-import request from 'superagent'
-import { fileRemoved, fileAdded } from './repoActions'
+import { getRepoMeta, updateRepoFile, deleteRepoFile } from '../helpers/api'
+import { fileRemoved, fileAdded, fileReplaced } from './repoActions'
 
 export const CHANGE_EDITOR_STATE = 'CHANGE_EDITOR_STATE'
 export const NEW_EMPTY_FILE = 'NEW_EMPTY_FILE'
 export const DELETE_EXISTING_FILE = 'DELETE_EXISTING_FILE'
 export const CLEAN_EDITOR = 'CLEAN_EDITOR'
+export const RESET_EDITOR_DATA = 'RESET_EDITOR_DATA'
 
-export function fetchFileContent(branch, path, index) {
+export function fetchFileContent(branch, path) {
   return dispatch => {
     dispatch({
       payload: { loading: true },
       type: CHANGE_EDITOR_STATE
     })
 
-    request
-      .get(`${API_BASE_URL}/api/repository?ref=${branch}&path=${path}&raw=true`)
-      .withCredentials()
-      .end((err, res) => {
-        if (err) {
-          console.error(err)
-          dispatch({
-            payload: { loading: false },
-            type: CHANGE_EDITOR_STATE
-          })
-        } else {
-          dispatch({
-            payload: { content: res.body, fileIndex: index, loading: false },
-            type: CHANGE_EDITOR_STATE
-          })
-        }
+    return getRepoMeta({ branch, path, raw: true})
+      .then(data => {
+        dispatch({
+          payload: { content: data, targetFile: path, loading: false },
+          type: CHANGE_EDITOR_STATE
+        })
+      })
+      .catch(err => {
+        dispatch({
+          payload: { loading: false },
+          type: CHANGE_EDITOR_STATE
+        })
       })
   }
 }
 
-export function updateFile(branch, path, content, index) {
+export function updateFile(branch, path, content) {
   return dispatch => {
     dispatch({
       payload: { loading: true },
       type: CHANGE_EDITOR_STATE
     })
 
-    return new Promise((resolve, reject) => {
-      request
-        .post(`${API_BASE_URL}/api/repository`)
-        .send({ branch, path, content, message: `update ${path}` })
-        .withCredentials()
-        .end((err, res) => {
-          if (err) {
-            console.error(err)
-            
-            dispatch({
-              payload: { loading: false },
-              type: CHANGE_EDITOR_STATE
-            })
-            return reject(err)
-          } else {
-            dispatch({
-              payload: { content: content, fileIndex: index, loading: false },
-              type: CHANGE_EDITOR_STATE
-            })
-            return resolve()
-          }
+    return updateRepoFile({ branch, path, content })
+      .then(data => {
+        dispatch({
+          payload: { content: content, targetFile: path, loading: false },
+          type: CHANGE_EDITOR_STATE
         })
+      })
+      .catch(err => {
+        dispatch({
+          payload: { loading: false },
+          type: CHANGE_EDITOR_STATE
+        })
+        
+      })
+  }
+}
+
+export function replaceFile(branch, oldPath, newPath, content) {
+  return (dispatch) => {
+    let apiUrl = `${API_BASE_URL}/api/repository`
+
+    dispatch({
+      payload: { loading: true },
+      type: CHANGE_EDITOR_STATE
+    })
+    let addFileRequest = updateRepoFile({ branch, path: newPath, content })
+      .then(data => {
+        let newFilename = data.content.name
+
+        return Promise.all([
+            dispatch({
+              payload: { content: content, targetFile: newPath, loading: false },
+              type: CHANGE_EDITOR_STATE
+            }),
+            dispatch(fileReplaced(newFilename, oldPath, newPath))
+          ])
+      })
+      .catch(err => {
+        dispatch({
+          payload: { loading: false },
+          type: CHANGE_EDITOR_STATE
+        })
+      })
+
+    return addFileRequest.then( res => {
+      return deleteRepoFile({ branch: branch, path: oldPath })
     })
   }
 }
@@ -75,61 +96,42 @@ export function createEmptyFile() {
   }
 }
 
-export function addNewFile(branch, path, content, index) {
+export function addNewFile(branch, path, content) {
   return dispatch => {
     dispatch({
       payload: { loading: true },
       type: CHANGE_EDITOR_STATE
     })
 
-    return new Promise((resolve, reject) => {
-      request
-        .post(`${API_BASE_URL}/api/repository`)
-        .send({ branch, path, content, message: `update ${path}` })
-        .withCredentials()
-        .end((err, res) => {
-          if (err) {
-            console.error(err)
+    return updateRepoFile({ branch, path, content, message: `add ${path}` })
+      .then(data => {
+        let newFilename = data.content.name
+        return Promise.all([
             dispatch({
-              payload: { loading: false },
+              payload: { content: content, targetFile: path, loading: false },
               type: CHANGE_EDITOR_STATE
-            })
-            return reject(err)
-          } else {
-            let newFilename = res.body.content.name
-            return resolve(Promise.all([
-                dispatch({
-                  payload: { content: content, fileIndex: index, loading: false },
-                  type: CHANGE_EDITOR_STATE
-                }),
-                dispatch(fileAdded(newFilename, path))
-              ]))
-          }
+            }),
+            dispatch(fileAdded(newFilename, path))
+          ])
+      })
+      .catch(err => {
+        dispatch({
+          payload: { loading: false },
+          type: CHANGE_EDITOR_STATE
         })
-      
-    })
+      })
   }
 }
 
-export function deleteFile(branch, path, index) {
+export function deleteFile(branch, path) {
   return dispatch => {
-    return new Promise((resolve, reject) => {
-      request
-        .del(`${API_BASE_URL}/api/repository`)
-        .send({ branch: branch, path: path })
-        .withCredentials()
-        .end((err, res) => {
-          if (err) {
-            console.error(err)
-            return reject(err)
-          } else {
-            return resolve(Promise.all([
-                dispatch(fileRemoved(index)),
-                dispatch({type: DELETE_EXISTING_FILE})
-              ]))
-          }
-        })      
-    })
+    return deleteRepoFile({ branch, path })
+      .then(data => {
+        return Promise.all([
+            dispatch(fileRemoved(path)),
+            dispatch({type: DELETE_EXISTING_FILE})
+          ])
+      })
   }
 }
 
@@ -141,4 +143,10 @@ export function cleanEditor() {
   }
 }
 
-
+export function resetEditorData () {
+  return dispatch => {
+    dispatch({
+      type: RESET_EDITOR_DATA
+    })
+  }
+}

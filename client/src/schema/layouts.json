@@ -13,13 +13,13 @@
     "properties": {
       "body": {
         "type": "string",
-        "title": "Body"
+        "title": "Content"
       }
     }
   },
   "uiSchema": {
     "body": {
-      "ui:widget": "customTextarea"      
+      "ui:widget": "customCodeMirror"      
     }
   }
 }

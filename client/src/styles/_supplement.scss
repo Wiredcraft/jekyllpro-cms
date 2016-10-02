@@ -1,7 +1,15 @@
 /* special styles for react components */
-@import 'bourbon';
-@import './_variables.scss';
-@import './partials/_modal.scss';
+// @import 'bourbon';
+// @import './_variables.scss';
+// @import './partials/_modal.scss';
+@import './app.scss';
+/* The switch - the box around the slider */
+$switch_size: 12px;
+$switch_padding: 4px;
+
+* {
+  box-sizing: border-box;
+}
 
 html,
 body,
@@ -65,15 +73,235 @@ fieldset {
   }
 }
 
+.ReactCodeMirror {
+  line-height: normal;
+  font-size: 14px;
+  border: 1px solid #c0c0c0;
+}
+
+#navigation .body {
+  a {
+    display: block;
+    &:hover {
+      text-decoration: none;
+    }
+  }
+  .folder {
+
+  }
+  .child {
+    padding-left: 25px !important;
+    color: inherit;
+  }
+}
+
+.ReactModal__Content {
+  .search {
+    position: relative;
+    svg {
+      fill: $grey;
+      left: $space/3;
+      position: absolute;
+      top: $space/6;
+    }
+    input {
+      background: $background;
+      border-radius: $space;
+      padding-left: 4*$space/3;
+      padding-right: $space/2;
+      width: 100%;
+      &:focus {
+        & + svg {
+          fill: $blue;
+        }
+      }
+    }
+  }
+  .default,
+  .empty {
+    background: $background;
+    border-radius: $radius;
+    color: $grey;
+    margin-top: $space/2;
+    padding: $space/2 1.5*$space/2;
+    text-align: center;
+  }
+  .list li,
+  .selected {
+    padding: $space/2 1.5*$space/2;
+    h3 {
+      margin: 0;
+      text-transform: none;
+    }
+    .type {
+      background: $background;
+      border-radius: $radius;
+      color: $grey;
+      @include font-size($small);
+      font-weight: normal;
+      padding: $space/12 $space/4;
+      &.info {
+        background: $blue;
+        color: #FFF;
+      }
+      &.ok {
+        background: $green;
+        color: #FFF;
+      }
+      &.warning {
+        background: $orange;
+        color: #FFF;
+      }
+    }
+    small {
+      color: $grey;
+    }
+  }
+  .list {
+    box-shadow: $shadow;
+    cursor: pointer;
+    list-style: none;
+    margin-left: 0;
+    li {
+      border: 1px solid $line;
+      border-width: 1px 1px 0;
+      margin-bottom: 0;
+      &:first-child {
+        border-radius: $radius $radius 0 0;
+      }
+      &:last-child {
+        border-radius: 0 0 $radius $radius;
+        border-width: 1px;
+      }
+      &:hover,
+      &.active {
+        border-color: $blue;
+        & + li {
+          border-top-color: $blue;
+        }
+      }
+    }
+  }
+  .selected {
+    background: $light;
+    border: 1px solid $line;
+    border-radius: $radius;
+    box-shadow: $shadow;
+    margin-bottom: $space/2;
+  }
+  .results {
+    margin: $space/2 0 0;
+  }
+  .branches li {
+    cursor: default;
+    padding: 0;
+    h3 {
+      cursor: pointer;
+      padding: $space/2 1.5*$space/2;
+      small {
+        color: $grey;
+        font-size: inherit;
+        font-weight: normal;
+      }
+    }
+    .details {
+      background: $light;
+      display: none;
+      .setting {
+        border-top: 1px solid $line;
+        padding: $space/2 1.5*$space/2;
+        .field:last-child {
+          margin: 0;
+        }
+        textarea {
+          max-width: 100%;
+          width: 100%;
+        }
+      }
+    }
+    &.active {
+      .details {
+        display: block;
+      }
+    }
+  }
+
+  .switch {
+    float: left;
+    height: $switch_size + 2*$switch_padding;
+    margin: 0;
+    opacity: 1;
+    position: relative;
+    width: 2*$switch_size + 2*$switch_padding;
+    input {
+      display: none;
+      &:checked + .slider {
+        background: $blue;
+      }
+      &:checked + .slider:before {
+        @include transform(translateX($switch_size));
+      }
+    }
+    .slider {
+      background: rgba(0, 0, 0, 0.1);
+      box-shadow: 1px 1px 0 rgba(0, 0, 0, 0.1) inset;
+      border-radius: 2*$switch_size;
+      bottom: 0;
+      cursor: pointer;
+      left: 0;
+      position: absolute;
+      right: 0;
+      top: 0;
+      @include transition-duration($ease);
+      &:before {
+        background: #FFF;
+        box-shadow: 1px 1px 0 rgba(0, 0, 0, 0.1);
+        border-radius: 50%;
+        bottom: $switch_padding;
+        content: '';
+        height: $switch_size;
+        left: $switch_padding;
+        position: absolute;
+        width: $switch_size;
+        @include transition-duration($ease);
+      }
+    }
+    & + label {
+      cursor: pointer;
+      display: inline-block;
+      margin: 0 0 0 $space/3;
+      vertical-align: bottom;
+    }
+  }
+}
+
 .ReactModal__Content {
   @extend #modal;
-  .body {
-    text-align: center;
-    button {
-      margin: 0 8px;
+  &.profile-modal {
+    .body {
+      text-align: center;
+      button {
+        margin: 0 8px;
+      }
     }
   }
 }
 .ReactModal__Body--open {
   @extend body.modal;
+  @extend #app;
+}
+.ReactModal__Overlay {
+  @extend #overlay;
+}
+
+#app #navigation .tree {
+  .svg {
+    display: inline !important;
+    margin: 0 !important;
+  }
+}
+fieldset {
+  border: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
 }
