@@ -127,6 +127,14 @@ const initRoutes = (app) => {
   app.route('/api/auth/github').get(users.githubOauthCall())
   app.route('/api/auth/github/callback').get(users.githubOauthCallback(config.redirectUrl))
   app.route('/api/me').get(users.getUserInfo)
+  app.route('/api/me/orgs')
+  .all(users.requireAuthentication)
+  .get(users.listUserOrgs)
+
+  app.route('/api/me/repos')
+  .all(users.requireAuthentication)
+  .get(users.listUserRepos)
+
   app.route('/api/repository')
   .all(users.requireAuthentication, repository.requireGithubAPI)
   .get(repository.getRepoContent)
