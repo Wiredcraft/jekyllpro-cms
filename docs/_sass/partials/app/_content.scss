@@ -46,9 +46,15 @@ $sidebar: 240px;
         right: 0;
         .danger {
           color: $red;
+          svg {
+            fill: $red;
+          }
           &:hover {
             background: $red;
             color: #FFF;
+            svg {
+              fill: #FFF;
+            }
           }
         }
       }
