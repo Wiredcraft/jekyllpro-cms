@@ -22,24 +22,28 @@ $box: 264px;
     border-radius: $radius;
     box-shadow: $shadow;
     padding: $space/2;
-    text-align: left;
     .button {
       @include font-size($larger);
       line-height: 160%;
       padding: $space/3;
       width: 100%;
     }
-    p {
-      @include font-size($smaller);
-    }
   }
-
   small {
-    color: rgba(255, 255, 255, 0.4);
+    color: $grey;
     display: block;
+    @include font-size($pico);
     letter-spacing: 1px;
     margin-top: $space/4;
     text-align: center;
     text-transform: uppercase;
+    a {
+      border-bottom: 1px solid $line;
+      color: inherit;
+      &:hover {
+        color: $black;
+        text-decoration: none;
+      }
+    }
   }
 }
