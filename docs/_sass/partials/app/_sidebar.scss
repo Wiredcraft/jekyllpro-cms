@@ -42,17 +42,46 @@
       li {
         display: inline-block;
         margin: $space/2 $space/4 0 0;
-        svg {
-          fill: $black;
-          height: $space/2;
-          width: $space/2;
+        .button {
+          padding: 0 $space/3;
+          &.icon {
+            padding-left: $space/8;
+            padding-right: $space/8;
+          }
+          svg {
+            fill: $grey;
+            height: $space/2;
+            vertical-align: middle;
+            width: $space/2;
+          }
+          &:hover {
+            svg {
+              fill: $black;
+            }
+          }
         }
       }
     }
   }
   .tree {
+    padding: 1.5*$space/2 $space/2;
     ul {
       list-style: none;
+      margin: 0;
+      ul {
+        margin-left: $space/2;
+      }
+      li {
+
+      }
+    }
+    svg {
+      display: inline-block;
+      float: left;
+      fill: $blue;
+      height: 1.5*$space/2;
+      vertical-align: text-top;
+      width: 1.5*$space/2;
     }
   }
   .list {
