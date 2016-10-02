@@ -5,9 +5,8 @@
     border-radius: $radius;
     color: #FFF;
     @include font-size($small);
-    font-weight: 600;
     line-height: 140%;
-    padding: 1.5*$space/4 1.5*$space/2;
+    padding: $space/4 $space/2;
     position: absolute;
     text-align: center;
     visibility: hidden;

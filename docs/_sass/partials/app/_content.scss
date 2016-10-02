@@ -3,10 +3,6 @@ $sidebar: 240px;
 #content {
   background: $background;
   padding: $space;
-  &.loading:after {
-    left: $sidebar;
-    position: fixed;
-  }
   input:not([type=submit]),
   textarea,
   .select select {
@@ -46,15 +42,9 @@ $sidebar: 240px;
         right: 0;
         .danger {
           color: $red;
-          svg {
-            fill: $red;
-          }
           &:hover {
             background: $red;
             color: #FFF;
-            svg {
-              fill: #FFF;
-            }
           }
         }
       }

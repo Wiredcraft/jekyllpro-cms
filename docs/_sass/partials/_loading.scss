@@ -1,7 +1,7 @@
 @mixin loading($thickness: 4px, $size: $space, $ease: 0.6s) {
   position: relative;
   &:before {
-    background: rgba(0, 0, 0, 0.8);
+    background: rgba(0, 0, 0, 0.6);
     bottom: 0;
     content: '';
     left: 0;
@@ -33,6 +33,6 @@
 }
 
 @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }

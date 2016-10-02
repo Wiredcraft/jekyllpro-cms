@@ -83,6 +83,18 @@
         color: inherit;
         padding: $space/4 $space/2;
         padding-left: $space/2 - 4;
+        span {
+          display: block;
+          margin-left: $space;
+        }
+        svg {
+          display: inline-block;
+          float: left;
+          fill: $grey;
+          height: 1.5*$space/2;
+          margin-top: $space/12;
+          width: 1.5*$space/2;
+        }
         &:hover {
           background: #FFF;
           border-left-color: #FFF;
@@ -100,13 +112,6 @@
           }
         }
       }
-    }
-    svg {
-      display: inline-block;
-      fill: $grey;
-      height: 1.5*$space/2;
-      vertical-align: text-top;
-      width: 1.5*$space/2;
     }
   }
   .list {
