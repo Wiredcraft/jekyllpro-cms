@@ -100,15 +100,14 @@ textarea {
 
 #landing {
   @import 'partials/_landing';
-  display: none;
 }
 
 #app {
   height: 100%;
-  @import 'partials/_layout';
-  @import 'partials/_header';
-  @import 'partials/_sidebar';
-  @import 'partials/_modal';
-  @import 'partials/_content';
-  @import 'partials/_preview';
+  @import 'partials/app/_layout';
+  @import 'partials/app/_header';
+  @import 'partials/app/_sidebar';
+  @import 'partials/app/_modal';
+  @import 'partials/app/_content';
+  @import 'partials/app/_preview';
 }

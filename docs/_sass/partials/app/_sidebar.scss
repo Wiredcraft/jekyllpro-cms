@@ -5,6 +5,9 @@
     border-bottom: 1px solid $line;
     @include font-size($smaller);
     padding: $space/3 $space/2;
+    .controls {
+      float: right;
+    }
     .button {
       padding: $space/12 $space/2;
       &.schema {
@@ -14,7 +17,6 @@
     }
     .search {
       display: inline-block;
-      float: right;
       position: relative;
       width: 50%;
       input {

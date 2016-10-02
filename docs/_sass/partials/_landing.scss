@@ -1,16 +1,39 @@
 $box: 264px;
 
-.card {
-  display: block;
-  margin: 4*$space auto 0;
-  width: $box;
-  input,
-  .primary {
-    @include font-size($larger);
-    line-height: 160%;
-    padding: $space/3;
-    width: 100%;
+.box {
+  bottom: 0;
+  margin: auto;
+  position: absolute;
+  display: table;
+  height: auto;
+  left: 0;
+  right: 0;
+  text-align: center;
+  top: 0;
+  width: 12*$space;
+  .logo {
+    display: inline-block;
+    margin-bottom: $space/2;
+    width: 4*$space;
   }
+  .card {
+    background: #FFF;
+    border: 1px solid $line;
+    border-radius: $radius;
+    box-shadow: $shadow;
+    padding: $space/2;
+    text-align: left;
+    .button {
+      @include font-size($larger);
+      line-height: 160%;
+      padding: $space/3;
+      width: 100%;
+    }
+    p {
+      @include font-size($smaller);
+    }
+  }
+
   small {
     color: rgba(255, 255, 255, 0.4);
     display: block;
