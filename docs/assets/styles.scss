@@ -109,8 +109,9 @@ textarea {
         }
       }
       &.disabled {
+        span,
         svg {
-          opacity: 0.2;
+          opacity: 0.4;
         }
       }
     }
