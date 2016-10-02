@@ -10,7 +10,7 @@
     }
     .button {
       padding: $space/12 $space/2;
-      &.schema {
+      &.icon {
         padding-left: $space/4;
         padding-right: $space/4;
       }
@@ -34,8 +34,28 @@
         width: 1.5*$space/2;
       }
     }
+    .filters {
+      @include font-size($small);
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      li {
+        display: inline-block;
+        margin: $space/2 $space/4 0 0;
+        svg {
+          fill: $black;
+          height: $space/2;
+          width: $space/2;
+        }
+      }
+    }
   }
-  .body {
+  .tree {
+    ul {
+      list-style: none;
+    }
+  }
+  .list {
     a {
       border-bottom: 1px solid $line;
       display: block;
