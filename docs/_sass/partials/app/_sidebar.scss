@@ -35,13 +35,16 @@
       }
     }
     .filters {
+      display: block;
+      @include clearfix;
       @include font-size($small);
       list-style: none;
       padding: 0;
       margin: 0;
       li {
-        display: inline-block;
-        margin: $space/2 $space/4 0 0;
+        display: block;
+        float: left;
+        margin: $space/4 $space/4 0 0;
         .button {
           padding: 0 $space/3;
           &.icon {
@@ -64,7 +67,6 @@
     }
   }
   .tree {
-    padding: 1.5*$space/2 $space/2;
     ul {
       list-style: none;
       margin: 0;
@@ -72,13 +74,36 @@
         margin-left: $space/2;
       }
       li {
-
+        margin: 0;
+        padding: 0;
+      }
+      a {
+        border-left: 4px solid transparent;
+        display: block;
+        color: inherit;
+        padding: $space/4 $space/2;
+        padding-left: $space/2 - 4;
+        &:hover {
+          background: #FFF;
+          border-left-color: #FFF;
+          text-decoration: none;
+        }
+        &.active,
+        &.active:hover {
+          background: #FFF;
+          border-left-color: $blue;
+        }
+        &.active,
+        &:hover {
+          svg {
+            fill: $black;
+          }
+        }
       }
     }
     svg {
       display: inline-block;
-      float: left;
-      fill: $blue;
+      fill: $grey;
       height: 1.5*$space/2;
       vertical-align: text-top;
       width: 1.5*$space/2;
