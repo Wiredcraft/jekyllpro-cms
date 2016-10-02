@@ -100,18 +100,30 @@ textarea {
         fill: $black;
         height: 1.5*$space/2;
         margin-right: $space/6;
+        opacity: 0.2;
         width: 1.5*$space/2;
         vertical-align: text-bottom;
       }
       &:hover {
         svg {
           fill: #FFF;
+          opacity: 1;
+        }
+      }
+      &.selected {
+        svg {
+          opacity: 1;
         }
       }
       &.disabled {
-        span,
-        svg {
-          opacity: 0.4;
+        span {
+          opacity: 0.2;
+        }
+        &:hover {
+          span,
+          svg {
+            opacity: 0.6;
+          }
         }
       }
     }
