@@ -1,5 +1,5 @@
 @mixin button($color: $blue, $clear: false, $border: true) {
-  background: $color;
+  @include linear-gradient($color, shade($color, 10%));
   border-radius: $radius;
   box-sizing: border-box;
   @if $clear == true {

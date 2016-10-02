@@ -1,0 +1,67 @@
+#sidebar {
+  border-right: 1px solid $line;
+  box-sizing: border-box;
+  .header {
+    border-bottom: 1px solid $line;
+    @include font-size($smaller);
+    padding: $space/3 $space/2;
+    .button {
+      padding: $space/12 $space/2;
+      &.schema {
+        padding-left: $space/4;
+        padding-right: $space/4;
+      }
+    }
+    .search {
+      display: inline-block;
+      float: right;
+      position: relative;
+      width: 50%;
+      input {
+        box-sizing: border-box;
+        padding: $space/12 $space/4;
+        padding-left: $space;
+        max-width: 100%;
+      }
+      svg {
+        fill: $grey;
+        height: 1.5*$space/2;
+        left: $space/4;
+        position: absolute;
+        top: $space/4;
+        width: 1.5*$space/2;
+      }
+    }
+  }
+  .body {
+    a {
+      border-bottom: 1px solid $line;
+      display: block;
+      line-height: 1;
+      padding: 1.5*$space/2 $space/2;
+      @include transition-property(background);
+      @include transition-duration($ease);
+      &.active {
+        border-left: 4px solid $primary;
+      }
+      &:hover,
+      &.active {
+        background: #FFF;
+        text-decoration: none;
+      }
+    }
+    h2 {
+      font-size: inherit;
+      margin-bottom: $space/6;
+    }
+    small {
+      color: $grey;
+    }
+    h2,
+    small {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  }
+}

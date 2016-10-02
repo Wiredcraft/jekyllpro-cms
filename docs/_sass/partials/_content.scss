@@ -1,0 +1,139 @@
+$sidebar: 240px;
+
+#content {
+  background: $background;
+  padding: $space;
+  &.loading:after {
+    left: $sidebar;
+    position: fixed;
+  }
+  input:not([type=submit]),
+  textarea,
+  .select select {
+    width: 100%;
+  }
+  .description {
+    color: tint($black, 40%);
+  }
+  .header {
+    background: #FFF;
+    border-bottom: 1px solid $line;
+    padding: $space 1.5*$space;
+  }
+  .sidebar {
+    float: right;
+    position: fixed;
+    right: $space;
+    width: $sidebar;
+    .select,
+    .select select {
+      width: 100%;
+    }
+    & + .body {
+      margin-right: $sidebar;
+      padding-right: $space;
+    }
+    .save {
+      width: $sidebar - 32px;
+    }
+    .menu {
+      .button {
+        padding-left: $space/4;
+        padding-right: $space/4;
+      }
+      .options {
+        left: auto;
+        right: 0;
+        .danger {
+          color: $red;
+          &:hover {
+            background: $red;
+            color: #FFF;
+          }
+        }
+      }
+    }
+  }
+  .body {
+    box-sizing: border-box;
+  }
+  .empty {
+    text-align: center;
+    .box {
+      background: #FFF;
+      border: 1px solid $line;
+      border-radius: $radius;
+      box-shadow: $shadow;
+      bottom: 0;
+      margin: auto;
+      padding: $space;
+      position: absolute;
+      display: table;
+      height: auto;
+      left: 0;
+      right: 0;
+      top: 0;
+      width: 240px;
+    }
+  }
+}
+
+/* The switch - the box around the slider */
+$switch_size: 12px;
+$switch_padding: 4px;
+
+.switch {
+  float: left;
+  height: $switch_size + 2*$switch_padding;
+  margin: 0;
+  opacity: 1;
+  position: relative;
+  width: 2*$switch_size + 2*$switch_padding;
+  input {
+    display: none;
+    &:checked + .slider {
+      background: $blue;
+    }
+    &:checked + .slider:before {
+      @include transform(translateX($switch_size));
+    }
+  }
+  .slider {
+    background: rgba(0, 0, 0, 0.1);
+    box-shadow: 1px 1px 0 rgba(0, 0, 0, 0.1) inset;
+    border-radius: 2*$switch_size;
+    bottom: 0;
+    cursor: pointer;
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+    @include transition-duration($ease);
+    &:before {
+      background: #FFF;
+      box-shadow: 1px 1px 0 rgba(0, 0, 0, 0.1);
+      border-radius: 50%;
+      bottom: $switch_padding;
+      content: '';
+      height: $switch_size;
+      left: $switch_padding;
+      position: absolute;
+      width: $switch_size;
+      @include transition-duration($ease);
+    }
+  }
+  & + label {
+    cursor: pointer;
+    display: inline-block;
+    margin: 0 0 0 $space/3;
+    vertical-align: bottom;
+  }
+}
+
+#preview {
+  border: 0;
+  display: block;
+  height: 100%;
+  margin-top: $header;
+  width: 100%;
+}
