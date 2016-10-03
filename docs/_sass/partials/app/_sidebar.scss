@@ -1,4 +1,5 @@
 #sidebar {
+  background: #FFF;
   border-right: 1px solid $line;
   box-sizing: border-box;
   .header {
@@ -67,6 +68,8 @@
     }
   }
   .tree {
+    @include font-size($smaller);
+    padding: $space/4;
     ul {
       list-style: none;
       margin: 0;
@@ -78,11 +81,11 @@
         padding: 0;
       }
       a {
+        border-radius: $radius;
         border-left: 4px solid transparent;
         display: block;
         color: inherit;
-        padding: $space/4 $space/2;
-        padding-left: $space/2 - 4;
+        padding: $space/8;
         span {
           display: block;
           margin-left: $space;
@@ -96,19 +99,15 @@
           width: 1.5*$space/2;
         }
         &:hover {
-          background: #FFF;
-          border-left-color: #FFF;
+          background: $light;
           text-decoration: none;
         }
-        &.active,
-        &.active:hover {
-          background: #FFF;
-          border-left-color: $blue;
-        }
-        &.active,
-        &:hover {
+        &.active {
+          background: $blue;
+          color: #FFF;
+          text-decoration: none;
           svg {
-            fill: $black;
+            fill: #FFF;
           }
         }
       }
@@ -125,10 +124,12 @@
       &.active {
         border-left: 4px solid $primary;
       }
-      &:hover,
-      &.active {
-        background: #FFF;
+      &:hover {
+        background: $light;
         text-decoration: none;
+      }
+      &.active:hover {
+        background: #FFF;
       }
     }
     h2 {
