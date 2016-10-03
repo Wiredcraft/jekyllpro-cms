@@ -137,7 +137,7 @@ $switch_padding: 2px;
   .message {
     border: 1px solid $line;
     border-radius: $radius;
-    @include font-size($smaller);
+    @include font-size($small);
     padding: $space/6 $space/2;
   }
 }
