@@ -69,7 +69,7 @@
   }
   .tree {
     @include font-size($smaller);
-    padding: $space/4;
+    padding: $space/3;
     ul {
       list-style: none;
       margin: 0;
