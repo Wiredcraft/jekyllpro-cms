@@ -78,13 +78,14 @@
       }
       li {
         margin: 0;
-        padding: 0 0 $space/8;
+        padding: 0;
       }
       a {
         border-radius: $radius;
         border-left: 4px solid transparent;
         display: block;
         color: inherit;
+        margin-bottom: $space/8;
         padding: $space/8;
         span {
           display: block;
