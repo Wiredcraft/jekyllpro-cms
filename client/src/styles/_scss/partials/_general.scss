@@ -1,0 +1,143 @@
+html,
+body {
+  height: 100%;
+}
+
+h1 {
+  @include font-size($larger);
+}
+
+h2 {
+  @include font-size($regular);
+}
+
+h3,
+h4,
+h5,
+h6 {
+  @include font-size($smaller);
+  text-transform: none;
+}
+
+input:not([type=submit]),
+textarea {
+  background: #FFF;
+  box-shadow: rgba(0, 0, 0, 0.04) 0 1px 0 0 inset;
+}
+
+.select select {
+  background: #FFF;
+  box-shadow: rgba(0, 0, 0, 0.04) 0 1px 0 0;
+  min-height: 35px; // HACK!!!! Dunno why but from Google Chrome 53, select is effed up
+}
+
+.button {
+  box-shadow: rgba(0, 0, 0, 0.04) 0 1px 0 0;
+  font-weight: normal;
+  svg {
+    display: inline-block;
+    fill: #FFF;
+    height: 1.5*$space/2;
+    vertical-align: text-top;
+    width: 1.5*$space/2;
+  }
+}
+
+.menu {
+  .options {
+    a {
+      svg {
+        display: inline-block;
+        fill: $black;
+        height: 1.5*$space/2;
+        margin-right: $space/6;
+        opacity: 0.2;
+        width: 1.5*$space/2;
+        vertical-align: text-bottom;
+      }
+      &:hover {
+        svg {
+          fill: #FFF;
+          opacity: 1;
+        }
+      }
+      &.selected {
+        svg {
+          opacity: 1;
+        }
+      }
+      &.disabled {
+        span {
+          opacity: 0.2;
+        }
+        &:hover {
+          span,
+          svg {
+            opacity: 0.6;
+          }
+        }
+      }
+    }
+  }
+}
+
+/* The switch - the box around the slider */
+$switch_size: 12px;
+$switch_padding: 2px;
+
+.switch {
+  float: left;
+  height: $switch_size + 2*$switch_padding;
+  margin: 0;
+  opacity: 1;
+  position: relative;
+  width: 2*$switch_size + 2*$switch_padding;
+  input {
+    display: none;
+    &:checked + .slider {
+      background: $blue;
+    }
+    &:checked + .slider:before {
+      @include transform(translateX($switch_size));
+    }
+  }
+  .slider {
+    background: rgba(0, 0, 0, 0.1);
+    box-shadow: 1px 1px 0 rgba(0, 0, 0, 0.1) inset;
+    border-radius: 2*$switch_size;
+    bottom: 0;
+    cursor: pointer;
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+    @include transition-duration($ease);
+    &:before {
+      background: #FFF;
+      box-shadow: 1px 1px 0 rgba(0, 0, 0, 0.1);
+      border-radius: 50%;
+      bottom: $switch_padding;
+      content: '';
+      height: $switch_size;
+      left: $switch_padding;
+      position: absolute;
+      width: $switch_size;
+      @include transition-duration($ease);
+    }
+  }
+  & + label {
+    cursor: pointer;
+    display: inline-block;
+    margin: 0 0 0 $space/3;
+    vertical-align: bottom;
+  }
+}
+
+.field {
+  .message {
+    border: 1px solid $line;
+    border-radius: $radius;
+    @include font-size($small);
+    padding: $space/6 $space/2;
+  }
+}

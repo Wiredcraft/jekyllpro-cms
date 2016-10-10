@@ -1,0 +1,75 @@
+$sidebar: 240px;
+
+#content {
+  background: $background;
+  padding: $space;
+  input:not([type=submit]),
+  textarea,
+  .select select {
+    width: 100%;
+  }
+  .description {
+    color: tint($black, 40%);
+  }
+  .header {
+    background: #FFF;
+    border-bottom: 1px solid $line;
+    padding: $space 1.5*$space;
+  }
+  .sidebar {
+    float: right;
+    position: fixed;
+    right: $space;
+    width: $sidebar;
+    .select,
+    .select select {
+      width: 100%;
+    }
+    & + .body {
+      margin-right: $sidebar;
+      padding-right: $space;
+    }
+    .save {
+      width: $sidebar - 32px;
+    }
+    .menu {
+      .button {
+        padding-left: $space/4;
+        padding-right: $space/4;
+      }
+      .options {
+        left: auto;
+        right: 0;
+        .danger {
+          color: $red;
+          &:hover {
+            background: $red;
+            color: #FFF;
+          }
+        }
+      }
+    }
+  }
+  .body {
+    box-sizing: border-box;
+  }
+  .empty {
+    text-align: center;
+    .box {
+      background: #FFF;
+      border: 1px solid $line;
+      border-radius: $radius;
+      box-shadow: $shadow;
+      bottom: 0;
+      margin: auto;
+      padding: $space;
+      position: absolute;
+      display: table;
+      height: auto;
+      left: 0;
+      right: 0;
+      top: 0;
+      width: 240px;
+    }
+  }
+}

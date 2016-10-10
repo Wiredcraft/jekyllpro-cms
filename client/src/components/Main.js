@@ -10,7 +10,7 @@ import Editor from './Editor'
 import Navigation from './Navigation'
 import Media from './Media'
 import 'styles/_supplement.scss'
-import 'styles/styles.css'
+import 'styles/_scss/main.scss'
 
 
 const addEditButtonsSrc = (branch, url) => `(function() {
@@ -81,7 +81,7 @@ export default class AppComponent extends React.Component {
     return isLoggedIn ? (
       <div id='app' className={repoLoading? 'spinning' : ''}>
         <Header params={this.props.params} />
-        { this.props.location.query.viewing !== 'site' ? [
+        {this.props.location.query.viewing !== 'site' ? [
           <Menu key='menu' params={this.props.params} />,
           collectionType !== 'media' && <Navigation key='nav' params={this.props.params} /> ,
           collectionType !== 'media' && <Editor key='editor' params={this.props.params} /> ,
