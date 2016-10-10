@@ -25,7 +25,6 @@
     "cors": "^2.8.0",
     "express": "^4.14.0",
     "express-session": "^1.14.1",
-    "fs-path": "0.0.22",
     "github-api": "^2.3.0",
     "helmet": "^2.1.2",
     "lodash": "^4.15.0",

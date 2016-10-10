@@ -143,7 +143,7 @@ const initRoutes = (app) => {
 
   app.route('/api/repository/index')
   .all(users.requireAuthentication, repository.requireGithubAPI)
-  .get(repository.getRepoBranchIndex)
+  .get(repository.getRepoBranchIndex, repository.refreshIndexAndSave)
 
   app.route('/api/repository/details')
   .all(users.requireAuthentication, repository.requireGithubAPI)

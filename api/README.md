@@ -305,7 +305,11 @@ Example success response body
 ##### get collection files index
 
 ```
-GET /api/repository/index
+GET /api/repository/index?branch=<branchname>
+// return index from database if saved before, if not providing `branch`, it default to `master`
+
+GET /api/repository/index?branch=<branchname>&refresh=true
+// will rebuild a new index from github
 ```
 
 Example of success response body see [Wiki](https://github.com/Wiredcraft/jekyllplus/wiki/sample)
