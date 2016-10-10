@@ -192,15 +192,12 @@ const getRepoBranchIndex = (req, res, next) => {
           var treeArray = data.data.tree
           var requestQueue = new TaskQueue(3)
           var formatedIndex = {collections: []}
-          // console.log(treeArray)
           var schemaFilesReq = treeArray.filter((item) => {
             return (item.type === 'blob') && (item.path.indexOf('_schemas/') === 0)
           })
           .map((f) => {
-            // console.log(f)
             return repo.getContents(branch, f.path, true)
               .then((data) => {
-                // console.log(data.data)
                 return data.data
               })
               .catch(err => {
@@ -216,9 +213,26 @@ const getRepoBranchIndex = (req, res, next) => {
               // console.log(collectionFiles)
               collectionFiles.forEach((item, idx) => {
                 requestQueue.pushTask(() => {
-                  return repo.getContents(branch, item.path, true)
-                    .then((data) => {
-                      item.content = data.data
+                  let getContentReq = repo.getContents(branch, item.path, true)
+                    .then((content) => {
+                      item.content = content.data
+                    })
+                    .catch(err => {
+                      console.log(err)
+                    })
+                  let getCommitsReq = repo.listCommits({sha: branch, path: item.path})
+                    .then((commits) => {
+                      var lastCommit = commits.data[0]
+                      item.lastCommitSha = lastCommit.sha
+                      item.lastUpdatedAt = lastCommit.commit.committer.date
+                      item.lastUpdatedBy = lastCommit.commit.committer.name
+                    })
+                    .catch(err => {
+                      console.log(err)
+                    })
+
+                  return Promise.all([getContentReq, getCommitsReq])
+                    .then(() => {                      
                       formatedIndex.collections.push(item)
                       if (idx === collectionFiles.length - 1) {
                         fspath.writeFile(`${INDEX_FOLDER}${repoFullname}.${branch}.json`, JSON.stringify(formatedIndex), (err) => {
