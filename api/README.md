@@ -301,3 +301,11 @@ Example success response body
   }
 }
 ```
+
+##### get collection files index
+
+```
+GET /api/repository/index
+```
+
+Example of success response body see [Wiki](https://github.com/Wiredcraft/jekyllplus/wiki/sample)
