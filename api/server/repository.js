@@ -1,6 +1,12 @@
 import config from '../config'
 import GithubAPI from 'github-api'
 import _ from 'lodash'
+import { TaskQueue, getCollectionFiles } from './utils'
+import fs from 'fs'
+import fspath from 'fs-path'
+import path from 'path'
+const INDEX_FOLDER = process.cwd() + '/indexFiles/'
+console.log(INDEX_FOLDER)
 
 const cb = (error, result, request) => {
   console.log(error)
@@ -155,6 +161,105 @@ const getBranchSchema = (req, res, next) => {
   })
 }
 
+const getRepoBranchIndex = (req, res, next) => {
+  var repo = req.githubRepo
+  var branch = req.query.branch || 'master'
+  var repoFullname = req.get('X-REPO-OWNER') + '/' + req.get('X-REPO-NAME')
+  var localCachedIndexFile = `${INDEX_FOLDER}${repoFullname}.${branch}.json`
+  var appLocals = req.app.locals
+  if (!appLocals.repoIndexCache) {
+    appLocals.repoIndexCache = {}
+  }
+
+  if (!appLocals.repoIndexCache[repoFullname]) {
+    appLocals.repoIndexCache[repoFullname] = {}
+  }
+
+  if (!appLocals.repoIndexCache[repoFullname][branch]) {
+    fs.exists(localCachedIndexFile, (hasFile) => {
+      if (hasFile) {
+        fs.readFile(localCachedIndexFile, (err, data) => {
+          if (err) throw err
+
+          appLocals.repoIndexCache[repoFullname][branch] = JSON.parse(data)
+          res.status(200).json(JSON.parse(data))
+        })
+      } else {
+        console.log(localCachedIndexFile + ' not existed')
+
+        repo.getTree(`${branch}?recursive=1`)
+        .then((data) => {
+          var treeArray = data.data.tree
+          var requestQueue = new TaskQueue(3)
+          var formatedIndex = {collections: []}
+          var schemaFilesReq = treeArray.filter((item) => {
+            return (item.type === 'blob') && (item.path.indexOf('_schemas/') === 0)
+          })
+          .map((f) => {
+            return repo.getContents(branch, f.path, true)
+              .then((data) => {
+                return data.data
+              })
+              .catch(err => {
+                console.log(err)
+              })
+          })
+
+          Promise.all(schemaFilesReq)
+            .then(schemas => {
+              // console.log(schemas)
+              formatedIndex.schemas = schemas
+              var collectionFiles = getCollectionFiles(schemas, treeArray)
+              // console.log(collectionFiles)
+              collectionFiles.forEach((item, idx) => {
+                requestQueue.pushTask(() => {
+                  let getContentReq = repo.getContents(branch, item.path, true)
+                    .then((content) => {
+                      item.content = content.data
+                    })
+                    .catch(err => {
+                      console.log(err)
+                    })
+                  let getCommitsReq = repo.listCommits({sha: branch, path: item.path})
+                    .then((commits) => {
+                      var lastCommit = commits.data[0]
+                      item.lastCommitSha = lastCommit.sha
+                      item.lastUpdatedAt = lastCommit.commit.committer.date
+                      item.lastUpdatedBy = lastCommit.commit.committer.name
+                    })
+                    .catch(err => {
+                      console.log(err)
+                    })
+
+                  return Promise.all([getContentReq, getCommitsReq])
+                    .then(() => {                      
+                      formatedIndex.collections.push(item)
+                      if (idx === collectionFiles.length - 1) {
+                        fspath.writeFile(`${INDEX_FOLDER}${repoFullname}.${branch}.json`, JSON.stringify(formatedIndex), (err) => {
+                          if (err) throw err
+                          console.log(`${repoFullname}.${branch}.json saved`)
+                        })
+                        res.status(200).json(formatedIndex)
+                      }
+                    })
+                })
+              })
+            })
+        })
+        .catch((err) => {
+          console.log(err)
+          res.status(err.status).json(err.response.data)    
+        })
+      }
+    })
+  }
+
+  if (appLocals.repoIndexCache[repoFullname][branch]) {
+    return res.status(200).json(appLocals.repoIndexCache[repoFullname][branch])
+  }
+
+}
+
 export default {
   requireGithubAPI,
   getRepoDetails,
@@ -163,5 +268,6 @@ export default {
   createBranches,
   getBranchSchema,
   writeRepoFile,
-  deleteRepoFile
+  deleteRepoFile,
+  getRepoBranchIndex
 }

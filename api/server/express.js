@@ -141,6 +141,10 @@ const initRoutes = (app) => {
   .post(repository.writeRepoFile)
   .delete(repository.deleteRepoFile)
 
+  app.route('/api/repository/index')
+  .all(users.requireAuthentication, repository.requireGithubAPI)
+  .get(repository.getRepoBranchIndex)
+
   app.route('/api/repository/details')
   .all(users.requireAuthentication, repository.requireGithubAPI)
   .get(repository.getRepoDetails)

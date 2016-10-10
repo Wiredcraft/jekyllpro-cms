@@ -42,16 +42,16 @@
       border-left: 1px solid shade($black, 20%);
       border-right: 0;
     }
-  }
-  img,
-  svg {
-    display: inline-block;
-    fill: #FFF;
-    height: 1.5*$space/2;
-    vertical-align: text-top;
-    width: 1.5*$space/2;
-  }
-  svg {
-    margin-right: $space/8;
+    img,
+    svg {
+      display: inline-block;
+      fill: #FFF;
+      height: 1.5*$space/2;
+      vertical-align: text-top;
+      width: 1.5*$space/2;
+    }
+    svg {
+      margin-right: $space/8;
+    }
   }
 }
