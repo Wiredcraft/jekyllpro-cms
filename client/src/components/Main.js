@@ -82,6 +82,7 @@ export default class AppComponent extends React.Component {
       <div id='app' className={repoLoading? 'spinning' : ''}>
         <Header params={this.props.params} />
         <Navigation key='nav' params={this.props.params} />
+        <Editor key='editor' params={this.props.params} />
         {/*{this.props.location.query.viewing !== 'site' ? [*/}
           {/*<Menu key='menu' params={this.props.params} />,*/}
           {/*collectionType !== 'media' && <Navigation key='nav' params={this.props.params} /> ,*/}
