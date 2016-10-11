@@ -48,19 +48,28 @@ class Navigation extends Component {
     const { selectedItem } = this.state
 
     return (
-      <nav id='navigation'>
-        {
-          collectionType && collectionType !=='media' && (
-            <header className='header'>
-              <div className='controls'>
-                <button className='button primary' onClick={::this.createNew}>Create</button>
-              </div>
-              <input type='text' className='search' placeholder='Filter by name'/>
-            </header>
-          )
-        }
-        <section className='body'>
-          <ul className='tree'>
+      <nav id='sidebar'>
+        <header className='header'>
+          <span className='controls'>
+            <button className='button primary icon tooltip-bottom'>
+              <svg height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'>
+                <path d='M9,16V10H5L12,3L19,10H15V16H9M5,20V18H19V20H5Z' />
+              </svg>
+              <span>Upload</span>
+            </button>
+
+            <button className='button primary create'>Create</button>
+          </span>
+          <span className='search'>
+            <input type='text' placeholder='Filter by name'/>
+            <svg height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'>
+              <path d='M9.5,3A6.5,6.5 0 0,1 16,9.5C16,11.11 15.41,12.59 14.44,13.73L14.71,14H15.5L20.5,19L19,20.5L14,15.5V14.71L13.73,14.44C12.59,15.41 11.11,16 9.5,16A6.5,6.5 0 0,1 3,9.5A6.5,6.5 0 0,1 9.5,3M9.5,5C7,5 5,7 5,9.5C5,12 7,14 9.5,14C12,14 14,12 14,9.5C14,7 12,5 9.5,5Z' />
+            </svg>
+          </span>
+        </header>
+
+        <span className='body tree'>
+          <ul>
           {
             !loading && collectionType !=='media' && filesMeta && filesMeta.map((node, i) => {
               if (node.children) {
@@ -101,7 +110,7 @@ class Navigation extends Component {
             })
           }
           </ul>
-        </section>
+        </span>
       </nav>
     )
   }

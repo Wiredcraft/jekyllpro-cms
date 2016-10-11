@@ -10,9 +10,11 @@ import {
   fetchPageFilesMeta,
   isBranchPrivate,
   fetchRepoInfo,
-  resetRepoData 
+  resetRepoData,
+  fetchNestedFilesMeta
 } from '../actions/repoActions'
-import { resetEditorData } from '../actions/editorActions'
+import { fetchFileContent, resetEditorData } from '../actions/editorActions'
+import { parseFolderFromSchema, getDefaultFolderStructure } from '../helpers/repo'
 import { logout } from '../actions/userActions'
 import { toRoute } from '../actions/routeActions'
 
@@ -30,12 +32,56 @@ export default class Header extends Component {
     this.state = {
       showProfileModal: false,
       showRepoModal: false,
-      showSettingModal: false
+      showSettingModal: false,
+      selectedItem: ''
     }
   }
 
   componentWillMount() {
+    const { currentBranch, fetchBranchSchema, fetchFileContent } = this.props
+    const { collectionType, branch, splat: path } = this.props.params
+    currentBranch && fetchBranchSchema(currentBranch)
+    // routing
+    if (collectionType && branch) {
+      if (collectionType === 'pages') {
+        this.fetchFiles(branch, path, collectionType)
+        path && fetchFileContent(branch, path)
+      } else if (path && path.split('/').length > 1) {
+        // not first level folder
+        let folderPath = path.split('/')[0]
+        this.fetchFiles(branch, folderPath, collectionType)
+          .then(() => {
+            fetchFileContent(branch, path)
+          })
+      } else {
+        path && this.fetchFiles(branch, path, collectionType)
+      }
+      this.setState({ selectedItem: collectionType})
+    }
     this.props.getAllBranch()
+  }
+
+  handleMenuItem(id, dir) {
+    const {currentBranch, toRoute} = this.props
+    let folderPath = (id === 'pages') ? '' : dir
+    this.setState({ selectedItem: id})
+    this.fetchFiles(currentBranch, dir, id)
+    toRoute(`${id}/${currentBranch}/${folderPath}`)
+  }
+
+  fetchFiles (branch, path, collectionType) {
+    const {fetchFilesMeta, fetchPageFilesMeta, fetchNestedFilesMeta} = this.props
+
+    switch (collectionType) {
+      case 'pages':
+        return fetchPageFilesMeta(branch)
+        break
+      case 'schema':
+        return fetchFilesMeta(branch, path, collectionType)
+        break
+      default:
+        return fetchNestedFilesMeta(branch, path, collectionType)
+    }
   }
 
   handleBranchChange(evt) {
@@ -63,8 +109,10 @@ export default class Header extends Component {
   }
 
   render () {
-    const { branches, currentBranch, avatar, userName, repoName, isBranchPrivate,
+    const { branches, currentBranch, avatar, userName, repoName, isBranchPrivate, schema,
     params: { collectionType, branch, splat: filePath} } = this.props
+    const { selectedItem } = this.state
+    const contentMenuList = parseFolderFromSchema(schema, 'content')
 
     return (
       <header id='header'>
@@ -141,24 +189,20 @@ export default class Header extends Component {
             Content
           </a>
           <div className='options'>
-            <a className='selected'>
-              <svg height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'>
-                <path d='M 19,7L 9,7L 9,5L 19,5M 15,15L 9,15L 9,13L 15,13M 19,11L 9,11L 9,9L 19,9M 20,2L 8,2C 6.9,2 6,2.9 6,4L 6,16C 6,17.1 6.9,18 8,18L 20,18C 21.1,18 22,17.1 22,16L 22,4C 22,2.9 21.1,2 20,2 Z M 4,6L 2,6L 2,20C 2,21.1 2.9,22 4,22L 18,22L 18,20L 4,20L 4,6 Z '></path>
-              </svg>
-              Page
-            </a>
-            <a>
-              <svg height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'>
-                <path d='M 19,7L 9,7L 9,5L 19,5M 15,15L 9,15L 9,13L 15,13M 19,11L 9,11L 9,9L 19,9M 20,2L 8,2C 6.9,2 6,2.9 6,4L 6,16C 6,17.1 6.9,18 8,18L 20,18C 21.1,18 22,17.1 22,16L 22,4C 22,2.9 21.1,2 20,2 Z M 4,6L 2,6L 2,20C 2,21.1 2.9,22 4,22L 18,22L 18,20L 4,20L 4,6 Z '></path>
-              </svg>
-              Blog post
-            </a>
-            <a>
-              <svg height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'>
-                <path d='M 19,7L 9,7L 9,5L 19,5M 15,15L 9,15L 9,13L 15,13M 19,11L 9,11L 9,9L 19,9M 20,2L 8,2C 6.9,2 6,2.9 6,4L 6,16C 6,17.1 6.9,18 8,18L 20,18C 21.1,18 22,17.1 22,16L 22,4C 22,2.9 21.1,2 20,2 Z M 4,6L 2,6L 2,20C 2,21.1 2.9,22 4,22L 18,22L 18,20L 4,20L 4,6 Z '></path>
-              </svg>
-              Product
-            </a>
+          {
+            schema && contentMenuList.map(item => {
+              return(
+                <a key={item.id}
+                   className={ selectedItem === item.id ? 'selected' : ''}
+                   onClick={this.handleMenuItem.bind(this, item.id, item.dir)}>
+                  <svg height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'>
+                    <path d='M 19,7L 9,7L 9,5L 19,5M 15,15L 9,15L 9,13L 15,13M 19,11L 9,11L 9,9L 19,9M 20,2L 8,2C 6.9,2 6,2.9 6,4L 6,16C 6,17.1 6.9,18 8,18L 20,18C 21.1,18 22,17.1 22,16L 22,4C 22,2.9 21.1,2 20,2 Z M 4,6L 2,6L 2,20C 2,21.1 2.9,22 4,22L 18,22L 18,20L 4,20L 4,6 Z '></path>
+                  </svg>
+                  {item.title}
+                </a>
+              )
+            })
+          }
           </div>
         </span>
 
@@ -202,6 +246,7 @@ function mapStateToProps(state, { params:
   return {
     currentBranch: branch || 'master',
     avatar: state.user.get('avatar'),
+    schema: state.repo.get('schema'),
     userName: state.user.get('userName'),
     branches: state.repo.get('branches'),
     repoName: state.repo.get('repoName')
@@ -213,7 +258,11 @@ function mapDispatchToProps (dispatch) {
     getAllBranch,
     checkoutBranch,
     logout,
+    fetchFilesMeta,
+    fetchPageFilesMeta,
+    fetchNestedFilesMeta,
     fetchBranchSchema,
+    fetchFileContent,
     resetEditorData,
     resetRepoData,
     isBranchPrivate,
