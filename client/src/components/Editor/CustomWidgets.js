@@ -34,29 +34,10 @@ const customTextarea = (props) => {
   )
 }
 
-class customCodeMirror extends React.Component {
-  constructor() {
-    super()
-    this.state = { mode: 'markdown'}
-  }
-  changeMode (evt) {
-    this.setState({mode: evt.target.value})
-  }
-  render () {
-    const {value, required, onChange} = this.props
-    const opts = Object.assign(cmOptions, this.state)
-    return (
-      <div>
-        <Codemirror value={value || ''} required={required} onChange={(code) => onChange(code)} options={opts} />
-        <span className='select'>
-          <select onChange={::this.changeMode} value={this.state.mode}>
-            <option value='markdown'>Markdown</option>
-            <option value='htmlmixed'>HTML</option>
-          </select>
-        </span>
-      </div>
-    )
-  }
+const customCodeMirror = (props) => {
+  return (
+    <Codemirror value={props.value || ''} required={props.required} onChange={(code) => props.onChange(code)} options={cmOptions} />
+  )
 }
 
 const JSONCode = (props) => {

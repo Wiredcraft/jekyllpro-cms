@@ -105,3 +105,12 @@ export function getBranchSchema ({ branch, path }) {
       .end(generalResponseHandler(resolve, reject))
   })
 }
+
+export function getRepoIndex (refresh) {
+  var requestUrl = `${API_BASE_URL}/api/repository/index?refresh=${refresh}`
+  return new Promise((resolve, reject) => {
+    request('GET', requestUrl)
+      .end(generalResponseHandler(resolve, reject))
+  })
+}
+

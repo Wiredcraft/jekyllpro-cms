@@ -8,7 +8,8 @@ const initialState = Immutable.fromJS({
   targetFileIndex: undefined,
   targetFile: undefined,
   newFileMode: false,
-  loading: false
+  loading: false,
+  mode: undefined
 })
 
 export default function repo (state = initialState, action) {
@@ -16,12 +17,13 @@ export default function repo (state = initialState, action) {
     case RESET_EDITOR_DATA:
       return initialState
     case CHANGE_EDITOR_STATE:
-      const { content, fileIndex, schema, loading, targetFile } = action.payload
+      const { content, fileIndex, schema, loading, targetFile, mode } = action.payload
       if (content !== undefined) state = state.set('content', content)
       if(schema !== undefined) state = state.set('schema', schema)
       if(targetFile !== undefined) state = state.set('targetFile', targetFile)
       if (state.get('newFileMode')) state = state.set('newFileMode', false)
       if(loading !== undefined) state = state.set('loading', loading)
+      if(mode) state = state.set('mode', mode)
       return state
     case NEW_EMPTY_FILE:
       state = state.set('newFileMode', true)

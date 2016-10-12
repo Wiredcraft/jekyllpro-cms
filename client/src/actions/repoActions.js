@@ -1,5 +1,5 @@
 /* global API_BASE_URL */
-import { getRepoDetails, getRepoMeta, getRepoBranchList, getBranchSchema } from '../helpers/api'
+import { getRepoDetails, getRepoMeta, getRepoBranchList, getBranchSchema, getRepoIndex } from '../helpers/api'
 import { parseFilesMeta } from '../helpers/repo'
 import { fetchDefaultSchema, cleanEditor } from './editorActions'
 
@@ -15,6 +15,18 @@ export function fetchRepoInfo() {
       .then(data => {        
         dispatch({
           payload: {currentBranch: data.default_branch, repoName: data.full_name},
+          type: CHANGE_REPO_STATE
+        })
+      })
+  }
+}
+
+export function fetchRepoIndex(refresh) {
+  return dispatch => {
+    return getRepoIndex(refresh)
+      .then(data => {        
+        return dispatch({
+          payload: {collections: data.collections, schemas: data.schemas},
           type: CHANGE_REPO_STATE
         })
       })
@@ -269,6 +281,15 @@ export function resetRepoData () {
   return dispatch => {
     dispatch({
       type: RESET_REPO_DATA
+    })
+  }
+}
+
+export function selectCollectionFile(item) {
+  return dispatch => {
+    dispatch({
+      payload: {selectedCollectionFile: item},
+      type: CHANGE_REPO_STATE
     })
   }
 }

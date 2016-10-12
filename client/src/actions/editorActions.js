@@ -150,3 +150,12 @@ export function resetEditorData () {
     })
   }
 }
+
+export function changeEditorMode (mode) {
+  return dispatch => {
+    dispatch({
+      payload: { mode },
+      type: CHANGE_EDITOR_STATE
+    })
+  }
+}

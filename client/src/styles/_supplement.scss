@@ -2,7 +2,9 @@
 // @import 'bourbon';
 // @import './_variables.scss';
 // @import './partials/_modal.scss';
-@import './app.scss';
+// @import './app.scss';
+@import './_scss/main.scss';
+
 /* The switch - the box around the slider */
 $switch_size: 12px;
 $switch_padding: 4px;
