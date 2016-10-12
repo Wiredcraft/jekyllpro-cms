@@ -2,7 +2,8 @@ import config from '../config'
 import GithubAPI from 'github-api'
 import _ from 'lodash'
 import { TaskQueue, getCollectionFiles } from './utils'
-import RepoIndexModel from './database'
+import { RepoIndex, RepoAccessToken } from './database'
+import { hookConfig } from './webhook'
 
 const cb = (error, result, request) => {
   console.log(error)
@@ -163,11 +164,25 @@ const getRepoBranchIndex = (req, res, next) => {
   var refreshIndex = req.query.refresh || false
   var repoFullname = req.get('X-REPO-OWNER') + '/' + req.get('X-REPO-NAME')
 
+  //update access token in db, which can be used to run the webhook service
+  RepoAccessToken.findOneAndUpdate({
+    repository: repoFullname       
+  }, {
+    repository: repoFullname,
+    accessToken: req.user.accessToken,
+    updatedBy: req.user.login,
+    updated: Date()
+  }, {
+    upsert: true
+  }, (err) => {
+    if (err) console.log(err)
+  })
+
   if (refreshIndex) {
     return next()
   }
 
-  RepoIndexModel.findByRepoInfo(repoFullname, branch, (err, record) => {
+  RepoIndex.findByRepoInfo(repoFullname, branch, (err, record) => {
     if (err) {
       console.log(err)
       return next()
@@ -188,7 +203,7 @@ const refreshIndexAndSave = (req, res) => {
 
   return getFreshIndexFromGithub(repo, branch)
     .then(formatedIndex => {
-      RepoIndexModel.findOneAndUpdate({
+      RepoIndex.findOneAndUpdate({
         repository: repoFullname,
         branch: branch        
       }, {
@@ -272,6 +287,67 @@ const getFreshIndexFromGithub = (repoObject, branch) => {
     })
 }
 
+const listJekyllplusHook = (repoObject) => {
+  return repoObject.listHooks()
+    .then(list => {
+      let arr = list.data.filter((hook) => {
+        return hook.config.url === hookConfig.config.url
+      })
+      if (arr.length > 0) {
+        return arr[0]
+      }
+      return null
+    })
+}
+
+const listHooks = (req, res) => {
+  var repo = req.githubRepo
+  listJekyllplusHook(repo)
+    .then(data => {
+      return res.status(200).json(data)
+    })
+    .catch(err => {
+      console.log(err)
+      return res.status(err.status).json(err.response.data)
+    })
+}
+
+const manageHook = (req, res) => {
+  var repo = req.githubRepo
+  if (req.body.action === 'create') {
+    listJekyllplusHook(repo)
+      .then(hook => {
+        if (hook) {
+          return res.status(200).json(hook)
+        }
+        return repo.createHook(hookConfig)
+      })
+      .then(data => {
+        return res.status(200).json(data.data)
+      })
+      .catch(err => {
+        console.log(err)
+        return res.status(err.status).json(err.response.data)
+      })
+  }
+  if (req.body.action === 'delete') {
+    listJekyllplusHook(repo)
+      .then(hook => {
+        if (hook) {
+          return repo.deleteHook(hook.id)
+            .then(data => {
+              return res.status(200).json(data.data)
+            })
+        }
+        return res.status(204).send('no content')
+      })
+      .catch(err => {
+        console.log(err)
+        return res.status(err.status).json(err.response.data)
+      })
+  }
+}
+
 export default {
   requireGithubAPI,
   getRepoDetails,
@@ -282,5 +358,8 @@ export default {
   writeRepoFile,
   deleteRepoFile,
   getRepoBranchIndex,
-  refreshIndexAndSave
+  refreshIndexAndSave,
+  getFreshIndexFromGithub,
+  listHooks,
+  manageHook
 }

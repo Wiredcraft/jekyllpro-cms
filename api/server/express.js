@@ -12,6 +12,7 @@ import helmet from 'helmet'
 import lusca from 'lusca'
 import users from './users'
 import repository from './repository'
+import {pushHook} from './webhook'
 
 const MongoStore = connectMongo(session)
 
@@ -157,6 +158,14 @@ const initRoutes = (app) => {
   app.route('/api/repository/schema')
   .all(users.requireAuthentication, repository.requireGithubAPI)
   .get(repository.getBranchSchema)
+
+  app.route('/api/repository/hooks')
+  .all(users.requireAuthentication, repository.requireGithubAPI)
+  .get(repository.listHooks)
+  .post(repository.manageHook)
+
+  app.route('/api/webhook')
+  .post(pushHook)
 }
 
 const initErrorHandler = (app) => {

@@ -31,5 +31,6 @@ module.exports = {
     origin: process.env.CORS_ORIGIN || 'http://localhost:8000',
     methods: 'POST,GET,OPTIONS,DELETE',
     credentials: true
-  }
+  },
+  serverUrl: process.env.SERVER_URL || 'http://localhost:3000'
 }
