@@ -161,7 +161,7 @@ const getBranchSchema = (req, res, next) => {
 const getRepoBranchIndex = (req, res, next) => {
   var repo = req.githubRepo
   var branch = req.query.branch || 'master'
-  var refreshIndex = req.query.refresh || false
+  var refreshIndex = req.query.refresh === true || req.query.refresh === 'true'
   var repoFullname = req.get('X-REPO-OWNER') + '/' + req.get('X-REPO-NAME')
 
   //update access token in db, which can be used to run the webhook service
