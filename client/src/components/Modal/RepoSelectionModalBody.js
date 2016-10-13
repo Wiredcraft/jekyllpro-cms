@@ -59,7 +59,7 @@ export default class RepoSelectionModalBody extends Component {
   }
 
   selectRepo (repoOwner, repoName, branch) {
-    const { getAllBranch, fetchBranchSchema, resetRepoData, resetEditorData, toRoute, fetchRepoInfo } = this.props
+    const { getAllBranch, resetRepoData, resetEditorData, toRoute, fetchRepoInfo } = this.props
 
     Cookie.set('repoOwner', repoOwner, { expires: 100 })
     Cookie.set('repoName', repoName, { expires: 100 })
@@ -68,7 +68,6 @@ export default class RepoSelectionModalBody extends Component {
     resetEditorData()
     resetRepoData()
     fetchRepoInfo().then(() => {
-      fetchBranchSchema(branch)
       getAllBranch()
     })
   }

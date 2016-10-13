@@ -5,16 +5,11 @@ import React, { Component } from 'react'
 import {
   getAllBranch,
   checkoutBranch,
-  fetchFilesMeta,
-  fetchBranchSchema,
-  fetchPageFilesMeta,
   isBranchPrivate,
   fetchRepoInfo,
   resetRepoData,
-  fetchNestedFilesMeta
 } from '../actions/repoActions'
 import { fetchFileContent, resetEditorData } from '../actions/editorActions'
-import { parseFolderFromSchema, getDefaultFolderStructure } from '../helpers/repo'
 import { logout } from '../actions/userActions'
 import { toRoute } from '../actions/routeActions'
 
@@ -33,63 +28,29 @@ export default class Header extends Component {
       showProfileModal: false,
       showRepoModal: false,
       showSettingModal: false,
-      selectedItem: ''
+      selectedType: ''
     }
   }
 
   componentWillMount() {
-    const { currentBranch, fetchBranchSchema, fetchFileContent } = this.props
     const { collectionType, branch, splat: path } = this.props.params
-    currentBranch && fetchBranchSchema(currentBranch)
     // routing
     if (collectionType && branch) {
-      if (collectionType === 'pages') {
-        this.fetchFiles(branch, path, collectionType)
-        path && fetchFileContent(branch, path)
-      } else if (path && path.split('/').length > 1) {
-        // not first level folder
-        let folderPath = path.split('/')[0]
-        this.fetchFiles(branch, folderPath, collectionType)
-          .then(() => {
-            fetchFileContent(branch, path)
-          })
-      } else {
-        path && this.fetchFiles(branch, path, collectionType)
-      }
-      this.setState({ selectedItem: collectionType})
+      this.setState({ selectedType: collectionType })
     }
     this.props.getAllBranch()
   }
 
-  handleMenuItem(id, dir) {
-    const {currentBranch, toRoute} = this.props
-    let folderPath = (id === 'pages') ? '' : dir
-    this.setState({ selectedItem: id})
-    this.fetchFiles(currentBranch, dir, id)
-    toRoute(`${id}/${currentBranch}/${folderPath}`)
+  handleContentMenu(type) {
+
   }
 
-  fetchFiles (branch, path, collectionType) {
-    const {fetchFilesMeta, fetchPageFilesMeta, fetchNestedFilesMeta} = this.props
 
-    switch (collectionType) {
-      case 'pages':
-        return fetchPageFilesMeta(branch)
-        break
-      case 'schema':
-        return fetchFilesMeta(branch, path, collectionType)
-        break
-      default:
-        return fetchNestedFilesMeta(branch, path, collectionType)
-    }
-  }
-
-  handleBranchChange(evt) {
-    const newBranch = evt.target.value
+  handleBranchChange(newBranch) {
     const {checkoutBranch, toRoute} = this.props
-    const { collectionType, branch, splat: filePath} = this.props.params
+    const { collectionType } = this.props.params
     checkoutBranch(newBranch)
-    toRoute(`/${collectionType}/${newBranch}/${filePath || ''}`)
+    toRoute(`/${collectionType}/${newBranch}/`)
   }
 
   logout () {
@@ -109,10 +70,9 @@ export default class Header extends Component {
   }
 
   render () {
-    const { branches, currentBranch, avatar, userName, repoName, isBranchPrivate, schema,
+    const { branches, currentBranch, avatar, userName, repoName, isBranchPrivate, schemas,
     params: { collectionType, branch, splat: filePath} } = this.props
-    const { selectedItem } = this.state
-    const contentMenuList = parseFolderFromSchema(schema, 'content')
+    const { selectedType } = this.state
 
     return (
       <header id='header'>
@@ -138,29 +98,19 @@ export default class Header extends Component {
             { branches && (
               <div className="options">
                 {branches && branches.map((b) => {
-                  if (b.name === currentBranch) {
-                    return (
-                      <a className="selected" key={b.name}>
-                        <svg height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'>
-                          <path strokeWidth='0.2' strokeLinejoin='round' d='M 13,14C 9.64431,14 8.54075,15.3513 8.17783,16.24C 9.2492,16.6979 10,17.7612 10,19C 10,20.6569 8.65686,22 7,22C 5.34315,22 4,20.6569 4,19C 4,17.6938 4.83481,16.5825 6,16.1707L 6,7.8293C 4.83481,7.41746 4,6.30622 4,5C 4,3.34315 5.34315,2.00001 7,2.00001C 8.65685,2.00001 10,3.34315 10,5C 10,6.30622 9.16519,7.41746 8,7.8293L 8,13.1221C 8.8845,12.4701 10.1602,12 12,12C 14.6714,12 15.5587,10.662 15.8534,9.77309C 14.7654,9.32274 14,8.25076 14,7C 14,5.34315 15.3431,4 17,4C 18.6569,4 20,5.34315 20,7C 20,8.34026 19.1211,9.47524 17.9082,9.86006C 17.6521,11.2898 16.6812,14 13,14 Z M 7,18C 6.44771,18 6,18.4477 6,19C 6,19.5523 6.44771,20 7,20C 7.55228,20 8,19.5523 8,19C 8,18.4477 7.55228,18 7,18 Z M 7,4.00001C 6.44771,4.00001 6,4.44772 6,5.00001C 6,5.55229 6.44771,6.00001 7,6.00001C 7.55228,6.00001 8,5.55229 8,5.00001C 8,4.44772 7.55228,4.00001 7,4.00001 Z M 17,6.00001C 16.4477,6.00001 16,6.44772 16,7C 16,7.55229 16.4477,8 17,8C 17.5523,8 18,7.55229 18,7C 18,6.44772 17.5523,6.00001 17,6.00001 Z '/>
-                        </svg>
-                        <span>{ b.name }</span>
-                      </a>
-                    )
-                  } else {
-                    return (
-                      <a key={b.name}>
-                        <svg height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'>
-                          <path strokeWidth='0.2' strokeLinejoin='round' d='M 13,14C 9.64431,14 8.54075,15.3513 8.17783,16.24C 9.2492,16.6979 10,17.7612 10,19C 10,20.6569 8.65686,22 7,22C 5.34315,22 4,20.6569 4,19C 4,17.6938 4.83481,16.5825 6,16.1707L 6,7.8293C 4.83481,7.41746 4,6.30622 4,5C 4,3.34315 5.34315,2.00001 7,2.00001C 8.65685,2.00001 10,3.34315 10,5C 10,6.30622 9.16519,7.41746 8,7.8293L 8,13.1221C 8.8845,12.4701 10.1602,12 12,12C 14.6714,12 15.5587,10.662 15.8534,9.77309C 14.7654,9.32274 14,8.25076 14,7C 14,5.34315 15.3431,4 17,4C 18.6569,4 20,5.34315 20,7C 20,8.34026 19.1211,9.47524 17.9082,9.86006C 17.6521,11.2898 16.6812,14 13,14 Z M 7,18C 6.44771,18 6,18.4477 6,19C 6,19.5523 6.44771,20 7,20C 7.55228,20 8,19.5523 8,19C 8,18.4477 7.55228,18 7,18 Z M 7,4.00001C 6.44771,4.00001 6,4.44772 6,5.00001C 6,5.55229 6.44771,6.00001 7,6.00001C 7.55228,6.00001 8,5.55229 8,5.00001C 8,4.44772 7.55228,4.00001 7,4.00001 Z M 17,6.00001C 16.4477,6.00001 16,6.44772 16,7C 16,7.55229 16.4477,8 17,8C 17.5523,8 18,7.55229 18,7C 18,6.44772 17.5523,6.00001 17,6.00001 Z '/>
-                        </svg>
-                        <span>{ b.name }</span>
-                      </a>
-                    )
-                  }
+                  return (
+                    <a className={b.name === currentBranch ? 'selected' : ''}
+                      onClick={this.handleBranchChange.bind(this, b.name)}
+                      key={b.name}>
+                      <svg height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'>
+                        <path strokeWidth='0.2' strokeLinejoin='round' d='M 13,14C 9.64431,14 8.54075,15.3513 8.17783,16.24C 9.2492,16.6979 10,17.7612 10,19C 10,20.6569 8.65686,22 7,22C 5.34315,22 4,20.6569 4,19C 4,17.6938 4.83481,16.5825 6,16.1707L 6,7.8293C 4.83481,7.41746 4,6.30622 4,5C 4,3.34315 5.34315,2.00001 7,2.00001C 8.65685,2.00001 10,3.34315 10,5C 10,6.30622 9.16519,7.41746 8,7.8293L 8,13.1221C 8.8845,12.4701 10.1602,12 12,12C 14.6714,12 15.5587,10.662 15.8534,9.77309C 14.7654,9.32274 14,8.25076 14,7C 14,5.34315 15.3431,4 17,4C 18.6569,4 20,5.34315 20,7C 20,8.34026 19.1211,9.47524 17.9082,9.86006C 17.6521,11.2898 16.6812,14 13,14 Z M 7,18C 6.44771,18 6,18.4477 6,19C 6,19.5523 6.44771,20 7,20C 7.55228,20 8,19.5523 8,19C 8,18.4477 7.55228,18 7,18 Z M 7,4.00001C 6.44771,4.00001 6,4.44772 6,5.00001C 6,5.55229 6.44771,6.00001 7,6.00001C 7.55228,6.00001 8,5.55229 8,5.00001C 8,4.44772 7.55228,4.00001 7,4.00001 Z M 17,6.00001C 16.4477,6.00001 16,6.44772 16,7C 16,7.55229 16.4477,8 17,8C 17.5523,8 18,7.55229 18,7C 18,6.44772 17.5523,6.00001 17,6.00001 Z '/>
+                      </svg>
+                      <span>{ b.name }</span>
+                    </a>
+                  )
                 })}
               </div>
-            )
-            }
+            )}
           </span>
           <a className='item user' onClick={evt => {this.setState({showProfileModal: true})}}>
             <img src={avatar} />
@@ -190,15 +140,15 @@ export default class Header extends Component {
           </a>
           <div className='options'>
           {
-            schema && contentMenuList.map(item => {
-              return(
-                <a key={item.id}
-                   className={ selectedItem === item.id ? 'selected' : ''}
-                   onClick={this.handleMenuItem.bind(this, item.id, item.dir)}>
+            schemas && schemas.map((s, idx) => {
+              return (
+                <a key={s.title}
+                  onClick={this.handleContentMenu.bind(this, s.jekyll.id)}
+                  className={selectedType === s.jekyll.id ? 'selected' : ''} >
                   <svg height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'>
                     <path d='M 19,7L 9,7L 9,5L 19,5M 15,15L 9,15L 9,13L 15,13M 19,11L 9,11L 9,9L 19,9M 20,2L 8,2C 6.9,2 6,2.9 6,4L 6,16C 6,17.1 6.9,18 8,18L 20,18C 21.1,18 22,17.1 22,16L 22,4C 22,2.9 21.1,2 20,2 Z M 4,6L 2,6L 2,20C 2,21.1 2.9,22 4,22L 18,22L 18,20L 4,20L 4,6 Z '></path>
                   </svg>
-                  {item.title}
+                  {s.title}
                 </a>
               )
             })
@@ -246,7 +196,7 @@ function mapStateToProps(state, { params:
   return {
     currentBranch: branch || 'master',
     avatar: state.user.get('avatar'),
-    schema: state.repo.get('schema'),
+    schemas: state.repo.get('schemas'),
     userName: state.user.get('userName'),
     branches: state.repo.get('branches'),
     repoName: state.repo.get('repoName')
@@ -258,11 +208,6 @@ function mapDispatchToProps (dispatch) {
     getAllBranch,
     checkoutBranch,
     logout,
-    fetchFilesMeta,
-    fetchPageFilesMeta,
-    fetchNestedFilesMeta,
-    fetchBranchSchema,
-    fetchFileContent,
     resetEditorData,
     resetRepoData,
     isBranchPrivate,
