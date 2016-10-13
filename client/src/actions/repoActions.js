@@ -21,14 +21,15 @@ export function fetchRepoInfo() {
   }
 }
 
-export function fetchRepoIndex(refresh) {
+export function fetchRepoIndex(opts) {
   return dispatch => {
-    return getRepoIndex(refresh)
+    return getRepoIndex(opts || {})
       .then(data => {        
-        return dispatch({
+        dispatch({
           payload: {collections: data.collections, schemas: data.schemas},
           type: CHANGE_REPO_STATE
         })
+        return data
       })
   }
 }

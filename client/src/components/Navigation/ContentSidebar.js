@@ -12,9 +12,21 @@ export default class ContentSidebar extends Component {
   }
 
   componentDidMount() {
-    const { collections, fetchRepoIndex } = this.props
-    console.log('mount')
-    fetchRepoIndex()
+    const { fetchRepoIndex, params, changeEditorMode, selectCollectionFile, currentBranch } = this.props
+    fetchRepoIndex({ branch: currentBranch })
+    .then((indexData) => {
+      if (params && (params.splat !== 'new')) {
+        indexData.collections.some(item => {
+          if (item.path === params.splat) {
+            selectCollectionFile(item)
+            changeEditorMode('collection')
+            // break iteration
+            return true
+          }
+          return false
+        })
+      }
+    })
   }
 
   handleNameFilter(evt) {
@@ -35,8 +47,9 @@ export default class ContentSidebar extends Component {
     this.setState({ filteredCollections: f, filtering: true })
   }
 
-  createNewFileByType() {
-
+  createNewFileByType(type) {
+    const { toRoute, currentBranch } = this.props
+    toRoute(`/${type}/${currentBranch}/new`)
   }
 
   handleTypeFilter(type) {
@@ -51,10 +64,11 @@ export default class ContentSidebar extends Component {
   }
 
   selectItem(item) {
-    const { selectCollectionFile, changeEditorMode } = this.props
+    const { selectCollectionFile, changeEditorMode, toRoute, currentBranch } = this.props
     this.setState({selectedItem: item.path})
     selectCollectionFile(item)
     changeEditorMode('collection')
+    toRoute(`/${item.collectionType}/${currentBranch}/${item.path}`)
   }
 
   render() {
@@ -76,7 +90,7 @@ export default class ContentSidebar extends Component {
               <div className="options">
                 {
                   schemas && schemas.map((s, idx) => {
-                    return <a key={s.title} onClick={::this.createNewFileByType}>{s.title}</a>
+                    return <a key={s.title} onClick={this.createNewFileByType.bind(this, s.jekyll.id)}>{s.title}</a>
                   })
                 }
               </div>

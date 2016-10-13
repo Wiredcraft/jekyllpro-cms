@@ -13,39 +13,14 @@ import { toRoute } from '../actions/routeActions'
 class Navigation extends Component {
   constructor(props) {
     super(props)
-    this.state = { selectedItem: props.params ? props.params.splat : undefined }
-  }
-
-  componentDidUpdate(prevProps) {
-    const { params } = this.props
-
-    if (params.splat !== prevProps.params.splat) {
-      this.setState({selectedItem: params.splat})
-    }
-  }
-
-  navigateByPath(path) {
-    const { fetchFileContent, currentBranch, selectedFolder, collectionType, toRoute } = this.props
-    this.setState({ selectedItem: path})
-    // Do not render editor if click on any media files
-    if (selectedFolder === 'media') {
-      return
-    }
-
-    let routingUrl = `/${collectionType || 'pages'}/${currentBranch}/${path}`
-    fetchFileContent(currentBranch, path)
-      .then(() =>{
-        toRoute(routingUrl)
-      })
-  }
-
-  createNew() {
-    this.props.createEmptyFile()
-    this.setState({selectedItem: null})
   }
 
   render() {
+    const { collectionType, branch, splat } = this.props.params
 
+    if (collectionType === 'files') {
+      return (<div />)
+    }
     return (
       <ContentSidebar {...this.props} />
     )

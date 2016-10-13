@@ -4,7 +4,7 @@ import { bindActionCreators } from 'redux'
 
 import { updateFile, deleteFile, addNewFile, replaceFile, fetchFileContent, createEmptyFile } from '../actions/editorActions'
 import { toRoute } from '../actions/routeActions'
-import { fetchBranchSchema } from '../actions/repoActions'
+import { selectCollectionFile } from '../actions/repoActions'
 
 import ContentEditor from './Editor/ContentEditor'
 
@@ -17,9 +17,9 @@ class Editor extends Component {
   }
 
   render() {
-    const { mode } = this.props
+    const { mode, params, schemas } = this.props
 
-    if (mode === 'collection') {      
+    if (schemas && mode === 'collection') {      
       return (<ContentEditor {...this.props} />)
     }
     return <section id='content' />
@@ -50,7 +50,7 @@ function mapDispatchToProps (dispatch) {
     updateFile,
     deleteFile,
     addNewFile,
-    fetchBranchSchema,
+    selectCollectionFile,
     replaceFile,
     fetchFileContent,
     createEmptyFile

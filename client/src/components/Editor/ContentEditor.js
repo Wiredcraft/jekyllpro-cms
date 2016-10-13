@@ -24,34 +24,43 @@ export default class ContentEditor extends Component {
     }
   }
 
-  componentDidUpdate(prevProps) {
-    const { newFileMode, selectedCollectionFile } = this.props
-
-    const fileChanged = selectedCollectionFile.path !== (prevProps.selectedCollectionFile && prevProps.selectedCollectionFile.path)
-    const modeChanged = newFileMode !== prevProps.newFileMode
-
-    if(modeChanged || fileChanged) {
+  componentWillMount() {
+    if (this.props.selectedCollectionFile) {
       this.getCurrentSchema(this.updateEditorForm)
     }
   }
 
-  getCurrentSchema(callback) {
-    let { schemas, selectedCollectionFile } = this.props
+  componentDidUpdate(prevProps) {
+    const { params, selectedCollectionFile } = this.props
 
+    const fileChanged = selectedCollectionFile.path !== prevProps.selectedCollectionFile.path
+    const newFileMode = (params.splat === 'new') &&
+      ((params.splat !== prevProps.params.splat) || (params.collectionType !== prevProps.params.collectionType))
+
+    if (fileChanged) {
+      this.getCurrentSchema(selectedCollectionFile.collectionType, this.updateEditorForm)
+    }
+    if (newFileMode) {
+      this.getCurrentSchema(params.collectionType, () => {
+        this.setState({formData: {}})
+      })
+    }
+  }
+
+  getCurrentSchema(type, callback) {
+    let { schemas } = this.props
     schemas = schemas ? schemas : []
 
     let schema = schemas.find(item => {
-        return (item.jekyll.id === selectedCollectionFile.collectionType)
+        return (item.jekyll.id === type)
       })
-    // using locally defined schema if no schema found in fetched data
-    
+
     this.setState({currentSchema: schema}, callback)
   }
 
   updateEditorForm() {
     const { content, path } = this.props.selectedCollectionFile
     const { currentSchema } = this.state
-    console.log(this.props.selectedCollectionFile)
     if (!content) return
     let formData = {}
 
@@ -209,13 +218,13 @@ export default class ContentEditor extends Component {
   }
 
   render() {
-    const { content, newFileMode, editorUpdating, selectedFolder, targetFile, selectedCollectionFile } = this.props
+    const { editorUpdating, selectedFolder, selectedCollectionFile, params } = this.props
     const { filePathInputClass, formData, newFilePath, currentSchema } = this.state
-    let currentFileName = newFileMode && selectedFolder
-      ? (selectedFolder + '/' + dateToString(new Date()) + '-new-file')
+    let currentFileName = (params.splat === 'new') && currentSchema
+      ? (currentSchema.jekyll.dir + '/' + dateToString(new Date()) + '-new-file')
       : selectedCollectionFile.path
 
-    if (!currentSchema) return (<div></div>)
+    if (!currentSchema) return (<section id='content' />)
 
     return (
       <section id='content'>
@@ -302,7 +311,7 @@ export default class ContentEditor extends Component {
             schema={currentSchema.JSONSchema}
             uiSchema={currentSchema.uiSchema}
             widgets={customWidgets}
-            formData={newFileMode ? {} : formData}>
+            formData={formData}>
             <button
               type='submit'
               ref='formSubmitBtn'

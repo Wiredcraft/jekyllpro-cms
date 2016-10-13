@@ -106,8 +106,10 @@ export function getBranchSchema ({ branch, path }) {
   })
 }
 
-export function getRepoIndex (refresh) {
-  var requestUrl = `${API_BASE_URL}/api/repository/index?refresh=${refresh}`
+export function getRepoIndex ({ branch, refresh }) {
+  branch = branch ? branch : 'master'
+  refresh = refresh ? refresh : false
+  var requestUrl = `${API_BASE_URL}/api/repository/index?branch=${branch}&refresh=${refresh}`
   return new Promise((resolve, reject) => {
     request('GET', requestUrl)
       .end(generalResponseHandler(resolve, reject))

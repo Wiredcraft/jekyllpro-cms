@@ -76,24 +76,20 @@ export default class AppComponent extends React.Component {
   }
 
   render() {
-    const { isLoggedIn, repoLoading, collectionType } = this.props
+    const { isLoggedIn, repoLoading, currentBranch } = this.props
 
     return isLoggedIn ? (
       <div id='app' className={repoLoading? 'spinning' : ''}>
         <Header params={this.props.params} />
-        <Navigation key='nav' params={this.props.params} />
-        <Editor key='editor' params={this.props.params} />
-        {/*{this.props.location.query.viewing !== 'site' ? [*/}
-          {/*<Menu key='menu' params={this.props.params} />,*/}
-          {/*collectionType !== 'media' && <Navigation key='nav' params={this.props.params} /> ,*/}
-          {/*collectionType !== 'media' && <Editor key='editor' params={this.props.params} /> ,*/}
-          {/*collectionType === 'media' && <Media key='media' />] :*/}
-          {/*<iframe onLoad={() => {*/}
-            {/*window.frames[0].window.eval(addEditButtonsSrc(this.props.params.branch, 'http://app.jekyllpro.com/'))*/}
-          {/*}}*/}
-          {/*style={{width: "100%", minHeight: "2000px", paddingTop: "39px"}}*/}
-          {/*src={`http://${this.props.params.branch}.beta-starbucks-com-cn.wiredcraft.jekyllpro.com`} />*/}
-        {/*}*/}
+        {this.props.location.query.viewing !== 'site' ? [
+          currentBranch && <Navigation key='nav' params={this.props.params} /> ,
+          currentBranch && <Editor key='editor' params={this.props.params} />] :
+          <iframe onLoad={() => {
+            window.frames[0].window.eval(addEditButtonsSrc(this.props.params.branch, 'http://app.jekyllpro.com/'))
+          }}
+          style={{width: "100%", minHeight: "2000px", paddingTop: "39px"}}
+          src={`http://${this.props.params.branch}.beta-starbucks-com-cn.wiredcraft.jekyllpro.com`} />
+        }
 
       </div>
     ) : (
@@ -111,6 +107,7 @@ function mapStateToProps(state) {
   return {
     repoLoading: state.repo.get('loading'),
     collectionType: state.repo.get('collectionType'),
+    currentBranch: state.repo.get('currentBranch'),
     isLoggedIn: state.user.get('isLoggedIn')
   }
 }
