@@ -4,7 +4,7 @@ import { bindActionCreators } from 'redux'
 
 import { updateFile, deleteFile, addNewFile, replaceFile, fetchFileContent, createEmptyFile } from '../actions/editorActions'
 import { toRoute } from '../actions/routeActions'
-import { selectCollectionFile } from '../actions/repoActions'
+import { selectCollectionFile, collectionFileRemoved, collectionFileAdded, collectionFileUpdated } from '../actions/repoActions'
 
 import ContentEditor from './Editor/ContentEditor'
 
@@ -48,11 +48,14 @@ function mapStateToProps(state, { params:
 function mapDispatchToProps (dispatch) {
   return bindActionCreators({
     toRoute,
+    collectionFileRemoved,
+    collectionFileAdded,
+    collectionFileUpdated,
     updateFile,
     deleteFile,
     addNewFile,
-    selectCollectionFile,
     replaceFile,
+    selectCollectionFile,
     fetchFileContent,
     createEmptyFile
   }, dispatch)

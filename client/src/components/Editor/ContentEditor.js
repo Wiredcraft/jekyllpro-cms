@@ -5,7 +5,7 @@ import ReactDOM from 'react-dom'
 import { parseYamlInsideMarkdown, retriveContent, serializeObjtoYaml } from '../../helpers/markdown'
 import DeleteIcon from '../svg/DeleteIcon'
 import customWidgets from './CustomWidgets'
-import { dateToString } from "../../helpers/utils"
+import { dateToString, purgeObject } from "../../helpers/utils"
 import Modal from 'react-modal'
 import ModalCustomStyle from '../Modal'
 
@@ -98,11 +98,14 @@ export default class ContentEditor extends Component {
     const {
       selectedCollectionFile,
       currentBranch,
-      newFileMode,
       updateFile,
       deleteFile,
       replaceFile,
-      addNewFile
+      addNewFile,
+      collectionFileRemoved,
+      collectionFileAdded,
+      collectionFileUpdated,
+      params
     } = this.props
     const { currentSchema, isPostPublished, isDraft, language } = this.state
     const filePath = this.refs.filePath.value
@@ -128,18 +131,45 @@ export default class ContentEditor extends Component {
     } else {
       delete formData.draft
     }
+    // delete all undefined property
+    purgeObject(formData)
 
-    if (newFileMode) {
+    if (params.splat === 'new') {
+      console.log(formData)
       updatedContent = serializeObjtoYaml(formData) + updatedContent
       addNewFile(currentBranch, filePath, updatedContent)
-    } else if (filePath !== targetFile) {
+        .then(() => {
+          collectionFileAdded({
+            path: filePath,
+            content: updatedContent,
+            collectionType: params.collectionType,
+            updatedAt: new Date()
+          })
+        })
+    } else if (filePath !== selectedCollectionFile.path) {
       // file path changed
-      let oldPath = targetFile
-      updatedContent = this.updateFileFrontMatter(content, formData) + updatedContent
+      let oldPath = selectedCollectionFile.path
+      updatedContent = this.updateFileFrontMatter(selectedCollectionFile.content, formData) + updatedContent
       replaceFile(currentBranch, oldPath, filePath, updatedContent)
+        .then(() => {
+          collectionFileUpdated(oldPath, {
+            path: filePath,
+            content: updatedContent,
+            collectionType: params.collectionType,
+            updatedAt: new Date()            
+          })
+        })
     } else {
-      updatedContent = this.updateFileFrontMatter(content, formData) + updatedContent
+      updatedContent = this.updateFileFrontMatter(selectedCollectionFile.content, formData) + updatedContent
       updateFile(currentBranch, filePath, updatedContent)
+        .then(() => {
+          collectionFileUpdated(filePath, {
+            path: filePath,
+            content: updatedContent,
+            collectionType: params.collectionType,
+            updatedAt: new Date()            
+          })
+        })
     }
   }
 
@@ -162,13 +192,16 @@ export default class ContentEditor extends Component {
   }
 
   handleDeleteFile() {
-    const { currentBranch, newFileMode, targetFile, deleteFile } = this.props
+    const { currentBranch, params, selectedCollectionFile, deleteFile, collectionFileRemoved } = this.props
 
-    if (newFileMode) {
+    if (params.splate === 'new') {
       return this.closeDeleteFileModel()
     }
     this.closeDeleteFileModel()
-    deleteFile(currentBranch, targetFile)
+    deleteFile(currentBranch, selectedCollectionFile.path)
+      .then(() => {
+        collectionFileRemoved(selectedCollectionFile.path)
+      })
   }
 
   handleFilePathInput(evt) {
@@ -227,7 +260,7 @@ export default class ContentEditor extends Component {
   }
 
   render() {
-    const { editorUpdating, selectedFolder, selectedCollectionFile, params } = this.props
+    const { editorUpdating, selectedCollectionFile, params } = this.props
     const { filePathInputClass, formData, newFilePath, currentSchema } = this.state
 
     let currentFileName = selectedCollectionFile ? selectedCollectionFile.path : ''
@@ -310,7 +343,7 @@ export default class ContentEditor extends Component {
               className={`${filePathInputClass}`}
               type='text'
               ref="filePath"
-              value={newFilePath || currentFileName}
+              value={params.splat === 'new' ? newFilePath : currentFileName}
               onChange={::this.handleFilePathInput}
               placeholder='Filename' />
           </div>

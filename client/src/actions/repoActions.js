@@ -8,6 +8,9 @@ export const FILE_REMOVED = 'FILE_REMOVED'
 export const FILE_ADDED = 'FILE_ADDED'
 export const FILE_REPLACED = 'FILE_REPLACED'
 export const RESET_REPO_DATA = 'RESET_REPO_DATA'
+export const COLLECTION_FILE_REMOVED = 'COLLECTION_FILE_REMOVED'
+export const COLLECTION_FILE_ADDED = 'FILE_ADDED'
+export const COLLECTION_FILE_UPDATED = 'COLLECTION_FILE_UPDATED'
 
 export function fetchRepoInfo() {
   return dispatch => {
@@ -190,6 +193,33 @@ export function fileReplaced(name, oldPath, newPath) {
     dispatch({
       payload: { name, oldPath, newPath },
       type: FILE_REPLACED
+    })
+  }
+}
+
+
+export function collectionFileAdded(newFileData) {
+  return dispatch => {
+    dispatch({
+      payload: { newFileData },
+      type: COLLECTION_FILE_ADDED
+    })
+  }
+}
+export function collectionFileRemoved(path) {
+  return dispatch => {
+    dispatch({
+      payload: { path },
+      type: COLLECTION_FILE_REMOVED
+    })
+  }
+}
+
+export function collectionFileUpdated(oldPath, newFileData) {
+  return dispatch => {
+    dispatch({
+      payload: { oldPath, newFileData },
+      type: COLLECTION_FILE_UPDATED
     })
   }
 }

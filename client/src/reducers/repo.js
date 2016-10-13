@@ -1,6 +1,7 @@
 import Immutable from 'immutable'
 
-import { CHANGE_REPO_STATE, FILE_REMOVED, FILE_ADDED, FILE_REPLACED, RESET_REPO_DATA } from '../actions/repoActions'
+import { CHANGE_REPO_STATE, FILE_REMOVED, FILE_ADDED, FILE_REPLACED, RESET_REPO_DATA,
+  COLLECTION_FILE_ADDED, COLLECTION_FILE_REMOVED, COLLECTION_FILE_UPDATED } from '../actions/repoActions'
 
 const initialState = Immutable.fromJS({
   branches: undefined,
@@ -8,9 +9,6 @@ const initialState = Immutable.fromJS({
   repoName: undefined,
   filesMeta: undefined,
   loading: false,
-  schema: undefined,
-  selectedFolder: undefined,
-  collectionType: undefined,
   collections: undefined,
   schemas: undefined,
   selectedCollectionFile: undefined
@@ -23,15 +21,12 @@ export default function repo (state = initialState, action) {
     case RESET_REPO_DATA:
       return initialState
     case CHANGE_REPO_STATE:
-      var { branches, filesMeta, currentBranch, loading, schema, selectedFolder, repoName, collectionType, collections, schemas, selectedCollectionFile } = action.payload
+      var { branches, filesMeta, currentBranch, loading, repoName, collections, schemas, selectedCollectionFile } = action.payload
       if(branches) state = state.set('branches', branches)
-      if(selectedFolder) state = state.set('selectedFolder', selectedFolder)
       if(filesMeta) state = state.set('filesMeta', filesMeta)
       if(currentBranch) state = state.set('currentBranch', currentBranch)
       if(loading !== undefined) state = state.set('loading', loading)
-      if(schema) state = state.set('schema', schema)
       if(repoName) state = state.set('repoName', repoName)
-      if(collectionType) state = state.set('collectionType', collectionType)
       if(schemas) state = state.set('schemas', schemas)
       if(collections) state = state.set('collections', collections)
       if(selectedCollectionFile) state = state.set('selectedCollectionFile', selectedCollectionFile)
@@ -98,7 +93,27 @@ export default function repo (state = initialState, action) {
         }
       })
       state = state.set('filesMeta', updatedFileMeta)
-      return state  
+      return state
+    case COLLECTION_FILE_ADDED:
+      let addingCol = state.get('collections').push(action.payload.newFileData)
+      state = state.set('collections', addingCol)
+      return state
+    case COLLECTION_FILE_REMOVED:
+      let removingCol = state.get('collections').filter(i => {
+        return i.path !== action.payload.path
+      })
+      state = state.set('collections', removingCol)
+      return state      
+    case COLLECTION_FILE_UPDATED:
+      var { oldPath, newFileData } = action.payload
+      let updatingCol = state.get('collections').map(i => {
+        if (i.path === oldPath) {
+          return newFileData
+        }
+        return i
+      })
+      state = state.set('collections', updatingCol)
+      return state 
     default:
       return state
   }

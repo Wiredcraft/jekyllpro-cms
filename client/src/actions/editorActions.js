@@ -41,9 +41,9 @@ export function updateFile(branch, path, content) {
     return updateRepoFile({ branch, path, content })
       .then(data => {
         dispatch({
-          payload: { content: content, targetFile: path, loading: false },
+          payload: { loading: false },
           type: CHANGE_EDITOR_STATE
-        })
+        }) 
       })
       .catch(err => {
         dispatch({
@@ -65,15 +65,10 @@ export function replaceFile(branch, oldPath, newPath, content) {
     })
     let addFileRequest = updateRepoFile({ branch, path: newPath, content })
       .then(data => {
-        let newFilename = data.content.name
-
-        return Promise.all([
-            dispatch({
-              payload: { content: content, targetFile: newPath, loading: false },
-              type: CHANGE_EDITOR_STATE
-            }),
-            dispatch(fileReplaced(newFilename, oldPath, newPath))
-          ])
+        dispatch({
+          payload: { loading: false },
+          type: CHANGE_EDITOR_STATE
+        })
       })
       .catch(err => {
         dispatch({
@@ -105,14 +100,10 @@ export function addNewFile(branch, path, content) {
 
     return updateRepoFile({ branch, path, content, message: `add ${path}` })
       .then(data => {
-        let newFilename = data.content.name
-        return Promise.all([
-            dispatch({
-              payload: { content: content, targetFile: path, loading: false },
-              type: CHANGE_EDITOR_STATE
-            }),
-            dispatch(fileAdded(newFilename, path))
-          ])
+        dispatch({
+          payload: { content: content, targetFile: path, loading: false },
+          type: CHANGE_EDITOR_STATE
+        })
       })
       .catch(err => {
         dispatch({
@@ -126,12 +117,6 @@ export function addNewFile(branch, path, content) {
 export function deleteFile(branch, path) {
   return dispatch => {
     return deleteRepoFile({ branch, path })
-      .then(data => {
-        return Promise.all([
-            dispatch(fileRemoved(path)),
-            dispatch({type: DELETE_EXISTING_FILE})
-          ])
-      })
   }
 }
 
