@@ -19,7 +19,7 @@ class Editor extends Component {
   render() {
     const { mode, params, schemas } = this.props
 
-    if (schemas && mode === 'collection') {      
+    if (schemas && mode === 'collection') {
       return (<ContentEditor {...this.props} />)
     }
     return <section id='content' />
@@ -33,6 +33,7 @@ function mapStateToProps(state, { params:
     currentBranch: branch || 'master',
     selectedFolder: state.repo.get('selectedFolder'),
     schemas: state.repo.get('schemas'),
+    collections: state.repo.get('collections'),
     filesMeta: state.repo.get('filesMeta'),
     pagesMeta: state.repo.get('pagesMeta'),
     selectedCollectionFile: state.repo.get('selectedCollectionFile'),

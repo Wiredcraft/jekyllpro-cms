@@ -25,8 +25,9 @@ export default class ContentEditor extends Component {
   }
 
   componentWillMount() {
-    if (this.props.selectedCollectionFile) {
-      this.getCurrentSchema(this.updateEditorForm)
+    const { selectedCollectionFile } = this.props
+    if (selectedCollectionFile) {
+      this.getCurrentSchema(selectedCollectionFile.collectionType, this.updateEditorForm)
     }
   }
 
@@ -42,7 +43,11 @@ export default class ContentEditor extends Component {
     }
     if (newFileMode) {
       this.getCurrentSchema(params.collectionType, () => {
-        this.setState({formData: {}})
+        let s = this.state.currentSchema
+        this.setState({
+          formData: {},
+          newFilePath: (s.jekyll.dir + '/' + dateToString(new Date()) + '-new-file')
+        })
       })
     }
   }
@@ -66,7 +71,7 @@ export default class ContentEditor extends Component {
 
     // content is markdown or html
     const docConfigObj = parseYamlInsideMarkdown(content)
-    console.log(docConfigObj)
+    // console.log(docConfigObj)
     if(docConfigObj) {
       const schemaObj = currentSchema.JSONSchema.properties
       Object.keys(schemaObj).forEach((prop) => {
@@ -186,9 +191,10 @@ export default class ContentEditor extends Component {
 
   switchFileByLang() {
     // const {language} = this.state
-    const { fetchFileContent, createEmptyFile, toRoute } = this.props
+    const { selectCollectionFile, collections, toRoute } = this.props
     const filePath = this.refs.filePath.value
     const { collectionType, branch } = this.props.params
+    console.log(filePath)
     if (!filePath) return
     let pathArray = filePath.split('/')
     let len = pathArray.length
@@ -199,18 +205,21 @@ export default class ContentEditor extends Component {
       pathArray.splice(pathArray.length - 1, 0 , 'en')
     }
     anotherFilePath = pathArray.join('/')
+    let isExistingFile = collections.some((item) =>{
+      if (item.path === anotherFilePath) {
+        selectCollectionFile(item)
+        return true
+      }
+      return false
+    })
+    if (isExistingFile) {
+      this.updateEditorForm()
+      toRoute(`/${collectionType}/${branch}/${anotherFilePath}`)
+    } else {
+      toRoute(`/${collectionType}/${branch}/new`)
 
-    let toUrl = `/${collectionType}/${branch}/${anotherFilePath}`
-    fetchFileContent(branch, anotherFilePath)
-      .then(() => {
-        toRoute(toUrl)
-      })
-      .catch(err => {
-        //newFileMode is true
-        console.log(err.message)
-        createEmptyFile()
-        this.setState({ newFilePath: anotherFilePath})
-      })
+      this.setState({ newFilePath: anotherFilePath})
+    }
   }
 
   changeLanguage(evt) {
@@ -220,9 +229,8 @@ export default class ContentEditor extends Component {
   render() {
     const { editorUpdating, selectedFolder, selectedCollectionFile, params } = this.props
     const { filePathInputClass, formData, newFilePath, currentSchema } = this.state
-    let currentFileName = (params.splat === 'new') && currentSchema
-      ? (currentSchema.jekyll.dir + '/' + dateToString(new Date()) + '-new-file')
-      : selectedCollectionFile.path
+
+    let currentFileName = selectedCollectionFile ? selectedCollectionFile.path : ''
 
     if (!currentSchema) return (<section id='content' />)
 
@@ -254,19 +262,19 @@ export default class ContentEditor extends Component {
               <div className="options">
                 {
                   (currentSchema.jekyll.id === 'posts') ? [
-                    <a className="selected" onClick={::this.handlePublishInput}>
+                    <a className="selected" onClick={::this.handlePublishInput} key='publish'>
                       {this.state.isPostPublished && <svg height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
                         <path d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z"></path>
                       </svg>}
                       <span>Published</span>
                     </a>,
-                    <a className="selected" onClick={::this.handleDraftInput}>
+                    <a className="selected" onClick={::this.handleDraftInput} key='draft'>
                       {this.state.isDraft && <svg height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
                         <path d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z"></path>
                       </svg>}
                       <span>Draft</span>
                     </a>,
-                    <hr />
+                    <hr key='hr' />
                   ]
                   : <span></span>
                 }
