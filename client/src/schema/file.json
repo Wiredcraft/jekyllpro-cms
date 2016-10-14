@@ -1,12 +1,10 @@
 { 
-  "title": "Data",
-  "jekyll": {
-    "type": "others",
-    "id": "data",
-    "dir": "_data"
-  },
+  "title": "File",
   "JSONSchema": {
     "type": "object",
+    "required": [
+      "body"
+    ],
     "properties": {
       "body": {
         "type": "string",

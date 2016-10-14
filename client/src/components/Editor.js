@@ -7,10 +7,8 @@ import { toRoute } from '../actions/routeActions'
 import { selectCollectionFile, collectionFileRemoved, collectionFileAdded, collectionFileUpdated } from '../actions/repoActions'
 
 import ContentEditor from './Editor/ContentEditor'
+import FileEditor from './Editor/FileEditor'
 
-const defaultSchema = require('../schema')
-
-// TODO: remove linePattern
 class Editor extends Component {
   constructor() {
     super()
@@ -21,6 +19,9 @@ class Editor extends Component {
 
     if (schemas && mode === 'collection') {
       return (<ContentEditor {...this.props} />)
+    }
+    if ((mode === 'file' || params.collectionType === 'files') && params.splat) {
+      return <FileEditor {...this.props} />
     }
     return <section id='content' />
   }
