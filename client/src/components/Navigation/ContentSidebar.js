@@ -13,7 +13,7 @@ export default class ContentSidebar extends Component {
 
   componentDidMount() {
     const { fetchRepoIndex, params, changeEditorMode, selectCollectionFile, currentBranch } = this.props
-    fetchRepoIndex({ branch: currentBranch, refresh: true })
+    fetchRepoIndex({ branch: currentBranch })
     .then((indexData) => {
       if (params && (params.splat !== 'new')) {
         indexData.collections.some(item => {

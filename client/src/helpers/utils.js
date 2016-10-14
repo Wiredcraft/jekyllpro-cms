@@ -9,3 +9,39 @@ export function purgeObject (obj) {
     }
   })
 }
+
+export function parseFileTree (treeArray) {
+  let directory = { _contents: [] }
+
+  let files = treeArray.filter((item) => {
+    return item.type === 'blob'
+  })
+  let folders = treeArray.filter((item) => {
+    return item.type === 'tree'
+  })
+  folders.forEach(item => {
+    let pathStr = item.path.split('/')
+    var p = directory
+    pathStr.forEach((s) => {
+      if (!p[s]) {
+        p[s] = { _contents: [] }
+      }
+      p = p[s]
+    })
+  })
+  files.forEach(item => {
+    let pathStr = item.path.split('/')
+    let len = pathStr.length
+    var n = directory
+
+    pathStr.forEach((f, idx) => {
+      if (idx === len - 1) {        
+        n._contents.push({ name: pathStr[len - 1], path: item.path })
+      } else {
+        n = n[f]        
+      }
+    })
+  })
+
+  return directory
+}

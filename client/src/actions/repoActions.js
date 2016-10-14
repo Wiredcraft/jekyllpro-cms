@@ -1,5 +1,5 @@
 /* global API_BASE_URL */
-import { getRepoDetails, getRepoMeta, getRepoBranchList, getBranchSchema, getRepoIndex } from '../helpers/api'
+import { getRepoDetails, getRepoMeta, getRepoBranchList, getBranchSchema, getRepoIndex, getRepoTree } from '../helpers/api'
 import { parseFilesMeta } from '../helpers/repo'
 import { fetchDefaultSchema, cleanEditor } from './editorActions'
 
@@ -30,6 +30,19 @@ export function fetchRepoIndex(opts) {
       .then(data => {        
         dispatch({
           payload: {collections: data.collections, schemas: data.schemas},
+          type: CHANGE_REPO_STATE
+        })
+        return data
+      })
+  }
+}
+
+export function fetchRepoTree(branch) {
+  return dispatch => {
+    return getRepoTree(branch)
+      .then(data => {        
+        dispatch({
+          payload: {treeMeta: data.tree},
           type: CHANGE_REPO_STATE
         })
         return data

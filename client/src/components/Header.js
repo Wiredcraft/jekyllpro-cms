@@ -69,6 +69,11 @@ export default class Header extends Component {
     document.body.classList.add('ReactModal__Body--open')
   }
 
+  toFilesView() {
+    const { currentBranch, toRoute } = this.props
+    toRoute(`/files/${currentBranch}/`)
+  }
+
   render () {
     const { branches, currentBranch, avatar, userName, repoName, isBranchPrivate, schemas,
     params: { collectionType, branch, splat: filePath} } = this.props
@@ -156,7 +161,7 @@ export default class Header extends Component {
           </div>
         </span>
 
-        <a className='item files' href='files.html'>
+        <a className='item files' onClick={::this.toFilesView}>
           <svg height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'>
             <path d='M3,3H9V7H3V3M15,10H21V14H15V10M15,17H21V21H15V17M13,13H7V18H13V20H7L5,20V9H7V11H13V13Z' />
           </svg>

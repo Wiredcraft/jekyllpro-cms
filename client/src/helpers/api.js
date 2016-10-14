@@ -116,3 +116,12 @@ export function getRepoIndex ({ branch, refresh }) {
   })
 }
 
+export function getRepoTree (branch) {
+  branch = branch ? branch : 'master'
+  var requestUrl = `${API_BASE_URL}/api/repository/tree?branch=${branch}`
+  return new Promise((resolve, reject) => {
+    request('GET', requestUrl)
+      .end(generalResponseHandler(resolve, reject))
+  })
+}
+
