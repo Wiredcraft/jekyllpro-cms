@@ -159,6 +159,10 @@ const initRoutes = (app) => {
   .all(users.requireAuthentication, repository.requireGithubAPI)
   .get(repository.getBranchSchema)
 
+  app.route('/api/repository/tree')
+  .all(users.requireAuthentication, repository.requireGithubAPI)
+  .get(repository.listBranchTree)
+
   app.route('/api/repository/hooks')
   .all(users.requireAuthentication, repository.requireGithubAPI)
   .get(repository.listHooks)

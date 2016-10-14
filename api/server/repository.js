@@ -348,6 +348,19 @@ const manageHook = (req, res) => {
   }
 }
 
+const listBranchTree = (req, res) => {
+  var repo = req.githubRepo
+  var branch = req.query.branch || 'master'
+  repo.getTree(`${branch}?recursive=1`)
+    .then(data => {
+      return res.status(200).json(data.data)
+    })
+    .catch(err => {
+      console.log(err)
+      return res.status(err.status).json(err.response.data)
+    })
+}
+
 export default {
   requireGithubAPI,
   getRepoDetails,
@@ -360,6 +373,7 @@ export default {
   getRepoBranchIndex,
   refreshIndexAndSave,
   getFreshIndexFromGithub,
+  listBranchTree,
   listHooks,
   manageHook
 }
