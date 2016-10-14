@@ -59,3 +59,9 @@ export function retriveContent(text) {
 export function serializeObjtoYaml(obj) {
   return '---\n' + yaml.safeDump(obj) + '---\n'
 }
+
+
+export function parseFilenameFromYaml (text) {
+  let doc = parseYamlInsideMarkdown(text)
+  return doc ? doc.title : null
+}

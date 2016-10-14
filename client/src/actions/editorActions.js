@@ -5,29 +5,6 @@ import { fileRemoved, fileAdded, fileReplaced } from './repoActions'
 export const CHANGE_EDITOR_STATE = 'CHANGE_EDITOR_STATE'
 export const RESET_EDITOR_DATA = 'RESET_EDITOR_DATA'
 
-// export function fetchFileContent(branch, path) {
-//   return dispatch => {
-//     dispatch({
-//       payload: { loading: true },
-//       type: CHANGE_EDITOR_STATE
-//     })
-
-//     return getRepoMeta({ branch, path, raw: true})
-//       .then(data => {
-//         dispatch({
-//           payload: { content: data, targetFile: path, loading: false },
-//           type: CHANGE_EDITOR_STATE
-//         })
-//       })
-//       .catch(err => {
-//         dispatch({
-//           payload: { loading: false },
-//           type: CHANGE_EDITOR_STATE
-//         })
-//       })
-//   }
-// }
-
 export function addNewFile(branch, path, content) {
   return dispatch => {
     dispatch({

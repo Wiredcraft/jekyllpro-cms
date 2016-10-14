@@ -1,4 +1,6 @@
 import React, { Component } from 'react'
+import moment from 'moment'
+import { parseFilenameFromYaml } from '../../helpers/markdown'
 
 export default class ContentSidebar extends Component {
   constructor(props) {
@@ -137,8 +139,8 @@ export default class ContentSidebar extends Component {
                 <a className={selectedItem === c.path ? 'active': ''}
                   onClick={this.selectItem.bind(this, c)}
                   key={c.path}>
-                  <h2>{c.path}</h2>
-                  <small className='meta'>{c.collectionType} . {c.lastUpdatedAt}</small>
+                  <h2>{parseFilenameFromYaml(c.content)}</h2>
+                  <small className='meta'>{c.collectionType} . {moment(Date.parse(c.lastUpdatedAt)).fromNow()}</small>
                 </a>
               )
             })

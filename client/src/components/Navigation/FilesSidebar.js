@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { parseFileTree } from "../../helpers/utils"
+import { parseFileTree } from '../../helpers/utils'
 import FileIcon from '../svg/FileIcon'
 import FolderIcon from '../svg/FolderIcon'
 

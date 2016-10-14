@@ -104,7 +104,6 @@ export default class AppComponent extends React.Component {
 function mapStateToProps(state) {
   return {
     repoLoading: state.repo.get('loading'),
-    collectionType: state.repo.get('collectionType'),
     currentBranch: state.repo.get('currentBranch'),
     isLoggedIn: state.user.get('isLoggedIn')
   }

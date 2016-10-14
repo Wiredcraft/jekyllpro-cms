@@ -49,4 +49,3 @@ export function parseFileTree (treeArray) {
 export function notTextFile (filename) {
   return /\.(jpeg|png|jpg|gif|ico|ttf|eot|svg|woff(2)?)(\?[a-z0-9]+)?$/.test(filename)
 }
-

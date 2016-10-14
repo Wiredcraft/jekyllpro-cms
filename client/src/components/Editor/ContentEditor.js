@@ -278,8 +278,8 @@ export default class ContentEditor extends Component {
                 <option value='cn'>Chinese</option>
               </select>
             </span>
-            <small className='description'>See the&nbsp; 
-              <a onClick={::this.switchFileByLang}>{this.state.language === 'en' ? 'Chinese version' : 'English version'}</a>
+            <small className='description'>Translations:&nbsp; 
+              <a onClick={::this.switchFileByLang}>{this.state.language === 'en' ? 'Chinese' : 'English'}</a>
             </small>
           </div>}
 
