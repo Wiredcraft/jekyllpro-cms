@@ -30,8 +30,8 @@ export default class ContentSidebar extends Component {
   }
 
   handleNameFilter(evt) {
-    const {filteredType, collections} = this.props
-    const {filtering} = this.state
+    const { collections } = this.props
+    const { filteredType, filtering } = this.state
     const val = evt.target.value
     if (val === '') {
       if (filtering) {

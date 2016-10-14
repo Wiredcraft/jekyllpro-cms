@@ -14,8 +14,9 @@ export default class FilesSidebar extends Component {
   }
 
   componentDidMount() {
-    const { fetchRepoTree, params, currentBranch } = this.props
+    const { fetchRepoTree, params, currentBranch, changeEditorMode } = this.props
     fetchRepoTree(currentBranch)
+    changeEditorMode('files')
   }
 
   handleNameFilter(evt) {

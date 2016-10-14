@@ -5,10 +5,8 @@ import { connect } from 'react-redux'
 
 import { confirmUserIsLogged } from '../actions/userActions'
 import Header from './Header'
-import Menu from './Menu'
 import Editor from './Editor'
 import Navigation from './Navigation'
-import Media from './Media'
 import 'styles/_supplement.scss'
 import 'styles/_scss/main.scss'
 

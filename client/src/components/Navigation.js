@@ -6,8 +6,8 @@ import { withRouter } from 'react-router'
 import ContentSidebar from './Navigation/ContentSidebar'
 import FilesSidebar from './Navigation/FilesSidebar'
 
-import { fetchFileContent, createEmptyFile, changeEditorMode } from '../actions/editorActions'
-import { fetchFilesMeta, fetchRepoIndex, selectCollectionFile, fetchRepoTree } from '../actions/repoActions'
+import { changeEditorMode, selectCollectionFile } from '../actions/editorActions'
+import { fetchRepoIndex, fetchRepoTree } from '../actions/repoActions'
 import { toRoute } from '../actions/routeActions'
 
 class Navigation extends Component {
@@ -33,18 +33,13 @@ function mapStateToProps(state, { params:
     loading: state.repo.get('loading'),
     collections: state.repo.get('collections'),
     schemas: state.repo.get('schemas'),
-    selectedFolder: state.repo.get('selectedFolder'),
-    collectionType: collectionType || state.repo.get('collectionType'),
-    filesMeta: state.repo.get('filesMeta'),
     treeMeta: state.repo.get('treeMeta'),
-    pagesMeta: state.repo.get('pagesMeta'),
     currentBranch: branch || 'master'
   }
 }
 
 function mapDispatchToProps (dispatch) {
-  return bindActionCreators({ fetchFileContent, createEmptyFile, fetchFilesMeta,
-    fetchRepoIndex, toRoute, changeEditorMode, selectCollectionFile, fetchRepoTree }, dispatch)
+  return bindActionCreators({ fetchRepoIndex, toRoute, changeEditorMode, selectCollectionFile, fetchRepoTree }, dispatch)
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Navigation)
