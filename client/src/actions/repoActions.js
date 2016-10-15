@@ -129,10 +129,10 @@ export function isBranchPrivate(branch) {
 * files/collection files data operation in local app state
 */
 
-export function fileAdded(name, path) {
+export function fileAdded(path) {
   return dispatch => {
     dispatch({
-      payload: {name, path},
+      payload: {path},
       type: FILE_ADDED
     })
   }
@@ -147,10 +147,10 @@ export function fileRemoved(path) {
   }
 }
 
-export function fileReplaced(name, oldPath, newPath) {
+export function fileReplaced(oldPath, newPath) {
   return dispatch => {
     dispatch({
-      payload: { name, oldPath, newPath },
+      payload: { oldPath, newPath },
       type: FILE_REPLACED
     })
   }

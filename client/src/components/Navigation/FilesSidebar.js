@@ -19,6 +19,15 @@ export default class FilesSidebar extends Component {
     changeEditorMode('files')
   }
 
+  componentDidUpdate(prevProps) {
+    const { params } = this.props
+    const fileChanged = params.splat !== prevProps.params.splat 
+
+    if (fileChanged) {
+      this.setState({ selectedItem: params.splat })
+    }
+  }
+
   handleNameFilter(evt) {
 
   }

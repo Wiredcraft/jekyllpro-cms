@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import Form from 'react-jsonschema-form'
+import ReactDOM from 'react-dom'
 
 import { getRepoMeta } from '../../helpers/api'
 import { parseYamlInsideMarkdown, retriveContent, serializeObjtoYaml } from '../../helpers/markdown'
@@ -11,13 +12,12 @@ import ModalCustomStyle from '../Modal'
 
 const defaultSchema = require('../../schema/file.json')
 
-// TODO: remove linePattern
 export default class FileEditor extends Component {
   constructor(props) {
     super(props)
     this.state = {
       targetFile: props.params ? props.params.splat : undefined,
-      currentFileName: null,
+      currentFilePath: '',
       filePathInputClass: '',
       formData: {},
       showDeleteFileModel: false,
@@ -45,17 +45,26 @@ export default class FileEditor extends Component {
     if (path === 'new') {
       return this.setState({
         formData: {},
+        currentFilePath: 'file_path',
+        targetFile: null,
         notTextFile: false
       })      
     }
     if (notTextFile(path)) {
-      return this.setState({ notTextFile: true })
+      return this.setState({
+        formData: {},
+        currentFilePath: '',
+        targetFile: null,
+        notTextFile: true
+      })
     }
-    getRepoMeta({ branch, path, raw: true})
+    let request = getRepoMeta({ branch, path, raw: true})
+    this.props.updatingEditor(request)
       .then(content => {
         this.setState({
           formData: { body: content },
-          currentFileName: path,
+          currentFilePath: path,
+          targetFile: path,
           notTextFile: false
         })
       })  
@@ -64,33 +73,40 @@ export default class FileEditor extends Component {
   updateResult(data) {
     const formData = Object.assign({}, data)
     const {
-      selectedFolder,
+      params,
       currentBranch,
-      content,
-      targetFile,
-      newFileMode,
-      fetchBranchSchema,
+      toRoute,
+      fileAdded,
+      fileReplaced,
       updateFile,
-      deleteFile,
       replaceFile,
       addNewFile
     } = this.props
-    const filePath = this.refs.filePath.value
-    if (!filePath) {
+    const { targetFile, currentFilePath } = this.state
+    // const filePath = this.refs.filePath.value
+    if (!currentFilePath) {
       console.error('no file path specified')
       this.setState({filePathInputClass: 'error'})
       return
     }
     let updatedContent = formData.body
 
-    if (newFileMode) {
-      addNewFile(currentBranch, filePath, updatedContent)
-    } else if (filePath !== targetFile) {
+    if (params.splat === 'new') {
+      addNewFile(currentBranch, currentFilePath, updatedContent)
+        .then(() => {
+          fileAdded(currentFilePath)
+          toRoute(`/files/${currentBranch}/`)
+        })
+    } else if (currentFilePath !== targetFile) {
       // file path changed
-      let oldPath = targetFile
-      replaceFile(currentBranch, oldPath, filePath, updatedContent)
+      replaceFile(currentBranch, targetFile, currentFilePath, updatedContent)
+        .then(() => {
+          fileReplaced(targetFile, currentFilePath)
+          toRoute(`/files/${currentBranch}/`)
+        })
     } else {
-      updateFile(currentBranch, filePath, updatedContent)
+      updateFile(currentBranch, targetFile, updatedContent)
+      this.setState({ formData: { body: updatedContent } })
     }
   }
 
@@ -104,13 +120,17 @@ export default class FileEditor extends Component {
   }
 
   handleDeleteFile() {
-    const { currentBranch, newFileMode, targetFile, deleteFile, fetchBranchSchema } = this.props
-
-    if (newFileMode) {
+    const { currentBranch, params, deleteFile, fileRemoved, toRoute } = this.props
+    const { targetFile } = this.state
+    if (params.splat === 'new') {
       return this.closeDeleteFileModel()
     }
     this.closeDeleteFileModel()
     deleteFile(currentBranch, targetFile)
+      .then(() => {
+        fileRemoved(targetFile)
+        toRoute(`/files/${currentBranch}/`)
+      })
   }
 
   closeDeleteFileModel () {
@@ -118,12 +138,12 @@ export default class FileEditor extends Component {
   }
 
   handleFilePathInput(evt) {
-    this.setState({currentFileName: evt.target.value})
+    this.setState({currentFilePath: evt.target.value})
   }
 
   render() {
     const { newFileMode, editorUpdating, params } = this.props
-    const { filePathInputClass, formData, currentFileName, notTextFile } = this.state
+    const { filePathInputClass, formData, currentFilePath, notTextFile } = this.state
 
     if (notTextFile) {
       return <section id='content' />
@@ -174,7 +194,7 @@ export default class FileEditor extends Component {
               className={`${filePathInputClass}`}
               type='text'
               ref="filePath"
-              value={currentFileName}
+              value={currentFilePath}
               onChange={::this.handleFilePathInput}
               placeholder='Filename' />
           </div>

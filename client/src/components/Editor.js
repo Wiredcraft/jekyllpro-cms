@@ -2,9 +2,10 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 
-import { updateFile, deleteFile, addNewFile, replaceFile } from '../actions/editorActions'
+import { selectCollectionFile, updateFile, deleteFile, addNewFile, replaceFile, updatingEditor } from '../actions/editorActions'
 import { toRoute } from '../actions/routeActions'
-import { selectCollectionFile, collectionFileRemoved, collectionFileAdded, collectionFileUpdated } from '../actions/repoActions'
+import { collectionFileRemoved, collectionFileAdded, collectionFileUpdated,
+  fileAdded, fileRemoved, fileReplaced } from '../actions/repoActions'
 
 import ContentEditor from './Editor/ContentEditor'
 import FileEditor from './Editor/FileEditor'
@@ -46,11 +47,15 @@ function mapDispatchToProps (dispatch) {
     collectionFileRemoved,
     collectionFileAdded,
     collectionFileUpdated,
+    fileAdded,
+    fileRemoved,
+    fileReplaced,
     updateFile,
     deleteFile,
     addNewFile,
     replaceFile,
-    selectCollectionFile
+    selectCollectionFile,
+    updatingEditor
   }, dispatch)
 }
 
