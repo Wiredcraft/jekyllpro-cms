@@ -49,3 +49,20 @@ export function parseFileTree (treeArray) {
 export function notTextFile (filename) {
   return /\.(jpeg|png|jpg|gif|ico|ttf|eot|svg|woff(2)?)(\?[a-z0-9]+)?$/.test(filename)
 }
+
+export function parseFilePathByLang (filePath) {
+  const LANGUAGES = ['en']
+  let pathArray = filePath.split('/')
+  let len = pathArray.length
+  let translations = {}
+  LANGUAGES.forEach(lang => {
+    if (len >= 2 && pathArray[pathArray.length - 2] === lang) {
+      pathArray.splice(pathArray.length - 2, 1)
+      translations['cn'] = pathArray.join('/')
+    } else {
+      pathArray.splice(pathArray.length - 1, 0 , lang)
+      translations[lang] = pathArray.join('/')
+    }
+  })
+  return translations
+}

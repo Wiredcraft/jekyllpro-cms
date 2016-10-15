@@ -5,15 +5,16 @@ import ReactDOM from 'react-dom'
 import { parseYamlInsideMarkdown, retriveContent, serializeObjtoYaml } from '../../helpers/markdown'
 import DeleteIcon from '../svg/DeleteIcon'
 import customWidgets from './CustomWidgets'
-import { dateToString, purgeObject } from "../../helpers/utils"
+import { dateToString, purgeObject, parseFilePathByLang } from "../../helpers/utils"
 import Modal from 'react-modal'
 import ModalCustomStyle from '../Modal'
 
 
 export default class ContentEditor extends Component {
-  constructor() {
-    super()
+  constructor(props) {
+    super(props)
     this.state = {
+      currentFilePath: props.params ? props.params.splat : '',
       isPostPublished: true,
       isDraft: false,
       language: 'cn',
@@ -39,6 +40,7 @@ export default class ContentEditor extends Component {
       ((params.splat !== prevProps.params.splat) || (params.collectionType !== prevProps.params.collectionType))
 
     if (fileChanged) {
+      this.setState({ currentFilePath: selectedCollectionFile.path })
       this.getCurrentSchema(selectedCollectionFile.collectionType, this.updateEditorForm)
     }
     if (newFileMode) {
@@ -46,7 +48,7 @@ export default class ContentEditor extends Component {
         let s = this.state.currentSchema
         this.setState({
           formData: {},
-          newFilePath: (s.jekyll.dir + '/' + dateToString(new Date()) + '-new-file')
+          currentFilePath: (s.jekyll.dir + '/' + dateToString(new Date()) + '-new-file')
         })
       })
     }
@@ -205,7 +207,7 @@ export default class ContentEditor extends Component {
   }
 
   handleFilePathInput(evt) {
-    this.setState({newFilePath: evt.target.value})
+    this.setState({ currentFilePath: evt.target.value })
   }
 
   handlePublishInput(evt) {
@@ -225,19 +227,13 @@ export default class ContentEditor extends Component {
   switchFileByLang() {
     // const {language} = this.state
     const { selectCollectionFile, collections, toRoute } = this.props
-    const filePath = this.refs.filePath.value
+    const { currentFilePath } = this.state
+    // const filePath = this.refs.filePath.value
     const { collectionType, branch } = this.props.params
-    console.log(filePath)
-    if (!filePath) return
-    let pathArray = filePath.split('/')
-    let len = pathArray.length
-    let anotherFilePath = ''
-    if (len >= 2 && pathArray[pathArray.length - 2] === 'en') {
-      pathArray.splice(pathArray.length - 2, 1)
-    } else {
-      pathArray.splice(pathArray.length - 1, 0 , 'en')
-    }
-    anotherFilePath = pathArray.join('/')
+    console.log(currentFilePath)
+    if (!currentFilePath) return
+    let translations = parseFilePathByLang(currentFilePath)
+    let anotherFilePath = translations['en'] ? translations['en'] : translations['cn']
     let isExistingFile = collections.some((item) =>{
       if (item.path === anotherFilePath) {
         selectCollectionFile(item)
@@ -251,7 +247,7 @@ export default class ContentEditor extends Component {
     } else {
       toRoute(`/${collectionType}/${branch}/new`)
 
-      this.setState({ newFilePath: anotherFilePath})
+      this.setState({ currentFilePath: anotherFilePath })
     }
   }
 
@@ -261,10 +257,9 @@ export default class ContentEditor extends Component {
 
   render() {
     const { editorUpdating, selectedCollectionFile, params } = this.props
-    const { filePathInputClass, formData, newFilePath, currentSchema } = this.state
-
-    let currentFileName = selectedCollectionFile ? selectedCollectionFile.path : ''
-
+    const { filePathInputClass, formData, currentFilePath, currentSchema } = this.state
+    let translations = parseFilePathByLang(currentFilePath)
+    console.log(translations)
     if (!currentSchema) return (<section id='content' />)
 
     return (
@@ -279,7 +274,7 @@ export default class ContentEditor extends Component {
               </select>
             </span>
             <small className='description'>Translations:&nbsp; 
-              <a onClick={::this.switchFileByLang}>{this.state.language === 'en' ? 'Chinese' : 'English'}</a>
+              <a onClick={::this.switchFileByLang}>{translations['cn'] ? 'Chinese' : 'English'}</a>
             </small>
           </div>}
 
@@ -343,7 +338,7 @@ export default class ContentEditor extends Component {
               className={`${filePathInputClass}`}
               type='text'
               ref="filePath"
-              value={params.splat === 'new' ? newFilePath : currentFileName}
+              value={currentFilePath}
               onChange={::this.handleFilePathInput}
               placeholder='Filename' />
           </div>
