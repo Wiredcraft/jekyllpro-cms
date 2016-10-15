@@ -56,7 +56,7 @@ const addEditButtonsSrc = (branch, url) => `(function() {
       window.document.body.appendChild(editableElement);
       console.log('link added');
     });
-    console.log("injected edit links");
+    console.log('injected edit links');
   }
   addEditableElements(document.querySelectorAll('[data-source]'));
 })();`
@@ -85,16 +85,21 @@ export default class AppComponent extends React.Component {
           <iframe onLoad={() => {
             window.frames[0].window.eval(addEditButtonsSrc(this.props.params.branch, 'http://app.jekyllpro.com/'))
           }}
-          style={{width: "100%", minHeight: "2000px", paddingTop: "39px"}}
+          style={{width: '100%', minHeight: '2000px', paddingTop: '39px'}}
           src={`http://${this.props.params.branch}.beta-starbucks-com-cn.wiredcraft.jekyllpro.com`} />
         }
 
       </div>
     ) : (
       <div id='landing' style={{'display': 'block'}}>
-        <div className='card'>
-          <button className='button primary' onClick={() => this.login()}>Login with GitHub</button>
-          <small>No account yet? <a>Sign up for free</a>.</small>
+        <div className='box'>
+          <section className='card'>
+            <img src='./assets/logo.svg' className='logo' alt='Jekyll+' />
+            <button className='button primary' onClick={() => this.login()}>Login with GitHub</button>
+          </section>
+          <small>Built by <a href='http://wiredcraft.com' target='_blank'>Wiredcraft</a>
+            | <a href='http://github.com/Wiredcraft/jekyllplus/wiki' target='_blank'>Documentation</a>
+            | <a href='http://github.com/Wiredcraft/jekyllplus' target='_blank'>Code</a></small>
         </div>
       </div>
     )
