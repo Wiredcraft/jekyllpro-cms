@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
 import { parseFileTree, parseFileArray } from '../../helpers/utils'
-import FileIcon from '../svg/FileIcon'
-import FolderIcon from '../svg/FolderIcon'
+import NestedFileTreeView from './NestedFileTreeView'
 
 let filteringTimeout = null
 
@@ -59,17 +58,18 @@ export default class FilesSidebar extends Component {
     toRoute(`/files/${currentBranch}/new`)
   }
 
-  selectItem(item) {
+  selectItem() {
     const { toRoute, currentBranch } = this.props
-    this.setState({ selectedItem: item })
-    toRoute(`/files/${currentBranch}/${item}`)
+    return function (item) {
+      toRoute(`/files/${currentBranch}/${item}`)
+    }
   }
 
   render() {
     const { treeMeta } = this.props
     const { selectedItem, filteredTreeMeta, filtering } = this.state
     const parsedTreeMeta = treeMeta && parseFileTree(treeMeta)
-    console.log(filteredTreeMeta)
+
     let records = filtering ? parseFileArray(filteredTreeMeta) : parsedTreeMeta
 
     return (
@@ -95,43 +95,10 @@ export default class FilesSidebar extends Component {
           </span>
         </header>
         <span className='body tree'>
-          <ul>
-          {
-            records && records._contents.map(file => {
-              return (
-                <li key={file.path} onClick={this.selectItem.bind(this, file.path)}>
-                  <a className={selectedItem === file.path ? 'active' : ''}>
-                    <FileIcon /><span>{file.name}</span>
-                  </a>
-                </li>
-              )
-            })
-          }
-          {
-            records && Object.keys(records)
-            .filter(k => { return k !== '_contents' })
-            .map(prop => {
-              return (
-                <li key={prop}>
-                  <a><FolderIcon /><span>{prop}</span></a>
-                  <ul>
-                    {
-                      records[prop]._contents.map(c => {
-                        return (
-                          <li key={c.path} onClick={this.selectItem.bind(this, c.path)}>
-                            <a className={selectedItem === c.path ? 'active' : ''}>
-                              <FileIcon /><span>{c.name}</span>
-                            </a>
-                          </li>
-                        )
-                      })
-                    }
-                  </ul>
-                </li>
-              )
-            })
-          }
-          </ul>
+          <NestedFileTreeView
+            selected={selectedItem}
+            onclick={::this.selectItem}
+            directory={records} />
         </span>
       </nav>
     )
