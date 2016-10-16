@@ -1,14 +1,16 @@
 import React, { Component } from 'react'
-import { parseFileTree } from '../../helpers/utils'
+import { parseFileTree, parseFileArray } from '../../helpers/utils'
 import FileIcon from '../svg/FileIcon'
 import FolderIcon from '../svg/FolderIcon'
+
+let filteringTimeout = null
 
 export default class FilesSidebar extends Component {
   constructor(props) {
     super(props)
     this.state = {
       selectedItem: props.params ? props.params.splat : undefined,
-      filteredFileTreeMeta: {},
+      filteredTreeMeta: [],
       filtering: false
     }
   }
@@ -29,7 +31,27 @@ export default class FilesSidebar extends Component {
   }
 
   handleNameFilter(evt) {
+    const val = evt.target.value
+    if (filteringTimeout) {
+      clearTimeout(filteringTimeout)
+    }
+    filteringTimeout = setTimeout(this.filterTreeMetaByName.bind(this, val), 400)
+  }
 
+  filterTreeMetaByName(name) {
+    const { treeMeta } = this.props
+    const { filteredType, filtering } = this.state
+    if (name === '') {
+      if (filtering) {
+        return this.setState({filtering: false})
+      }
+      return
+    }
+    name = name.toLowerCase()
+    let f = treeMeta.filter(item => {
+      return item.path.toLowerCase().indexOf(name) > -1
+    })
+    this.setState({ filteredTreeMeta: f, filtering: true })
   }
 
   createNewFile() {
@@ -45,8 +67,10 @@ export default class FilesSidebar extends Component {
 
   render() {
     const { treeMeta } = this.props
-    const { selectedItem } = this.state
+    const { selectedItem, filteredTreeMeta, filtering } = this.state
     const parsedTreeMeta = treeMeta && parseFileTree(treeMeta)
+    console.log(filteredTreeMeta)
+    let records = filtering ? parseFileArray(filteredTreeMeta) : parsedTreeMeta
 
     return (
       <nav id='sidebar'>
@@ -73,7 +97,7 @@ export default class FilesSidebar extends Component {
         <span className='body tree'>
           <ul>
           {
-            parsedTreeMeta && parsedTreeMeta._contents.map(file => {
+            records && records._contents.map(file => {
               return (
                 <li key={file.path} onClick={this.selectItem.bind(this, file.path)}>
                   <a className={selectedItem === file.path ? 'active' : ''}>
@@ -84,7 +108,7 @@ export default class FilesSidebar extends Component {
             })
           }
           {
-            parsedTreeMeta && Object.keys(parsedTreeMeta)
+            records && Object.keys(records)
             .filter(k => { return k !== '_contents' })
             .map(prop => {
               return (
@@ -92,7 +116,7 @@ export default class FilesSidebar extends Component {
                   <a><FolderIcon /><span>{prop}</span></a>
                   <ul>
                     {
-                      parsedTreeMeta[prop]._contents.map(c => {
+                      records[prop]._contents.map(c => {
                         return (
                           <li key={c.path} onClick={this.selectItem.bind(this, c.path)}>
                             <a className={selectedItem === c.path ? 'active' : ''}>

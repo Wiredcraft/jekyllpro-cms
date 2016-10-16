@@ -46,6 +46,28 @@ export function parseFileTree (treeArray) {
   return directory
 }
 
+export function parseFileArray (fileArray) {
+  let directory = { _contents: [] }
+
+  fileArray.forEach(item => {
+    let pathStr = item.path.split('/')
+    let len = pathStr.length
+    var n = directory
+
+    pathStr.forEach((f, idx) => {
+      if (idx === len - 1) {        
+        n._contents.push({ name: pathStr[len - 1], path: item.path })
+      } else {
+        if (!n[f]) {
+          n[f] = { _contents: [] }
+        }
+        n = n[f]        
+      }
+    })
+  })
+  return directory
+}
+
 export function notTextFile (filename) {
   return /\.(jpeg|png|jpg|gif|ico|ttf|eot|svg|woff(2)?)(\?[a-z0-9]+)?$/.test(filename)
 }
