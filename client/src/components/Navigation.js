@@ -27,9 +27,12 @@ class Navigation extends Component {
   }
 }
 
-function mapStateToProps(state, { params:
-  { collectionType, branch, splat: path } }) {
+function mapStateToProps(state, {
+  params: { collectionType, branch, splat: path },
+  location: { pathname, query } }) {
   return {
+    pathname: pathname,
+    query: query,
     loading: state.repo.get('loading'),
     collections: state.repo.get('collections'),
     schemas: state.repo.get('schemas'),

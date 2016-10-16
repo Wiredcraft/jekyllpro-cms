@@ -78,10 +78,10 @@ export default class AppComponent extends React.Component {
 
     return isLoggedIn ? (
       <div id='app' className={repoLoading? 'spinning' : ''}>
-        <Header params={this.props.params} />
+        <Header params={this.props.params} location={this.props.location} />
         {this.props.location.query.viewing !== 'site' ? [
-          currentBranch && <Navigation key='nav' params={this.props.params} /> ,
-          currentBranch && <Editor key='editor' params={this.props.params} />] :
+          currentBranch && <Navigation key='nav' params={this.props.params} location={this.props.location} /> ,
+          currentBranch && <Editor key='editor' params={this.props.params} location={this.props.location} />] :
           <iframe onLoad={() => {
             window.frames[0].window.eval(addEditButtonsSrc(this.props.params.branch, 'http://app.jekyllpro.com/'))
           }}

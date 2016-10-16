@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import moment from 'moment'
+import { Link } from 'react-router'
 import { parseFilenameFromYaml } from '../../helpers/markdown'
 
 export default class ContentSidebar extends Component {
@@ -14,7 +15,7 @@ export default class ContentSidebar extends Component {
   }
 
   componentDidMount() {
-    const { fetchRepoIndex, params, changeEditorMode, selectCollectionFile, currentBranch } = this.props
+    const { fetchRepoIndex, params, changeEditorMode, selectCollectionFile, currentBranch, query } = this.props
     fetchRepoIndex({ branch: currentBranch })
     .then((indexData) => {
       if (params && (params.splat !== 'new')) {
@@ -28,7 +29,17 @@ export default class ContentSidebar extends Component {
           return false
         })
       }
+      if (query && query.filteredType) {
+        this.handleTypeFilter(query.filteredType)
+      }
     })
+  }
+
+  componentDidUpdate(prevProps) {
+    const { filteredType } = this.props.query
+    if (filteredType && (filteredType !== prevProps.query.filteredType)) {
+      this.handleTypeFilter(filteredType)
+    }
   }
 
   handleNameFilter(evt) {
@@ -55,14 +66,18 @@ export default class ContentSidebar extends Component {
   }
 
   handleTypeFilter(type) {
+    // const { toRoute, pathname } = this.props
     let f = this.props.collections.filter(item => {
       return item.collectionType === type
     })
     this.setState({filtering: true, filteredType: type, filteredCollections: f})
+    // toRoute(`${pathname}?filteredType=${type}`)
   }
 
   removeFilterType() {
+    const { toRoute, pathname } = this.props
     this.setState({filtering: false, filteredType: null})
+    toRoute(`${pathname}`)
   }
 
   selectItem(item) {
@@ -74,7 +89,7 @@ export default class ContentSidebar extends Component {
   }
 
   render() {
-    const { schemas, collections } = this.props
+    const { schemas, collections, pathname, query } = this.props
     const { filteredCollections, filtering, selectedItem, filteredType } = this.state
     let records = filtering ? filteredCollections : collections
 
@@ -112,7 +127,7 @@ export default class ContentSidebar extends Component {
               <div className="options">
                 {
                   schemas && schemas.map((s, idx) => {
-                    return <a key={s.title} onClick={this.handleTypeFilter.bind(this, s.jekyll.id)}>Content: {s.title}</a>
+                    return <Link  key={s.title} to={`${pathname}?filteredType=${s.jekyll.id}`}>Content: {s.title}</Link>
                   })
                 }
               </div>

@@ -259,7 +259,7 @@ export default class ContentEditor extends Component {
     const { editorUpdating, selectedCollectionFile, params } = this.props
     const { filePathInputClass, formData, currentFilePath, currentSchema } = this.state
     let translations = parseFilePathByLang(currentFilePath)
-    console.log(translations)
+
     if (!currentSchema) return (<section id='content' />)
 
     return (
