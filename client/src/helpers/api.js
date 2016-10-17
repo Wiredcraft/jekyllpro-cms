@@ -122,3 +122,28 @@ export function getRepoTree (branch) {
   })
 }
 
+export function listRepoHooks () {
+  var requestUrl = `${API_BASE_URL}/api/repository/hooks`
+  return new Promise((resolve, reject) => {
+    repoRequest('GET', requestUrl)
+      .end(generalResponseHandler(resolve, reject))
+  })
+}
+
+export function registerRepoHook () {
+  var requestUrl = `${API_BASE_URL}/api/repository/hooks`
+  return new Promise((resolve, reject) => {
+    repoRequest('POST', requestUrl)
+      .send({ action: 'create' })
+      .end(generalResponseHandler(resolve, reject))
+  })
+}
+
+export function removeRepoHook () {
+  var requestUrl = `${API_BASE_URL}/api/repository/hooks`
+  return new Promise((resolve, reject) => {
+    repoRequest('POST', requestUrl)
+      .send({ action: 'delete' })
+      .end(generalResponseHandler(resolve, reject))
+  })
+}

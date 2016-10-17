@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import Modal from 'react-modal'
 import ModalCustomStyle from './index'
+import { registerRepoHook } from '../../helpers/api'
 
 export default class SettingModal extends Component {
 
@@ -32,6 +33,7 @@ export default class SettingModal extends Component {
             <h2>Settings</h2>
           </header>
           <section className="body">
+            { !props.hasIndexHook && <button onClick={(res) => {registerRepoHook()}}>registerRepoHook</button> }
             <ul className="list branches">
               <li className="active">
                 <h3>master <span className="type ok">Public</span> <span className="type info">Variants</span></h3>

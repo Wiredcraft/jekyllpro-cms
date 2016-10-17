@@ -9,6 +9,7 @@ import {
   isBranchPrivate,
   fetchRepoInfo,
   resetRepoData,
+  listHooks
 } from '../actions/repoActions'
 import { resetEditorData } from '../actions/editorActions'
 import { logout } from '../actions/userActions'
@@ -36,7 +37,7 @@ export default class Header extends Component {
 
   componentWillMount() {
     const { collectionType, branch, splat: path } = this.props.params
-    const { fetchRepoInfo, getAllBranch } = this.props
+    const { fetchRepoInfo, getAllBranch, listHooks } = this.props
     // routing
     if (collectionType && branch) {
       this.setState({ selectedType: collectionType })
@@ -46,10 +47,11 @@ export default class Header extends Component {
       this.setState({showRepoModal: true})
     } else {
       fetchRepoInfo().then(res => {
-        getAllBranch()
+        return getAllBranch()
+      }).then(s => {
+        listHooks()
       })
     }
-
   }
 
   componentDidMount() {
@@ -233,7 +235,8 @@ function mapStateToProps(state, { params:
     schemas: state.repo.get('schemas'),
     userName: state.user.get('userName'),
     branches: state.repo.get('branches'),
-    repoName: state.repo.get('repoName')
+    repoName: state.repo.get('repoName'),
+    hasIndexHook: state.repo.get('hasIndexHook')
   }
 }
 
@@ -246,6 +249,7 @@ function mapDispatchToProps (dispatch) {
     resetEditorData,
     isBranchPrivate,
     toRoute,
+    listHooks,
     fetchRepoInfo
   }, dispatch)
 }

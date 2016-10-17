@@ -10,7 +10,8 @@ const initialState = Immutable.fromJS({
   loading: false,
   collections: undefined,
   schemas: undefined,
-  treeMeta: undefined
+  treeMeta: undefined,
+  hasIndexHook: false
 })
 
 export default function repo (state = initialState, action) {
@@ -21,7 +22,7 @@ export default function repo (state = initialState, action) {
       return initialState
 
     case CHANGE_REPO_STATE:
-      var { branches, treeMeta, currentBranch, loading, repoName, collections, schemas } = action.payload
+      var { branches, treeMeta, currentBranch, loading, repoName, collections, schemas, hasIndexHook } = action.payload
       if(branches) state = state.set('branches', branches)
       if(currentBranch) state = state.set('currentBranch', currentBranch)
       if(loading !== undefined) state = state.set('loading', loading)
@@ -29,6 +30,7 @@ export default function repo (state = initialState, action) {
       if(schemas) state = state.set('schemas', schemas)
       if(collections) state = state.set('collections', collections)
       if(treeMeta) state = state.set('treeMeta', treeMeta)
+      if(hasIndexHook) state = state.set('hasIndexHook', hasIndexHook)
       return state
 
     case FILE_REMOVED:

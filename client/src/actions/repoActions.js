@@ -1,5 +1,6 @@
 /* global API_BASE_URL */
-import { getRepoDetails, getRepoMeta, getRepoBranchList, getRepoIndex, getRepoTree } from '../helpers/api'
+import { getRepoDetails, getRepoMeta, getRepoBranchList, getRepoIndex, getRepoTree,
+  listRepoHooks, registerRepoHook } from '../helpers/api'
 import { cleanEditor } from './editorActions'
 
 export const CHANGE_REPO_STATE = 'CHANGE_REPO_STATE'
@@ -57,6 +58,24 @@ export function fetchRepoTree(branch) {
           type: CHANGE_REPO_STATE
         })
         return data
+      })
+  }
+}
+
+export function listHooks () {
+  return dispatch => {
+    return listRepoHooks()
+      .then(data => {
+        let hasIndexHook = data.some((hook) => {
+          return hook.config.url === `${API_BASE_URL}/api/webhook`
+        })
+        dispatch({
+          payload: { hasIndexHook },
+          type: CHANGE_REPO_STATE
+        })  
+      })
+      .catch(err => {
+        console.log(err)      
       })
   }
 }
