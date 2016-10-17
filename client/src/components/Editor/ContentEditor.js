@@ -33,7 +33,7 @@ export default class ContentEditor extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    const { params, selectedCollectionFile } = this.props
+    const { params, selectedCollectionFile, location } = this.props
 
     const fileChanged = selectedCollectionFile.path !== prevProps.selectedCollectionFile.path
     const newFileMode = (params.splat === 'new') &&
@@ -46,6 +46,9 @@ export default class ContentEditor extends Component {
     if (newFileMode) {
       this.getCurrentSchema(params.collectionType, () => {
         let s = this.state.currentSchema
+        if (location.query.translation) {
+          return
+        }
         this.setState({
           formData: {},
           currentFilePath: (s.jekyll.dir + '/' + dateToString(new Date()) + '-new-file')
@@ -225,12 +228,10 @@ export default class ContentEditor extends Component {
   }
 
   switchFileByLang() {
-    // const {language} = this.state
     const { selectCollectionFile, collections, toRoute } = this.props
     const { currentFilePath } = this.state
-    // const filePath = this.refs.filePath.value
     const { collectionType, branch } = this.props.params
-    console.log(currentFilePath)
+
     if (!currentFilePath) return
     let translations = parseFilePathByLang(currentFilePath)
     let anotherFilePath = translations['en'] ? translations['en'] : translations['cn']
@@ -245,9 +246,9 @@ export default class ContentEditor extends Component {
       this.updateEditorForm()
       toRoute(`/${collectionType}/${branch}/${anotherFilePath}`)
     } else {
-      toRoute(`/${collectionType}/${branch}/new`)
+      toRoute(`/${collectionType}/${branch}/new?translation=true`)
 
-      this.setState({ currentFilePath: anotherFilePath })
+      this.setState({ currentFilePath: anotherFilePath, formData: {} })
     }
   }
 
