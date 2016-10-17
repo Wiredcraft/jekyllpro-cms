@@ -287,11 +287,14 @@ const getFreshIndexFromGithub = (repoObject, branch) => {
     })
 }
 
-const listJekyllplusHook = (repoObject) => {
+const listJekyllplusHook = (repoObject, hookUrl) => {
   return repoObject.listHooks()
     .then(list => {
+      if (!hookUrl) {
+        return list.data
+      }
       let arr = list.data.filter((hook) => {
-        return hook.config.url === hookConfig.config.url
+        return hook.config.url === hookUrl
       })
       if (arr.length > 0) {
         return arr[0]
@@ -302,9 +305,9 @@ const listJekyllplusHook = (repoObject) => {
 
 const listHooks = (req, res) => {
   var repo = req.githubRepo
-  listJekyllplusHook(repo)
+  repo.listHooks()
     .then(data => {
-      return res.status(200).json(data)
+      return res.status(200).json(data.data)
     })
     .catch(err => {
       console.log(err)
@@ -314,13 +317,14 @@ const listHooks = (req, res) => {
 
 const manageHook = (req, res) => {
   var repo = req.githubRepo
+  var mergedConfig = Object.assign({}, hookConfig, (req.body.config || {}))
   if (req.body.action === 'create') {
-    listJekyllplusHook(repo)
+    listJekyllplusHook(repo, mergedConfig.config.url)
       .then(hook => {
         if (hook) {
           return res.status(200).json(hook)
         }
-        return repo.createHook(hookConfig)
+        return repo.createHook(mergedConfig)
       })
       .then(data => {
         return res.status(200).json(data.data)
@@ -331,7 +335,7 @@ const manageHook = (req, res) => {
       })
   }
   if (req.body.action === 'delete') {
-    listJekyllplusHook(repo)
+    listJekyllplusHook(repo, mergedConfig.config.url)
       .then(hook => {
         if (hook) {
           return repo.deleteHook(hook.id)
