@@ -25,13 +25,14 @@ import Cookie from 'js-cookie'
 
 @connect(mapStateToProps, mapDispatchToProps)
 export default class Header extends Component {
-  constructor() {
-    super()
+  constructor(props) {
+    super(props)
     this.state = {
       showProfileModal: false,
       showRepoModal: false,
       showSettingModal: false,
-      selectedType: ''
+      selectedType: '',
+      activeView: props.params.collectionType === 'files' ? 'files' : 'content'
     }
   }
 
@@ -89,17 +90,19 @@ export default class Header extends Component {
   toFilesView() {
     const { currentBranch, toRoute } = this.props
     toRoute(`/files/${currentBranch}/`)
+    this.setState({ activeView: 'files' })
   }
 
   toContentView() {
     const { toRoute } = this.props
     toRoute(`/`)    
+    this.setState({ activeView: 'content' })
   }
 
   render () {
     const { branches, currentBranch, avatar, userName, repoName, isBranchPrivate, schemas,
     params: { collectionType, branch, splat: filePath} } = this.props
-    const { selectedType } = this.state
+    const { selectedType, activeView } = this.state
 
     return (
       <header id='header'>
@@ -168,7 +171,7 @@ export default class Header extends Component {
           </svg>
         </a>
         <span className='menu content'>
-          <a className='item active' onClick={::this.toContentView}>
+          <a className={activeView === 'content' ? 'item active' : 'item'} onClick={::this.toContentView}>
             <svg height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'>
               <path d='M 19,7L 9,7L 9,5L 19,5M 15,15L 9,15L 9,13L 15,13M 19,11L 9,11L 9,9L 19,9M 20,2L 8,2C 6.9,2 6,2.9 6,4L 6,16C 6,17.1 6.9,18 8,18L 20,18C 21.1,18 22,17.1 22,16L 22,4C 22,2.9 21.1,2 20,2 Z M 4,6L 2,6L 2,20C 2,21.1 2.9,22 4,22L 18,22L 18,20L 4,20L 4,6 Z '></path>
             </svg>
@@ -192,7 +195,7 @@ export default class Header extends Component {
           </div>
         </span>
 
-        <a className='item files' onClick={::this.toFilesView}>
+        <a className={activeView === 'files' ? 'item active' : 'item'} onClick={::this.toFilesView}>
           <svg height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'>
             <path d='M3,3H9V7H3V3M15,10H21V14H15V10M15,17H21V21H15V17M13,13H7V18H13V20H7L5,20V9H7V11H13V13Z' />
           </svg>
