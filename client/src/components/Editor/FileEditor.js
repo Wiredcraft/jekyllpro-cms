@@ -61,6 +61,9 @@ export default class FileEditor extends Component {
     let request = getRepoMeta({ branch, path, raw: true})
     this.props.updatingEditor(request)
       .then(content => {
+        if (typeof content === 'object') {
+          content = JSON.stringify(content)
+        }
         this.setState({
           formData: { body: content },
           currentFilePath: path,
