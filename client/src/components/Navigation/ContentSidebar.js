@@ -107,7 +107,7 @@ export default class ContentSidebar extends Component {
               <div className="options">
                 {
                   schemas && schemas.map((s, idx) => {
-                    return <a key={s.title} onClick={this.createNewFileByType.bind(this, s.jekyll.id)}>{s.title}</a>
+                    return <a key={`${s.title}-${idx}`} onClick={this.createNewFileByType.bind(this, s.jekyll.id)}>{s.title}</a>
                   })
                 }
               </div>
@@ -127,7 +127,7 @@ export default class ContentSidebar extends Component {
               <div className="options">
                 {
                   schemas && schemas.map((s, idx) => {
-                    return <Link  key={s.title} to={`${pathname}?filteredType=${s.jekyll.id}`}>Content: {s.title}</Link>
+                    return <Link  key={`${s.title}-${idx}`} to={`${pathname}?filteredType=${s.jekyll.id}`}>Content: {s.title}</Link>
                   })
                 }
               </div>
@@ -149,11 +149,11 @@ export default class ContentSidebar extends Component {
         </header>
         <section className='body list'>
           {
-            records && records.map(c => {
+            records && records.map((c, idx) => {
               return (
                 <a className={selectedItem === c.path ? 'active': ''}
                   onClick={this.selectItem.bind(this, c)}
-                  key={c.path}>
+                  key={`${c.path}-${idx}`}>
                   <h2>{parseFilenameFromYaml(c.content)}</h2>
                   <small className='meta'>{c.collectionType} . {moment(Date.parse(c.lastUpdatedAt)).fromNow()}</small>
                 </a>
