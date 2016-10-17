@@ -13,7 +13,7 @@ export function confirmUserIsLogged() {
           type: CHANGE_LOGIN_STATE,
           payload: { isLoggedIn: true, userName: data.login, avatar: data.avatar_url }
         })
-        dispatch(fetchRepoInfo())
+        // dispatch(fetchRepoInfo())
       })
   }
 }

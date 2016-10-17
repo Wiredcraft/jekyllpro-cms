@@ -10,6 +10,7 @@ import {
   fetchRepoInfo,
   resetRepoData,
 } from '../actions/repoActions'
+import { resetEditorData } from '../actions/editorActions'
 import { logout } from '../actions/userActions'
 import { toRoute } from '../actions/routeActions'
 
@@ -19,6 +20,7 @@ import Modal from 'react-modal'
 import ModalCustomStyle from './Modal'
 import RepoSelectionModal from './Modal/RepoSelectionModal'
 import SettingModal from './Modal/SettingModal'
+import Cookie from 'js-cookie'
 
 @connect(mapStateToProps, mapDispatchToProps)
 export default class Header extends Component {
@@ -34,11 +36,29 @@ export default class Header extends Component {
 
   componentWillMount() {
     const { collectionType, branch, splat: path } = this.props.params
+    const { fetchRepoInfo, getAllBranch } = this.props
     // routing
     if (collectionType && branch) {
       this.setState({ selectedType: collectionType })
     }
-    this.props.getAllBranch()
+
+    if (!Cookie.get('repoOwner') || !Cookie.get('repoName')) {
+      this.setState({showRepoModal: true})
+    } else {
+      fetchRepoInfo().then(res => {
+        getAllBranch()
+      })
+    }
+
+  }
+
+  componentDidMount() {
+    const { location: { pathname, query } } = this.props
+    if (query && query.modal === 'repoSelection') {
+      this.setState({showRepoModal: true})
+    } else if (query && query.modal === 'repoSettings') {
+      this.setState({showSettingModal: true})
+    }
   }
 
   handleBranchChange(newBranch) {
@@ -223,6 +243,7 @@ function mapDispatchToProps (dispatch) {
     checkoutBranch,
     logout,
     resetRepoData,
+    resetEditorData,
     isBranchPrivate,
     toRoute,
     fetchRepoInfo

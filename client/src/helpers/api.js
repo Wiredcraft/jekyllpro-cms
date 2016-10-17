@@ -4,8 +4,13 @@ import Cookie from 'js-cookie'
 
 const request = (method, url) => {
   return superagent(method, url)
-    .set('X-REPO-OWNER', Cookie.get('repoOwner') || 'Wiredcraft')
-    .set('X-REPO-NAME', Cookie.get('repoName') || 'beta.starbucks.com.cn')
+    .withCredentials()
+}
+
+const repoRequest = (method, url) => {
+  return superagent(method, url)
+    .set('X-REPO-OWNER', Cookie.get('repoOwner'))
+    .set('X-REPO-NAME', Cookie.get('repoName'))
     .withCredentials()
 }
 
@@ -61,7 +66,7 @@ export function getUserRepos (opts) {
 
 export function getRepoDetails () {
   return new Promise((resolve, reject) => {
-    request('GET', `${API_BASE_URL}/api/repository/details`)
+    repoRequest('GET', `${API_BASE_URL}/api/repository/details`)
       .end(generalResponseHandler(resolve, reject))
   })
 }
@@ -70,21 +75,21 @@ export function getRepoMeta ({ branch, path, raw }) {
   var requestUrl = `${API_BASE_URL}/api/repository` + setQueryParam({ branch, path, raw })
 
   return new Promise((resolve, reject) => {
-    request('GET', requestUrl)
+    repoRequest('GET', requestUrl)
       .end(generalResponseHandler(resolve, reject))
   })
 }
 
 export function getRepoBranchList () {
   return new Promise((resolve, reject) => {
-    request('GET', `${API_BASE_URL}/api/repository/branch`)
+    repoRequest('GET', `${API_BASE_URL}/api/repository/branch`)
       .end(generalResponseHandler(resolve, reject))
   }) 
 }
 
 export function updateRepoFile ({ branch, path, content, message }) {
   return new Promise((resolve, reject) => {
-    request('POST', `${API_BASE_URL}/api/repository`)
+    repoRequest('POST', `${API_BASE_URL}/api/repository`)
       .send({ branch, path, content, message: message || `update ${path}` })
       .end(generalResponseHandler(resolve, reject))
   }) 
@@ -92,18 +97,10 @@ export function updateRepoFile ({ branch, path, content, message }) {
 
 export function deleteRepoFile ({ branch, path }) {
   return new Promise((resolve, reject) => {
-    request('DELETE', `${API_BASE_URL}/api/repository`)
+    repoRequest('DELETE', `${API_BASE_URL}/api/repository`)
       .send({ branch, path })
       .end(generalResponseHandler(resolve, reject))
   }) 
-}
-
-export function getBranchSchema ({ branch, path }) {
-  var requestUrl = `${API_BASE_URL}/api/repository/schema` + setQueryParam({ branch, path })
-  return new Promise((resolve, reject) => {
-    request('GET', requestUrl)
-      .end(generalResponseHandler(resolve, reject))
-  })
 }
 
 export function getRepoIndex ({ branch, refresh }) {
@@ -111,7 +108,7 @@ export function getRepoIndex ({ branch, refresh }) {
   refresh = refresh ? refresh : false
   var requestUrl = `${API_BASE_URL}/api/repository/index?branch=${branch}&refresh=${refresh}`
   return new Promise((resolve, reject) => {
-    request('GET', requestUrl)
+    repoRequest('GET', requestUrl)
       .end(generalResponseHandler(resolve, reject))
   })
 }
@@ -120,7 +117,7 @@ export function getRepoTree (branch) {
   branch = branch ? branch : 'master'
   var requestUrl = `${API_BASE_URL}/api/repository/tree?branch=${branch}`
   return new Promise((resolve, reject) => {
-    request('GET', requestUrl)
+    repoRequest('GET', requestUrl)
       .end(generalResponseHandler(resolve, reject))
   })
 }
