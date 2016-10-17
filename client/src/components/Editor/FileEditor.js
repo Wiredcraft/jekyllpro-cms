@@ -153,7 +153,7 @@ export default class FileEditor extends Component {
     }
 
     return (
-      <section id='content' className={editorUpdating ? 'spinning' : ''}>
+      <section id='content' className={editorUpdating ? 'loading' : ''}>
         <aside className='sidebar'>
           <span className="bundle">
             <button className="button primary save" onClick={::this.handleSaveBtn}>Save</button>

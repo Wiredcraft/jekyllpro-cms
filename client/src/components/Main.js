@@ -77,7 +77,7 @@ export default class AppComponent extends React.Component {
     const { isLoggedIn, repoLoading, currentBranch } = this.props
 
     return isLoggedIn ? (
-      <div id='app' className={repoLoading? 'spinning' : ''}>
+      <div id='app' className={repoLoading? 'loading' : ''}>
         <Header params={this.props.params} location={this.props.location} />
         {this.props.location.query.viewing !== 'site' ? [
           currentBranch && <Navigation key='nav' params={this.props.params} location={this.props.location} /> ,
