@@ -31,7 +31,7 @@ export default class Header extends Component {
       showProfileModal: false,
       showRepoModal: false,
       showSettingModal: false,
-      selectedType: '',
+      selectedType: undefined,
       activeView: props.params.collectionType === 'files' ? 'files' : 'content'
     }
   }
@@ -61,6 +61,13 @@ export default class Header extends Component {
       this.setState({showRepoModal: true})
     } else if (query && query.modal === 'repoSettings') {
       this.setState({showSettingModal: true})
+    }
+  }
+
+  componentDidUpdate(prevProps) {
+    const { query } = this.props.location
+    if (query && (query.filteredType !== this.state.selectedType)) {
+      this.setState({ selectedType: query.filteredType })
     }
   }
 
