@@ -6,7 +6,7 @@ import { getRepoMeta } from '../../helpers/api'
 import { parseYamlInsideMarkdown, retriveContent, serializeObjtoYaml } from '../../helpers/markdown'
 import DeleteIcon from '../svg/DeleteIcon'
 import customWidgets from './CustomWidgets'
-import { notTextFile } from "../../helpers/utils"
+import { notTextFile, isImageFile } from "../../helpers/utils"
 import Modal from 'react-modal'
 import ModalCustomStyle from '../Modal'
 
@@ -53,7 +53,7 @@ export default class FileEditor extends Component {
     if (notTextFile(path)) {
       return this.setState({
         formData: {},
-        currentFilePath: '',
+        currentFilePath: path,
         targetFile: null,
         notTextFile: true
       })
@@ -145,11 +145,24 @@ export default class FileEditor extends Component {
   }
 
   render() {
-    const { newFileMode, editorUpdating, params } = this.props
+    const { newFileMode, editorUpdating, params, repoName, currentBranch } = this.props
     const { filePathInputClass, formData, currentFilePath, notTextFile } = this.state
 
     if (notTextFile) {
-      return <section id='content' />
+      if (isImageFile(currentFilePath)) {
+        return (
+          <section id='content'>
+            <img src={`https://github.com/${repoName}/blob/${currentBranch}/${currentFilePath}?raw=true`} />
+          </section>
+        )
+      }
+      return (
+        <section id='content'>
+          <a href={`https://github.com/${repoName}/blob/${currentBranch}/${currentFilePath}?raw=true`} target='_blank'>
+            {currentFilePath}
+          </a>
+        </section>
+      )        
     }
 
     return (
