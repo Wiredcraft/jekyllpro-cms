@@ -39,7 +39,12 @@ const getRepoDetails = (req, res, next) => {
       'description',
       'private',
       'url',
-      'default_branch'
+      'html_url',
+      'default_branch',
+      'created_at',
+      'updated_at',
+      'pushed_at',
+      'permissions'
     ])
     details.owner = _.pick(data.data.owner, [
       'login',
