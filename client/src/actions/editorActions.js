@@ -27,9 +27,9 @@ export function updatingEditor (promiseObj) {
   }
 }
 
-export function addNewFile (branch, path, content) {
+export function addNewFile (branch, path, content, options) {
   return dispatch => {
-    return updateRepoFile({ branch, path, content, message: `add ${path}` })
+    return updateRepoFile({ branch, path, content, message: `add ${path}`, options })
   }
 }
 
@@ -39,15 +39,15 @@ export function deleteFile (branch, path) {
   }
 }
 
-export function updateFile (branch, path, content) {
+export function updateFile (branch, path, content, options) {
   return dispatch => {
-    return updateRepoFile({ branch, path, content })
+    return updateRepoFile({ branch, path, content, options })
   }
 }
 
-export function replaceFile (branch, oldPath, newPath, content) {
+export function replaceFile (branch, oldPath, newPath, content, options) {
   return (dispatch) => {
-    return updateRepoFile({ branch, path: newPath, content })
+    return updateRepoFile({ branch, path: newPath, content, options })
       .then( res => {
         deleteRepoFile({ branch: branch, path: oldPath })
       })

@@ -9,6 +9,7 @@ import { collectionFileRemoved, collectionFileAdded, collectionFileUpdated,
 
 import ContentEditor from './Editor/ContentEditor'
 import FileEditor from './Editor/FileEditor'
+import FileUploader from './Editor/FileUploader'
 
 class Editor extends Component {
   constructor() {
@@ -16,7 +17,7 @@ class Editor extends Component {
   }
 
   render() {
-    const { mode, params, schemas } = this.props
+    const { mode, params, schemas, location } = this.props
 
     if (schemas && mode === 'collection') {
       return (<ContentEditor {...this.props} />)
@@ -24,6 +25,10 @@ class Editor extends Component {
     if ((mode === 'files' || params.collectionType === 'files') && params.splat) {
       return <FileEditor {...this.props} />
     }
+    if (location.query && location.query['upload']) {
+      return <FileUploader {...this.props} />
+    }
+
     return <section id='content' />
   }
 }
@@ -33,6 +38,7 @@ function mapStateToProps(state, { params:
 
   return {
     currentBranch: branch || 'master',
+    repoName: state.repo.get('repoName'),
     schemas: state.repo.get('schemas'),
     collections: state.repo.get('collections'),
     selectedCollectionFile: state.editor.get('selectedCollectionFile'),

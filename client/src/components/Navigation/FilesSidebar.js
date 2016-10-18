@@ -65,6 +65,11 @@ export default class FilesSidebar extends Component {
     }
   }
 
+  toFileUpload () {
+    const { toRoute, currentBranch } = this.props
+    toRoute(`/files/${currentBranch}/?upload=true`)
+  }
+
   render() {
     const { treeMeta } = this.props
     const { selectedItem, filteredTreeMeta, filtering } = this.state
@@ -76,7 +81,7 @@ export default class FilesSidebar extends Component {
       <nav id='sidebar'>
         <header className='header'>
           <span className='controls'>
-            <button className='button primary icon tooltip-bottom'>
+            <button className='button primary icon tooltip-bottom' onClick={::this.toFileUpload}>
               <svg height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'>
                 <path d='M9,16V10H5L12,3L19,10H15V16H9M5,20V18H19V20H5Z' />
               </svg>

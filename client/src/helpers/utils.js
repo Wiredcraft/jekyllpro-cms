@@ -72,6 +72,10 @@ export function notTextFile (filename) {
   return /\.(jpeg|png|jpg|gif|ico|ttf|eot|svg|woff(2)?)(\?[a-z0-9]+)?$/.test(filename)
 }
 
+export function isImageFile (filename) {
+  return /\.(jpeg|png|jpg|gif)(\?[a-z0-9]+)?$/.test(filename)
+}
+
 export function parseFilePathByLang (filePath) {
   const LANGUAGES = ['en']
   let pathArray = filePath.split('/')
