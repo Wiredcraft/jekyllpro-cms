@@ -19,9 +19,11 @@ const MongoStore = connectMongo(session)
 const initMiddleware = (app) => {
   // Request body parsing middleware should be above methodOverride
   app.use(bodyParser.urlencoded({
-    extended: true
+    extended: true,
+    limit: '5mb',
+    parameterLimit:5000
   }))
-  app.use(bodyParser.json())
+  app.use(bodyParser.json({limit: '5mb'}))
   app.use(methodOverride())
 
   app.use(cookieParser())
