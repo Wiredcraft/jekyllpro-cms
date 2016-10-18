@@ -246,6 +246,7 @@ function mapStateToProps(state, { params:
     userName: state.user.get('userName'),
     branches: state.repo.get('branches'),
     repoName: state.repo.get('repoName'),
+    repoDetails: state.repo.get('repoDetails'),
     hasIndexHook: state.repo.get('hasIndexHook')
   }
 }

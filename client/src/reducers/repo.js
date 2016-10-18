@@ -4,10 +4,11 @@ import { CHANGE_REPO_STATE, FILE_REMOVED, FILE_ADDED, FILE_REPLACED, RESET_REPO_
   COLLECTION_FILE_ADDED, COLLECTION_FILE_REMOVED, COLLECTION_FILE_UPDATED } from '../actions/repoActions'
 
 const initialState = Immutable.fromJS({
+  loading: false,
   branches: undefined,
   currentBranch: undefined,
   repoName: undefined,
-  loading: false,
+  repoDetails: undefined,
   collections: undefined,
   schemas: undefined,
   treeMeta: undefined,
@@ -22,7 +23,9 @@ export default function repo (state = initialState, action) {
       return initialState
 
     case CHANGE_REPO_STATE:
-      var { branches, treeMeta, currentBranch, loading, repoName, collections, schemas, hasIndexHook } = action.payload
+      var { branches, treeMeta, currentBranch, loading, repoDetails,
+        repoName, collections, schemas, hasIndexHook } = action.payload
+      if(repoDetails) state = state.set('repoDetails', repoDetails)
       if(branches) state = state.set('branches', branches)
       if(currentBranch) state = state.set('currentBranch', currentBranch)
       if(loading !== undefined) state = state.set('loading', loading)
