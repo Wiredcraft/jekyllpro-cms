@@ -26,7 +26,7 @@ export class TaskQueue {
 
 export function getCollectionFiles (schemaArray, filesArray) {
   filesArray.forEach(item => {
-    if (/^[a-zA-Z0-9\/]+\.(html|HTML)$/.test(item.path)) {
+    if (/^[^_]+\w*\.html$/i.test(item.path)) {
       // any html files that are not in folders starts with '_' are pages file
       item.collectionType = 'pages' 
     } else if (item.type === 'blob') {
