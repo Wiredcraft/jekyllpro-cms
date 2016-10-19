@@ -46,26 +46,46 @@ export function resetRepoData () {
 
 export function fetchRepoIndex(opts) {
   return dispatch => {
+    dispatch({
+      payload: { loading: true },
+      type: CHANGE_REPO_STATE
+    })
     return getRepoIndex(opts || {})
       .then(data => {        
         dispatch({
-          payload: {collections: data.collections, schemas: data.schemas},
+          payload: { collections: data.collections, schemas: data.schemas, loading: false },
           type: CHANGE_REPO_STATE
         })
         return data
+      })
+      .catch(err => {
+        dispatch({
+          payload: { loading: false },
+          type: CHANGE_REPO_STATE
+        })        
       })
   }
 }
 
 export function fetchRepoTree(branch) {
   return dispatch => {
+    dispatch({
+      payload: { loading: true },
+      type: CHANGE_REPO_STATE
+    })
     return getRepoTree(branch)
       .then(data => {        
         dispatch({
-          payload: {treeMeta: data.tree},
+          payload: { treeMeta: data.tree, loading: false },
           type: CHANGE_REPO_STATE
         })
         return data
+      })
+      .catch(err => {
+        dispatch({
+          payload: { loading: false },
+          type: CHANGE_REPO_STATE
+        })        
       })
   }
 }
