@@ -30,9 +30,9 @@ let config = Object.assign({}, baseConfig, {
   debug: false,
   devtool: null,
   output: {
-    path: path.join(__dirname, '/../dist'),
+    path: path.join(__dirname, '../dist'),
     filename: '/assets/app.js',
-    publicPath: `.${defaultSettings.publicPath}`
+    publicPath: '/'
   },
   plugins: [
     new webpack.optimize.DedupePlugin(),

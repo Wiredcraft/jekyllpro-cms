@@ -94,7 +94,7 @@ export default class AppComponent extends React.Component {
       <div id='landing' style={{'display': 'block'}}>
         <div className='box'>
           <section className='card'>
-            <img src='./assets/logo.svg' className='logo' alt='Jekyll+' />
+            <img src={require('../assets/logo.svg')} className='logo' alt='Jekyll+' />
             <button className='button primary' onClick={() => this.login()}>Login with GitHub</button>
           </section>
           <small>Built by <a href='http://wiredcraft.com' target='_blank'>Wiredcraft</a>
