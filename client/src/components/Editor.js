@@ -37,7 +37,7 @@ function mapStateToProps(state, { params:
   { collectionType, branch, splat: path } }) {
 
   return {
-    currentBranch: branch || 'master',
+    currentBranch: state.repo.get('currentBranch'),
     repoName: state.repo.get('repoName'),
     schemas: state.repo.get('schemas'),
     collections: state.repo.get('collections'),

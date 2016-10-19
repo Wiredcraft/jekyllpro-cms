@@ -37,7 +37,7 @@ function mapStateToProps(state, {
     collections: state.repo.get('collections'),
     schemas: state.repo.get('schemas'),
     treeMeta: state.repo.get('treeMeta'),
-    currentBranch: branch || 'master'
+    currentBranch: state.repo.get('currentBranch')
   }
 }
 

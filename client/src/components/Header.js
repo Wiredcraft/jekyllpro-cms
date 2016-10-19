@@ -65,9 +65,13 @@ export default class Header extends Component {
   }
 
   componentDidUpdate(prevProps) {
+    const { params } = this.props
     const { query } = this.props.location
     if (query && (query.filteredType !== this.state.selectedType)) {
       this.setState({ selectedType: query.filteredType })
+    }
+    if (params && (params.collectionType !== prevProps.params.collectionType)) {
+      this.setState({ activeView: params.collectionType === 'files' ? 'files' : 'content' })
     }
   }
 
@@ -75,7 +79,7 @@ export default class Header extends Component {
     const {checkoutBranch, toRoute} = this.props
     const { collectionType } = this.props.params
     checkoutBranch(newBranch)
-    toRoute(`/${collectionType}/${newBranch}/`)
+    toRoute(`/`)
   }
 
   logout () {
@@ -240,7 +244,7 @@ function mapStateToProps(state, { params:
   { collectionType, branch, splat: path } }) {
 
   return {
-    currentBranch: branch || 'master',
+    currentBranch: state.repo.get('currentBranch'),
     avatar: state.user.get('avatar'),
     schemas: state.repo.get('schemas'),
     userName: state.user.get('userName'),

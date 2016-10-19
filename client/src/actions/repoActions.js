@@ -1,7 +1,7 @@
 /* global API_BASE_URL */
 import { getRepoDetails, getRepoMeta, getRepoBranchList, getRepoIndex, getRepoTree,
   listRepoHooks, registerRepoHook } from '../helpers/api'
-import { cleanEditor } from './editorActions'
+import { resetEditorData } from './editorActions'
 
 export const CHANGE_REPO_STATE = 'CHANGE_REPO_STATE'
 export const RESET_REPO_DATA = 'RESET_REPO_DATA'
@@ -122,7 +122,8 @@ export function checkoutBranch(branch) {
         payload: { currentBranch: branch },
         type: CHANGE_REPO_STATE
       }),
-      dispatch(cleanEditor())
+      dispatch(fetchRepoIndex({ branch })),
+      dispatch(resetEditorData())
     ])
   }
 }
