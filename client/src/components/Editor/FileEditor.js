@@ -77,14 +77,14 @@ export default class FileEditor extends Component {
   updateResult(data) {
     const formData = Object.assign({}, data)
     const {
-      params,
       currentBranch,
       toRoute,
       fileAdded,
       fileReplaced,
       updateFile,
       replaceFile,
-      addNewFile
+      addNewFile,
+      params: { repoOwner, repoName, splat }
     } = this.props
     const { targetFile, currentFilePath } = this.state
     // const filePath = this.refs.filePath.value
@@ -97,18 +97,18 @@ export default class FileEditor extends Component {
 
     this.setState({ disableActionBtn: true })
 
-    if (params.splat === 'new') {
+    if (splat === 'new') {
       addNewFile(currentBranch, currentFilePath, updatedContent)
         .then(() => {
           fileAdded(currentFilePath)
-          toRoute(`/files/${currentBranch}/`)
+          toRoute(`/${repoOwner}/${repoName}/files/${currentBranch}/`)
         })
     } else if (currentFilePath !== targetFile) {
       // file path changed
       replaceFile(currentBranch, targetFile, currentFilePath, updatedContent)
         .then(() => {
           fileReplaced(targetFile, currentFilePath)
-          toRoute(`/files/${currentBranch}/`)
+          toRoute(`/${repoOwner}/${repoName}/files/${currentBranch}/`)
         })
     } else {
       this.setState({ formData: { body: updatedContent } })
@@ -129,9 +129,9 @@ export default class FileEditor extends Component {
   }
 
   handleDeleteFile() {
-    const { currentBranch, params, deleteFile, fileRemoved, toRoute } = this.props
+    const { currentBranch, deleteFile, fileRemoved, toRoute, params: { repoOwner, repoName, splat } } = this.props
     const { targetFile } = this.state
-    if (params.splat === 'new') {
+    if (splat === 'new') {
       return this.closeDeleteFileModel()
     }
     this.closeDeleteFileModel()
@@ -139,7 +139,7 @@ export default class FileEditor extends Component {
     deleteFile(currentBranch, targetFile)
       .then(() => {
         fileRemoved(targetFile)
-        toRoute(`/files/${currentBranch}/`)
+        toRoute(`/${repoOwner}/${repoName}/files/${currentBranch}/`)
       })
   }
 
@@ -152,20 +152,20 @@ export default class FileEditor extends Component {
   }
 
   render() {
-    const { newFileMode, editorUpdating, params, repoName, currentBranch } = this.props
+    const { newFileMode, editorUpdating, params, repoFullName, currentBranch } = this.props
     const { filePathInputClass, formData, currentFilePath, notTextFile, disableActionBtn } = this.state
 
     if (notTextFile) {
       if (isImageFile(currentFilePath)) {
         return (
           <section id='content'>
-            <img src={`https://github.com/${repoName}/blob/${currentBranch}/${currentFilePath}?raw=true`} />
+            <img src={`https://github.com/${repoFullName}/blob/${currentBranch}/${currentFilePath}?raw=true`} />
           </section>
         )
       }
       return (
         <section id='content'>
-          <a href={`https://github.com/${repoName}/blob/${currentBranch}/${currentFilePath}?raw=true`} target='_blank'>
+          <a href={`https://github.com/${repoFullName}/blob/${currentBranch}/${currentFilePath}?raw=true`} target='_blank'>
             {currentFilePath}
           </a>
         </section>

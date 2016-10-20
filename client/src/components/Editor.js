@@ -34,11 +34,11 @@ class Editor extends Component {
 }
 
 function mapStateToProps(state, { params:
-  { collectionType, branch, splat: path } }) {
+  { repoOwner, repoName, collectionType, branch, splat: path } }) {
 
   return {
     currentBranch: state.repo.get('currentBranch'),
-    repoName: state.repo.get('repoName'),
+    repoFullName: `${repoOwner}/${repoName}`,
     schemas: state.repo.get('schemas'),
     collections: state.repo.get('collections'),
     selectedCollectionFile: state.editor.get('selectedCollectionFile'),

@@ -65,17 +65,15 @@ export default class ContentSidebar extends Component {
   }
 
   createNewFileByType(type) {
-    const { toRoute, currentBranch } = this.props
-    toRoute(`/${type}/${currentBranch}/new`)
+    const { toRoute, currentBranch, params: { repoOwner, repoName } } = this.props
+    toRoute(`/${repoOwner}/${repoName}/${type}/${currentBranch}/new`)
   }
 
   handleTypeFilter(type) {
-    // const { toRoute, pathname } = this.props
     let f = this.props.collections.filter(item => {
       return item.collectionType === type
     })
     this.setState({filtering: true, filteredType: type, filteredCollections: f})
-    // toRoute(`${pathname}?filteredType=${type}`)
   }
 
   removeFilterType() {
@@ -85,11 +83,12 @@ export default class ContentSidebar extends Component {
   }
 
   selectItem(item) {
-    const { selectCollectionFile, changeEditorMode, toRoute, currentBranch } = this.props
+    const { selectCollectionFile, changeEditorMode,
+      toRoute, currentBranch, params: { repoOwner, repoName } } = this.props
     this.setState({selectedItem: item.path})
     selectCollectionFile(item)
     changeEditorMode('collection')
-    toRoute(`/${item.collectionType}/${currentBranch}/${item.path}`)
+    toRoute(`/${repoOwner}/${repoName}/${item.collectionType}/${currentBranch}/${item.path}`)
   }
 
   render() {
