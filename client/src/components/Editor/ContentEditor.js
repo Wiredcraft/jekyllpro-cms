@@ -1,6 +1,8 @@
 import React, { Component } from 'react'
 import Form from 'react-jsonschema-form'
 import ReactDOM from 'react-dom'
+import moment from 'moment'
+import Cookie from 'js-cookie'
 
 import { parseYamlInsideMarkdown, retriveContent, serializeObjtoYaml } from '../../helpers/markdown'
 import DeleteIcon from '../svg/DeleteIcon'
@@ -9,6 +11,7 @@ import { dateToString, purgeObject, parseFilePathByLang } from "../../helpers/ut
 import Modal from 'react-modal'
 import ModalCustomStyle from '../Modal'
 
+const repoUrl = `https://github.com/${Cookie.get('repoOwner')}/${Cookie.get('repoName')}/`
 
 export default class ContentEditor extends Component {
   constructor(props) {
@@ -291,6 +294,14 @@ export default class ContentEditor extends Component {
     return (
       <section id='content'>
         <aside className='sidebar'>
+          {params.splat !== 'new' && <div className="field">
+            <span className="label">Latest update</span>
+            <div className="message">
+              <a>{selectedCollectionFile.lastUpdatedBy}</a>
+              ,&nbsp;{moment(Date.parse(selectedCollectionFile.lastUpdatedAt)).fromNow()}
+              &nbsp;(<a href={`${repoUrl}commit/${selectedCollectionFile.lastCommitSha}`} target='_blank'> #{selectedCollectionFile.lastCommitSha.slice(0, 6)} </a>)
+            </div>
+          </div>}
           <div className='field language'>
             <label>Language</label>
             <span className='select'>
