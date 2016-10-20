@@ -50,6 +50,7 @@ export function replaceFile (branch, oldPath, newPath, content, options) {
     return updateRepoFile({ branch, path: newPath, content, options })
       .then( res => {
         deleteRepoFile({ branch: branch, path: oldPath })
+        return res
       })
   }
 }

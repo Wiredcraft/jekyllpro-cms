@@ -14,7 +14,7 @@ export default class ContentSidebar extends Component {
     }
   }
 
-  componentDidMount() {
+  componentWillMount() {
     const { fetchRepoIndex, params, changeEditorMode, selectCollectionFile, currentBranch, query } = this.props
     fetchRepoIndex({ branch: currentBranch })
     .then((indexData) => {
@@ -36,9 +36,13 @@ export default class ContentSidebar extends Component {
   }
 
   componentDidUpdate(prevProps) {
+    const { params } = this.props
     const { filteredType } = this.props.query
     if (filteredType && (filteredType !== prevProps.query.filteredType)) {
       this.handleTypeFilter(filteredType)
+    }
+    if (params && (params.splat !== prevProps.params.splat)) {
+      this.setState({ selectedItem: params.splat })
     }
   }
 

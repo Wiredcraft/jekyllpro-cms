@@ -21,7 +21,8 @@ export default class ContentEditor extends Component {
       filePathInputClass: '',
       formData: {},
       currentSchema: null,
-      showDeleteFileModel: false
+      showDeleteFileModel: false,
+      disableActionBtn: false
     }
   }
 
@@ -102,6 +103,7 @@ export default class ContentEditor extends Component {
     const formData = Object.assign({}, data)
     const {
       selectedCollectionFile,
+      selectCollectionFile,
       currentBranch,
       updateFile,
       deleteFile,
@@ -110,10 +112,12 @@ export default class ContentEditor extends Component {
       collectionFileRemoved,
       collectionFileAdded,
       collectionFileUpdated,
-      params
+      params,
+      toRoute
     } = this.props
     const { currentSchema, isPostPublished, isDraft, language } = this.state
     const filePath = this.refs.filePath.value
+
     if (!filePath) {
       console.error('no file path specified')
       this.setState({filePathInputClass: 'error'})
@@ -139,41 +143,59 @@ export default class ContentEditor extends Component {
     // delete all undefined property
     purgeObject(formData)
 
+    this.setState({ disableActionBtn: true, formData: data })
+
     if (params.splat === 'new') {
-      console.log(formData)
       updatedContent = serializeObjtoYaml(formData) + updatedContent
       addNewFile(currentBranch, filePath, updatedContent)
-        .then(() => {
-          collectionFileAdded({
+        .then((data) => {
+          let newItem = {
             path: filePath,
             content: updatedContent,
             collectionType: params.collectionType,
-            updatedAt: new Date()
-          })
+            lastUpdatedAt: data.commit.committer.date,
+            lastUpdatedBy: data.commit.committer.name,
+            lastCommitSha: data.commit.sha 
+          }
+          collectionFileAdded(newItem)
+          selectCollectionFile(newItem)
+          toRoute(`/${params.collectionType}/${params.branch}/${filePath}`)
+          this.setState({ disableActionBtn: false })
         })
     } else if (filePath !== selectedCollectionFile.path) {
       // file path changed
       let oldPath = selectedCollectionFile.path
       updatedContent = this.updateFileFrontMatter(selectedCollectionFile.content, formData) + updatedContent
       replaceFile(currentBranch, oldPath, filePath, updatedContent)
-        .then(() => {
-          collectionFileUpdated(oldPath, {
+        .then((data) => {
+          let newItem = {
             path: filePath,
             content: updatedContent,
             collectionType: params.collectionType,
-            updatedAt: new Date()            
-          })
+            lastUpdatedAt: data.commit.committer.date,
+            lastUpdatedBy: data.commit.committer.name,
+            lastCommitSha: data.commit.sha           
+          }
+          collectionFileUpdated(oldPath, newItem)
+          selectCollectionFile(newItem)
+          toRoute(`/${params.collectionType}/${params.branch}/${filePath}`)
+          this.setState({ disableActionBtn: false })
         })
     } else {
       updatedContent = this.updateFileFrontMatter(selectedCollectionFile.content, formData) + updatedContent
       updateFile(currentBranch, filePath, updatedContent)
-        .then(() => {
-          collectionFileUpdated(filePath, {
+        .then((data) => {
+          let newItem = {
             path: filePath,
             content: updatedContent,
             collectionType: params.collectionType,
-            updatedAt: new Date()            
-          })
+            lastUpdatedAt: data.commit.committer.date,
+            lastUpdatedBy: data.commit.committer.name,
+            lastCommitSha: data.commit.sha
+          }
+          collectionFileUpdated(filePath, newItem)
+          selectCollectionFile(newItem)
+          this.setState({ disableActionBtn: false })
         })
     }
   }
@@ -197,15 +219,18 @@ export default class ContentEditor extends Component {
   }
 
   handleDeleteFile() {
-    const { currentBranch, params, selectedCollectionFile, deleteFile, collectionFileRemoved } = this.props
+    const { currentBranch, params, selectedCollectionFile,
+      deleteFile, collectionFileRemoved, toRoute } = this.props
 
     if (params.splate === 'new') {
       return this.closeDeleteFileModel()
     }
     this.closeDeleteFileModel()
+    this.setState({ disableActionBtn: true })
     deleteFile(currentBranch, selectedCollectionFile.path)
       .then(() => {
         collectionFileRemoved(selectedCollectionFile.path)
+        toRoute('/')
       })
   }
 
@@ -257,8 +282,8 @@ export default class ContentEditor extends Component {
   }
 
   render() {
-    const { editorUpdating, selectedCollectionFile, params } = this.props
-    const { filePathInputClass, formData, currentFilePath, currentSchema } = this.state
+    const { editorUpdating, selectedCollectionFile, params, schemas } = this.props
+    const { filePathInputClass, formData, currentFilePath, currentSchema, disableActionBtn } = this.state
     let translations = parseFilePathByLang(currentFilePath)
 
     if (!currentSchema) return (<section id='content' />)
@@ -279,7 +304,7 @@ export default class ContentEditor extends Component {
             </small>
           </div>
 
-          <span className="bundle">
+          <span className={disableActionBtn ? 'bundle loading' : 'bundle'}>
             <button className="button primary save" onClick={::this.handleSaveBtn}>Save</button>
 
             <span className="menu">

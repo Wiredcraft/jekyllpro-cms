@@ -21,7 +21,8 @@ export default class FileEditor extends Component {
       filePathInputClass: '',
       formData: {},
       showDeleteFileModel: false,
-      notTextFile: false
+      notTextFile: false,
+      disableActionBtn: false
     }
   }
 
@@ -94,6 +95,8 @@ export default class FileEditor extends Component {
     }
     let updatedContent = formData.body
 
+    this.setState({ disableActionBtn: true })
+
     if (params.splat === 'new') {
       addNewFile(currentBranch, currentFilePath, updatedContent)
         .then(() => {
@@ -108,8 +111,11 @@ export default class FileEditor extends Component {
           toRoute(`/files/${currentBranch}/`)
         })
     } else {
-      updateFile(currentBranch, targetFile, updatedContent)
       this.setState({ formData: { body: updatedContent } })
+      updateFile(currentBranch, targetFile, updatedContent)
+        .then(() => {
+          this.setState({ disableActionBtn: false })
+        })
     }
   }
 
@@ -129,6 +135,7 @@ export default class FileEditor extends Component {
       return this.closeDeleteFileModel()
     }
     this.closeDeleteFileModel()
+    this.setState({ disableActionBtn: true })
     deleteFile(currentBranch, targetFile)
       .then(() => {
         fileRemoved(targetFile)
@@ -146,7 +153,7 @@ export default class FileEditor extends Component {
 
   render() {
     const { newFileMode, editorUpdating, params, repoName, currentBranch } = this.props
-    const { filePathInputClass, formData, currentFilePath, notTextFile } = this.state
+    const { filePathInputClass, formData, currentFilePath, notTextFile, disableActionBtn } = this.state
 
     if (notTextFile) {
       if (isImageFile(currentFilePath)) {
@@ -168,7 +175,7 @@ export default class FileEditor extends Component {
     return (
       <section id='content' className={editorUpdating ? 'loading' : ''}>
         <aside className='sidebar'>
-          <span className="bundle">
+          <span className={disableActionBtn ? 'bundle loading' : 'bundle'}>
             <button className="button primary save" onClick={::this.handleSaveBtn}>Save</button>
 
             <span className="menu">

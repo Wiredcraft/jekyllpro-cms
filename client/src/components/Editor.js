@@ -19,7 +19,7 @@ class Editor extends Component {
   render() {
     const { mode, params, schemas, location } = this.props
 
-    if (schemas && mode === 'collection') {
+    if (schemas && (mode === 'collection') && params.splat) {
       return (<ContentEditor {...this.props} />)
     }
     if ((mode === 'files' || params.collectionType === 'files') && params.splat) {

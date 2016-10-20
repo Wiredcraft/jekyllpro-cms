@@ -47,8 +47,8 @@ export default function repo (state = initialState, action) {
 
     case FILE_ADDED:
       var { path } = action.payload
-      updatedTreeMeta = state.get('treeMeta').push({ type: 'blob', path: path })
-      // updatedTreeMeta = Object.assign([], updatedTreeMeta)
+      updatedTreeMeta = state.get('treeMeta')
+      updatedTreeMeta.push({ type: 'blob', path: path })
       state = state.set('treeMeta', updatedTreeMeta)
       return state
 
@@ -65,7 +65,8 @@ export default function repo (state = initialState, action) {
       return state
 
     case COLLECTION_FILE_ADDED:
-      let addingCol = state.get('collections').push(action.payload.newFileData)
+      let addingCol = state.get('collections')
+      addingCol.push(action.payload.newFileData)
       state = state.set('collections', addingCol)
       return state
 
