@@ -54,20 +54,20 @@ export default class FilesSidebar extends Component {
   }
 
   createNewFile() {
-    const { toRoute, currentBranch } = this.props
-    toRoute(`/files/${currentBranch}/new`)
+    const { toRoute, currentBranch, params: { repoOwner, repoName } } = this.props
+    toRoute(`/${repoOwner}/${repoName}/files/${currentBranch}/new`)
   }
 
   selectItem() {
-    const { toRoute, currentBranch } = this.props
+    const { toRoute, currentBranch, params: { repoOwner, repoName } } = this.props
     return function (item) {
-      toRoute(`/files/${currentBranch}/${item}`)
+      toRoute(`/${repoOwner}/${repoName}/files/${currentBranch}/${item}`)
     }
   }
 
   toFileUpload () {
-    const { toRoute, currentBranch } = this.props
-    toRoute(`/files/${currentBranch}/?upload=true`)
+    const { toRoute, currentBranch, params: { repoOwner, repoName } } = this.props
+    toRoute(`/${repoOwner}/${repoName}/files/${currentBranch}/?upload=true`)
   }
 
   render() {

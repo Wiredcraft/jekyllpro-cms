@@ -7,7 +7,6 @@ const initialState = Immutable.fromJS({
   loading: false,
   branches: undefined,
   currentBranch: undefined,
-  repoName: undefined,
   repoDetails: undefined,
   collections: undefined,
   schemas: undefined,
@@ -24,12 +23,11 @@ export default function repo (state = initialState, action) {
 
     case CHANGE_REPO_STATE:
       var { branches, treeMeta, currentBranch, loading, repoDetails,
-        repoName, collections, schemas, hasIndexHook } = action.payload
+        collections, schemas, hasIndexHook } = action.payload
       if(repoDetails) state = state.set('repoDetails', repoDetails)
       if(branches) state = state.set('branches', branches)
       if(currentBranch) state = state.set('currentBranch', currentBranch)
       if(loading !== undefined) state = state.set('loading', loading)
-      if(repoName) state = state.set('repoName', repoName)
       if(schemas) state = state.set('schemas', schemas)
       if(collections) state = state.set('collections', collections)
       if(treeMeta) state = state.set('treeMeta', treeMeta)

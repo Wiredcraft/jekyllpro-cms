@@ -33,6 +33,7 @@ export default class RepoSelectionModal extends Component {
         })
         onclose()
         getAllBranch()
+        toRoute(`/${repoOwner}/${repoName}/`)
       })
       .catch(err => {
         Cookie.remove('repoOwner')

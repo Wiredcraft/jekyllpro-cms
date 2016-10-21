@@ -22,7 +22,6 @@ export function fetchRepoInfo() {
         dispatch({
           payload: {
             currentBranch: data.default_branch,
-            repoName: data.full_name,
             repoDetails: {
               isPrivate: data.private,
               updatedAt: data.pushed_at,

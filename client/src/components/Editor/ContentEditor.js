@@ -115,8 +115,8 @@ export default class ContentEditor extends Component {
       collectionFileRemoved,
       collectionFileAdded,
       collectionFileUpdated,
-      params,
-      toRoute
+      toRoute,
+      params: { repoOwner, repoName, collectionType, branch, splat }
     } = this.props
     const { currentSchema, isPostPublished, isDraft, language } = this.state
     const filePath = this.refs.filePath.value
@@ -148,21 +148,21 @@ export default class ContentEditor extends Component {
 
     this.setState({ disableActionBtn: true, formData: data })
 
-    if (params.splat === 'new') {
+    if (splat === 'new') {
       updatedContent = serializeObjtoYaml(formData) + updatedContent
       addNewFile(currentBranch, filePath, updatedContent)
         .then((data) => {
           let newItem = {
             path: filePath,
             content: updatedContent,
-            collectionType: params.collectionType,
+            collectionType: collectionType,
             lastUpdatedAt: data.commit.committer.date,
             lastUpdatedBy: data.commit.committer.name,
             lastCommitSha: data.commit.sha 
           }
           collectionFileAdded(newItem)
           selectCollectionFile(newItem)
-          toRoute(`/${params.collectionType}/${params.branch}/${filePath}`)
+          toRoute(`/${repoOwner}/${repoName}/${collectionType}/${branch}/${filePath}`)
           this.setState({ disableActionBtn: false })
         })
     } else if (filePath !== selectedCollectionFile.path) {
@@ -174,14 +174,14 @@ export default class ContentEditor extends Component {
           let newItem = {
             path: filePath,
             content: updatedContent,
-            collectionType: params.collectionType,
+            collectionType: collectionType,
             lastUpdatedAt: data.commit.committer.date,
             lastUpdatedBy: data.commit.committer.name,
             lastCommitSha: data.commit.sha           
           }
           collectionFileUpdated(oldPath, newItem)
           selectCollectionFile(newItem)
-          toRoute(`/${params.collectionType}/${params.branch}/${filePath}`)
+          toRoute(`/${repoOwner}/${repoName}/${collectionType}/${branch}/${filePath}`)
           this.setState({ disableActionBtn: false })
         })
     } else {
@@ -191,7 +191,7 @@ export default class ContentEditor extends Component {
           let newItem = {
             path: filePath,
             content: updatedContent,
-            collectionType: params.collectionType,
+            collectionType: collectionType,
             lastUpdatedAt: data.commit.committer.date,
             lastUpdatedBy: data.commit.committer.name,
             lastCommitSha: data.commit.sha
@@ -222,10 +222,10 @@ export default class ContentEditor extends Component {
   }
 
   handleDeleteFile() {
-    const { currentBranch, params, selectedCollectionFile,
-      deleteFile, collectionFileRemoved, toRoute } = this.props
+    const { currentBranch, selectedCollectionFile, deleteFile,
+      collectionFileRemoved, toRoute, params: { repoOwner, repoName, splat } } = this.props
 
-    if (params.splate === 'new') {
+    if (splate === 'new') {
       return this.closeDeleteFileModel()
     }
     this.closeDeleteFileModel()
@@ -233,7 +233,7 @@ export default class ContentEditor extends Component {
     deleteFile(currentBranch, selectedCollectionFile.path)
       .then(() => {
         collectionFileRemoved(selectedCollectionFile.path)
-        toRoute('/')
+        toRoute(`/${repoOwner}/${repoName}`)
       })
   }
 
@@ -258,7 +258,7 @@ export default class ContentEditor extends Component {
   switchFileByLang() {
     const { selectCollectionFile, collections, toRoute } = this.props
     const { currentFilePath } = this.state
-    const { collectionType, branch } = this.props.params
+    const { repoOwner, repoName, collectionType, branch } = this.props.params
 
     if (!currentFilePath) return
     let translations = parseFilePathByLang(currentFilePath)
@@ -272,9 +272,9 @@ export default class ContentEditor extends Component {
     })
     if (isExistingFile) {
       this.updateEditorForm()
-      toRoute(`/${collectionType}/${branch}/${anotherFilePath}`)
+      toRoute(`/${repoOwner}/${repoName}/${collectionType}/${branch}/${anotherFilePath}`)
     } else {
-      toRoute(`/${collectionType}/${branch}/new?translation=true`)
+      toRoute(`/${repoOwner}/${repoName}/${collectionType}/${branch}/new?translation=true`)
 
       this.setState({ currentFilePath: anotherFilePath, formData: {} })
     }

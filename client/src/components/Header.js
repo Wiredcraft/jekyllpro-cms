@@ -2,6 +2,7 @@ import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import React, { Component } from 'react'
 import { Link } from 'react-router'
+import Cookie from 'js-cookie'
 
 import {
   getAllBranch,
@@ -21,7 +22,6 @@ import Modal from 'react-modal'
 import ModalCustomStyle from './Modal'
 import RepoSelectionModal from './Modal/RepoSelectionModal'
 import SettingModal from './Modal/SettingModal'
-import Cookie from 'js-cookie'
 
 @connect(mapStateToProps, mapDispatchToProps)
 export default class Header extends Component {
@@ -37,21 +37,45 @@ export default class Header extends Component {
   }
 
   componentWillMount() {
-    const { collectionType, branch, splat: path } = this.props.params
-    const { fetchRepoInfo, getAllBranch, listHooks } = this.props
+    const { repoOwner, repoName, collectionType, branch, splat: path } = this.props.params
+    const { fetchRepoInfo, getAllBranch, listHooks, toRoute } = this.props
+    const repoOwnerCk = Cookie.get('repoOwner')
+    const repoNameCk = Cookie.get('repoName')
     // routing
     if (collectionType && branch) {
       this.setState({ selectedType: collectionType })
     }
 
-    if (!Cookie.get('repoOwner') || !Cookie.get('repoName')) {
-      this.setState({showRepoModal: true})
-    } else {
-      fetchRepoInfo().then(res => {
-        return getAllBranch()
-      }).then(s => {
-        listHooks()
+    if (repoOwner && repoName) {
+      Cookie.set('repoOwner', repoOwner, { expires: 100 })
+      Cookie.set('repoName', repoName, { expires: 100 })
+
+      fetchRepoInfo()
+      .then(res => {
+        getAllBranch()
       })
+      .catch(err => {
+        Cookie.remove('repoOwner')
+        Cookie.remove('repoName')
+        this.setState({ showRepoModal: true })
+      })
+    } else if (repoOwnerCk && repoNameCk) {
+      fetchRepoInfo()
+      .then(res => {
+        toRoute({
+          pathname: `/${repoOwnerCk}/${repoNameCk}/`
+        })      
+        getAllBranch()
+      })
+      .catch(err => {
+        Cookie.remove('repoOwner')
+        Cookie.remove('repoName')
+        this.setState({ showRepoModal: true })
+      })
+
+    } else {
+      this.setState({showRepoModal: true})
+      
     }
   }
 
@@ -77,9 +101,9 @@ export default class Header extends Component {
 
   handleBranchChange(newBranch) {
     const {checkoutBranch, toRoute} = this.props
-    const { collectionType } = this.props.params
+    const { repoOwner, repoName } = this.props.params
     checkoutBranch(newBranch)
-    toRoute(`/`)
+    toRoute(`/${repoOwner}/${repoName}/`)
   }
 
   logout () {
@@ -100,19 +124,22 @@ export default class Header extends Component {
 
   toFilesView() {
     const { currentBranch, toRoute } = this.props
-    toRoute(`/files/${currentBranch}/`)
+    const repoLink = `${Cookie.get('repoOwner')}/${Cookie.get('repoName')}`
+
+    toRoute(`/${repoLink}/files/${currentBranch}/`)
     this.setState({ activeView: 'files' })
   }
 
   toContentView() {
     const { toRoute } = this.props
-    toRoute(`/`)    
+    const repoLink = `${Cookie.get('repoOwner')}/${Cookie.get('repoName')}`
+    toRoute(`/${repoLink}/`)    
     this.setState({ activeView: 'content' })
   }
 
   render () {
-    const { branches, currentBranch, avatar, userName, repoName, isBranchPrivate, schemas,
-    params: { collectionType, branch, splat: filePath} } = this.props
+    const { branches, currentBranch, avatar, userName, isBranchPrivate, schemas,
+    params: { repoOwner, repoName, collectionType, branch, splat: filePath} } = this.props
     const { selectedType, activeView } = this.state
 
     return (
@@ -122,7 +149,7 @@ export default class Header extends Component {
             <svg height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'>
               <path strokeWidth='0.2' strokeLinejoin='round' d='M 9.99936,3.99807L 3.99936,3.99807C 2.89436,3.99807 2.00936,4.89406 2.00936,5.99807L 1.99936,17.9981C 1.99936,19.1021 2.89436,19.9981 3.99936,19.9981L 19.9994,19.9981C 21.1029,19.9981 21.9994,19.1021 21.9994,17.9981L 21.9994,7.99807C 21.9994,6.89406 21.1029,5.99807 19.9994,5.99807L 11.9994,5.99807L 9.99936,3.99807 Z '/>
             </svg>
-            {repoName}
+            {repoOwner}/{repoName}
             <RepoSelectionModal
               {...this.props}
               isOpen={this.state.showRepoModal}
@@ -186,7 +213,7 @@ export default class Header extends Component {
             schemas && schemas.map((s, idx) => {
               return (
                 <Link key={s.title}
-                  to={`/?filteredType=${s.jekyll.id}`}
+                  to={`/${repoOwner}/${repoName}/?filteredType=${s.jekyll.id}`}
                   className={selectedType === s.jekyll.id ? 'selected' : ''} >
                   <svg height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'>
                     <path d='M 19,7L 9,7L 9,5L 19,5M 15,15L 9,15L 9,13L 15,13M 19,11L 9,11L 9,9L 19,9M 20,2L 8,2C 6.9,2 6,2.9 6,4L 6,16C 6,17.1 6.9,18 8,18L 20,18C 21.1,18 22,17.1 22,16L 22,4C 22,2.9 21.1,2 20,2 Z M 4,6L 2,6L 2,20C 2,21.1 2.9,22 4,22L 18,22L 18,20L 4,20L 4,6 Z '></path>
@@ -242,7 +269,6 @@ function mapStateToProps(state, { params:
     schemas: state.repo.get('schemas'),
     userName: state.user.get('userName'),
     branches: state.repo.get('branches'),
-    repoName: state.repo.get('repoName'),
     repoDetails: state.repo.get('repoDetails'),
     hasIndexHook: state.repo.get('hasIndexHook')
   }

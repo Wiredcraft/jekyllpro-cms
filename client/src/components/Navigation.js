@@ -1,22 +1,17 @@
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import React, { Component } from 'react'
-import { withRouter } from 'react-router'
 
 import ContentSidebar from './Navigation/ContentSidebar'
 import FilesSidebar from './Navigation/FilesSidebar'
 
 import { changeEditorMode, selectCollectionFile } from '../actions/editorActions'
 import { fetchRepoIndex, fetchRepoTree } from '../actions/repoActions'
-import { toRoute } from '../actions/routeActions'
+import { toRoute, replaceRoute } from '../actions/routeActions'
 
 class Navigation extends Component {
-  constructor(props) {
-    super(props)
-  }
-
   render() {
-    const { collectionType, branch, splat } = this.props.params
+    const { collectionType } = this.props.params
 
     if (collectionType === 'files') {
       return (<FilesSidebar {...this.props} />)
@@ -42,7 +37,8 @@ function mapStateToProps(state, {
 }
 
 function mapDispatchToProps (dispatch) {
-  return bindActionCreators({ fetchRepoIndex, toRoute, changeEditorMode, selectCollectionFile, fetchRepoTree }, dispatch)
+  return bindActionCreators({ fetchRepoIndex, toRoute, replaceRoute, changeEditorMode,
+    selectCollectionFile, fetchRepoTree }, dispatch)
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Navigation)
