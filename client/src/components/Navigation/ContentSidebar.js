@@ -15,7 +15,11 @@ export default class ContentSidebar extends Component {
   }
 
   componentWillMount() {
-    const { fetchRepoIndex, params, changeEditorMode, selectCollectionFile, currentBranch, query } = this.props
+    const { fetchRepoIndex, params, changeEditorMode, collections,
+      selectCollectionFile, currentBranch, query } = this.props
+    if (collections) {
+      return
+    }
     fetchRepoIndex({ branch: currentBranch })
     .then((indexData) => {
       if (params && (params.splat !== 'new')) {
