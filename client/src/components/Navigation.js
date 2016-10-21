@@ -10,10 +10,6 @@ import { fetchRepoIndex, fetchRepoTree } from '../actions/repoActions'
 import { toRoute, replaceRoute } from '../actions/routeActions'
 
 class Navigation extends Component {
-  constructor(props) {
-    super(props)
-  }
-
   render() {
     const { collectionType } = this.props.params
 

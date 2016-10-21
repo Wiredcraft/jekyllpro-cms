@@ -9,6 +9,7 @@ import App from './components/Main'
 import Navigation from './components/Navigation'
 import Editor from './components/Editor'
 import TransitionView from './components/TransitionView'
+import NotFound from './components/NotFound'
 import store from './stores'
 
 // __DEV__ is global variable defined in webpack,
@@ -23,6 +24,7 @@ ReactDOM.render((
         <Route path='/:repoOwner/:repoName/' components={{navigation: Navigation}} />
         <Route path='/:repoOwner/:repoName/link/(:branch)/*' components={{transitionView: TransitionView}} />
         <Route path='/:repoOwner/:repoName/(:collectionType)/(:branch)/*' components={{navigation: Navigation, editor: Editor}} />        
+        <Route path='/*' components={{notFound: NotFound}} />
       </Route>
     </Router>
   </Provider>

@@ -7,8 +7,8 @@ import { confirmUserIsLogged } from '../actions/userActions'
 import Header from './Header'
 import Editor from './Editor'
 import Navigation from './Navigation'
-import 'styles/_supplement.scss'
 import 'styles/_scss/main.scss'
+import 'styles/_supplement.scss'
 
 
 const addEditButtonsSrc = (branch, url) => `(function() {
@@ -63,9 +63,19 @@ const addEditButtonsSrc = (branch, url) => `(function() {
 
 @connect(mapStateToProps, mapDispatchToProps)
 export default class AppComponent extends React.Component {
-  componentDidMount() {
+  constructor(props) {
+    super(props)
+    this.state = { loadingUserInfo: true }
+  }
+
+  componentWillMount() {
     const { confirmUserIsLogged } = this.props
-    confirmUserIsLogged()
+    confirmUserIsLogged().then(() => {
+      this.setState({ loadingUserInfo: false })
+    })
+    .catch(() => {
+      this.setState({ loadingUserInfo: false })
+    })
   }
 
   login() {
@@ -74,11 +84,12 @@ export default class AppComponent extends React.Component {
   }
 
   render() {
-    const { isLoggedIn, repoLoading, currentBranch, navigation, editor, transitionView } = this.props
+    const { isLoggedIn, repoLoading, currentBranch, navigation, editor, transitionView, notFound } = this.props
 
     return isLoggedIn ? (
       <div id='app' className={repoLoading? 'loading' : ''}>
         <Header params={this.props.params} location={this.props.location} />
+        { notFound }
         {
           transitionView && React.cloneElement(transitionView, {
             params: this.props.params,
@@ -103,7 +114,7 @@ export default class AppComponent extends React.Component {
 
       </div>
     ) : (
-      <div id='landing' style={{'display': 'block'}}>
+      <div id='landing' className={this.state.loadingUserInfo ? 'coating' : ''}>
         <div className='box'>
           <section className='card'>
             <img src={require('../assets/logo.svg')} className='logo' alt='Jekyll+' />

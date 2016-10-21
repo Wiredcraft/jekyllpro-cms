@@ -1,8 +1,6 @@
 /* global API_BASE_URL */
 import { getUser, logoutUser } from '../helpers/api'
 
-import { fetchRepoInfo, fetchBranchSchema } from './repoActions'
-
 export const CHANGE_LOGIN_STATE = 'CHANGE_LOGIN_STATE'
 
 export function confirmUserIsLogged() {
@@ -13,7 +11,6 @@ export function confirmUserIsLogged() {
           type: CHANGE_LOGIN_STATE,
           payload: { isLoggedIn: true, userName: data.login, avatar: data.avatar_url }
         })
-        // dispatch(fetchRepoInfo())
       })
   }
 }

@@ -7,10 +7,6 @@ import { fetchRepoIndex } from '../actions/repoActions'
 import { replaceRoute } from '../actions/routeActions'
 
 class TransitionView extends Component {
-  constructor(props) {
-    super(props)
-  }
-
   componentDidMount() {
     const { changeEditorMode, selectCollectionFile, fetchRepoIndex, replaceRoute } = this.props
     const { repoOwner, repoName, branch, splat } = this.props.params

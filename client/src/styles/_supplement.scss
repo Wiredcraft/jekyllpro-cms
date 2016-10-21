@@ -52,3 +52,16 @@ fieldset {
   padding: 0 !important;
   margin: 0 !important;
 }
+
+.full-screen {
+  text-align: center;
+}
+.coating {
+  visibility: hidden;
+}
+
+.loading {
+  .loading:after {
+    display: none;
+  }
+}
