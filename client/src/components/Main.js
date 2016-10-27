@@ -2,11 +2,12 @@
 import React from 'react'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
+import { NotificationContainer } from 'react-notifications'
 
 import { confirmUserIsLogged } from '../actions/userActions'
 import Header from './Header'
-import Editor from './Editor'
-import Navigation from './Navigation'
+
+import 'react-notifications/lib/notifications.css'
 import 'styles/_scss/main.scss'
 import 'styles/_supplement.scss'
 
@@ -111,7 +112,7 @@ export default class AppComponent extends React.Component {
           style={{width: '100%', minHeight: '2000px', paddingTop: '39px'}}
           src={`http://${this.props.params.branch}.beta-starbucks-com-cn.wiredcraft.jekyllpro.com`} />
         }
-
+        <NotificationContainer />
       </div>
     ) : (
       <div id='landing' className={this.state.loadingUserInfo ? 'coating' : ''}>

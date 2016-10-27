@@ -9,6 +9,7 @@ import customWidgets from './CustomWidgets'
 import { notTextFile, isImageFile } from "../../helpers/utils"
 import Modal from 'react-modal'
 import ModalCustomStyle from '../Modal'
+import notify from '../common/Notify'
 
 const defaultSchema = require('../../schema/file.json')
 
@@ -88,6 +89,8 @@ export default class FileEditor extends Component {
     } = this.props
     const { targetFile, currentFilePath } = this.state
     // const filePath = this.refs.filePath.value
+    let reqPromise = null
+
     if (!currentFilePath) {
       console.error('no file path specified')
       this.setState({filePathInputClass: 'error'})
@@ -98,25 +101,33 @@ export default class FileEditor extends Component {
     this.setState({ disableActionBtn: true })
 
     if (splat === 'new') {
-      addNewFile(currentBranch, currentFilePath, updatedContent)
+      reqPromise = addNewFile(currentBranch, currentFilePath, updatedContent)
         .then(() => {
           fileAdded(currentFilePath)
           toRoute(`/${repoOwner}/${repoName}/files/${currentBranch}/`)
         })
     } else if (currentFilePath !== targetFile) {
       // file path changed
-      replaceFile(currentBranch, targetFile, currentFilePath, updatedContent)
+      reqPromise = replaceFile(currentBranch, targetFile, currentFilePath, updatedContent)
         .then(() => {
           fileReplaced(targetFile, currentFilePath)
           toRoute(`/${repoOwner}/${repoName}/files/${currentBranch}/`)
         })
     } else {
       this.setState({ formData: { body: updatedContent } })
-      updateFile(currentBranch, targetFile, updatedContent)
+      reqPromise = updateFile(currentBranch, targetFile, updatedContent)
         .then(() => {
           this.setState({ disableActionBtn: false })
         })
     }
+
+    reqPromise.then(() => {
+      notify('success', 'Change saved!')
+    })
+    .catch(err => {
+      this.setState({ disableActionBtn: false })
+      notify('error', 'Unable to complete the operation!')
+    })
   }
 
   handleSaveBtn() {
@@ -140,6 +151,11 @@ export default class FileEditor extends Component {
       .then(() => {
         fileRemoved(targetFile)
         toRoute(`/${repoOwner}/${repoName}/files/${currentBranch}/`)
+        notify('success', 'File deleted!')
+      })
+      .catch(err => {
+        this.setState({ disableActionBtn: false })
+        notify('error', 'Unable to complete the operation!')
       })
   }
 

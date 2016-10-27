@@ -10,6 +10,7 @@ import customWidgets from './CustomWidgets'
 import { dateToString, purgeObject, parseFilePathByLang } from "../../helpers/utils"
 import Modal from 'react-modal'
 import ModalCustomStyle from '../Modal'
+import notify from '../common/Notify'
 
 const repoUrl = `https://github.com/${Cookie.get('repoOwner')}/${Cookie.get('repoName')}/`
 
@@ -39,7 +40,7 @@ export default class ContentEditor extends Component {
   componentDidUpdate(prevProps) {
     const { params, selectedCollectionFile, location } = this.props
 
-    const fileChanged = selectedCollectionFile.path !== prevProps.selectedCollectionFile.path
+    const fileChanged = selectedCollectionFile.path !== (prevProps.selectedCollectionFile && prevProps.selectedCollectionFile.path)
     const newFileMode = (params.splat === 'new') &&
       ((params.splat !== prevProps.params.splat) || (params.collectionType !== prevProps.params.collectionType))
 
@@ -120,6 +121,7 @@ export default class ContentEditor extends Component {
     } = this.props
     const { currentSchema, isPostPublished, isDraft, language } = this.state
     const filePath = this.refs.filePath.value
+    let reqPromise = null
 
     if (!filePath) {
       console.error('no file path specified')
@@ -150,7 +152,7 @@ export default class ContentEditor extends Component {
 
     if (splat === 'new') {
       updatedContent = serializeObjtoYaml(formData) + updatedContent
-      addNewFile(currentBranch, filePath, updatedContent)
+      reqPromise = addNewFile(currentBranch, filePath, updatedContent)
         .then((data) => {
           let newItem = {
             path: filePath,
@@ -169,7 +171,7 @@ export default class ContentEditor extends Component {
       // file path changed
       let oldPath = selectedCollectionFile.path
       updatedContent = this.updateFileFrontMatter(selectedCollectionFile.content, formData) + updatedContent
-      replaceFile(currentBranch, oldPath, filePath, updatedContent)
+      reqPromise = replaceFile(currentBranch, oldPath, filePath, updatedContent)
         .then((data) => {
           let newItem = {
             path: filePath,
@@ -186,7 +188,7 @@ export default class ContentEditor extends Component {
         })
     } else {
       updatedContent = this.updateFileFrontMatter(selectedCollectionFile.content, formData) + updatedContent
-      updateFile(currentBranch, filePath, updatedContent)
+      reqPromise = updateFile(currentBranch, filePath, updatedContent)
         .then((data) => {
           let newItem = {
             path: filePath,
@@ -201,6 +203,14 @@ export default class ContentEditor extends Component {
           this.setState({ disableActionBtn: false })
         })
     }
+
+    reqPromise.then(() => {
+      notify('success', 'Change saved!')
+    })
+    .catch(err => {
+      this.setState({ disableActionBtn: false })
+      notify('error', 'Unable to complete the operation!')
+    })
   }
 
   updateFileFrontMatter(originalFile, editorFormData) {
@@ -225,7 +235,7 @@ export default class ContentEditor extends Component {
     const { currentBranch, selectedCollectionFile, deleteFile,
       collectionFileRemoved, toRoute, params: { repoOwner, repoName, splat } } = this.props
 
-    if (splate === 'new') {
+    if (splat === 'new') {
       return this.closeDeleteFileModel()
     }
     this.closeDeleteFileModel()
@@ -234,6 +244,11 @@ export default class ContentEditor extends Component {
       .then(() => {
         collectionFileRemoved(selectedCollectionFile.path)
         toRoute(`/${repoOwner}/${repoName}`)
+        notify('success', 'File deleted!')
+      })
+      .catch(err => {
+        this.setState({ disableActionBtn: false })
+        notify('error', 'Unable to complete the operation!')
       })
   }
 
