@@ -7,7 +7,6 @@ import Cookie from 'js-cookie'
 import {
   getAllBranch,
   checkoutBranch,
-  isBranchPrivate,
   fetchRepoInfo,
   resetRepoData,
   listHooks
@@ -281,7 +280,6 @@ function mapDispatchToProps (dispatch) {
     logout,
     resetRepoData,
     resetEditorData,
-    isBranchPrivate,
     toRoute,
     listHooks,
     fetchRepoInfo

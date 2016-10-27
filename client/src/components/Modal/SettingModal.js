@@ -1,19 +1,23 @@
 import React, { Component } from 'react'
 import Modal from 'react-modal'
 import ModalCustomStyle from './index'
-import { registerRepoHook } from '../../helpers/api'
+import { registerRepoHook, getRepoMeta } from '../../helpers/api'
 
 export default class SettingModal extends Component {
 
   componentDidUpdate(prevProps) {
-    const {isBranchPrivate, branches} = this.props
+    const {branches} = this.props
     if (branches && prevProps.branches !== branches) {
       branches.map((b) => {
-        return isBranchPrivate(b.name)
-          .then(obj => {
-            var tmp = {}
-            tmp[b.name] = obj.isPrivate
-            return this.setState(tmp)
+        let tmp = {}
+        tmp[b.name] = false
+        return getRepoMeta({ branch: b.name, path: 'PROTECTED', raw: true })
+          .then(isPrivate => {
+            tmp[b.name] = true
+            this.setState(tmp)
+          })
+          .catch(err => {
+            this.setState(tmp)
           })
       })
     }

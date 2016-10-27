@@ -17,10 +17,15 @@ export const COLLECTION_FILE_UPDATED = 'COLLECTION_FILE_UPDATED'
 */
 export function fetchRepoInfo() {
   return dispatch => {
+    dispatch({
+      payload: { loading: true },
+      type: CHANGE_REPO_STATE
+    })
     return getRepoDetails()
       .then(data => {        
         dispatch({
           payload: {
+            loading: false,
             currentBranch: data.default_branch,
             repoDetails: {
               isPrivate: data.private,
@@ -30,6 +35,12 @@ export function fetchRepoInfo() {
           },
           type: CHANGE_REPO_STATE
         })
+      })
+      .catch(err => {
+        dispatch({
+          payload: { loading: false },
+          type: CHANGE_REPO_STATE
+        })        
       })
   }
 }
@@ -144,31 +155,6 @@ export function checkoutBranch(branch) {
       dispatch(fetchRepoIndex({ branch })),
       dispatch(resetEditorData())
     ])
-  }
-}
-
-export function isBranchPrivate(branch) {
-  return dispatch => {
-    dispatch({
-      payload: { loading: true },
-      type: CHANGE_REPO_STATE
-    })
-
-    return getRepoMeta({ branch, path: 'PROTECTED', raw: true })
-      .then(data => {
-        dispatch({
-          payload: { loading: false },
-          type: CHANGE_REPO_STATE
-        })
-        return {isPrivate: true}
-      })
-      .catch(err => {
-        dispatch({
-          payload: { loading: false },
-          type: CHANGE_REPO_STATE
-        })
-        return {isPrivate: false}
-      })
   }
 }
 
