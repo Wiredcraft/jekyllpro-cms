@@ -17,6 +17,8 @@ export default class ContentSidebar extends Component {
   componentWillMount() {
     const { fetchRepoIndex, params, changeEditorMode, collections,
       selectCollectionFile, currentBranch, query } = this.props
+
+    changeEditorMode('collection')
     if (collections) {
       return
     }
@@ -26,7 +28,6 @@ export default class ContentSidebar extends Component {
         indexData.collections.some(item => {
           if (item.path === params.splat) {
             selectCollectionFile(item)
-            changeEditorMode('collection')
             // break iteration
             return true
           }
