@@ -32,6 +32,14 @@ fieldset {
       }
     }
   }
+  &.confirm-deletion {
+    .body {
+      text-align: center;
+    }
+    .button {
+      margin: 0 8px;
+    }
+  }
 }
 .ReactModal__Body--open {
   @extend body.modal;
@@ -64,4 +72,9 @@ fieldset {
   .loading:after {
     display: none;
   }
+}
+
+.notification-container {
+  top: auto;
+  bottom: 20px;
 }

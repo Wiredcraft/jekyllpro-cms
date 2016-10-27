@@ -7,12 +7,25 @@
   <meta name="description" content="">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <link rel="stylesheet" href="/assets/app.css">
+  <style type="text/css">
+    body {
+      background: #ddd;
+    }
+    .mounting {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+  </style>
   <script>
   document.domain = 'jekyllpro.com'
   </script>
 </head>
 <body>
-  <div id="js-app">APPLICATION CONTENT</div>
+  <div id="js-app">
+    <section class="mounting"> Preparing Application Content...</section>
+  </div>
 
   <script>__REACT_DEVTOOLS_GLOBAL_HOOK__ = parent.__REACT_DEVTOOLS_GLOBAL_HOOK__</script>
   <script type="text/javascript" src="/assets/app.js"></script>

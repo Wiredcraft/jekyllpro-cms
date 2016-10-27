@@ -8,8 +8,7 @@ import { parseYamlInsideMarkdown, retriveContent, serializeObjtoYaml } from '../
 import DeleteIcon from '../svg/DeleteIcon'
 import customWidgets from './CustomWidgets'
 import { dateToString, purgeObject, parseFilePathByLang } from "../../helpers/utils"
-import Modal from 'react-modal'
-import ModalCustomStyle from '../Modal'
+import ConfirmDeletionModal from '../Modal/ConfirmDeletionModal'
 import notify from '../common/Notify'
 
 const repoUrl = `https://github.com/${Cookie.get('repoOwner')}/${Cookie.get('repoName')}/`
@@ -362,21 +361,11 @@ export default class ContentEditor extends Component {
               </div>
             </span>
           </span>
-          <Modal
-            style={ModalCustomStyle}
+          <ConfirmDeletionModal
             isOpen={this.state.showDeleteFileModel}
-            onRequestClose={::this.closeDeleteFileModel} >
-            <header className='header'>
-              <a className='close' id='close-modal' onClick={::this.closeDeleteFileModel}>Close</a>
-              <h2>Are you sure to delete this file?</h2>
-            </header>
-            <section className='body'>
-              <p>
-                <button className='button primary' onClick={::this.handleDeleteFile}>Yes</button>
-                <button className='button' onClick={::this.closeDeleteFileModel}>Cancel</button>
-              </p>
-            </section>
-          </Modal>
+            onclose={::this.closeDeleteFileModel}
+            onsubmit={::this.handleDeleteFile}
+            oncancel={::this.closeDeleteFileModel} />
         </aside>
         <div className='body'>
           <div className='field filename'>

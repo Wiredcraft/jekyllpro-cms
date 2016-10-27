@@ -189,7 +189,7 @@ export default class Header extends Component {
               onRequestClose={evt => {this.setState({showProfileModal: false})}} >
               <header className='header'>
                 <a className='close' id='close-modal' onClick={evt => {this.setState({showProfileModal: false})}}>Close</a>
-                <h2>This is a modal</h2>
+                <h2>User</h2>
               </header>
               <section className='body'>
                 <p><button className='button primary' onClick={() => this.logout()}>Logout</button></p>
