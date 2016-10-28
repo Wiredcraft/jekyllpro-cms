@@ -52,11 +52,10 @@ export default class ImageLoader extends Component {
 
     return (
       <div className='imageWrapper' style={{textAlign: 'center'}}>
-        { loading && (<img
-          style={{width: '40px'}}
-          src='https://assets-cdn.github.com/images/spinners/octocat-spinner-128.gif' />)
+        { loading ? (<img
+            src='https://assets-cdn.github.com/images/spinners/octocat-spinner-128.gif'
+            style={{width: '40px'}} />) : <img src={this.props.src} />
         }
-        <img src={this.props.src} />
       </div>
     )
   }
