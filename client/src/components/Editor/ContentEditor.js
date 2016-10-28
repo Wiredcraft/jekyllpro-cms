@@ -7,7 +7,7 @@ import Cookie from 'js-cookie'
 import { parseYamlInsideMarkdown, retriveContent, serializeObjtoYaml } from '../../helpers/markdown'
 import DeleteIcon from '../svg/DeleteIcon'
 import customWidgets from './CustomWidgets'
-import { dateToString, purgeObject, parseFilePathByLang } from "../../helpers/utils"
+import { dateToString, purgeObject, parseFilePathByLang, textValueIsDifferent } from "../../helpers/utils"
 import ConfirmDeletionModal from '../Modal/ConfirmDeletionModal'
 import notify from '../common/Notify'
 
@@ -170,6 +170,7 @@ export default class ContentEditor extends Component {
       // file path changed
       let oldPath = selectedCollectionFile.path
       updatedContent = this.updateFileFrontMatter(selectedCollectionFile.content, formData) + updatedContent
+
       reqPromise = replaceFile(currentBranch, oldPath, filePath, updatedContent)
         .then((data) => {
           let newItem = {
@@ -187,6 +188,11 @@ export default class ContentEditor extends Component {
         })
     } else {
       updatedContent = this.updateFileFrontMatter(selectedCollectionFile.content, formData) + updatedContent
+
+      if (!textValueIsDifferent(selectedCollectionFile.content, updatedContent)) {
+        this.setState({ disableActionBtn: false })
+        return notify('warning', 'You don\'t have any changes!')
+      }
       reqPromise = updateFile(currentBranch, filePath, updatedContent)
         .then((data) => {
           let newItem = {

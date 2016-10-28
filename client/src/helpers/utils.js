@@ -1,3 +1,12 @@
+import { diffChars } from 'diff/lib/diff/character'
+
+export function textValueIsDifferent (origin, other) {
+  let diff = diffChars(origin, other)
+  return diff.some(d => {
+    return (d.added || d.removed)
+  })
+}
+
 export function dateToString (dateObj) {
   return [dateObj.getFullYear(), dateObj.getMonth() + 1, dateObj.getDate()].join('-')
 }
