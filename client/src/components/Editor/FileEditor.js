@@ -9,6 +9,7 @@ import customWidgets from './CustomWidgets'
 import { notTextFile, isImageFile } from "../../helpers/utils"
 import ConfirmDeletionModal from '../Modal/ConfirmDeletionModal'
 import notify from '../common/Notify'
+import ImageLoader from '../common/ImageLoader'
 
 const defaultSchema = require('../../schema/file.json')
 
@@ -55,7 +56,7 @@ export default class FileEditor extends Component {
       return this.setState({
         formData: {},
         currentFilePath: path,
-        targetFile: null,
+        targetFile: path,
         notTextFile: true
       })
     }
@@ -170,74 +171,78 @@ export default class FileEditor extends Component {
     const { newFileMode, editorUpdating, params, repoFullName, currentBranch } = this.props
     const { filePathInputClass, formData, currentFilePath, notTextFile, disableActionBtn } = this.state
 
-    if (notTextFile) {
-      if (isImageFile(currentFilePath)) {
-        return (
-          <section id='content'>
-            <img src={`https://github.com/${repoFullName}/blob/${currentBranch}/${currentFilePath}?raw=true`} />
-          </section>
-        )
-      }
-      return (
-        <section id='content'>
-          <a href={`https://github.com/${repoFullName}/blob/${currentBranch}/${currentFilePath}?raw=true`} target='_blank'>
-            {currentFilePath}
-          </a>
-        </section>
-      )        
-    }
-
     return (
       <section id='content' className={editorUpdating ? 'loading' : ''}>
         <aside className='sidebar'>
           <span className={disableActionBtn ? 'bundle loading' : 'bundle'}>
-            <button className="button primary save" onClick={::this.handleSaveBtn}>Save</button>
+            {
+              notTextFile
+              ? <button className="button primary" onClick={evt => {this.setState({showDeleteFileModel: true})}}>Delete</button>
+              : [(<button className="button primary save"
+                    key="saveBtn"
+                    onClick={::this.handleSaveBtn}>Save</button>),
+                (<span className="menu" key="subMenu">
+                  <button className="button primary">
+                    <svg height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M12,16A2,2 0 0,1 14,18A2,2 0 0,1 12,20A2,2 0 0,1 10,18A2,2 0 0,1 12,16M12,10A2,2 0 0,1 14,12A2,2 0 0,1 12,14A2,2 0 0,1 10,12A2,2 0 0,1 12,10M12,4A2,2 0 0,1 14,6A2,2 0 0,1 12,8A2,2 0 0,1 10,6A2,2 0 0,1 12,4Z"></path>
+                    </svg>
+                  </button>
+                  <div className="options">
+                    <a className="danger" onClick={evt => {this.setState({showDeleteFileModel: true})}}>
+                      <svg height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M19,4H15.5L14.5,3H9.5L8.5,4H5V6H19M6,19A2,2 0 0,0 8,21H16A2,2 0 0,0 18,19V7H6V19Z"></path>
+                      </svg>
+                      Delete
+                    </a>
+                  </div>
+                </span>)]
+            }
 
-            <span className="menu">
-              <button className="button primary">
-                <svg height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M12,16A2,2 0 0,1 14,18A2,2 0 0,1 12,20A2,2 0 0,1 10,18A2,2 0 0,1 12,16M12,10A2,2 0 0,1 14,12A2,2 0 0,1 12,14A2,2 0 0,1 10,12A2,2 0 0,1 12,10M12,4A2,2 0 0,1 14,6A2,2 0 0,1 12,8A2,2 0 0,1 10,6A2,2 0 0,1 12,4Z"></path>
-                </svg>
-              </button>
-              <div className="options">
-                <a className="danger" onClick={evt => {this.setState({showDeleteFileModel: true})}}>
-                  <svg height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M19,4H15.5L14.5,3H9.5L8.5,4H5V6H19M6,19A2,2 0 0,0 8,21H16A2,2 0 0,0 18,19V7H6V19Z"></path>
-                  </svg>
-                  Delete
-                </a>
-                <ConfirmDeletionModal
-                  isOpen={this.state.showDeleteFileModel}
-                  onclose={::this.closeDeleteFileModel}
-                  onsubmit={::this.handleDeleteFile}
-                  oncancel={::this.closeDeleteFileModel} />
-              </div>
-            </span>
           </span>
+          <ConfirmDeletionModal
+            isOpen={this.state.showDeleteFileModel}
+            onclose={::this.closeDeleteFileModel}
+            onsubmit={::this.handleDeleteFile}
+            oncancel={::this.closeDeleteFileModel} />
         </aside>
         <div className='body'>
-          <div className='field filename'>
-            <label>Filename</label>
-            <input
-              className={`${filePathInputClass}`}
-              type='text'
-              ref="filePath"
-              value={currentFilePath}
-              onChange={::this.handleFilePathInput}
-              placeholder='Filename' />
-          </div>
-          <Form
-            onSubmit={res => this.updateResult(res.formData)}
-            schema={defaultSchema.JSONSchema}
-            uiSchema={defaultSchema.uiSchema}
-            formData={formData}>
-            <button
-              type='submit'
-              ref='formSubmitBtn'
-              style={{'display': 'none'}}>
-              Submit
-            </button>
-          </Form>
+          {
+            notTextFile
+            ? isImageFile(currentFilePath)
+              ? (<div className='field preview'>
+                  <label>Preview</label>
+                  <ImageLoader src={`https://github.com/${repoFullName}/blob/${currentBranch}/${currentFilePath}?raw=true`} />
+                </div>)
+              : (<div className='field preview'>
+                  <label>Browse file in github</label>
+                  <a href={`https://github.com/${repoFullName}/blob/${currentBranch}/${currentFilePath}?raw=true`} target='_blank'>
+                    {currentFilePath}
+                  </a>
+                </div>)
+            : [(<div className='field filename' key="filepath">
+                  <label>Filename</label>
+                  <input
+                    className={`${filePathInputClass}`}
+                    type='text'
+                    ref="filePath"
+                    value={currentFilePath}
+                    onChange={::this.handleFilePathInput}
+                    placeholder='Filename' />
+                </div>),
+                (<Form
+                  key="fileForm"
+                  onSubmit={res => this.updateResult(res.formData)}
+                  schema={defaultSchema.JSONSchema}
+                  uiSchema={defaultSchema.uiSchema}
+                  formData={formData}>
+                  <button
+                    type='submit'
+                    ref='formSubmitBtn'
+                    style={{'display': 'none'}}>
+                    Submit
+                  </button>
+                </Form>)]
+          }
         </div>
       </section>
     )

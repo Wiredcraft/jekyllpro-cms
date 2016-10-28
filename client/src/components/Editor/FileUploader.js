@@ -63,7 +63,7 @@ export default class FileUploader extends Component {
     console.log(filepath)
     addNewFile(currentBranch, filepath, files[0].base64, { encode: false })
       .then(() => {
-        fileAdded(currentFilePath)
+        fileAdded(filepath)
         toRoute(`/files/${currentBranch}/`)
       })
   }
