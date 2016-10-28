@@ -234,7 +234,7 @@ export default class Header extends Component {
 
         <a className='website item' onClick={evt =>
           this.props.toRoute({
-            pathname: `/${collectionType || 'pages' }/${branch || 'master' }/${filePath || ''}`,
+            pathname: `/${repoOwner}/${repoName}/${collectionType}/${branch || 'master' }/${filePath || ''}`,
             query: { viewing: 'site' }}
           )}>
           <svg height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'>
