@@ -31,7 +31,11 @@ module.exports = {
   },
   devServer: {
     contentBase: path.join(__dirname, '../dev'),
-    historyApiFallback: true,
+    historyApiFallback: {
+      rewrites: [
+        { from: /./, to: '/index.html' }
+      ]
+    },
     hot: true,
     port: 8000,
     publicPath: `${publicPath}`,

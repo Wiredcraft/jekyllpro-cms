@@ -2,7 +2,7 @@ import 'core-js/fn/object/assign'
 import React from 'react'
 import ReactDOM from 'react-dom'
 import { Provider } from 'react-redux'
-import { Router, Route, browserHistory, hashHistory } from 'react-router'
+import { Router, Route, browserHistory } from 'react-router'
 import { syncHistoryWithStore } from 'react-router-redux'
 
 import App from './components/Main'
@@ -13,8 +13,7 @@ import NotFound from './components/NotFound'
 import store from './stores'
 
 // __DEV__ is global variable defined in webpack,
-// if in developement, using hash history
-const history = __DEV__ ? syncHistoryWithStore(hashHistory, store) : syncHistoryWithStore(browserHistory, store)
+const history = syncHistoryWithStore(browserHistory, store)
 
 // Render the main component into   the dom
 ReactDOM.render((
