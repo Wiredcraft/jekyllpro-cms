@@ -10,13 +10,14 @@ export default class ContentSidebar extends Component {
       selectedItem: props.params ? props.params.splat : undefined,
       filteredCollections: [],
       filtering: false,
-      filteredType: null
+      filteredType: null,
+      loadingIndex: false
     }
   }
 
   componentWillMount() {
     const { fetchRepoIndex, params, changeEditorMode, collections,
-      selectCollectionFile, currentBranch, query } = this.props
+      selectCollectionFile, currentBranch, query, lastRepoUpdate } = this.props
 
     changeEditorMode('collection')
     if (collections) {
@@ -24,8 +25,22 @@ export default class ContentSidebar extends Component {
     }
     fetchRepoIndex({ branch: currentBranch })
     .then((indexData) => {
+      // check if index is out of sync
+      if (Date.parse(indexData.updated) < Date.parse(lastRepoUpdate)) {
+        this.setState({ loadingIndex: true })
+        return fetchRepoIndex({ branch: currentBranch, refresh: true })
+          .then((newIndexData) => {
+            this.setState({ loadingIndex: false })
+
+            return newIndexData
+          })
+      }
+
+      return indexData
+    })
+    .then((data) => {
       if (params && (params.splat !== 'new')) {
-        indexData.collections.some(item => {
+        data.collections.some(item => {
           if (item.path === params.splat) {
             selectCollectionFile(item)
             // break iteration
@@ -155,7 +170,7 @@ export default class ContentSidebar extends Component {
             }
           </span>
         </header>
-        <section className='body list'>
+        <section className={this.state.loadingIndex ? 'body list loading' : 'body list'}>
           {
             records && records.map((c, idx) => {
               return (
