@@ -196,7 +196,11 @@ const getRepoBranchIndex = (req, res, next) => {
       return next()
     }
     console.log(record)
-    let data = {collections: JSON.parse(record.collections), schemas: JSON.parse(record.schemas)}
+    let data = {
+      updated: record.updated,
+      collections: JSON.parse(record.collections),
+      schemas: JSON.parse(record.schemas)
+    }
     return res.status(200).json(data)
   })
 }
@@ -222,6 +226,7 @@ const refreshIndexAndSave = (req, res) => {
       }, (err) => {
         if (err) console.log(err)
       })
+      formatedIndex.updated = new Date()
       return res.status(200).json(formatedIndex)
     })
     .catch((err) => {
