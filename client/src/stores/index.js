@@ -12,7 +12,9 @@ const rootReducer = (state, action) => {
 }
 
 // __DEV__ is global variable defined in webpack,
-let composeEnhancers = __DEV__ ? window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ : compose
+let composeEnhancers = __DEV__
+  ? window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ ? window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ : compose
+  : compose
 
 const store = createStore(rootReducer, composeEnhancers(
   applyMiddleware(thunkMiddleware, routerMiddleware(browserHistory))
