@@ -29,7 +29,7 @@ class Editor extends Component {
       return <FileUploader {...this.props} />
     }
 
-    return <section id='content' />
+    return (<section id='content'><div className='empty'>Please select an entry</div></section>)
   }
 }
 

@@ -309,7 +309,7 @@ export default class ContentEditor extends Component {
     const { filePathInputClass, formData, currentFilePath, currentSchema, disableActionBtn } = this.state
     let translations = parseFilePathByLang(currentFilePath)
 
-    if (!currentSchema) return (<section id='content' />)
+    if (!currentSchema) return (<section id='content'><div className='empty'>Please select an entry</div></section>)
 
     return (
       <section id='content'>
