@@ -17,3 +17,13 @@ $headline: $body;
 
 $sidebar: 25%;
 $header: 42px;
+
+/* Partials */
+
+$partials: (
+  base,
+  button,
+  form,
+  menu,
+  tooltip
+);
