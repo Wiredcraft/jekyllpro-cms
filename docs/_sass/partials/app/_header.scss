@@ -18,6 +18,31 @@
   }
   .menu {
     float: left;
+    .options {
+      .header {
+        @include font-size($smaller);
+        padding: $space/3 $space/2;
+        .search {
+          display: inline-block;
+          position: relative;
+          width: 100%;
+          input {
+            box-sizing: border-box;
+            padding: $space/12 $space/4;
+            padding-left: $space;
+            width: 100%;
+          }
+          svg {
+            fill: $grey;
+            height: 1.5*$space/2;
+            left: $space/4;
+            position: absolute;
+            top: $space/4;
+            width: 1.5*$space/2;
+          }
+        }
+      }
+    }
   }
   .item {
     border-right: 1px solid shade($black, 40%);
@@ -33,14 +58,8 @@
       opacity: 1;
       text-decoration: none;
     }
-    &.active,
-    &.logo {
+    &.active {
       opacity: 1;
-    }
-    &.profile {
-      float: right;
-      border-left: 1px solid shade($black, 20%);
-      border-right: 0;
     }
     img,
     svg {
@@ -52,6 +71,27 @@
     }
     svg {
       margin-right: $space/8;
+    }
+  }
+  .logo {
+    .options {
+      .header {
+        line-height: 1;
+        text-align: center;
+        img {
+          height: $space;
+          margin-bottom: $space/6;
+        }
+        small {
+          color: $grey;
+          white-space: nowrap;
+        }
+      }
+    }
+  }
+  .pro {
+    .item > a svg {
+      margin-right: 0;
     }
   }
 }
