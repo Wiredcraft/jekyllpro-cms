@@ -16,6 +16,15 @@
         padding-right: $space/4;
       }
     }
+    .menu {
+      .button {
+        padding-right: $space/4;
+        svg {
+          height: 1.5*$space/2 - 2;
+          width: 1.5*$space/2 - 2;
+        }
+      }
+    }
     .search {
       display: inline-block;
       position: relative;

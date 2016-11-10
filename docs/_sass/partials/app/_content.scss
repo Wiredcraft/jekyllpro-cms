@@ -20,17 +20,17 @@ $panel: 240px;
     float: right;
     position: fixed;
     right: $space;
-    width: $sidebar;
+    width: $panel;
     .select,
     .select select {
       width: 100%;
     }
     & + .body {
-      margin-right: $sidebar;
+      margin-right: $panel;
       padding-right: $space;
     }
     .save {
-      width: $sidebar - 32px;
+      width: $panel - 32px;
     }
     .menu {
       .button {
