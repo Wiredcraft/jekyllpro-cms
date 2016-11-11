@@ -18,18 +18,30 @@
   input,
   textarea,
   select {
-    box-shadow: $shadow inset;
     font-family: inherit;
     font-size: inherit;
     line-height: inherit;
   }
 
-  input:not([type=submit]),
+  input[type=color],
+  input[type=date],
+  input[type=datetime-local],
+  input[type=email],
+  input[type=month],
+  input[type=number],
+  input[type=password],
+  input[type=search],
+  input[type=tel],
+  input[type=text],
+  input[type=time],
+  input[type=url],
+  input[type=week],
   textarea,
   .select select {
     background: $background;
     border: 1px solid $line;
     border-radius: $radius;
+    box-shadow: $shadow inset;
     box-sizing: border-box;
     display: block;
     padding: $space/6 $space/4;
