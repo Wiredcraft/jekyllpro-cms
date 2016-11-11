@@ -19,7 +19,19 @@ h6 {
   text-transform: none;
 }
 
-input:not([type=submit]),
+input[type=color],
+input[type=date],
+input[type=datetime-local],
+input[type=email],
+input[type=month],
+input[type=number],
+input[type=password],
+input[type=search],
+input[type=tel],
+input[type=text],
+input[type=time],
+input[type=url],
+input[type=week],
 textarea {
   background: #FFF;
   box-shadow: rgba(0, 0, 0, 0.04) 0 1px 0 0 inset;
@@ -64,17 +76,6 @@ textarea {
       &.selected {
         svg {
           opacity: 1;
-        }
-      }
-      &.disabled {
-        span {
-          opacity: 0.2;
-        }
-        &:hover {
-          span,
-          svg {
-            opacity: 0.6;
-          }
         }
       }
     }
@@ -139,5 +140,39 @@ $switch_padding: 2px;
     border-radius: $radius;
     @include font-size($small);
     padding: $space/6 $space/2;
+  }
+}
+
+@import '_loading';
+
+.loading {
+  @include loading;
+}
+
+.processing {
+  position: relative;
+  &:after {
+    @include spinner(1px, $space/2, 0.6s, $grey);
+    bottom: 0;
+    margin: auto;
+    position: absolute;
+    right: $space/4;
+    top: 0;
+  }
+  input {
+    padding-right: $space !important;
+  }
+}
+
+.button {
+  &.processing {
+    &:after {
+      @include spinner(1px, $space/2, 0.6s);
+      bottom: 0;
+      margin: auto;
+      position: absolute;
+      right: $space/4;
+      top: 0;
+    }
   }
 }

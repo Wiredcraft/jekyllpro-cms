@@ -1,4 +1,4 @@
-$sidebar: 240px;
+$panel: 240px;
 
 #content {
   background: $background;
@@ -20,17 +20,17 @@ $sidebar: 240px;
     float: right;
     position: fixed;
     right: $space;
-    width: $sidebar;
+    width: $panel;
     .select,
     .select select {
       width: 100%;
     }
     & + .body {
-      margin-right: $sidebar;
+      margin-right: $panel;
       padding-right: $space;
     }
     .save {
-      width: $sidebar - 32px;
+      width: $panel - 32px;
     }
     .menu {
       .button {
@@ -54,22 +54,37 @@ $sidebar: 240px;
     box-sizing: border-box;
   }
   .empty {
+    background: #FFF;
+    border: 1px solid $line;
+    border-radius: $radius;
+    box-shadow: $shadow;
+    box-sizing: border-box;
+    bottom: 0;
+    margin: auto;
+    padding: $space/2 1.5*$space/2;
+    position: absolute;
+    display: table;
+    height: auto;
+    left: 0;
+    right: 0;
     text-align: center;
-    .box {
-      background: #FFF;
-      border: 1px solid $line;
-      border-radius: $radius;
-      box-shadow: $shadow;
-      bottom: 0;
-      margin: auto;
-      padding: $space;
-      position: absolute;
-      display: table;
-      height: auto;
-      left: 0;
-      right: 0;
-      top: 0;
-      width: 240px;
+    top: 0;
+    width: 240px;
+    h2,
+    p {
+      margin-bottom: $space/2;
+    }
+    p {
+      @include font-size($smaller);
+      line-height: 160%;
+    }
+    .button {
+      width: 100%;
+    }
+    small {
+      display: block;
+      @include font-size($smaller);
+      margin-top: $space/4;
     }
   }
 }

@@ -8,7 +8,7 @@ import { confirmUserIsLogged } from '../actions/userActions'
 import Header from './Header'
 
 import 'react-notifications/lib/notifications.css'
-import 'styles/_scss/main.scss'
+import 'styles/_sass/main.scss'
 import 'styles/_supplement.scss'
 
 
