@@ -1,4 +1,4 @@
-$box: 264px;
+$box: 288px;
 
 .box {
   bottom: 0;
@@ -21,12 +21,71 @@ $box: 264px;
     border: 1px solid $line;
     border-radius: $radius;
     box-shadow: $shadow;
+    box-sizing: border-box;
     padding: $space/2;
+    h2 {
+      @include font-size($larger);
+      margin-bottom: $space/2;
+    }
     .button {
       @include font-size($larger);
       line-height: 160%;
       padding: $space/3;
       width: 100%;
+    }
+    .search {
+      display: inline-block;
+      position: relative;
+      width: 100%;
+      input {
+        box-sizing: border-box;
+        padding-left: 1.25*$space;
+        width: 100%;
+      }
+      svg {
+        fill: $grey;
+        height: $space;
+        left: $space/4;
+        position: absolute;
+        top: $space/4;
+        width: $space;
+      }
+    }
+    .empty,
+    .repo {
+      border-radius: $radius;
+      box-sizing: border-box;
+      @include font-size($smaller);
+      overflow: hidden;
+      margin-top: $space/2;
+      padding: $space/4 $space/2;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      width: $box - ($space + 2);
+    }
+    .empty {
+      background: $light;
+      color: $grey;
+    }
+    .repo {
+      border: 1px solid $line;
+      color: inherit;
+      display: block;
+      @include transition-property(border);
+      @include transition-duration($ease);
+      white-space: nowrap;
+      svg {
+        display: inline-block;
+        fill: $grey;
+        margin-right: $space/6;
+        height: 1.5*$space/2;
+        vertical-align: text-bottom;
+        width: 1.5*$space/2;
+      }
+      &:hover {
+        border-color: $blue;
+        text-decoration: none;
+      }
     }
   }
   small {

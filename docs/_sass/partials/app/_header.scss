@@ -42,6 +42,14 @@
           }
         }
       }
+      .empty {
+        color: $grey;
+        display: block;
+        @include font-size($smaller);
+        padding: $space/12 $space/2;
+        margin: $space/6 0;
+        text-align: center;
+      }
     }
   }
   .item {
@@ -77,6 +85,7 @@
     .options {
       .header {
         line-height: 1;
+        padding: $space;
         text-align: center;
         img {
           height: $space;
