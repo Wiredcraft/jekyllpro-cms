@@ -304,6 +304,11 @@ export default class ContentEditor extends Component {
     this.setState({language: evt.target.value})
   }
 
+
+  afterOpenModal() {
+    document.body.classList.add('ReactModal__Body--open')
+  }
+
   render() {
     const { editorUpdating, selectedCollectionFile, params, schemas } = this.props
     const { filePathInputClass, formData, currentFilePath, currentSchema, disableActionBtn } = this.state

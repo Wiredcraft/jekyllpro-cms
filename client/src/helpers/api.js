@@ -35,6 +35,16 @@ const setQueryParam = (options) => {
   return '?' + params.join('&')
 }
 
+export function checkRepoAvailability (repoOwner, repoName) {
+  return new Promise((resolve, reject) => {
+    superagent('GET', `${API_BASE_URL}/api/repository/details`)
+      .set('X-REPO-OWNER', repoOwner)
+      .set('X-REPO-NAME', repoName)
+      .withCredentials()
+      .end(generalResponseHandler(resolve, reject))
+  })
+}
+
 export function getUser () {
   return new Promise((resolve, reject) => {
     request('GET', `${API_BASE_URL}/api/me`)

@@ -173,6 +173,11 @@ export default class FileEditor extends Component {
     this.setState({currentFilePath: evt.target.value})
   }
 
+
+  afterOpenModal() {
+    document.body.classList.add('ReactModal__Body--open')
+  }
+
   render() {
     const { newFileMode, editorUpdating, params, repoFullName, currentBranch } = this.props
     const { filePathInputClass, formData, currentFilePath, notTextFile, disableActionBtn } = this.state

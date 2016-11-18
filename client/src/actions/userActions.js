@@ -9,7 +9,7 @@ export function confirmUserIsLogged() {
       .then(data => {
         dispatch({
           type: CHANGE_LOGIN_STATE,
-          payload: { isLoggedIn: true, userName: data.login, avatar: data.avatar_url }
+          payload: { isLoggedIn: true, userName: data.login, avatar: data.avatar_url, userUrl: data.html_url }
         })
       })
   }

@@ -17,19 +17,13 @@ import { toRoute } from '../actions/routeActions'
 
 import RepoIcon from './svg/RepoIcon'
 import BranchIcon from './svg/BranchIcon'
-import Modal from 'react-modal'
-import ModalCustomStyle from './Modal'
-import RepoSelectionModal from './Modal/RepoSelectionModal'
-import SettingModal from './Modal/SettingModal'
+import RepoSelection from './Header/RepoSelection'
 
 @connect(mapStateToProps, mapDispatchToProps)
 export default class Header extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      showProfileModal: false,
-      showRepoModal: false,
-      showSettingModal: false,
       selectedType: undefined,
       activeView: props.params.collectionType === 'files' ? 'files' : 'content'
     }
@@ -56,7 +50,7 @@ export default class Header extends Component {
       .catch(err => {
         Cookie.remove('repoOwner')
         Cookie.remove('repoName')
-        this.setState({ showRepoModal: true })
+        // this.setState({ showRepoModal: true })
       })
     } else if (repoOwnerCk && repoNameCk) {
       fetchRepoInfo()
@@ -69,11 +63,11 @@ export default class Header extends Component {
       .catch(err => {
         Cookie.remove('repoOwner')
         Cookie.remove('repoName')
-        this.setState({ showRepoModal: true })
+        // this.setState({ showRepoModal: true })
       })
 
     } else {
-      this.setState({showRepoModal: true})
+      // this.setState({showRepoModal: true})
       
     }
   }
@@ -81,9 +75,9 @@ export default class Header extends Component {
   componentDidMount() {
     const { location: { pathname, query } } = this.props
     if (query && query.modal === 'repoSelection') {
-      this.setState({showRepoModal: true})
+      // this.setState({showRepoModal: true})
     } else if (query && query.modal === 'repoSettings') {
-      this.setState({showSettingModal: true})
+      // this.setState({showSettingModal: true})
     }
   }
 
@@ -109,18 +103,6 @@ export default class Header extends Component {
     this.props.logout()
   }
 
-  onCloseRepoModal () {
-    this.setState({showRepoModal: false})
-  }
-
-  onCloseSettingModal () {
-    this.setState({showSettingModal: false})
-  }
-
-  afterOpenModal() {
-    document.body.classList.add('ReactModal__Body--open')
-  }
-
   toFilesView() {
     const { currentBranch, toRoute } = this.props
     const repoLink = `${Cookie.get('repoOwner')}/${Cookie.get('repoName')}`
@@ -137,24 +119,22 @@ export default class Header extends Component {
   }
 
   render () {
-    const { branches, currentBranch, avatar, userName, isBranchPrivate, schemas,
+    const { branches, currentBranch, avatar, userName, userUrl, isBranchPrivate, schemas,
     params: { repoOwner, repoName, collectionType, branch, splat: filePath} } = this.props
     const { selectedType, activeView } = this.state
 
     return (
       <header id='header'>
         <nav className='navigation'>
-          <a className='item repo' onClick={evt => {this.setState({showRepoModal: true})}}>
-            <svg height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'>
-              <path strokeWidth='0.2' strokeLinejoin='round' d='M 9.99936,3.99807L 3.99936,3.99807C 2.89436,3.99807 2.00936,4.89406 2.00936,5.99807L 1.99936,17.9981C 1.99936,19.1021 2.89436,19.9981 3.99936,19.9981L 19.9994,19.9981C 21.1029,19.9981 21.9994,19.1021 21.9994,17.9981L 21.9994,7.99807C 21.9994,6.89406 21.1029,5.99807 19.9994,5.99807L 11.9994,5.99807L 9.99936,3.99807 Z '/>
-            </svg>
-            {repoOwner}/{repoName}
-            <RepoSelectionModal
-              {...this.props}
-              isOpen={this.state.showRepoModal}
-              afterOpen={::this.afterOpenModal}
-              onclose={::this.onCloseRepoModal}/>
-          </a>
+          <span className='repo menu'>
+            <a className='item repo' >
+              <svg height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'>
+                <path strokeWidth='0.2' strokeLinejoin='round' d='M 9.99936,3.99807L 3.99936,3.99807C 2.89436,3.99807 2.00936,4.89406 2.00936,5.99807L 1.99936,17.9981C 1.99936,19.1021 2.89436,19.9981 3.99936,19.9981L 19.9994,19.9981C 21.1029,19.9981 21.9994,19.1021 21.9994,17.9981L 21.9994,7.99807C 21.9994,6.89406 21.1029,5.99807 19.9994,5.99807L 11.9994,5.99807L 9.99936,3.99807 Z '/>
+              </svg>
+              {repoOwner}/{repoName}
+            </a>
+            <RepoSelection {...this.props} />
+          </span>
           <span className='branch menu'>
             <a className='item'>
               <svg height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'>
@@ -179,23 +159,20 @@ export default class Header extends Component {
               </div>
             )}
           </span>
-          <a className='item user' onClick={evt => {this.setState({showProfileModal: true})}}>
-            <img src={avatar} />
-            <Modal
-              className='profile-modal'
-              style={ModalCustomStyle}
-              isOpen={this.state.showProfileModal}
-              onAfterOpen={::this.afterOpenModal}
-              onRequestClose={evt => {this.setState({showProfileModal: false})}} >
-              <header className='header'>
-                <a className='close' id='close-modal' onClick={evt => {this.setState({showProfileModal: false})}}>Close</a>
-                <h2>User</h2>
-              </header>
-              <section className='body'>
-                <p><button className='button primary' onClick={() => this.logout()}>Logout</button></p>
-              </section>
-            </Modal>
-          </a>
+          <span className='menu user'>
+            <a className='item'><img src={avatar} /></a>
+            <div className="options">
+              <a href={userUrl} target="_blank">
+                <svg height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M0 0h24v24H0z" fill="none"></path>
+                  <path d="M19 19H5V5h7V3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z"></path>
+                </svg>
+                {userName}
+              </a>
+              <hr />
+              <a onClick={() => this.logout()}>Logout</a>
+            </div>
+          </span>
         </nav>
         <span className='logo menu'>
           <a className='item logo'>
@@ -248,28 +225,34 @@ export default class Header extends Component {
           Files
         </a>
 
-        <a className='website item' onClick={evt =>
+        <a className='preview item' onClick={evt =>
           this.props.toRoute({
             pathname: `/${repoOwner}/${repoName}/${collectionType}/${branch || 'master' }/${filePath || ''}`,
             query: { viewing: 'site' }}
           )}>
-          <svg height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'>
-            <path d='M12,9A3,3 0 0,0 9,12A3,3 0 0,0 12,15A3,3 0 0,0 15,12A3,3 0 0,0 12,9M12,17A5,5 0 0,1 7,12A5,5 0 0,1 12,7A5,5 0 0,1 17,12A5,5 0 0,1 12,17M12,4.5C7,4.5 2.73,7.61 1,12C2.73,16.39 7,19.5 12,19.5C17,19.5 21.27,16.39 23,12C21.27,7.61 17,4.5 12,4.5Z' />
+          <svg height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12,9A3,3 0 0,0 9,12A3,3 0 0,0 12,15A3,3 0 0,0 15,12A3,3 0 0,0 12,9M12,17A5,5 0 0,1 7,12A5,5 0 0,1 12,7A5,5 0 0,1 17,12A5,5 0 0,1 12,17M12,4.5C7,4.5 2.73,7.61 1,12C2.73,16.39 7,19.5 12,19.5C17,19.5 21.27,16.39 23,12C21.27,7.61 17,4.5 12,4.5Z"></path>
           </svg>
-          View site
+          Preview
         </a>
-        <a className='item settings' onClick={evt => {this.setState({showSettingModal: true})}}>
-          <svg height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'>
-            <path d='M 11.9994,15.498C 10.0664,15.498 8.49939,13.931 8.49939,11.998C 8.49939,10.0651 10.0664,8.49805 11.9994,8.49805C 13.9324,8.49805 15.4994,10.0651 15.4994,11.998C 15.4994,13.931 13.9324,15.498 11.9994,15.498 Z M 19.4284,12.9741C 19.4704,12.6531 19.4984,12.329 19.4984,11.998C 19.4984,11.6671 19.4704,11.343 19.4284,11.022L 21.5414,9.36804C 21.7294,9.21606 21.7844,8.94604 21.6594,8.73004L 19.6594,5.26605C 19.5354,5.05005 19.2734,4.96204 19.0474,5.04907L 16.5584,6.05206C 16.0424,5.65607 15.4774,5.32104 14.8684,5.06903L 14.4934,2.41907C 14.4554,2.18103 14.2484,1.99805 13.9994,1.99805L 9.99939,1.99805C 9.74939,1.99805 9.5434,2.18103 9.5054,2.41907L 9.1304,5.06805C 8.52039,5.32104 7.95538,5.65607 7.43939,6.05206L 4.95139,5.04907C 4.7254,4.96204 4.46338,5.05005 4.33939,5.26605L 2.33939,8.73004C 2.21439,8.94604 2.26938,9.21606 2.4574,9.36804L 4.5694,11.022C 4.5274,11.342 4.49939,11.6671 4.49939,11.998C 4.49939,12.329 4.5274,12.6541 4.5694,12.9741L 2.4574,14.6271C 2.26938,14.78 2.21439,15.05 2.33939,15.2661L 4.33939,18.73C 4.46338,18.946 4.7254,19.0341 4.95139,18.947L 7.4404,17.944C 7.95639,18.34 8.52139,18.675 9.1304,18.9271L 9.5054,21.577C 9.5434,21.8151 9.74939,21.998 9.99939,21.998L 13.9994,21.998C 14.2484,21.998 14.4554,21.8151 14.4934,21.577L 14.8684,18.9271C 15.4764,18.6741 16.0414,18.34 16.5574,17.9431L 19.0474,18.947C 19.2734,19.0341 19.5354,18.946 19.6594,18.73L 21.6594,15.2661C 21.7844,15.05 21.7294,14.78 21.5414,14.6271L 19.4284,12.9741 Z ' />
-          </svg>
-          Settings
-          <SettingModal
-            isBranchPrivate={isBranchPrivate}
-            branches={branches}
-            isOpen={this.state.showSettingModal}
-            afterOpen={::this.afterOpenModal}
-            onclose={::this.onCloseSettingModal} />
-        </a>
+        <span className="publish menu">
+          <a className="item">
+            <svg height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+              <path d="M0 0h24v24H0z" fill="none"></path>
+              <path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96z"></path>
+            </svg>
+            Publish
+          </a>
+          <div className="options">
+            <a href="https://jekyllpro.com" target="_blank">
+              <svg height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M0 0h24v24H0z" fill="none"></path>
+                <path d="M19 19H5V5h7V3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z"></path>
+              </svg>
+              JekyllPro
+            </a>
+          </div>
+        </span>
       </header>
     )
   }
@@ -283,6 +266,7 @@ function mapStateToProps(state, { params:
     avatar: state.user.get('avatar'),
     schemas: state.repo.get('schemas'),
     userName: state.user.get('userName'),
+    userUrl: state.user.get('userUrl'),
     branches: state.repo.get('branches'),
     repoDetails: state.repo.get('repoDetails'),
     hasIndexHook: state.repo.get('hasIndexHook')
