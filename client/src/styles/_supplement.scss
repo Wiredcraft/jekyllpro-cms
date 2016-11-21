@@ -79,3 +79,12 @@ fieldset {
   bottom: 20px;
 }
 
+.disabled {
+  .button {
+    pointer-events: none;
+    @extend .button.primary.disabled;
+  }
+  .button + .menu {
+    pointer-events: none;
+  }
+}

@@ -322,9 +322,9 @@ export default class ContentEditor extends Component {
           {params.splat !== 'new' && <div className="field">
             <span className="label">Latest update</span>
             <div className="message">
-              <a>{selectedCollectionFile.lastUpdatedBy}</a>
-              ,&nbsp;{moment(Date.parse(selectedCollectionFile.lastUpdatedAt)).fromNow()}
-              &nbsp;(<a href={`${repoUrl}commit/${selectedCollectionFile.lastCommitSha}`} target='_blank'> #{selectedCollectionFile.lastCommitSha.slice(0, 6)} </a>)
+              <a href={`${repoUrl}commit/${selectedCollectionFile.lastCommitSha}`} target='_blank'>
+                {selectedCollectionFile.lastUpdatedBy},&nbsp;{moment(Date.parse(selectedCollectionFile.lastUpdatedAt)).fromNow()}
+              </a>
             </div>
           </div>}
           <div className='field language'>
@@ -340,8 +340,8 @@ export default class ContentEditor extends Component {
             </small>
           </div>
 
-          <span className={disableActionBtn ? 'bundle loading' : 'bundle'}>
-            <button className="button primary save" onClick={::this.handleSaveBtn}>Save</button>
+          <span className={disableActionBtn ? 'bundle disabled' : 'bundle'}>
+            <button className={disableActionBtn ? 'button primary save processing' : 'button primary save'} onClick={::this.handleSaveBtn}>Save</button>
 
             <span className="menu">
               <button className="button primary">
