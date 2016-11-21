@@ -23,7 +23,7 @@ fieldset {
 }
 
 .ReactModal__Content {
-  // @extend #modal;
+  @extend #modal;
   &.profile-modal {
     .body {
       text-align: center;
@@ -42,11 +42,11 @@ fieldset {
   }
 }
 .ReactModal__Body--open {
-  // @extend body.modal;
-  // @extend #app;
+  @extend body.modal;
+  @extend #app;
 }
 .ReactModal__Overlay {
-  // @extend #overlay;
+  @extend #overlay;
 }
 
 #app #sidebar .tree {
