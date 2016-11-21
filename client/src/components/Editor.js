@@ -9,7 +9,6 @@ import { collectionFileRemoved, collectionFileAdded, collectionFileUpdated,
 
 import ContentEditor from './Editor/ContentEditor'
 import FileEditor from './Editor/FileEditor'
-import FileUploader from './Editor/FileUploader'
 
 class Editor extends Component {
   constructor() {
@@ -17,16 +16,13 @@ class Editor extends Component {
   }
 
   render() {
-    const { mode, params, schemas, location } = this.props
+    const { mode, params, schemas } = this.props
 
     if (schemas && (mode === 'collection') && params.splat) {
       return (<ContentEditor {...this.props} />)
     }
-    if ((mode === 'files' || params.collectionType === 'files') && params.splat) {
+    if (mode === 'files' || params.collectionType === 'files') {
       return <FileEditor {...this.props} />
-    }
-    if (location.query && location.query['upload']) {
-      return <FileUploader {...this.props} />
     }
 
     return (<section id='content'><div className='empty'>Please select an entry</div></section>)

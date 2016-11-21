@@ -10,6 +10,7 @@ import { notTextFile, isImageFile, textValueIsDifferent } from "../../helpers/ut
 import ConfirmDeletionModal from '../Modal/ConfirmDeletionModal'
 import notify from '../common/Notify'
 import ImageLoader from '../common/ImageLoader'
+import FileUploader from './FileUploader'
 
 const defaultSchema = require('../../schema/file.json')
 
@@ -173,15 +174,38 @@ export default class FileEditor extends Component {
     this.setState({currentFilePath: evt.target.value})
   }
 
-
   afterOpenModal() {
     document.body.classList.add('ReactModal__Body--open')
   }
 
+  createNewFile() {
+    const { toRoute, currentBranch, params: { repoOwner, repoName } } = this.props
+    toRoute(`/${repoOwner}/${repoName}/files/${currentBranch}/new`)
+  }
+
+  toFileUpload () {
+    const { toRoute, currentBranch, params: { repoOwner, repoName } } = this.props
+    toRoute(`/${repoOwner}/${repoName}/files/${currentBranch}/?upload=true`)
+  }
+
   render() {
-    const { newFileMode, editorUpdating, params, repoFullName, currentBranch } = this.props
+    const { newFileMode, editorUpdating, params, repoFullName, currentBranch, location } = this.props
     const { filePathInputClass, formData, currentFilePath, notTextFile, disableActionBtn } = this.state
 
+    if (location.query && location.query['upload']) {
+      return <FileUploader {...this.props} />
+    } else if (!params.splat) {
+      return (
+        <section id='content'>
+          <div className="empty">
+            <h2>No file selected</h2>
+            <p>You can select a file using the sidebar or add a new one:</p>
+            <button className="button primary" onClick={::this.toFileUpload}>Upload a file</button>
+            <small>Or <a onClick={::this.createNewFile}>create a file</a></small>
+          </div>
+        </section>
+      )
+    }
     return (
       <section id='content' className={editorUpdating ? 'loading' : ''}>
         <aside className='sidebar'>

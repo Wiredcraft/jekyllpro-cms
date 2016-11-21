@@ -72,25 +72,26 @@ export default class FileUploader extends Component {
     const { altFilename, uploadFolder, files } = this.state
     return (
       <section id='content'>
-        <h2>Step 1: choose a file </h2>
-        <input
-          type="file"
-          onChange={ ::this.handleFileInput }
-          multiple={ false } />
-        <h2> Step 2:  specify the folder path</h2>
-        <div className='field filename'>
-          <label>Folder path</label>
+        <div className='upload-box'>
           <input
-            className=''
-            type='text'
-            ref="filePath"
-            value={uploadFolder}
-            onChange={::this.handleFolderInput}
-            placeholder='i.e. "assets/"' />
+            type='file'
+            id='file'
+            onChange={ ::this.handleFileInput }
+            multiple={ false } />
+          <label htmlFor='file'>{ files.length > 0 ? files[0].name : 'Choose File'}</label>
+          <div className='field filename'>
+            <input
+              className=''
+              type='text'
+              ref="filePath"
+              value={uploadFolder}
+              onChange={::this.handleFolderInput}
+              placeholder='Folder path: i.e. "assets/"' />
+          </div>
+          { this.state.files.length !== 0 &&
+            <button className='button primary' onClick={::this.uploadFile}>Upload</button>
+          }
         </div>
-        { this.state.files.length !== 0 &&
-          <button className='button primary' onClick={::this.uploadFile}>Upload</button>
-        }
       </section>
     )
   }
