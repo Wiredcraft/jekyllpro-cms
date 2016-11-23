@@ -7,7 +7,7 @@ export default class RepoSelection extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      loading: false,
+      hasUserInput: false,
       searching: false,
       searchResult: null,
       inputClassname: ''
@@ -15,10 +15,10 @@ export default class RepoSelection extends Component {
   }
   handleSearch (repoFullName) {
     let tmp = repoFullName.split('/')
-    if (tmp.length < 2) {
+    if (tmp.length < 2 || !tmp[1]) {
       return
     }
-    this.setState({ searching: true })
+    this.setState({ searching: true, hasUserInput: true })
     checkRepoAvailability(tmp[0], tmp[1]).then(() => {
       this.setState({ searching: false, searchResult: { repoOwner: tmp[0], repoName: tmp[1] } })
     }).catch(() => {
@@ -29,6 +29,9 @@ export default class RepoSelection extends Component {
 
   handleChange (evt) {
     let s = evt.target.value
+    if (!s && this.state.hasUserInput) {
+      this.setState({ hasUserInput: false, searchResult: null })
+    }
     if (timeout) {
       clearTimeout(timeout)
     }
@@ -40,26 +43,21 @@ export default class RepoSelection extends Component {
     const { searchResult: { repoName, repoOwner } } = this.state
     Cookie.set('repoOwner', repoOwner, { expires: 100 })
     Cookie.set('repoName', repoName, { expires: 100 })
-    this.setState({ loading: true })
     resetEditorData()
     resetRepoData()
     fetchRepoInfo().then(() => {
-      this.setState({
-        loading: false
-      })
       getAllBranch()
       toRoute(`/${repoOwner}/${repoName}/`)
     })
     .catch(err => {
       Cookie.remove('repoOwner')
       Cookie.remove('repoName')
-      this.setState({ loading: false })
     })
   }
 
   render () {
-    const { searching, loading, inputClassname, searchResult } = this.state
-    // const { afterOpen, onclose, isOpen, repoDetails } = this.props
+    const { searching, hasUserInput, inputClassname, searchResult } = this.state
+
     return (
       <div className="options">
         <header className="header">
@@ -74,7 +72,7 @@ export default class RepoSelection extends Component {
             </svg>
           </span>
         </header>
-        <div className="empty">e.g. "Wiredcraft/pipelines"</div>
+        { !hasUserInput && <div className="empty">e.g. "Wiredcraft/pipelines"</div>}
         { (searchResult === '') && !searching && <div className='empty'>No match</div>}
         { searchResult && !searching &&(<a onClick={::this.handleClick}>
           <svg height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'>

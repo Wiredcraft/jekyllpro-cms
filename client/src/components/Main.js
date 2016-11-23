@@ -90,10 +90,13 @@ export default class AppComponent extends React.Component {
   }
 
   componentWillUpdate(nextProps, nextState) {
-    if (!this.state.hasSavedRepo) return
-
-    if ((nextProps.location.pathname === '/select') && (nextProps.location.query.reset === '1')) {
+    const { hasSavedRepo } = this.state
+    if ((nextProps.location.pathname === '/select')
+      && (nextProps.location.query.reset === '1')
+      && hasSavedRepo) {
       this.setState({ hasSavedRepo: false })
+    } else if (Cookie.get('repoOwner') && Cookie.get('repoName') && !hasSavedRepo) {
+      this.setState({ hasSavedRepo: true })
     }
   }
 

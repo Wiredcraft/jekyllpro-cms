@@ -20,7 +20,7 @@ export default class SelectRepo extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      loading: false,
+      hasUserInput: false,
       searching: false,
       searchResult: null,
       inputClassname: ''
@@ -28,20 +28,29 @@ export default class SelectRepo extends Component {
   }
   handleSearch (repoFullName) {
     let tmp = repoFullName.split('/')
-    if (tmp.length < 2) {
+    if (tmp.length < 2 || !tmp[1]) {
       return
     }
-    this.setState({ searching: true })
+    this.setState({ searching: true, hasUserInput: true })
     checkRepoAvailability(tmp[0], tmp[1]).then(() => {
-      this.setState({ searching: false, searchResult: { repoOwner: tmp[0], repoName: tmp[1] } })
+      this.setState({
+        searching: false,
+        searchResult: { repoOwner: tmp[0], repoName: tmp[1] }
+      })
     }).catch(() => {
-      this.setState({ searching: false, searchResult: '' })
+      this.setState({
+        searching: false,
+        searchResult: ''
+      })
 
     })
   }
 
   handleChange (evt) {
     let s = evt.target.value
+    if (!s && this.state.hasUserInput) {
+      this.setState({ hasUserInput: false, searchResult: null })
+    }
     if (timeout) {
       clearTimeout(timeout)
     }
@@ -53,25 +62,11 @@ export default class SelectRepo extends Component {
     const { searchResult: { repoName, repoOwner } } = this.state
     Cookie.set('repoOwner', repoOwner, { expires: 100 })
     Cookie.set('repoName', repoName, { expires: 100 })
-    this.setState({ loading: true })
-    resetEditorData()
-    resetRepoData()
-    fetchRepoInfo().then(() => {
-      this.setState({
-        loading: false
-      })
-      getAllBranch()
-      toRoute(`/${repoOwner}/${repoName}/`)
-    })
-    .catch(err => {
-      Cookie.remove('repoOwner')
-      Cookie.remove('repoName')
-      this.setState({ loading: false })
-    })
+    toRoute(`/${repoOwner}/${repoName}/`)
   }
 
   render () {
-    const { searching, loading, inputClassname, searchResult } = this.state
+    const { searching, inputClassname, searchResult, hasUserInput } = this.state
     return (
       <div className='box'>
         <section className='card'>
@@ -86,7 +81,7 @@ export default class SelectRepo extends Component {
               <path d="M9.5,3A6.5,6.5 0 0,1 16,9.5C16,11.11 15.41,12.59 14.44,13.73L14.71,14H15.5L20.5,19L19,20.5L14,15.5V14.71L13.73,14.44C12.59,15.41 11.11,16 9.5,16A6.5,6.5 0 0,1 3,9.5A6.5,6.5 0 0,1 9.5,3M9.5,5C7,5 5,7 5,9.5C5,12 7,14 9.5,14C12,14 14,12 14,9.5C14,7 12,5 9.5,5Z"></path>
             </svg>
           </span>
-          <div className="empty">e.g. "Wiredcraft/pipelines"</div>
+          { !hasUserInput && <div className="empty">e.g. "Wiredcraft/pipelines"</div>}
           { (searchResult === '') && !searching && <div className='empty'>No match</div>}
           { searchResult && !searching &&(<a className='repo' onClick={::this.handleClick}>
             <svg height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'>
