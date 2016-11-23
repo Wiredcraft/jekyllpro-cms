@@ -50,7 +50,7 @@ export default class Header extends Component {
       .catch(err => {
         Cookie.remove('repoOwner')
         Cookie.remove('repoName')
-        // this.setState({ showRepoModal: true })
+        toRoute({ pathname: '/select', query: { reset: 1 } })
       })
     } else if (repoOwnerCk && repoNameCk) {
       fetchRepoInfo()
@@ -63,12 +63,11 @@ export default class Header extends Component {
       .catch(err => {
         Cookie.remove('repoOwner')
         Cookie.remove('repoName')
-        // this.setState({ showRepoModal: true })
+        toRoute({ pathname: '/select', query: { reset: 1 } })
       })
 
     } else {
-      // this.setState({showRepoModal: true})
-      
+      toRoute({ pathname: '/select', query: { reset: 1 } })
     }
   }
 

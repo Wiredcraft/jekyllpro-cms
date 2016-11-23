@@ -5,7 +5,10 @@ import { connect } from 'react-redux'
 import { NotificationContainer } from 'react-notifications'
 
 import { confirmUserIsLogged } from '../actions/userActions'
+import { toRoute } from '../actions/routeActions'
 import Header from './Header'
+import SelectRepo from './SelectRepo'
+import Cookie from 'js-cookie'
 
 import 'react-notifications/lib/notifications.css'
 import 'styles/_sass/main.scss'
@@ -66,17 +69,32 @@ const addEditButtonsSrc = (branch, url) => `(function() {
 export default class AppComponent extends React.Component {
   constructor(props) {
     super(props)
-    this.state = { loadingUserInfo: true }
+    this.state = { loadingUserInfo: true, hasSavedRepo: true }
   }
 
   componentWillMount() {
-    const { confirmUserIsLogged } = this.props
+    const { confirmUserIsLogged, toRoute } = this.props
     confirmUserIsLogged().then(() => {
-      this.setState({ loadingUserInfo: false })
+      if (!Cookie.get('repoOwner') || !Cookie.get('repoName')) {
+        this.setState({
+          loadingUserInfo: false,
+          hasSavedRepo: false
+        })
+        return toRoute('/select')
+      }
+      return this.setState({ loadingUserInfo: false, hasSavedRepo: true })
     })
     .catch(() => {
       this.setState({ loadingUserInfo: false })
     })
+  }
+
+  componentWillUpdate(nextProps, nextState) {
+    if (!this.state.hasSavedRepo) return
+
+    if ((nextProps.location.pathname === '/select') && (nextProps.location.query.reset === '1')) {
+      this.setState({ hasSavedRepo: false })
+    }
   }
 
   login() {
@@ -85,37 +103,47 @@ export default class AppComponent extends React.Component {
   }
 
   render() {
-    const { isLoggedIn, repoLoading, currentBranch, navigation, editor, transitionView, notFound } = this.props
+    const { isLoggedIn, repoLoading, currentBranch, navigation, editor, transitionView, notFound, selectRepo } = this.props
+    const { loadingUserInfo, hasSavedRepo } = this.state
 
-    return isLoggedIn ? (
-      <div id='app' className={repoLoading? 'loading' : ''}>
-        <Header params={this.props.params} location={this.props.location} />
-        { notFound }
-        {
-          transitionView && React.cloneElement(transitionView, {
+    return isLoggedIn
+      ? hasSavedRepo ? (
+        <div id='app' className={repoLoading? 'loading' : ''}>
+          <Header params={this.props.params} location={this.props.location} />
+          { notFound }
+          {
+            transitionView && React.cloneElement(transitionView, {
+              params: this.props.params,
+              location: this.props.location
+            })
+          }
+          {this.props.location.query.viewing !== 'site' ? [
+            navigation && currentBranch && React.cloneElement(navigation, {
+              params: this.props.params,
+              location: this.props.location
+            }),
+            editor && currentBranch && React.cloneElement(editor, {
+              params: this.props.params,
+              location: this.props.location
+            })] :
+            <iframe onLoad={() => {
+              window.frames[0].window.eval(addEditButtonsSrc(this.props.params.branch, 'http://app.jekyllpro.com/'))
+            }}
+            style={{width: '100%', minHeight: '2000px', paddingTop: '39px'}}
+            src={`http://${this.props.params.branch}.beta-starbucks-com-cn.wiredcraft.jekyllpro.com`} />
+          }
+          <NotificationContainer />
+        </div>
+      ) : (
+        <div id='landing'>
+          {selectRepo && React.cloneElement(selectRepo, {
             params: this.props.params,
             location: this.props.location
-          })
-        }
-        {this.props.location.query.viewing !== 'site' ? [
-          navigation && currentBranch && React.cloneElement(navigation, {
-            params: this.props.params,
-            location: this.props.location
-          }),
-          editor && currentBranch && React.cloneElement(editor, {
-            params: this.props.params,
-            location: this.props.location
-          })] :
-          <iframe onLoad={() => {
-            window.frames[0].window.eval(addEditButtonsSrc(this.props.params.branch, 'http://app.jekyllpro.com/'))
-          }}
-          style={{width: '100%', minHeight: '2000px', paddingTop: '39px'}}
-          src={`http://${this.props.params.branch}.beta-starbucks-com-cn.wiredcraft.jekyllpro.com`} />
-        }
-        <NotificationContainer />
-      </div>
-    ) : (
-      <div id='landing' className={this.state.loadingUserInfo ? 'coating' : ''}>
+          })}
+        </div>
+      )
+    : (
+      <div id='landing' className={loadingUserInfo ? 'coating' : ''}>
         <div className='box'>
           <section className='card'>
             <img src={require('../assets/logo.svg')} className='logo' alt='Jekyll+' />
@@ -139,5 +167,5 @@ function mapStateToProps(state) {
 }
 
 function mapDispatchToProps (dispatch) {
-  return bindActionCreators({ confirmUserIsLogged }, dispatch)
+  return bindActionCreators({ confirmUserIsLogged, toRoute }, dispatch)
 }

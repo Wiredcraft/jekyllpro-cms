@@ -40,7 +40,9 @@ export function fetchRepoInfo() {
         dispatch({
           payload: { loading: false },
           type: CHANGE_REPO_STATE
-        })        
+        })
+        // make sure the caller can catch to do more error handler
+        return Promise.reject(err)
       })
   }
 }
