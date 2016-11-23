@@ -25,7 +25,12 @@ class Editor extends Component {
       return <FileEditor {...this.props} />
     }
 
-    return (<section id='content'><div className='empty'>Please select an entry</div></section>)
+    return (<section id='content'>
+      <div className='empty'>
+        <h2>No content selected</h2>
+        <p>You can select an entry using the sidebar.</p>
+      </div>
+    </section>)
   }
 }
 
