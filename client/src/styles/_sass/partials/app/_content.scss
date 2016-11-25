@@ -77,8 +77,10 @@ $panel: 240px;
     p {
       @include font-size($smaller);
       line-height: 160%;
+      margin: 0;
     }
     .button {
+      margin-top: $space/2;
       width: 100%;
     }
     small {
@@ -88,3 +90,5 @@ $panel: 240px;
     }
   }
 }
+
+

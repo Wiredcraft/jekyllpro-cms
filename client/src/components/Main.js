@@ -147,7 +147,7 @@ export default class AppComponent extends React.Component {
       )
     : (
       <div id='landing' className={loadingUserInfo ? 'coating' : ''}>
-        <div className='box'>
+        <div className='box login'>
           <section className='card'>
             <img src={require('../assets/logo.svg')} className='logo' alt='Jekyll+' />
             <button className='button primary' onClick={() => this.login()}>Login with GitHub</button>

@@ -14,4 +14,5 @@
 #app {
   height: 100%;
   @import 'partials/app/_all';
+  @import 'partials/_codemirror';
 }

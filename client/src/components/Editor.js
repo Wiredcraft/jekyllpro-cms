@@ -21,8 +21,9 @@ class Editor extends Component {
     if (location.query && location.query.invalidRepo === '1') {
       return (<section id='content'>
         <div className='empty'>
-          <h2>Fail to get valid schemas</h2>
-          <p>You need to create schema files for this repository to be used with Jekyll+</p>
+          <h2>Something went wrong...</h2>
+          <p>Jekyll+ need schema files defining the content types.</p>
+          <a className='button primary' href='https://github.com/Wiredcraft/jekyllplus/wiki' target='_blank'>Read more about it...</a>
         </div>
       </section>)
     }

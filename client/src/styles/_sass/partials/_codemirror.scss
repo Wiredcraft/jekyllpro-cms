@@ -1,0 +1,33 @@
+.CodeMirror {
+  font-family: inherit;
+  font-size: inherit;
+  line-height: 160%;
+  padding: 0 $space/12;
+}
+
+.cm-s-default {
+  .cm-comment {
+    background: $light;
+    color: inherit;
+    font-family: $code;
+  }
+  .cm-link {
+    color: inherit;
+    font-weight: bold;
+    text-decoration: none;
+  }
+  .cm-url {
+    color: $blue;
+  }
+  .cm-header {
+    color: inherit;
+    @include font-size($larger);
+  }
+  .cm-tag {
+    color: $green;
+  }
+  .cm-variable-2 {
+    color: inherit;
+  }
+}
+

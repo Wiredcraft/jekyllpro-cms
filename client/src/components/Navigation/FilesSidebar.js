@@ -88,7 +88,7 @@ export default class FilesSidebar extends Component {
                 <path d="M0 0h24v24H0z" fill="none"></path>
               </svg>
               <span>Create</span>
-            </button>
+            </button>&nbsp;
             <button className='button primary' onClick={::this.toFileUpload}>
               Upload
             </button>
