@@ -16,7 +16,16 @@ class Editor extends Component {
   }
 
   render() {
-    const { mode, params, schemas } = this.props
+    const { mode, params, schemas, location } = this.props
+
+    if (location.query && location.query.invalidRepo === '1') {
+      return (<section id='content'>
+        <div className='empty'>
+          <h2>Fail to get valid schemas</h2>
+          <p>You need to create schema files for this repository to be used with Jekyll+</p>
+        </div>
+      </section>)
+    }
 
     if (schemas && (mode === 'collection') && params.splat) {
       return (<ContentEditor {...this.props} />)

@@ -16,7 +16,7 @@ export default class ContentSidebar extends Component {
   }
 
   componentWillMount() {
-    const { fetchRepoIndex, params, changeEditorMode, collections,
+    const { fetchRepoIndex, params, changeEditorMode, collections, toRoute, location,
       selectCollectionFile, currentBranch, query, lastRepoUpdate } = this.props
 
     changeEditorMode('collection')
@@ -31,11 +31,23 @@ export default class ContentSidebar extends Component {
         return fetchRepoIndex({ branch: currentBranch, refresh: true })
           .then((newIndexData) => {
             this.setState({ loadingIndex: false })
-
+            // check if this repo has schemas
+            if (!newIndexData.schemas || !newIndexData.schemas.length) {
+              return toRoute({
+                pathname: location.pathname,
+                query: { invalidRepo: 1 }
+              })
+            }
             return newIndexData
           })
       }
-
+      // check if this repo has schemas
+      if (!indexData.schemas || !indexData.schemas.length) {
+        return toRoute({
+          pathname: location.pathname,
+          query: { invalidRepo: 1 }
+        })
+      }
       return indexData
     })
     .then((data) => {

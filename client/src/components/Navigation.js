@@ -12,6 +12,11 @@ import { toRoute, replaceRoute } from '../actions/routeActions'
 class Navigation extends Component {
   render() {
     const { collectionType } = this.props.params
+    const { query } = this.props.location
+
+    if (query && query.invalidRepo === '1') {
+      return null
+    }
 
     if (collectionType === 'files') {
       return (<FilesSidebar {...this.props} />)
