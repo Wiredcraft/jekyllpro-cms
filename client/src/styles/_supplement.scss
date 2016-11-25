@@ -121,3 +121,13 @@ fieldset {
     }
   }
 }
+
+.field-boolean .checkbox {
+  input {
+    width: auto !important;
+    + strong {
+      float: left;
+      margin-right: 10px;
+    }
+  }
+}
