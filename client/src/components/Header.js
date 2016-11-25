@@ -117,6 +117,15 @@ export default class Header extends Component {
     this.setState({ activeView: 'content' })
   }
 
+  toPreview() {
+    const { toRoute, params: { repoOwner, repoName, collectionType, branch, splat: filePath } } = this.props
+    toRoute({
+      pathname: `/${repoOwner}/${repoName}/${collectionType}/${branch || 'master' }/${filePath || ''}`,
+      query: { viewing: 'site' }
+    })
+    this.setState({ activeView: 'preview' })  
+  }
+
   render () {
     const { branches, currentBranch, avatar, userName, userUrl, isBranchPrivate, schemas,
     params: { repoOwner, repoName, collectionType, branch, splat: filePath} } = this.props
@@ -224,11 +233,8 @@ export default class Header extends Component {
           Files
         </a>
 
-        <a className='preview item' onClick={evt =>
-          this.props.toRoute({
-            pathname: `/${repoOwner}/${repoName}/${collectionType}/${branch || 'master' }/${filePath || ''}`,
-            query: { viewing: 'site' }}
-          )}>
+        <a className={ filePath ? (activeView === 'preview' ? 'preview item active' : 'preview item') : 'preview item disabled' }
+          onClick={::this.toPreview}>
           <svg height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
             <path d="M12,9A3,3 0 0,0 9,12A3,3 0 0,0 12,15A3,3 0 0,0 15,12A3,3 0 0,0 12,9M12,17A5,5 0 0,1 7,12A5,5 0 0,1 12,7A5,5 0 0,1 17,12A5,5 0 0,1 12,17M12,4.5C7,4.5 2.73,7.61 1,12C2.73,16.39 7,19.5 12,19.5C17,19.5 21.27,16.39 23,12C21.27,7.61 17,4.5 12,4.5Z"></path>
           </svg>

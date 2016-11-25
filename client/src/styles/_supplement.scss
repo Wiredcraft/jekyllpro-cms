@@ -110,5 +110,14 @@ fieldset {
       background-color: #2fa3ff;
     }
   }
-
+}
+#app #header .item {
+  &.disabled {
+    opacity: 0.3;
+    pointer-events: none;
+    cursor: default;
+    &:hover {
+      opacity: 0.3;
+    }
+  }
 }
