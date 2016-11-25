@@ -391,6 +391,7 @@ export default class ContentEditor extends Component {
               placeholder='Filename' />
           </div>
           <Form
+            onChange={res => this.setState({ formData: res.formData })}
             onSubmit={res => this.updateResult(res.formData)}
             schema={currentSchema.JSONSchema}
             uiSchema={currentSchema.uiSchema}

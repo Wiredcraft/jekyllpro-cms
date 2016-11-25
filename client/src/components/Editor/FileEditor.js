@@ -266,6 +266,7 @@ export default class FileEditor extends Component {
                 </div>),
                 (<Form
                   key="fileForm"
+                  onChange={res => this.setState({ formData: res.formData })}
                   onSubmit={res => this.updateResult(res.formData)}
                   schema={defaultSchema.JSONSchema}
                   uiSchema={defaultSchema.uiSchema}
