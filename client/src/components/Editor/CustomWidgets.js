@@ -52,6 +52,7 @@ const JSONCode = (props) => {
 }
 
 export default {
+  SelectWidget: customSelect,
   customSelect,
   customTextarea,
   customCodeMirror,

@@ -2,6 +2,8 @@
 
 @import './_sass/main.scss';
 
+@include font-face('icon', '../assets/icons/icons');
+
 #js-app {
   height: 100%;
 }
@@ -131,3 +133,65 @@ fieldset {
     }
   }
 }
+
+.btn {
+  @extend .button;
+  &-group {
+    position: relative;
+    display: inline-block;
+    vertical-align: middle;
+  }
+}
+.glyphicon {
+  font-family: icon;
+  position: relative;
+  top: 1px;
+  display: inline-block;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  &-remove:before {
+    content: "\2716";
+  }
+  &-arrow-down:before {
+    content: "\2b07";
+  }
+  &-arrow-up:before {
+    content: "\2b06";
+  }
+  &-plus:before {
+    content: "\2795";
+  }
+}
+.row {
+  margin-right: -15px;
+  margin-left: -15px;
+  &:after {
+    clear: both;
+  }
+  &:before,
+  &:after {
+    display: table;
+    content: " ";
+  }
+}
+.col-xs-9, .col-xs-3 {
+  float: left;
+  position: relative;
+  min-height: 1px;
+  padding-right: 15px;
+  padding-left: 15px;
+}
+.col-xs-9 {
+  width: 75%;
+}
+.col-xs-3 {
+  width: 25%;
+}
+.col-xs-offset-9 {
+  margin-left: 75%
+}
+
