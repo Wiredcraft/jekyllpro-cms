@@ -396,6 +396,7 @@ export default class ContentEditor extends Component {
             schema={currentSchema.JSONSchema}
             uiSchema={currentSchema.uiSchema}
             widgets={customWidgets}
+            showErrorList={false}
             formData={formData}>
             <button
               type='submit'

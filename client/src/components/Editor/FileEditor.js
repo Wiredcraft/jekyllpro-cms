@@ -270,6 +270,7 @@ export default class FileEditor extends Component {
                   onSubmit={res => this.updateResult(res.formData)}
                   schema={defaultSchema.JSONSchema}
                   uiSchema={defaultSchema.uiSchema}
+                  showErrorList={false}
                   formData={formData}>
                   <button
                     type='submit'
