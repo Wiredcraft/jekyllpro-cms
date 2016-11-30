@@ -60,9 +60,9 @@ const getRepoDetails = (req, res, next) => {
 
 const getRepoContent = (req, res, next) => {
   var repo = req.githubRepo
-  var { ref, path, raw } = req.query
+  var { branch, path, raw } = req.query
 
-  repo.getContents(ref, path, raw)
+  repo.getContents(branch, path, raw)
   .then((data) => {
     // console.log(data)
     res.status(200).json(data.data)
