@@ -20,10 +20,8 @@ export default class SelectRepo extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      hasUserInput: false,
       searching: false,
-      searchResult: null,
-      inputClassname: ''
+      searchResult: null
     }
   }
   handleSearch (repoFullName) {
@@ -31,7 +29,7 @@ export default class SelectRepo extends Component {
     if (tmp.length < 2 || !tmp[1]) {
       return
     }
-    this.setState({ searching: true, hasUserInput: true })
+    this.setState({ searching: true })
     checkRepoAvailability(tmp[0], tmp[1]).then(() => {
       this.setState({
         searching: false,
@@ -48,8 +46,8 @@ export default class SelectRepo extends Component {
 
   handleChange (evt) {
     let s = evt.target.value
-    if (!s && this.state.hasUserInput) {
-      this.setState({ hasUserInput: false, searchResult: null })
+    if (!s) {
+      this.setState({ searchResult: null })
     }
     if (timeout) {
       clearTimeout(timeout)
@@ -66,7 +64,7 @@ export default class SelectRepo extends Component {
   }
 
   render () {
-    const { searching, inputClassname, searchResult, hasUserInput } = this.state
+    const { searching, searchResult } = this.state
     return (
       <div className='box'>
         <section className='card'>
@@ -81,7 +79,7 @@ export default class SelectRepo extends Component {
               <path d="M9.5,3A6.5,6.5 0 0,1 16,9.5C16,11.11 15.41,12.59 14.44,13.73L14.71,14H15.5L20.5,19L19,20.5L14,15.5V14.71L13.73,14.44C12.59,15.41 11.11,16 9.5,16A6.5,6.5 0 0,1 3,9.5A6.5,6.5 0 0,1 9.5,3M9.5,5C7,5 5,7 5,9.5C5,12 7,14 9.5,14C12,14 14,12 14,9.5C14,7 12,5 9.5,5Z"></path>
             </svg>
           </span>
-          { !hasUserInput && <div className="empty">e.g. "Wiredcraft/pipelines"</div>}
+          { (searchResult === null || searching) && <div className="empty">e.g. "Wiredcraft/pipelines"</div>}
           { (searchResult === '') && !searching && <div className='empty'>No match</div>}
           { searchResult && !searching &&(<a className='repo' onClick={::this.handleClick}>
             <svg height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'>

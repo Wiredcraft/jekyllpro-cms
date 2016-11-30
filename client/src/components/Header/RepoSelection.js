@@ -7,10 +7,8 @@ export default class RepoSelection extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      hasUserInput: false,
       searching: false,
-      searchResult: null,
-      inputClassname: ''
+      searchResult: null
     }
   }
   handleSearch (repoFullName) {
@@ -18,7 +16,7 @@ export default class RepoSelection extends Component {
     if (tmp.length < 2 || !tmp[1]) {
       return
     }
-    this.setState({ searching: true, hasUserInput: true })
+    this.setState({ searching: true })
     checkRepoAvailability(tmp[0], tmp[1]).then(() => {
       this.setState({ searching: false, searchResult: { repoOwner: tmp[0], repoName: tmp[1] } })
     }).catch(() => {
@@ -29,8 +27,8 @@ export default class RepoSelection extends Component {
 
   handleChange (evt) {
     let s = evt.target.value
-    if (!s && this.state.hasUserInput) {
-      this.setState({ hasUserInput: false, searchResult: null })
+    if (!s) {
+      this.setState({ searchResult: null })
     }
     if (timeout) {
       clearTimeout(timeout)
@@ -56,7 +54,7 @@ export default class RepoSelection extends Component {
   }
 
   render () {
-    const { searching, hasUserInput, inputClassname, searchResult } = this.state
+    const { searching, searchResult } = this.state
 
     return (
       <div className="options">
@@ -72,7 +70,7 @@ export default class RepoSelection extends Component {
             </svg>
           </span>
         </header>
-        { !hasUserInput && <div className="empty">e.g. "Wiredcraft/pipelines"</div>}
+        { (searchResult === null || searching) && <div className="empty">e.g. "Wiredcraft/pipelines"</div>}
         { (searchResult === '') && !searching && <div className='empty'>No match</div>}
         { searchResult && !searching &&(<a onClick={::this.handleClick}>
           <svg height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'>
