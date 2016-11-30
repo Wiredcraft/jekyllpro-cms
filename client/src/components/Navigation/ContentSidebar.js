@@ -81,7 +81,7 @@ export default class ContentSidebar extends Component {
   handleNameFilter(evt) {
     const { collections } = this.props
     const { filteredType, filtering } = this.state
-    const val = evt.target.value
+    const val = evt.target.value.toLowerCase()
     if (val === '') {
       if (filtering) {
         return this.setState({filtering: false})
@@ -91,7 +91,7 @@ export default class ContentSidebar extends Component {
     let f = collections.filter(item => {
       let isRightType = filteredType ? item.collectionType === filteredType : true
 
-      return isRightType && (item.path.indexOf(val) > -1)
+      return isRightType && (item.path.toLowerCase().indexOf(val) > -1)
     })
     this.setState({ filteredCollections: f, filtering: true })
   }
