@@ -97,7 +97,8 @@ export default class ContentSidebar extends Component {
   }
 
   createNewFileByType(type) {
-    const { toRoute, currentBranch, params: { repoOwner, repoName } } = this.props
+    const { changeEditorMode, toRoute, currentBranch, params: { repoOwner, repoName } } = this.props
+    changeEditorMode('collection')
     toRoute(`/${repoOwner}/${repoName}/${type}/${currentBranch}/new`)
   }
 

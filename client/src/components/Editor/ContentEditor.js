@@ -35,16 +35,30 @@ export default class ContentEditor extends Component {
   }
 
   componentWillMount() {
-    const { selectedCollectionFile } = this.props
+    const { selectedCollectionFile, params, config } = this.props
     if (selectedCollectionFile) {
-      this.getCurrentSchema(selectedCollectionFile.collectionType, this.updateEditorForm)
+      return this.getCurrentSchema(selectedCollectionFile.collectionType, this.updateEditorForm)
+    }
+    if (params.splat === 'new') {
+      this.getCurrentSchema(params.collectionType, () => {
+        this.setState({
+          formData: {},
+          currentFileSlug: dateToString(new Date()) + '-new-file',
+          currentFileExt: 'md',
+          currentFileLanguage: config && config.languages && config.languages[0].code || undefined,
+          currentFileSubFolder: undefined
+        }, () => {
+          this.updateCurrentFilePath()
+        })
+      })
     }
   }
 
   componentDidUpdate(prevProps) {
     const { params, selectedCollectionFile, location, config } = this.props
 
-    const fileChanged = selectedCollectionFile.path !== (prevProps.selectedCollectionFile && prevProps.selectedCollectionFile.path)
+    const fileChanged = selectedCollectionFile &&
+      (selectedCollectionFile.path !== (prevProps.selectedCollectionFile && prevProps.selectedCollectionFile.path))
     const newFileMode = (params.splat === 'new') &&
       ((params.splat !== prevProps.params.splat) || (params.collectionType !== prevProps.params.collectionType))
 
@@ -52,12 +66,9 @@ export default class ContentEditor extends Component {
       this.setState({ currentFilePath: selectedCollectionFile.path })
       this.getCurrentSchema(selectedCollectionFile.collectionType, this.updateEditorForm)
     }
+
     if (newFileMode) {
       this.getCurrentSchema(params.collectionType, () => {
-        let s = this.state.currentSchema
-        if (location.query.translation) {
-          return
-        }
         this.setState({
           formData: {},
           currentFileSlug: dateToString(new Date()) + '-new-file',
