@@ -29,5 +29,9 @@
   .cm-variable-2 {
     color: inherit;
   }
+  .cm-srting,
+  .cm-url {
+    word-break: break-all;
+  }
 }
 
