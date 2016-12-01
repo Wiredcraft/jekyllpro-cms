@@ -21,7 +21,7 @@ ReactDOM.render((
   <Provider store={store}>
     <Router history={history}>
       <Route path='/' component={App} >
-        <Route path='/:repoOwner/:repoName/' components={{navigation: Navigation, editor: Editor}} />
+        <Route path='/:repoOwner/:repoName(/)' components={{navigation: Navigation, editor: Editor}} />
         <Route path='/:repoOwner/:repoName/link/(:branch)/*' components={{transitionView: TransitionView}} />
         <Route path='/:repoOwner/:repoName/(:collectionType)/(:branch)/*' components={{navigation: Navigation, editor: Editor}} />        
         <Route path='/select' components={{selectRepo: SelectRepo}} />

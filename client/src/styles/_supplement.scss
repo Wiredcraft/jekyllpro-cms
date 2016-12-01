@@ -195,3 +195,24 @@ fieldset {
   margin-left: 75%
 }
 
+#app #content {
+  .field.field-group {
+    select,
+    input {
+      display: inline;
+    }
+    input {
+      width: auto;
+    }
+  }
+  input[readonly] {
+    background: #ddd;
+  }
+  .readonly {
+    @extend input[type=text];
+    background: #ddd;
+  }
+  .input.error {
+    border-color: red;
+  }
+}

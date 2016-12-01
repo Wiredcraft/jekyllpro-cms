@@ -50,6 +50,7 @@ function mapStateToProps(state, { params:
   return {
     currentBranch: state.repo.get('currentBranch'),
     repoFullName: `${repoOwner}/${repoName}`,
+    config: state.repo.get('config'),
     schemas: state.repo.get('schemas'),
     collections: state.repo.get('collections'),
     selectedCollectionFile: state.editor.get('selectedCollectionFile'),

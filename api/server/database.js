@@ -29,6 +29,11 @@ const repoSchema = new Schema({
     default: '[]',
     trim: true
   },
+  config: {
+    type: String,
+    default: '[]',
+    trim: true
+  },
   updatedBy: {
     type: String,
     default: ''

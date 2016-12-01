@@ -65,7 +65,7 @@ export function fetchRepoIndex(opts) {
     return getRepoIndex(opts || {})
       .then(data => {        
         dispatch({
-          payload: { collections: data.collections, schemas: data.schemas, loading: false },
+          payload: { collections: data.collections, schemas: data.schemas, config: data.config, loading: false },
           type: CHANGE_REPO_STATE
         })
         return data

@@ -199,7 +199,8 @@ const getRepoBranchIndex = (req, res, next) => {
     let data = {
       updated: record.updated,
       collections: JSON.parse(record.collections),
-      schemas: JSON.parse(record.schemas)
+      schemas: JSON.parse(record.schemas),
+      config: JSON.parse(record.config),
     }
     return res.status(200).json(data)
   })
@@ -220,6 +221,7 @@ const refreshIndexAndSave = (req, res) => {
         branch: branch,
         collections: JSON.stringify(formatedIndex.collections),
         schemas: JSON.stringify(formatedIndex.schemas),
+        config: JSON.stringify(formatedIndex.config),
         updated: Date()
       }, {
         upsert: true
@@ -241,6 +243,8 @@ const getFreshIndexFromGithub = (repoObject, branch) => {
       var treeArray = data.data.tree
       var requestQueue = new TaskQueue(3)
       var formatedIndex = {collections: []}
+      var jekyllProConfigReq = Promise.resolve()
+
       var schemaFilesReq = treeArray.filter((item) => {
         return (item.type === 'blob') && (item.path.indexOf('_schemas/') === 0)
       })
@@ -254,7 +258,19 @@ const getFreshIndexFromGithub = (repoObject, branch) => {
           })
       })
 
-      return Promise.all(schemaFilesReq)
+      treeArray.forEach((item) => {
+        if (item.path === '.JekyllPro/config.json') {
+          jekyllProConfigReq = repoObject.getContents(branch, '.JekyllPro/config.json', true)
+          .then((data) => {
+            formatedIndex['config'] = data.data
+          })
+          .catch(err => {
+            console.log(err)
+          })
+        }
+      })
+
+      var nextPromiseFlow = Promise.all(schemaFilesReq)
         .then(schemas => {
           formatedIndex.schemas = schemas
           var collectionFiles = getCollectionFiles(schemas, treeArray)
@@ -294,6 +310,10 @@ const getFreshIndexFromGithub = (repoObject, branch) => {
             })
           })
         })
+
+      return jekyllProConfigReq.then(() => {
+        return nextPromiseFlow
+      })
     })
 }
 

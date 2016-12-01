@@ -7,17 +7,22 @@ import Cookie from 'js-cookie'
 import { parseYamlInsideMarkdown, retriveContent, serializeObjtoYaml } from '../../helpers/markdown'
 import DeleteIcon from '../svg/DeleteIcon'
 import customWidgets from './CustomWidgets'
-import { dateToString, purgeObject, parseFilePathByLang, textValueIsDifferent } from "../../helpers/utils"
+import { dateToString, purgeObject, parseFilePathByLang, textValueIsDifferent, parseFilePath } from "../../helpers/utils"
 import ConfirmDeletionModal from '../Modal/ConfirmDeletionModal'
 import notify from '../common/Notify'
 
 const repoUrl = `https://github.com/${Cookie.get('repoOwner')}/${Cookie.get('repoName')}/`
+// const LANGUAGES = [{name: 'Chinese', code: 'cn'}, {name: 'English', code: 'en'}]
 
 export default class ContentEditor extends Component {
   constructor(props) {
     super(props)
     this.state = {
       currentFilePath: props.params ? props.params.splat : '',
+      currentFileSlug: undefined,
+      currentFileExt: undefined,
+      currentFileLanguage: undefined,
+      currentFileSubFolder: undefined,
       isPostPublished: true,
       isDraft: false,
       language: 'cn',
@@ -37,7 +42,7 @@ export default class ContentEditor extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    const { params, selectedCollectionFile, location } = this.props
+    const { params, selectedCollectionFile, location, config } = this.props
 
     const fileChanged = selectedCollectionFile.path !== (prevProps.selectedCollectionFile && prevProps.selectedCollectionFile.path)
     const newFileMode = (params.splat === 'new') &&
@@ -55,7 +60,12 @@ export default class ContentEditor extends Component {
         }
         this.setState({
           formData: {},
-          currentFilePath: (s.jekyll.dir + '/' + dateToString(new Date()) + '-new-file')
+          currentFileSlug: dateToString(new Date()) + '-new-file',
+          currentFileExt: 'md',
+          currentFileLanguage: config && config.languages && config.languages[0].code || undefined,
+          currentFileSubFolder: undefined
+        }, () => {
+          this.updateCurrentFilePath()
         })
       })
     }
@@ -70,6 +80,21 @@ export default class ContentEditor extends Component {
       })
 
     this.setState({currentSchema: schema}, callback)
+  }
+
+  setParsedFileProps(fullFilePath) {
+    const { config } = this.props
+    const { currentSchema } = this.state
+    let rootFolder = currentSchema.jekyll.id === 'pages' ? '/' : currentSchema.jekyll.dir
+    let langs = config && config.languages || undefined
+    let parsedObj = parseFilePath(fullFilePath, langs, rootFolder)
+    // console.log(parsedObj)
+    this.setState({
+      currentFileSlug: parsedObj.fileSlug,
+      currentFileExt: parsedObj.fileExt,
+      currentFileLanguage: parsedObj.lang,
+      currentFileSubFolder: parsedObj.subFolder  
+    })
   }
 
   updateEditorForm() {
@@ -88,7 +113,7 @@ export default class ContentEditor extends Component {
       })
       formData.published = docConfigObj.published
       formData.draft = docConfigObj.draft
-      formData.lang = docConfigObj.lang
+      // formData.lang = docConfigObj.lang
       formData.body = retriveContent(content)
     } else {
       formData.body = content
@@ -98,7 +123,9 @@ export default class ContentEditor extends Component {
       formData,
       isPostPublished: (formData.published !== undefined) ? formData.published : true,
       isDraft: (formData.draft !== undefined) ? formData.draft : false,
-      language: formData.lang ? formData.lang : 'cn'
+      // language: formData.lang ? formData.lang : 'cn'
+    }, () => {
+      this.setParsedFileProps(path)
     })
   }
 
@@ -119,20 +146,21 @@ export default class ContentEditor extends Component {
       params: { repoOwner, repoName, collectionType, branch, splat }
     } = this.props
     const { currentSchema, isPostPublished, isDraft, language } = this.state
-    const filePath = this.refs.filePath.value
+    const filePath = this.state.currentFilePath
+
     let reqPromise = null
 
-    if (!filePath) {
-      console.error('no file path specified')
+    if (!this.state.currentFileSlug) {
+      console.error('no file name specified')
       this.setState({filePathInputClass: 'error'})
       return
     }
     let updatedContent = formData.body
     delete formData.body
 
-    if (currentSchema.jekyll.type === 'content') {
-      formData.lang = language
-    }
+    // if (currentSchema.jekyll.type === 'content') {
+    //   formData.lang = language
+    // }
 
     if (isPostPublished === false) {
       formData.published = false
@@ -257,10 +285,6 @@ export default class ContentEditor extends Component {
       })
   }
 
-  handleFilePathInput(evt) {
-    this.setState({ currentFilePath: evt.target.value })
-  }
-
   handlePublishInput(evt) {
     const { isPostPublished } = this.state
     this.setState({ isPostPublished: !isPostPublished })
@@ -275,44 +299,55 @@ export default class ContentEditor extends Component {
     this.setState({showDeleteFileModel: false})
   }
 
-  switchFileByLang() {
-    const { selectCollectionFile, collections, toRoute } = this.props
-    const { currentFilePath } = this.state
-    const { repoOwner, repoName, collectionType, branch } = this.props.params
-
-    if (!currentFilePath) return
-    let translations = parseFilePathByLang(currentFilePath)
-    let anotherFilePath = translations['en'] ? translations['en'] : translations['cn']
-    let isExistingFile = collections.some((item) =>{
-      if (item.path === anotherFilePath) {
-        selectCollectionFile(item)
-        return true
-      }
-      return false
+  handleFileSlugInput(evt) {
+    this.setState({ currentFileSlug: evt.target.value }, () => {
+      this.updateCurrentFilePath()
     })
-    if (isExistingFile) {
-      this.updateEditorForm()
-      toRoute(`/${repoOwner}/${repoName}/${collectionType}/${branch}/${anotherFilePath}`)
-    } else {
-      toRoute(`/${repoOwner}/${repoName}/${collectionType}/${branch}/new?translation=true`)
+  }
 
-      this.setState({ currentFilePath: anotherFilePath, formData: {} })
+  changeFileLanguage(evt) {
+    this.setState({currentFileLanguage: evt.target.value}, () => {
+      this.updateCurrentFilePath()
+    })
+  }
+
+  changeFileType(evt) {
+    this.setState({currentFileExt: evt.target.value}, () => {
+      this.updateCurrentFilePath()
+    })
+  }
+
+  handleFileSubFolderInput(evt) {
+    this.setState({currentFileSubFolder: evt.target.value}, () => {
+      this.updateCurrentFilePath()
+    })
+  }
+
+  updateCurrentFilePath () {
+    const { config } = this.props
+    const { currentFileSlug, currentFileExt, currentFileLanguage, currentFileSubFolder, currentSchema } = this.state
+    let newPathArray = []
+    let newFilename = currentFileExt ? (currentFileSlug + '.' + currentFileExt) : currentFileSlug
+    if (currentSchema.jekyll.id !== 'pages') {
+      newPathArray.push(currentSchema.jekyll.dir)
     }
+    if (currentFileSubFolder) {
+      newPathArray.push(currentFileSubFolder)
+    }
+    if (config && config.languages && currentFileLanguage !== config.languages[0].code) {
+      newPathArray.push(currentFileLanguage)
+    }
+    newPathArray.push(newFilename)
+    this.setState({ currentFilePath: newPathArray.join('/')})
   }
-
-  changeLanguage(evt) {
-    this.setState({language: evt.target.value})
-  }
-
 
   afterOpenModal() {
     document.body.classList.add('ReactModal__Body--open')
   }
 
   render() {
-    const { editorUpdating, selectedCollectionFile, params, schemas } = this.props
-    const { filePathInputClass, formData, currentFilePath, currentSchema, disableActionBtn } = this.state
-    let translations = parseFilePathByLang(currentFilePath)
+    const { editorUpdating, selectedCollectionFile, params, schemas, config } = this.props
+    const { filePathInputClass, formData, currentFilePath, currentSchema, disableActionBtn, currentFileSlug } = this.state
 
     if (!currentSchema) return (<section id='content'><div className='empty'>Please select an entry</div></section>)
 
@@ -327,18 +362,6 @@ export default class ContentEditor extends Component {
               </a>
             </div>
           </div>}
-          <div className='field language'>
-            <label>Language</label>
-            <span className='select'>
-              <select value={this.state.language || 'cn'} onChange={::this.changeLanguage}>
-                <option value='en'>English</option>
-                <option value='cn'>Chinese</option>
-              </select>
-            </span>
-            <small className='description'>Translations:&nbsp; 
-              <a onClick={::this.switchFileByLang}>{translations['cn'] ? 'Chinese' : 'English'}</a>
-            </small>
-          </div>
 
           <span className={disableActionBtn ? 'bundle disabled' : 'bundle'}>
             <button className={disableActionBtn ? 'button primary save processing' : 'button primary save'} onClick={::this.handleSaveBtn}>Save</button>
@@ -380,15 +403,42 @@ export default class ContentEditor extends Component {
             oncancel={::this.closeDeleteFileModel} />
         </aside>
         <div className='body'>
-          <div className='field filename'>
-            <label>Filename</label>
+          <div className='field filename field-group'>
+            <label>Compile file path</label>
+            {currentSchema && (currentSchema.jekyll.id === 'pages') &&
+              <input
+                type='text'
+                value={this.state.currentFileSubFolder}
+                onChange={::this.handleFileSubFolderInput}
+                placeholder='File folder' />
+            }         
+            {config && config.languages &&
+              <span className='select'>
+                <select value={this.state.currentFileLanguage} onChange={::this.changeFileLanguage}>
+                  {
+                    config.languages.map((lang) => {
+                      return <option value={lang.code} key={lang.code}>{lang.name}</option>
+                    })
+                  }
+                </select>
+              </span>
+            }
             <input
               className={`${filePathInputClass}`}
               type='text'
-              ref="filePath"
-              value={currentFilePath}
-              onChange={::this.handleFilePathInput}
-              placeholder='Filename' />
+              value={currentFileSlug}
+              onChange={::this.handleFileSlugInput}
+              placeholder='File slug' />
+            <span className='select'>
+              <select value={this.state.currentFileExt} onChange={::this.changeFileType}>
+                <option value='md'>markdown</option>
+                <option value='html'>html</option>
+              </select>
+            </span>
+          </div>
+          <div className='field'>
+            <label>Full file path</label>
+            <div className='readonly'>{currentFilePath}</div>
           </div>
           <Form
             onChange={res => this.setState({ formData: res.formData })}
