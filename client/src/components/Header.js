@@ -122,7 +122,9 @@ export default class Header extends Component {
     params: { repoOwner, repoName, collectionType, branch, splat: filePath} } = this.props
     const { selectedType, activeView } = this.state
 
-    let previewLink = `http://${currentBranch}.` + repoName.split('.').join('-') + `.${repoOwner}.jekyllpro.com`
+    let previewLink = `http://${currentBranch || 'master'}.`
+      + (repoName && repoName.split('.').join('-') || 'demo')
+      + `.${repoOwner}.jekyllpro.com`
 
     return (
       <header id='header'>
