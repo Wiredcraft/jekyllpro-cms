@@ -31,13 +31,6 @@ export default class ContentSidebar extends Component {
         return fetchRepoIndex({ branch: currentBranch, refresh: true })
           .then((newIndexData) => {
             this.setState({ loadingIndex: false })
-            // check if this repo has schemas
-            if (!newIndexData.schemas || !newIndexData.schemas.length) {
-              return toRoute({
-                pathname: location.pathname,
-                query: { invalidRepo: 1 }
-              })
-            }
             return newIndexData
           })
       }
@@ -65,16 +58,31 @@ export default class ContentSidebar extends Component {
         this.handleTypeFilter(query.filteredType)
       }
     })
+    .catch(err => {
+      if (err.status === 404) {
+        toRoute({
+          pathname: location.pathname,
+          query: { invalidRepo: 1 }
+        })        
+      }
+    })
   }
 
   componentDidUpdate(prevProps) {
-    const { params } = this.props
+    const { params, schemas, toRoute, location } = this.props
     const { filteredType } = this.props.query
     if (filteredType && (filteredType !== prevProps.query.filteredType)) {
       this.handleTypeFilter(filteredType)
     }
     if (params && (params.splat !== prevProps.params.splat)) {
       this.setState({ selectedItem: params.splat })
+    }
+    // switched branch and branch has no schemas
+    if ((!schemas || !schemas.length) && (schemas !== prevProps.schemas)) {
+      toRoute({
+        pathname: location.pathname,
+        query: { invalidRepo: 1 }
+      })
     }
   }
 
