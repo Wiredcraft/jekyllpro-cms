@@ -195,7 +195,11 @@ const getRepoBranchIndex = (req, res, next) => {
     if (!record) {
       return next()
     }
-    console.log(record)
+    console.log('get database record:',
+      record.branch,
+      record.repository,
+      record.updated
+    )
     let data = {
       updated: record.updated,
       collections: JSON.parse(record.collections),
@@ -272,6 +276,16 @@ const getFreshIndexFromGithub = (repoObject, branch) => {
 
       var nextPromiseFlow = Promise.all(schemaFilesReq)
         .then(schemas => {
+          // if no schemas at all, end the request flow here
+          if (!schemas || !schemas.length) {
+            return Promise.reject({
+              status: 404,
+              response: {
+                data: { message: 'no schemas of this repository branch!' }
+              }
+            })
+          }
+
           formatedIndex.schemas = schemas
           var collectionFiles = getCollectionFiles(schemas, treeArray)
 
