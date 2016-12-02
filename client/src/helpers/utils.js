@@ -102,63 +102,59 @@ export function parseFilePathByLang (filePath) {
   return translations
 }
 
-// i.e filepath '_products/en/msr.md' will be parsed to
-// {lang: 'en', fileExt: 'md', fileSlug: 'msr'}
+// i.e filepath '_products/en/some_folder/msr.md' will be parsed to
+// {lang: 'en', fileExt: 'md', fileSlug: 'some_folder/msr'}
 //
 // LANGUAGES should be in format:
 // [{name: 'English', code: 'en'}, {name: 'Chinese', code: 'cn'}],
 // THE first one is default site language.
 export function parseFilePath (filePath, LANGUAGES, rootFolder) {
+  // slice out root folder
   if (rootFolder && rootFolder !== '/') {
     let idx = filePath.indexOf(rootFolder) + rootFolder.length
     filePath = filePath.slice(idx)
   }
 
   let pathArray = filePath.split('/').filter((f) => { return !!f })
-  let len = pathArray.length
   let parsedObj = {}
 
-  let filenames = pathArray[len - 1].split('.')
+  // get language code if any
+  if (LANGUAGES) {
+    let possibleCode = pathArray[0]
+
+    let matched = LANGUAGES.filter(item => {
+      return possibleCode === item.code
+    })
+    if (matched[0]) {
+      parsedObj['lang'] = matched[0].code
+      // shift out language
+      pathArray.shift()
+    } else {
+      parsedObj['lang'] = LANGUAGES[0].code
+    }
+  }
+
+  // get file extension
+  let len = pathArray[pathArray.length - 1]
+  let filenames = pathArray[pathArray.length - 1].split('.')
+
   switch (filenames[filenames.length - 1]) {
     case 'md':
     case 'MD':
       parsedObj['fileExt'] = 'md'
       filenames.pop()
-      parsedObj['fileSlug'] = filenames.join('')
+      pathArray[pathArray.length - 1] = filenames.join('')
       break
     case 'html':
     case 'HTML':
       parsedObj['fileExt'] = 'html'
       filenames.pop()
-      parsedObj['fileSlug'] = filenames.join('')
+      pathArray[pathArray.length - 1] = filenames.join('')
       break
     default:
-      parsedObj['fileSlug'] = pathArray[len - 1]
+      break
   }
-  // pop out filename
-  pathArray.pop()
-
-  if (!LANGUAGES) {
-    parsedObj['subFolder'] = pathArray.join('/')
-    return parsedObj
-  }
-
-  if (pathArray.length > 0) {
-    let matched = LANGUAGES.filter(item => {
-      return pathArray[pathArray.length - 1] === item.code
-    })
-    if (matched[0]) {
-      parsedObj['lang'] = matched[0].code
-      // pop out language
-      pathArray.pop()
-      parsedObj['subFolder'] = pathArray.join('/')
-    } else {
-      parsedObj['lang'] = LANGUAGES[0].code
-      parsedObj['subFolder'] = pathArray.join('/')
-    }
-  } else {
-    parsedObj['lang'] = LANGUAGES[0].code
-  }
+  parsedObj['fileSlug'] = pathArray.join('/')
 
   return parsedObj
 }

@@ -22,7 +22,6 @@ export default class ContentEditor extends Component {
       currentFileSlug: undefined,
       currentFileExt: undefined,
       currentFileLanguage: undefined,
-      currentFileSubFolder: undefined,
       isPostPublished: true,
       isDraft: false,
       language: 'cn',
@@ -45,8 +44,7 @@ export default class ContentEditor extends Component {
           formData: {},
           currentFileSlug: dateToString(new Date()) + '-new-file',
           currentFileExt: 'md',
-          currentFileLanguage: config && config.languages && config.languages[0].code || undefined,
-          currentFileSubFolder: undefined
+          currentFileLanguage: config && config.languages && config.languages[0].code || undefined
         }, () => {
           this.updateCurrentFilePath()
         })
@@ -73,8 +71,7 @@ export default class ContentEditor extends Component {
           formData: {},
           currentFileSlug: dateToString(new Date()) + '-new-file',
           currentFileExt: 'md',
-          currentFileLanguage: config && config.languages && config.languages[0].code || undefined,
-          currentFileSubFolder: undefined
+          currentFileLanguage: config && config.languages && config.languages[0].code || undefined
         }, () => {
           this.updateCurrentFilePath()
         })
@@ -103,8 +100,7 @@ export default class ContentEditor extends Component {
     this.setState({
       currentFileSlug: parsedObj.fileSlug,
       currentFileExt: parsedObj.fileExt,
-      currentFileLanguage: parsedObj.lang,
-      currentFileSubFolder: parsedObj.subFolder  
+      currentFileLanguage: parsedObj.lang
     })
   }
 
@@ -328,22 +324,13 @@ export default class ContentEditor extends Component {
     })
   }
 
-  handleFileSubFolderInput(evt) {
-    this.setState({currentFileSubFolder: evt.target.value}, () => {
-      this.updateCurrentFilePath()
-    })
-  }
-
   updateCurrentFilePath () {
     const { config } = this.props
-    const { currentFileSlug, currentFileExt, currentFileLanguage, currentFileSubFolder, currentSchema } = this.state
+    const { currentFileSlug, currentFileExt, currentFileLanguage, currentSchema } = this.state
     let newPathArray = []
     let newFilename = currentFileExt ? (currentFileSlug + '.' + currentFileExt) : currentFileSlug
     if (currentSchema.jekyll.id !== 'pages') {
       newPathArray.push(currentSchema.jekyll.dir)
-    }
-    if (currentFileSubFolder) {
-      newPathArray.push(currentFileSubFolder)
     }
     if (config && config.languages && currentFileLanguage !== config.languages[0].code) {
       newPathArray.push(currentFileLanguage)
@@ -364,7 +351,30 @@ export default class ContentEditor extends Component {
 
     return (
       <section id='content'>
-        <aside className='sidebar'>
+        <aside className='sidebar'>   
+          {config && config.languages &&
+            <div className='field'>
+              <label>Language</label>
+              <span className='select'>
+                <select value={this.state.currentFileLanguage} onChange={::this.changeFileLanguage}>
+                  {
+                    config.languages.map((lang) => {
+                      return <option value={lang.code} key={lang.code}>{lang.name}</option>
+                    })
+                  }
+                </select>
+              </span>
+            </div>
+          }
+          <div className='field'>
+            <label>Format</label>
+            <span className='select'>
+              <select value={this.state.currentFileExt} onChange={::this.changeFileType}>
+                <option value='md'>markdown</option>
+                <option value='html'>html</option>
+              </select>
+            </span>
+          </div>
           {params.splat !== 'new' && <div className="field">
             <span className="label">Latest update</span>
             <div className="message">
@@ -414,42 +424,15 @@ export default class ContentEditor extends Component {
             oncancel={::this.closeDeleteFileModel} />
         </aside>
         <div className='body'>
-          <div className='field filename field-group'>
-            <label>Compile file path</label>
-            {currentSchema && (currentSchema.jekyll.id === 'pages') &&
-              <input
-                type='text'
-                value={this.state.currentFileSubFolder}
-                onChange={::this.handleFileSubFolderInput}
-                placeholder='File folder' />
-            }         
-            {config && config.languages &&
-              <span className='select'>
-                <select value={this.state.currentFileLanguage} onChange={::this.changeFileLanguage}>
-                  {
-                    config.languages.map((lang) => {
-                      return <option value={lang.code} key={lang.code}>{lang.name}</option>
-                    })
-                  }
-                </select>
-              </span>
-            }
+          <div className='field'>
+            <label>Slug</label>
             <input
               className={`${filePathInputClass}`}
               type='text'
               value={currentFileSlug}
               onChange={::this.handleFileSlugInput}
               placeholder='File slug' />
-            <span className='select'>
-              <select value={this.state.currentFileExt} onChange={::this.changeFileType}>
-                <option value='md'>markdown</option>
-                <option value='html'>html</option>
-              </select>
-            </span>
-          </div>
-          <div className='field'>
-            <label>Full file path</label>
-            <div className='readonly'>{currentFilePath}</div>
+            <small className='description'><strong>File path: </strong>{currentFilePath}</small>
           </div>
           <Form
             onChange={res => this.setState({ formData: res.formData })}

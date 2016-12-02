@@ -166,9 +166,15 @@ fieldset {
     content: "\2795";
   }
 }
+legend {
+  @include font-size($small);
+  font-weight: bold;
+}
+.btn-group {
+  @include bundle;
+}
 .row {
-  margin-right: -15px;
-  margin-left: -15px;
+  margin: 0;
   &:after {
     clear: both;
   }
@@ -177,18 +183,53 @@ fieldset {
     display: table;
     content: " ";
   }
+  .array-item {
+    border: 1px solid $line;
+    border-bottom-width: 0;
+    @include clearfix;
+    padding: $space/2;
+    padding-bottom: 0;
+    &:first-child {
+      border-radius: $radius $radius 0 0;
+    }
+    &:last-child {
+      border-radius: 0 0 $radius $radius;
+      border-bottom-width: 1px;
+    }
+  }
+  fieldset {
+    .field:last-child {
+      margin-bottom: 0;
+    }
+  }
+  .array-item-add {
+    float: none;
+    margin: $space/2 0 0;
+    padding: 0;
+    width: auto;
+    .button {
+      @include button($blue);
+      @include font-size($smaller);
+      padding: $space/12 $space/2;
+      &:before {
+        content: 'Add ';
+      }
+    }
+  }
 }
 .col-xs-9, .col-xs-3 {
-  float: left;
+  box-sizing: border-box;
   position: relative;
   min-height: 1px;
-  padding-right: 15px;
-  padding-left: 15px;
 }
 .col-xs-9 {
+  float: left;
+  padding-right: 6px;
   width: 75%;
 }
 .col-xs-3 {
+  float: right;
+  padding-left: 6px;
   width: 25%;
 }
 .col-xs-offset-9 {
