@@ -180,7 +180,10 @@ export default class ContentSidebar extends Component {
         </header>
         <section className={this.state.loadingIndex ? 'body list loading' : 'body list'}>
           {
-            records && records.map((c, idx) => {
+            records && records.sort((curr, next) => {
+              return Date.parse(next.lastUpdatedAt) - Date.parse(curr.lastUpdatedAt)
+            })
+            .map((c, idx) => {
               return (
                 <a className={selectedItem === c.path ? 'active': ''}
                   onClick={this.selectItem.bind(this, c)}
