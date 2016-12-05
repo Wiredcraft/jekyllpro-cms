@@ -58,11 +58,11 @@ export default class FilesSidebar extends Component {
     toRoute(`/${repoOwner}/${repoName}/files/${currentBranch}/new`)
   }
 
-  selectItem() {
+  selectItem(item) {
     const { toRoute, currentBranch, params: { repoOwner, repoName } } = this.props
-    return function (item) {
-      toRoute(`/${repoOwner}/${repoName}/files/${currentBranch}/${item}`)
-    }
+    toRoute(`/${repoOwner}/${repoName}/files/${currentBranch}/${item}`)
+    // return function (item) {
+    // }
   }
 
   toFileUpload () {

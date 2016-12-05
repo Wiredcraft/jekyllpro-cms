@@ -12,7 +12,10 @@ const ExpendableFolderIcon = (props) =>{
 
 const FileView = (props) => {
   const { file, onclick, selected } = props
-  const onclickFn = onclick().bind(null, file.path)
+  const onclickFn = () => {
+    onclick(file.path)
+  }
+  
   return (
     <li key={`file-${file.path}`} onClick={onclickFn}>
       <a className={selected === file.path ? 'active' : ''}>
