@@ -16,7 +16,11 @@ fieldset {
   border: none;
   margin: 0;
   padding: 0;
+  .field {
+    clear: both;
+  }
 }
+
 
 .ReactCodeMirror {
   line-height: normal;
@@ -120,16 +124,6 @@ fieldset {
     cursor: default;
     &:hover {
       opacity: 0.3;
-    }
-  }
-}
-
-.field-boolean .checkbox {
-  input {
-    width: auto !important;
-    + strong {
-      float: left;
-      margin-right: 10px;
     }
   }
 }
