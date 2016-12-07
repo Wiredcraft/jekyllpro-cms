@@ -8,6 +8,7 @@ import 'codemirror/mode/xml/xml'
 import 'codemirror/mode/htmlmixed/htmlmixed'
 import 'codemirror/addon/display/autorefresh'
 import "codemirror/lib/codemirror.css"
+import Tags from './Tags'
 const cmOptions = {
   theme: "default",
   height: "auto",
@@ -77,5 +78,6 @@ export default {
   customSelect,
   customTextarea,
   customCodeMirror,
-  JSONCode
+  JSONCode,
+  Tags
 }

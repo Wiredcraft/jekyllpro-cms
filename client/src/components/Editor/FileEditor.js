@@ -5,7 +5,7 @@ import ReactDOM from 'react-dom'
 import { getRepoMeta } from '../../helpers/api'
 import { parseYamlInsideMarkdown, retriveContent, serializeObjtoYaml } from '../../helpers/markdown'
 import DeleteIcon from '../svg/DeleteIcon'
-import customWidgets from './CustomWidgets'
+import customWidgets from '../JSONSchemaForm/CustomWidgets'
 import { notTextFile, isImageFile, textValueIsDifferent } from "../../helpers/utils"
 import ConfirmDeletionModal from '../Modal/ConfirmDeletionModal'
 import notify from '../common/Notify'

@@ -13,6 +13,7 @@ import Cookie from 'js-cookie'
 import 'react-notifications/lib/notifications.css'
 import 'styles/_sass/main.scss'
 import 'styles/_supplement.scss'
+import 'react-select/dist/react-select.css'
 
 @connect(mapStateToProps, mapDispatchToProps)
 export default class AppComponent extends React.Component {
