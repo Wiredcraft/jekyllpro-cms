@@ -1,90 +1,124 @@
 $panel: 240px;
 
 #content {
-  background: $background;
-  padding: $space;
-  input:not([type=submit]),
-  textarea,
-  .select select {
-    width: 100%;
-  }
-  .description {
-    color: tint($black, 40%);
-  }
+  background: #FFF;
+  border-radius: $radius;
+  box-shadow: 0 1px 4px 0 rgba(0,0,0,0.14);
+  margin: $space auto;
+  max-width: $width-body;
   .header {
     background: #FFF;
     border-bottom: 1px solid $line;
-    padding: $space 1.5*$space;
-  }
-  .sidebar {
-    float: right;
-    position: fixed;
-    right: $space;
-    width: $panel;
-    .select,
-    .select select {
-      width: 100%;
-    }
-    & + .body {
-      margin-right: $panel;
-      padding-right: $space;
-    }
-    .save {
-      width: $panel - 32px;
-    }
-    .menu {
-      .button {
-        padding-left: $space/4;
-        padding-right: $space/4;
+    box-sizing: border-box;
+    padding: $space/2 1.5*$space/2;
+    .search {
+      display: inline-block;
+      position: relative;
+      input {
+        padding-left: 5*$space/4;
       }
-      .options {
-        left: auto;
-        right: 0;
-        .danger {
-          color: $red;
-          &:hover {
-            background: $red;
-            color: #FFF;
-          }
+      > svg {
+        color: $grey;
+        fill: $grey;
+        left: $space/4;
+        position: absolute;
+        top: $space/4;
+      }
+    }
+    .controls {
+      float: right;
+      .button {
+        margin-left: $space/2;
+      }
+      .edit {
+        color: $grey;
+        @include font-size($small);
+        padding: ($space/6 + 1) 0;
+        &:hover {
+          color: $blue;
+          text-decoration: none;
         }
       }
     }
   }
   .body {
-    box-sizing: border-box;
-  }
-  .empty {
-    background: #FFF;
-    border: 1px solid $line;
-    border-radius: $radius;
-    box-shadow: $shadow;
-    box-sizing: border-box;
-    bottom: 0;
-    margin: auto;
-    padding: $space/2 1.5*$space/2;
-    position: absolute;
-    display: table;
-    height: auto;
-    left: 0;
-    right: 0;
-    text-align: center;
-    top: 0;
-    width: 240px;
-    h2,
-    p {
-      margin-bottom: $space/2;
-    }
-    p {
-      @include font-size($smaller);
-      line-height: 160%;
-    }
-    .button {
+    padding: 1.5*$space/2;
+    input:not([type=submit]),
+    textarea,
+    .select select {
       width: 100%;
     }
-    small {
-      display: block;
-      @include font-size($smaller);
-      margin-top: $space/4;
+    .file-picker {
+      display: inline-block;
+      position: relative;
+      width: 100%;
+      .button,
+      input:focus + .button {
+        border-bottom-left-radius: 0;
+        border-top-left-radius: 0;
+        position: absolute;
+        right: 0;
+        top: 0;
+      }
+      input:hover + .button {
+        border-color: shade($line, 20%);
+      }
+      input:focus + .button {
+        @include button($primary);
+        fill: #FFF;
+        padding-left: $space/3;
+        padding-right: $space/3;
+      }
+    }
+    &.list {
+      padding: 0;
+      a {
+        border-top: 1px solid $line;
+        color: inherit;
+        @include clearfix;
+        display: block;
+        line-height: 1;
+        padding: 1.5*$space/2;
+        @include transition-property(background);
+        @include transition-duration($ease);
+        &:hover {
+          background: $light;
+          text-decoration: none;
+        }
+        &:first-child {
+          border: 0;
+        }
+        h2,
+        .meta {
+          box-sizing: border-box;
+          color: inherit;
+          display: block;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+        h2 {
+          margin-bottom: $space/3;
+        }
+        .type {
+          background: tint($purple, 90%);
+          border-radius: $radius;
+          color: $purple;
+          display: inline-block;
+          float: left;
+          @include font-size($pico);
+          font-weight: normal;
+          margin-right: $space/4;
+          padding: 0 $space/6;
+          text-transform: uppercase;
+        }
+        .meta {
+          color: $grey;
+        }
+        .edit {
+          float: right;
+        }
+      }
     }
   }
 }

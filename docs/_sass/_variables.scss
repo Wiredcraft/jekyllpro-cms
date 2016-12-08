@@ -4,19 +4,20 @@ $black: #343c46;
 $blue: #0A93FF;
 $primary: $blue;
 $red: #FC255D;
-$background: #F4F4F4;
+$background: #eee;
+$light: #f4f4f4;
 
 /* Fonts */
 
-@import 'https://fonts.googleapis.com/css?family=Roboto:400,700';
+@import 'https://fonts.googleapis.com/css?family=Roboto:400,500,700';
 
 $body: 'Roboto', 'Helvetica Neue', Helvetica, Arial, sans-serif;
 $headline: $body;
 
 /* Layout */
 
-$sidebar: 25%;
-$header: 42px;
+$width-body: 960px;
+$footer: 59px;
 
 /* Partials */
 
