@@ -5,7 +5,7 @@ import ReactDOM from 'react-dom'
 import { getRepoMeta } from '../../helpers/api'
 import { parseYamlInsideMarkdown, retriveContent, serializeObjtoYaml } from '../../helpers/markdown'
 import DeleteIcon from '../svg/DeleteIcon'
-import customWidgets from './CustomWidgets'
+import customWidgets from '../JSONSchemaForm/CustomWidgets'
 import { notTextFile, isImageFile, textValueIsDifferent } from "../../helpers/utils"
 import ConfirmDeletionModal from '../Modal/ConfirmDeletionModal'
 import notify from '../common/Notify'
@@ -115,11 +115,11 @@ export default class FileEditor extends Component {
           toRoute(`/${repoOwner}/${repoName}/files/${currentBranch}/`)
         })
     } else {
-      let originContent = this.state.formData.body ? this.state.formData.body : ''
-      if (!textValueIsDifferent(originContent, updatedContent)) {
-        this.setState({ disableActionBtn: false })
-        return notify('warning', 'You don\'t have any changes!')
-      }
+      // let originContent = this.state.formData.body ? this.state.formData.body : ''
+      // if (!textValueIsDifferent(originContent, updatedContent)) {
+      //   this.setState({ disableActionBtn: false })
+      //   return notify('warning', 'You don\'t have any changes!')
+      // }
       
       this.setState({ formData: { body: updatedContent } })
       reqPromise = updateFile(currentBranch, targetFile, updatedContent)

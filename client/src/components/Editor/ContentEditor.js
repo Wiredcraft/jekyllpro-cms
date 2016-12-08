@@ -6,13 +6,13 @@ import Cookie from 'js-cookie'
 
 import { parseYamlInsideMarkdown, retriveContent, serializeObjtoYaml } from '../../helpers/markdown'
 import DeleteIcon from '../svg/DeleteIcon'
-import customWidgets from './CustomWidgets'
+import customWidgets from '../JSONSchemaForm/CustomWidgets'
+import CustomArrayField from '../JSONSchemaForm/CustomArrayField'
 import { dateToString, purgeObject, parseFilePathByLang, textValueIsDifferent, parseFilePath } from "../../helpers/utils"
 import ConfirmDeletionModal from '../Modal/ConfirmDeletionModal'
 import notify from '../common/Notify'
 
 const repoUrl = `https://github.com/${Cookie.get('repoOwner')}/${Cookie.get('repoName')}/`
-// const LANGUAGES = [{name: 'Chinese', code: 'cn'}, {name: 'English', code: 'en'}]
 
 export default class ContentEditor extends Component {
   constructor(props) {
@@ -439,6 +439,7 @@ export default class ContentEditor extends Component {
             onSubmit={res => this.updateResult(res.formData)}
             schema={currentSchema.JSONSchema}
             uiSchema={currentSchema.uiSchema}
+            fields={{ArrayField: CustomArrayField}}
             widgets={customWidgets}
             showErrorList={false}
             formData={formData}>
