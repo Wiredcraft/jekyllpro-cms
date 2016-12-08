@@ -35,6 +35,7 @@ export default class Tags extends Component {
         noResultsText={this.state.noResultsText}
         multi={true}
         value={this.state.tags}
+        clearable={false}
         onChange={::this.handleChange} />
     )
   }

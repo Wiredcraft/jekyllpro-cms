@@ -59,6 +59,7 @@ export default class CustomSelectWidget extends Component {
     return (
       <Select
         id={id}
+        clearable={false}
         required={required}
         disabled={disabled}
         readOnly={readonly}
