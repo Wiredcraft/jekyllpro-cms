@@ -6,6 +6,22 @@
   .menu {
     float: left;
     .options {
+      .message {
+        background: tint($blue, 90%);
+        color: $blue;
+        display: block;
+        @include font-size($smaller);
+        margin: $space/6;
+        padding: $space/12 $space/2;
+        &.error {
+          background: tint($red, 90%);
+          color: $red;
+        }
+        &.pending {
+          background: tint($orange, 90%);
+          color: $orange;
+        }
+      }
       .header {
         @include font-size($smaller);
         padding: $space/3 $space/2;
@@ -42,7 +58,14 @@
     &.error {
       .item {
         svg {
-          fill: $blue;
+          fill: $red;
+        }
+      }
+    }
+    &.pending {
+      .item {
+        svg {
+          fill: $orange;
         }
       }
     }
