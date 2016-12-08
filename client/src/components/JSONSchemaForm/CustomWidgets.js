@@ -9,6 +9,7 @@ import 'codemirror/mode/htmlmixed/htmlmixed'
 import 'codemirror/addon/display/autorefresh'
 import "codemirror/lib/codemirror.css"
 import Tags from './Tags'
+import CustomSelectWidget from './CustomSelectWidget'
 const cmOptions = {
   theme: "default",
   height: "auto",
@@ -57,7 +58,7 @@ const customCheckbox = (props) => {
 
   return (
     <div className={`checkbox ${disabled ? "disabled" : ""}`}>
-      <label for={id}>{label}</label>
+      <label htmlFor={id}>{label}</label>
       <label className='switch'>
         <input type='checkbox'
           id={id}
@@ -73,10 +74,10 @@ const customCheckbox = (props) => {
 }
 
 export default {
-  SelectWidget: customSelect,
+  SelectWidget: CustomSelectWidget,
   CheckboxWidget: customCheckbox,
-  customSelect,
-  customTextarea,
+  TextareaWidget: customTextarea,
+  customSelect: CustomSelectWidget,
   customCodeMirror,
   JSONCode,
   Tags

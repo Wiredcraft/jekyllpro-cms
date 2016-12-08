@@ -3,7 +3,6 @@ import Select, { Creatable } from 'react-select'
 
 export default class Tags extends Component {
   constructor(props) {
-    console.log(props)
     super(props)
     this.state = {
       tags: props.value && props.value.map(v => { return { label: v, value: v }}) || [],
@@ -29,7 +28,7 @@ export default class Tags extends Component {
   }
 
   render () {
-    console.log(this.props.value)
+
     return (
       <Creatable
         placeholder='Enter tags...'
