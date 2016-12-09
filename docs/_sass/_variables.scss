@@ -7,6 +7,8 @@ $red: #FC255D;
 $background: #eee;
 $light: #f4f4f4;
 
+$shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
+
 /* Fonts */
 
 @import 'https://fonts.googleapis.com/css?family=Roboto:400,500,700';
@@ -16,8 +18,7 @@ $headline: $body;
 
 /* Layout */
 
-$width-body: 960px;
-$footer: 59px;
+$width-body: 864px;
 
 /* Partials */
 

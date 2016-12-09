@@ -49,6 +49,17 @@ h3 {
 }
 
 .menu {
+  > .button {
+    padding-left: $space/2;
+    padding-right: $space/2;
+    &.icon {
+      padding-left: $space/3;
+      padding-right: $space/3;
+      svg {
+        margin-right: 0;
+      }
+    }
+  }
   .options {
     h2 {
       color: $grey;
@@ -75,6 +86,7 @@ h3 {
         }
       }
       &.selected {
+        font-weight: 500;
         svg {
           opacity: 1;
         }
@@ -97,14 +109,16 @@ $switch_padding: 2px;
     display: none;
     &:checked + .slider {
       background: $blue;
+      border: 1px solid shade($blue, 20%);
     }
     &:checked + .slider:before {
       @include transform(translateX($switch_size));
     }
   }
   .slider {
-    background: rgba(0, 0, 0, 0.1);
-    box-shadow: 1px 1px 0 rgba(0, 0, 0, 0.1) inset;
+    background: $background;
+    border: 1px solid $line;
+    box-shadow: $shadow inset;
     border-radius: 2*$switch_size;
     bottom: 0;
     cursor: pointer;
@@ -115,15 +129,18 @@ $switch_padding: 2px;
     @include transition-duration($ease);
     &:before {
       background: #FFF;
-      box-shadow: 1px 1px 0 rgba(0, 0, 0, 0.1);
+      box-shadow: 0 0 2px 1px rgba(0, 0, 0, 0.1);
       border-radius: 50%;
       bottom: $switch_padding;
       content: '';
-      height: $switch_size;
+      height: $switch_size - 2;
       left: $switch_padding;
       position: absolute;
-      width: $switch_size;
+      width: $switch_size - 2;
       @include transition-duration($ease);
+    }
+    &:hover {
+      border-color: shade($line, 20%);
     }
   }
   & + label {

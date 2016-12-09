@@ -25,7 +25,7 @@
   <link rel='stylesheet' href='assets/styles.css'>
 </head>
 
-<body class='modal'>
+<body class=''>
   <!-- APP -->
   <div id='app'>
     <header id='header'>
@@ -58,6 +58,14 @@
           marketing
         </a>
         <div class='options'>
+          <a>
+            <svg height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'>
+              <path d='M0 0h24v24H0z' fill='none'/>
+              <path d='M19 19H5V5h7V3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z'/>
+            </svg>
+            Wiredcraft/marketing
+          </a>
+          <hr/>
           <header class='header'>
             <span class='search'>
               <input class='search' type='text' placeholder='Search repositories by name'/>
@@ -112,12 +120,42 @@
         </div>
       </span>
 
-      <a class='preview item' href='website.html'>
+      <span class='website menu error'>
+        <a class='view item tooltip-bottom' href='website.html'>
+          <svg height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'>
+            <path d='M0 0h24v24H0z' fill='none'/>
+            <path d='M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96z'/>
+          </svg>
+          Website
+        </a>
+        <div class='options'>
+          <!-- <span class='message ok'>Updated 6 min ago</span> -->
+          <span class='message error'>Update failed 6 min ago</span>
+          <!-- <span class='message pending'>Pending update</span> -->
+          <hr/>
+          <a>
+            <svg height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'>
+              <path d='M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z'/>
+              <path d='M0 0h24v24H0z' fill='none'/>
+            </svg>
+            See the logs
+          </a>
+          <a>
+            <svg height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'>
+              <path d='M0 0h24v24H0z' fill='none'/>
+              <path d='M19 19H5V5h7V3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z'/>
+            </svg>
+            Current version: #07180ad
+          </a>
+        </div>
+      </span>
+
+      <!-- <a class='settings item tooltip-bottom' href='website.html'>
         <svg height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'>
-          <path d='M12,9A3,3 0 0,0 9,12A3,3 0 0,0 12,15A3,3 0 0,0 15,12A3,3 0 0,0 12,9M12,17A5,5 0 0,1 7,12A5,5 0 0,1 12,7A5,5 0 0,1 17,12A5,5 0 0,1 12,17M12,4.5C7,4.5 2.73,7.61 1,12C2.73,16.39 7,19.5 12,19.5C17,19.5 21.27,16.39 23,12C21.27,7.61 17,4.5 12,4.5Z' />
+          <path d='M 11.9994,15.498C 10.0664,15.498 8.49939,13.931 8.49939,11.998C 8.49939,10.0651 10.0664,8.49805 11.9994,8.49805C 13.9324,8.49805 15.4994,10.0651 15.4994,11.998C 15.4994,13.931 13.9324,15.498 11.9994,15.498 Z M 19.4284,12.9741C 19.4704,12.6531 19.4984,12.329 19.4984,11.998C 19.4984,11.6671 19.4704,11.343 19.4284,11.022L 21.5414,9.36804C 21.7294,9.21606 21.7844,8.94604 21.6594,8.73004L 19.6594,5.26605C 19.5354,5.05005 19.2734,4.96204 19.0474,5.04907L 16.5584,6.05206C 16.0424,5.65607 15.4774,5.32104 14.8684,5.06903L 14.4934,2.41907C 14.4554,2.18103 14.2484,1.99805 13.9994,1.99805L 9.99939,1.99805C 9.74939,1.99805 9.5434,2.18103 9.5054,2.41907L 9.1304,5.06805C 8.52039,5.32104 7.95538,5.65607 7.43939,6.05206L 4.95139,5.04907C 4.7254,4.96204 4.46338,5.05005 4.33939,5.26605L 2.33939,8.73004C 2.21439,8.94604 2.26938,9.21606 2.4574,9.36804L 4.5694,11.022C 4.5274,11.342 4.49939,11.6671 4.49939,11.998C 4.49939,12.329 4.5274,12.6541 4.5694,12.9741L 2.4574,14.6271C 2.26938,14.78 2.21439,15.05 2.33939,15.2661L 4.33939,18.73C 4.46338,18.946 4.7254,19.0341 4.95139,18.947L 7.4404,17.944C 7.95639,18.34 8.52139,18.675 9.1304,18.9271L 9.5054,21.577C 9.5434,21.8151 9.74939,21.998 9.99939,21.998L 13.9994,21.998C 14.2484,21.998 14.4554,21.8151 14.4934,21.577L 14.8684,18.9271C 15.4764,18.6741 16.0414,18.34 16.5574,17.9431L 19.0474,18.947C 19.2734,19.0341 19.5354,18.946 19.6594,18.73L 21.6594,15.2661C 21.7844,15.05 21.7294,14.78 21.5414,14.6271L 19.4284,12.9741 Z ' />
         </svg>
-        Preview
-      </a>
+        <span>Settings</span>
+      </a> -->
     </header>
 
     <!-- CONTENT -->
@@ -128,75 +166,89 @@
             Ronan Berder, 6 hours ago
             <span>View on GitHub</span>
           </a>
-          <button class='button primary save processing'>Save</button>
+
+          <span class='bundle'>
+            <button class='button primary save processing'>Save</button><span class='menu'>
+
+            <span class='menu'>
+              <button class='button primary icon'>
+                <svg height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'>
+                  <path d='M0 0h24v24H0z' fill='none'/>
+                  <path d='M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z'/>
+                </svg>
+              </button>
+              <div class='options'>
+                <a class='selected'>
+                  <svg height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'>
+                    <path d='M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z' />
+                  </svg>
+                  <span>Published</span>
+                </a>
+                <a>
+                  <svg height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'>
+                    <path d='M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z' />
+                  </svg>
+                  <span>Draft</span>
+                </a>
+                <hr/>
+                <a class='danger'>
+                  <svg height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'>
+                    <path d='M19,4H15.5L14.5,3H9.5L8.5,4H5V6H19M6,19A2,2 0 0,0 8,21H16A2,2 0 0,0 18,19V7H6V19Z' />
+                  </svg>
+                  Delete
+                </a>
+              </div>
+            </span>
+          </span>
         </div>
 
-        <span class='menu'>
-          <button class='button create'>
-            English
-            <svg height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'>
-              <path d='M7 10l5 5 5-5z'/>
-              <path d='M0 0h24v24H0z' fill='none'/>
-            </svg>
-          </button>
-          <div class='options'>
-            <a class='selected'>
-              <svg height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'>
-                <path d='M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z' />
-              </svg>
-              English
-            </a>
-            <a>
-              <svg height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'>
-                <path d='M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z' />
-              </svg>
-              Chinese
-            </a>
-            <hr/>
-            <h2>Existing translations</h2>
-            <a>
-              <svg height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'>
-                <path d='M0 0h24v24H0z' fill='none'/>
-                <path d='M19 19H5V5h7V3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z'/>
-              </svg>
-              French
-            </a>
-          </div>
-        </span>
-
-        <span class='menu'>
-          <button class='button icon'>
-            <svg height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'>
-              <path d='M0 0h24v24H0z' fill='none'/>
-              <path d='M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z'/>
-            </svg>
-          </button>
-          <div class='options'>
-            <a class='selected'>
-              <svg height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'>
-                <path d='M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z' />
-              </svg>
-              <span>Published</span>
-            </a>
-            <a>
-              <svg height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'>
-                <path d='M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z' />
-              </svg>
-              <span>Draft</span>
-            </a>
-            <hr/>
-            <a class='danger'>
-              <svg height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'>
-                <path d='M19,4H15.5L14.5,3H9.5L8.5,4H5V6H19M6,19A2,2 0 0,0 8,21H16A2,2 0 0,0 18,19V7H6V19Z' />
-              </svg>
-              Delete
-            </a>
-          </div>
-        </span>
+        <button class='button icon tooltip-bottom'>
+          <svg height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'>
+            <path d='M0 0h24v24H0z' fill='none'/>
+            <path d='M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z'/>
+          </svg>
+          <span>Back to all content</span>
+        </button>
       </header>
 
       <div class='body'>
-        <div class='field filename'>
+        <div class='field language'>
+          <label>Language</label>
+          <span class='menu'>
+            <button class='button create'>
+              English
+              <svg height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'>
+                <path d='M7 10l5 5 5-5z'/>
+                <path d='M0 0h24v24H0z' fill='none'/>
+              </svg>
+            </button>
+            <div class='options'>
+              <a class='selected'>
+                <svg height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'>
+                  <path d='M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z' />
+                </svg>
+                English
+              </a>
+              <a>
+                <svg height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'>
+                  <path d='M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z' />
+                </svg>
+                Chinese
+              </a>
+              <hr/>
+              <h2>Existing translations</h2>
+              <a>
+                <svg height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'>
+                  <path d='M0 0h24v24H0z' fill='none'/>
+                  <path d='M19 19H5V5h7V3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z'/>
+                </svg>
+                French
+              </a>
+            </div>
+          </span>
+        </div>
+
+        <div class='field slug'>
           <label>SLUG</label>
           <input type='text' value='wiredcraft-hits-the-beach' placeholder='Filename'/>
           <small class='description'>Filename: _posts/wiredcraft-hits-the-beach.md</small>
@@ -244,6 +296,30 @@
           </span>
         </div>
         <div class='field'>
+          <span class='menu format'>
+            <a>
+              Markdown
+              <svg height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'>
+                <path d='M7 10l5 5 5-5z'/>
+                <path d='M0 0h24v24H0z' fill='none'/>
+              </svg>
+            </a>
+            <div class='options'>
+              <a class='selected'>
+                <svg height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'>
+                  <path d='M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z' />
+                </svg>
+                Markdown
+              </a>
+              <a>
+                <svg height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'>
+                  <path d='M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z' />
+                </svg>
+                HTML
+              </a>
+            </div>
+          </span>
+
           <label>Body</label>
           <textarea rows='20'>Last week, the Wiredcraft team took the day to relax and hang out at the beach! Shanghai doesn't have any natural beaches nearby, so we had to settle for taking a bus to Jinshan City Beach. After some storms along the way, we finally arrived to clear and sunny skies.
 
@@ -307,46 +383,48 @@ Stay tuned for the next team building update from Wiredcraft! Beach day is going
                 </svg>
                 <span>en</span>
               </a>
-            </li>
-            <li>
-              <a class='active'>
-                <svg xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' version='1.1' baseProfile='full' width='24' height='24' viewBox='0 0 24.00 24.00' enable-background='new 0 0 24.00 24.00' xml:space='preserve'>
-                  <path d="M13,9H18.5L13,3.5V9M6,2H14L20,8V20A2,2 0 0,1 18,22H6C4.89,22 4,21.1 4,20V4C4,2.89 4.89,2 6,2M15,18V16H6V18H15M18,14V12H6V14H18Z" />
-                </svg>
-                <span>yo-mayi.md</span>
-              </a>
-            </li>
-            <li>
-              <a>
-                <svg xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' version='1.1' baseProfile='full' width='24' height='24' viewBox='0 0 24.00 24.00' enable-background='new 0 0 24.00 24.00' xml:space='preserve'>
-                  <path d="M13,9H18.5L13,3.5V9M6,2H14L20,8V20A2,2 0 0,1 18,22H6C4.89,22 4,21.1 4,20V4C4,2.89 4.89,2 6,2M15,18V16H6V18H15M18,14V12H6V14H18Z" />
-                </svg>
-                <span>wiredcraft-hits-the-beach.md</span>
-              </a>
-            </li>
-            <li>
-              <a>
-                <svg xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' version='1.1' baseProfile='full' width='24' height='24' viewBox='0 0 24.00 24.00' enable-background='new 0 0 24.00 24.00' xml:space='preserve'>
-                  <path d="M13,9H18.5L13,3.5V9M6,2H14L20,8V20A2,2 0 0,1 18,22H6C4.89,22 4,21.1 4,20V4C4,2.89 4.89,2 6,2M15,18V16H6V18H15M18,14V12H6V14H18Z" />
-                </svg>
-                <span>gooygle-analtics.md</span>
-              </a>
-            </li>
-            <li>
-              <a>
-                <svg xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' version='1.1' baseProfile='full' width='24' height='24' viewBox='0 0 24.00 24.00' enable-background='new 0 0 24.00 24.00' xml:space='preserve'>
-                  <path d="M13,9H18.5L13,3.5V9M6,2H14L20,8V20A2,2 0 0,1 18,22H6C4.89,22 4,21.1 4,20V4C4,2.89 4.89,2 6,2M15,18V16H6V18H15M18,14V12H6V14H18Z" />
-                </svg>
-                <span>ui-ux-conference-tickets-are-now-on-sale.md</span>
-              </a>
-            </li>
-            <li>
-              <a>
-                <svg xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' version='1.1' baseProfile='full' width='24' height='24' viewBox='0 0 24.00 24.00' enable-background='new 0 0 24.00 24.00' xml:space='preserve'>
-                  <path d="M13,9H18.5L13,3.5V9M6,2H14L20,8V20A2,2 0 0,1 18,22H6C4.89,22 4,21.1 4,20V4C4,2.89 4.89,2 6,2M15,18V16H6V18H15M18,14V12H6V14H18Z" />
-                </svg>
-                <span>our-job-ads-will-never-die.md</span>
-              </a>
+              <ul>
+                <li>
+                  <a class='active'>
+                    <svg xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' version='1.1' baseProfile='full' width='24' height='24' viewBox='0 0 24.00 24.00' enable-background='new 0 0 24.00 24.00' xml:space='preserve'>
+                      <path d="M13,9H18.5L13,3.5V9M6,2H14L20,8V20A2,2 0 0,1 18,22H6C4.89,22 4,21.1 4,20V4C4,2.89 4.89,2 6,2M15,18V16H6V18H15M18,14V12H6V14H18Z" />
+                    </svg>
+                    <span>yo-mayi.md</span>
+                  </a>
+                </li>
+                <li>
+                  <a>
+                    <svg xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' version='1.1' baseProfile='full' width='24' height='24' viewBox='0 0 24.00 24.00' enable-background='new 0 0 24.00 24.00' xml:space='preserve'>
+                      <path d="M13,9H18.5L13,3.5V9M6,2H14L20,8V20A2,2 0 0,1 18,22H6C4.89,22 4,21.1 4,20V4C4,2.89 4.89,2 6,2M15,18V16H6V18H15M18,14V12H6V14H18Z" />
+                    </svg>
+                    <span>wiredcraft-hits-the-beach.md</span>
+                  </a>
+                </li>
+                <li>
+                  <a>
+                    <svg xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' version='1.1' baseProfile='full' width='24' height='24' viewBox='0 0 24.00 24.00' enable-background='new 0 0 24.00 24.00' xml:space='preserve'>
+                      <path d="M13,9H18.5L13,3.5V9M6,2H14L20,8V20A2,2 0 0,1 18,22H6C4.89,22 4,21.1 4,20V4C4,2.89 4.89,2 6,2M15,18V16H6V18H15M18,14V12H6V14H18Z" />
+                    </svg>
+                    <span>gooygle-analtics.md</span>
+                  </a>
+                </li>
+                <li>
+                  <a>
+                    <svg xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' version='1.1' baseProfile='full' width='24' height='24' viewBox='0 0 24.00 24.00' enable-background='new 0 0 24.00 24.00' xml:space='preserve'>
+                      <path d="M13,9H18.5L13,3.5V9M6,2H14L20,8V20A2,2 0 0,1 18,22H6C4.89,22 4,21.1 4,20V4C4,2.89 4.89,2 6,2M15,18V16H6V18H15M18,14V12H6V14H18Z" />
+                    </svg>
+                    <span>ui-ux-conference-tickets-are-now-on-sale.md</span>
+                  </a>
+                </li>
+                <li>
+                  <a>
+                    <svg xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' version='1.1' baseProfile='full' width='24' height='24' viewBox='0 0 24.00 24.00' enable-background='new 0 0 24.00 24.00' xml:space='preserve'>
+                      <path d="M13,9H18.5L13,3.5V9M6,2H14L20,8V20A2,2 0 0,1 18,22H6C4.89,22 4,21.1 4,20V4C4,2.89 4.89,2 6,2M15,18V16H6V18H15M18,14V12H6V14H18Z" />
+                    </svg>
+                    <span>our-job-ads-will-never-die.md</span>
+                  </a>
+                </li>
+              </ul>
             </li>
             <li>
               <a class='folder'>
@@ -360,16 +438,8 @@ Stay tuned for the next team building update from Wiredcraft! Beach day is going
         </section>
         <footer class='footer'>
           <div class='controls'>
-            <button class='button primary icon tooltip'>
-              <span>Create a folder</span>
-              <svg xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' version='1.1' baseProfile='full' width='24' height='24' viewBox='0 0 24.00 24.00' enable-background='new 0 0 24.00 24.00' xml:space='preserve'>
-                <path d='M0 0h24v24H0V0z' fill='none'/>
-                <path d='M20 6h-8l-2-2H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2zm-1 8h-3v3h-2v-3h-3v-2h3V9h2v3h3v2z'/>
-              </svg>
-            </button>
-
-            <button class='button primary icon tooltip'>
-              <span>Upload a file</span>
+            <button class='button primary tooltip'>
+              Upload a file
               <svg xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' version='1.1' baseProfile='full' width='24' height='24' viewBox='0 0 24.00 24.00' enable-background='new 0 0 24.00 24.00' xml:space='preserve'>
                 <path d='M0 0h24v24H0z' fill='none'/>
                 <path d='M9 16h6v-6h4l-7-7-7 7h4zm-4 2h14v2H5z'/>
