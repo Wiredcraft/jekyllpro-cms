@@ -25,7 +25,7 @@ export default class CustomArrayField extends Component {
     const { formData, schema, idSchema, required, registry: { fields, definitions } } = this.props
     const title = (schema.title === undefined) ? name : schema.title
 
-    if (schema.items.type === 'string') {
+    if (schema.items.type === 'string' && !schema.items.enum) {
       return (
         <fieldset className='field field-array field-array-of-string'>
           <fields.TitleField

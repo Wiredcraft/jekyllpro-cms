@@ -21,6 +21,9 @@ fieldset {
   }
 }
 
+.field-array-of-string .Select-arrow-zone {
+  visibility: hidden;
+}
 
 .ReactCodeMirror {
   line-height: normal;
