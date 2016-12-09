@@ -12,16 +12,15 @@ $panel: 240px;
     padding: $space/2 1.5*$space/2;
     .search {
       display: inline-block;
-      position: relative;
-      input {
-        padding-left: 5*$space/4;
+      .menu {
+        float: left;
+        > .button {
+          border-radius: $radius 0 0 $radius;
+          border-right: 0;
+        }
       }
-      > svg {
-        color: $grey;
-        fill: $grey;
-        left: $space/4;
-        position: absolute;
-        top: $space/4;
+      input {
+        border-radius: 0 $radius $radius 0;
       }
     }
     .filters {
@@ -130,6 +129,10 @@ $panel: 240px;
           height: $space/2;
           vertical-align: text-top;
           width: $space/2;
+        }
+        &:hover {
+          color: $blue;
+          text-decoration: none;
         }
       }
       .options {
