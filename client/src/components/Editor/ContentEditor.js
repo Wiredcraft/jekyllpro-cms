@@ -54,34 +54,8 @@ export default class ContentEditor extends Component {
     if (selectedCollectionFile) {
       return this.getCurrentSchema(selectedCollectionFile.collectionType, this.updateEditorForm)
     }
+
     if (params.splat === 'new') {
-      this.getCurrentSchema(params.collectionType, () => {
-        this.setState({
-          formData: {},
-          currentFileSlug: dateToString(new Date()) + '-new-file',
-          currentFileExt: 'md',
-          currentFileLanguage: config && config.languages && config.languages[0].code || undefined
-        }, () => {
-          this.updateCurrentFilePath()
-        })
-      })
-    }
-  }
-
-  componentDidUpdate(prevProps) {
-    const { params, selectedCollectionFile, location, config } = this.props
-
-    const fileChanged = selectedCollectionFile &&
-      (selectedCollectionFile.path !== (prevProps.selectedCollectionFile && prevProps.selectedCollectionFile.path))
-    const newFileMode = (params.splat === 'new') &&
-      ((params.splat !== prevProps.params.splat) || (params.collectionType !== prevProps.params.collectionType))
-
-    if (fileChanged) {
-      this.setState({ currentFilePath: selectedCollectionFile.path })
-      this.getCurrentSchema(selectedCollectionFile.collectionType, this.updateEditorForm)
-    }
-
-    if (newFileMode) {
       this.getCurrentSchema(params.collectionType, () => {
         this.setState({
           formData: {},

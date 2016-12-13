@@ -6,7 +6,7 @@ import moment from 'moment'
 import { parseFilenameFromYaml } from '../helpers/markdown'
 import { parseFilePathByLang } from "../helpers/utils"
 
-import { changeEditorMode, selectCollectionFile } from '../actions/editorActions'
+import { selectCollectionFile, resetEditorData } from '../actions/editorActions'
 import { fetchRepoIndex, fetchRepoTree } from '../actions/repoActions'
 import { toRoute, replaceRoute } from '../actions/routeActions'
 import NoSchema from './common/NoSchema'
@@ -40,8 +40,8 @@ class ContentListing extends Component {
   }
 
   createNewFileByType(type) {
-    const { changeEditorMode, toRoute, currentBranch, params: { repoOwner, repoName } } = this.props
-    changeEditorMode('collection')
+    const { resetEditorData, toRoute, currentBranch, params: { repoOwner, repoName } } = this.props
+    resetEditorData()
     toRoute(`/${repoOwner}/${repoName}/${type}/${currentBranch}/new`)
   }
 
@@ -130,10 +130,8 @@ class ContentListing extends Component {
   }
 
   selectItem(item) {
-    const { selectCollectionFile, changeEditorMode,
-      toRoute, currentBranch, params: { repoOwner, repoName } } = this.props
+    const { selectCollectionFile, toRoute, currentBranch, params: { repoOwner, repoName } } = this.props
     selectCollectionFile(item)
-    changeEditorMode('collection')
     toRoute(`/${repoOwner}/${repoName}/${item.collectionType}/${currentBranch}/${item.path}`)
   }
 
@@ -264,7 +262,7 @@ function mapStateToProps(state, {
 }
 
 function mapDispatchToProps (dispatch) {
-  return bindActionCreators({ fetchRepoIndex, toRoute, replaceRoute, changeEditorMode,
+  return bindActionCreators({ fetchRepoIndex, toRoute, replaceRoute, resetEditorData,
     selectCollectionFile, fetchRepoTree }, dispatch)
 }
 
