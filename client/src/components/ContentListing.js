@@ -11,6 +11,10 @@ import { fetchRepoIndex, fetchRepoTree } from '../actions/repoActions'
 import { toRoute, replaceRoute } from '../actions/routeActions'
 import NoSchema from './common/NoSchema'
 
+import CaretDownIcon from './svg/CaretDownIcon'
+import RemoveIcon from './svg/RemoveIcon'
+import CheckIcon from './svg/CheckIcon'
+
 class ContentListing extends Component {
   constructor(props) {
     super(props)
@@ -103,10 +107,7 @@ class ContentListing extends Component {
             <span className="menu">
               <button className="button primary create">
                 Create
-                <svg height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M7 10l5 5 5-5z"></path>
-                  <path d="M0 0h24v24H0z" fill="none"></path>
-                </svg>
+                <CaretDownIcon />
               </button>
               <div className="options">
                 {
@@ -122,10 +123,7 @@ class ContentListing extends Component {
             <span className="menu">
               <button className="button">
                 Filters
-                <svg height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M7 10l5 5 5-5z"></path>
-                  <path d="M0 0h24v24H0z" fill="none"></path>
-                </svg>
+                <CaretDownIcon />
               </button>
               <div className="options">
                 <h2>Filter by type</h2>
@@ -134,9 +132,7 @@ class ContentListing extends Component {
                     return (<Link key={s.title}
                       to={`${pathname}?filteredType=${s.jekyll.id}`}
                       className={filteredType === s.jekyll.id ? 'selected' : ''} >
-                      <svg height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z"></path>
-                      </svg>
+                      <CheckIcon />
                       {s.title}
                     </Link>)
                   })
@@ -153,18 +149,14 @@ class ContentListing extends Component {
               filteredType && <li>
                 <span>Type: {filteredType}</span>
                 <a className="remove" onClick={::this.removeFilterType}>
-                  <svg height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z"></path>
-                  </svg>
+                  <RemoveIcon />
                 </a>
               </li>
             }
             <li>
               <span>Language: English</span>
               <a className="remove">
-                <svg height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z"></path>
-                </svg>
+                <RemoveIcon />
               </a>
             </li>
           </ul>

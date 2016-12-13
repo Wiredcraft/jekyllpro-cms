@@ -5,12 +5,17 @@ import moment from 'moment'
 import Cookie from 'js-cookie'
 
 import { parseYamlInsideMarkdown, retriveContent, serializeObjtoYaml } from '../../helpers/markdown'
-import DeleteIcon from '../svg/DeleteIcon'
+import TrashIcon from '../svg/TrashIcon'
+import MoreMenuIcon from '../svg/MoreMenuIcon'
+import CheckIcon from '../svg/CheckIcon'
+import BackArrowIcon from '../svg/BackArrowIcon'
+import CaretDownIcon from '../svg/CaretDownIcon'
 import customWidgets from '../JSONSchemaForm/CustomWidgets'
 import CustomArrayField from '../JSONSchemaForm/CustomArrayField'
 import { dateToString, purgeObject, parseFilePathByLang, textValueIsDifferent, parseFilePath } from "../../helpers/utils"
 import ConfirmDeletionModal from '../Modal/ConfirmDeletionModal'
 import notify from '../common/Notify'
+
 
 const repoUrl = `https://github.com/${Cookie.get('repoOwner')}/${Cookie.get('repoName')}/`
 
@@ -379,29 +384,20 @@ export default class ContentEditor extends Component {
 
               <span className="menu">
                 <button className="button primary">
-                  <svg height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M7 10l5 5 5-5z"></path>
-                    <path d="M0 0h24v24H0z" fill="none"></path>
-                  </svg>
+                  <MoreMenuIcon />
                 </button>
                 <div className="options">
                   <a className={this.state.isPostPublished ? 'selected' : 'disabled'} onClick={::this.handlePublishInput}>
-                    <svg height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z"></path>
-                    </svg>
+                    <CheckIcon />
                     <span>Published</span>
                   </a>
                   <a className={this.state.isDraft ? 'selected' : 'disabled'} onClick={::this.handleDraftInput}>
-                    <svg height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z"></path>
-                    </svg>
+                    <CheckIcon />
                     <span>Draft</span>
                   </a>
                   <hr />
                   <a className="danger" onClick={evt => {this.setState({showDeleteFileModel: true})}}>
-                    <svg height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M19,4H15.5L14.5,3H9.5L8.5,4H5V6H19M6,19A2,2 0 0,0 8,21H16A2,2 0 0,0 18,19V7H6V19Z"></path>
-                    </svg>
+                    <TrashIcon />
                     Delete
                   </a>
                 </div>
@@ -415,10 +411,7 @@ export default class ContentEditor extends Component {
           </div>
           <button className="button icon tooltip-bottom"
             onClick={::this.toContentListing}>
-            <svg height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
-              <path d="M0 0h24v24H0z" fill="none"></path>
-              <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"></path>
-            </svg>
+            <BackArrowIcon />
             <span>Back to all content</span>
           </button>
         </header>
@@ -467,24 +460,17 @@ export default class ContentEditor extends Component {
             <span className='menu format'>
               <a>
                 {fileExtMapping(this.state.currentFileExt)}
-                <svg height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M7 10l5 5 5-5z"></path>
-                  <path d="M0 0h24v24H0z" fill="none"></path>
-                </svg>
+                <CaretDownIcon />
               </a>
               <div className='options'>
                 <a className={this.state.currentFileExt === 'md' ? 'selected' : ''}
                   onClick={this.changeFileType.bind(this, 'md')}>
-                  <svg height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z"></path>
-                  </svg>
+                  <CheckIcon />
                   Markdown
                 </a>
                 <a className={this.state.currentFileExt === 'html' ? 'selected' : ''}
                   onClick={this.changeFileType.bind(this, 'html')}>
-                  <svg height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z"></path>
-                  </svg>
+                  <CheckIcon />
                   HTML
                 </a>
               </div>

@@ -7,7 +7,6 @@ import { syncHistoryWithStore } from 'react-router-redux'
 
 import App from './components/Main'
 import ContentListing from './components/ContentListing'
-import Navigation from './components/Navigation'
 import Editor from './components/Editor'
 import TransitionView from './components/TransitionView'
 import NotFound from './components/NotFound'
