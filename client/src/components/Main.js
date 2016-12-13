@@ -56,38 +56,21 @@ export default class AppComponent extends React.Component {
   }
 
   render() {
-    const { isLoggedIn, repoLoading, currentBranch, navigation, editor, transitionView, notFound, selectRepo } = this.props
+    const { isLoggedIn, repoLoading } = this.props
     const { loadingUserInfo, hasSavedRepo } = this.state
 
     return isLoggedIn
       ? hasSavedRepo ? (
         <div id='app' className={repoLoading? 'loading' : ''}>
           <Header params={this.props.params} location={this.props.location} />
-          { notFound }
           {
-            transitionView && React.cloneElement(transitionView, {
-              params: this.props.params,
-              location: this.props.location
-            })
+            this.props.children
           }
-          {[
-            navigation && currentBranch && React.cloneElement(navigation, {
-              params: this.props.params,
-              location: this.props.location
-            }),
-            editor && currentBranch && React.cloneElement(editor, {
-              params: this.props.params,
-              location: this.props.location
-            })
-          ]}
           <NotificationContainer />
         </div>
       ) : (
         <div id='landing'>
-          {selectRepo && React.cloneElement(selectRepo, {
-            params: this.props.params,
-            location: this.props.location
-          })}
+          {this.props.children}
         </div>
       )
     : (

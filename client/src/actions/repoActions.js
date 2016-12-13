@@ -30,7 +30,8 @@ export function fetchRepoInfo() {
             repoDetails: {
               isPrivate: data.private,
               updatedAt: data.pushed_at,
-              url: data.html_url
+              url: data.html_url,
+              ownerAvatar: data.owner.avatar_url
             },
           },
           type: CHANGE_REPO_STATE

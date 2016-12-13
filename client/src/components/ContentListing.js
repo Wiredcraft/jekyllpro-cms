@@ -1,9 +1,17 @@
+import { connect } from 'react-redux'
+import { bindActionCreators } from 'redux'
 import React, { Component } from 'react'
-import moment from 'moment'
 import { Link } from 'react-router'
-import { parseFilenameFromYaml } from '../../helpers/markdown'
+import moment from 'moment'
 
-export default class ContentSidebar extends Component {
+import { parseFilenameFromYaml } from '../helpers/markdown'
+
+import { changeEditorMode, selectCollectionFile } from '../actions/editorActions'
+import { fetchRepoIndex, fetchRepoTree } from '../actions/repoActions'
+import { toRoute, replaceRoute } from '../actions/routeActions'
+import NoSchema from './common/NoSchema'
+
+class ContentListing extends Component {
   constructor(props) {
     super(props)
     this.state = {
@@ -13,59 +21,6 @@ export default class ContentSidebar extends Component {
       filteredType: null,
       loadingIndex: false
     }
-  }
-
-  componentWillMount() {
-    const { fetchRepoIndex, params, changeEditorMode, collections, toRoute, location,
-      selectCollectionFile, currentBranch, query, lastRepoUpdate } = this.props
-
-    changeEditorMode('collection')
-    if (collections) {
-      return
-    }
-    fetchRepoIndex({ branch: currentBranch })
-    .then((indexData) => {
-      // check if index is out of sync
-      if (Date.parse(indexData.updated) < Date.parse(lastRepoUpdate)) {
-        this.setState({ loadingIndex: true })
-        return fetchRepoIndex({ branch: currentBranch, refresh: true })
-          .then((newIndexData) => {
-            this.setState({ loadingIndex: false })
-            return newIndexData
-          })
-      }
-      // check if this repo has schemas
-      if (!indexData.schemas || !indexData.schemas.length) {
-        return toRoute({
-          pathname: location.pathname,
-          query: { invalidRepo: 1 }
-        })
-      }
-      return indexData
-    })
-    .then((data) => {
-      if (params && (params.splat !== 'new')) {
-        data.collections.some(item => {
-          if (item.path === params.splat) {
-            selectCollectionFile(item)
-            // break iteration
-            return true
-          }
-          return false
-        })
-      }
-      if (query && query.filteredType) {
-        this.handleTypeFilter(query.filteredType)
-      }
-    })
-    .catch(err => {
-      if (err.status === 404) {
-        toRoute({
-          pathname: location.pathname,
-          query: { invalidRepo: 1 }
-        })        
-      }
-    })
   }
 
   componentDidUpdate(prevProps) {
@@ -137,10 +92,14 @@ export default class ContentSidebar extends Component {
     const { filteredCollections, filtering, selectedItem, filteredType } = this.state
     let records = filtering ? filteredCollections : collections
 
+    if (query && query.invalidRepo === '1') {
+      return (<NoSchema />)
+    }
+
     return (
-      <nav id='sidebar'>
-        <header className='header'>
-          <span className='controls'>
+      <section id='content' className={this.state.loadingIndex ? 'loading' : ''}>
+        <header className="header">
+          <div className="controls">
             <span className="menu">
               <button className="button primary create">
                 Create
@@ -157,28 +116,60 @@ export default class ContentSidebar extends Component {
                 }
               </div>
             </span>
+          </div>
+
+          <span className="search">
+            <span className="menu">
+              <button className="button">
+                Filters
+                <svg height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M7 10l5 5 5-5z"></path>
+                  <path d="M0 0h24v24H0z" fill="none"></path>
+                </svg>
+              </button>
+              <div className="options">
+                <h2>Filter by type</h2>
+                {
+                  schemas && schemas.map((s, idx) => {
+                    return (<Link key={s.title}
+                      to={`${pathname}?filteredType=${s.jekyll.id}`}
+                      className={filteredType === s.jekyll.id ? 'selected' : ''} >
+                      <svg height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z"></path>
+                      </svg>
+                      {s.title}
+                    </Link>)
+                  })
+                }
+              </div>
+            </span>
+            <input type="text"
+              placeholder="Filter by name"
+              onChange={::this.handleNameFilter} />
           </span>
-          <span className='search'>
-            <input type='text' placeholder='Filter by name' onChange={::this.handleNameFilter} />
-            <svg height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'>
-              <path d='M9.5,3A6.5,6.5 0 0,1 16,9.5C16,11.11 15.41,12.59 14.44,13.73L14.71,14H15.5L20.5,19L19,20.5L14,15.5V14.71L13.73,14.44C12.59,15.41 11.11,16 9.5,16A6.5,6.5 0 0,1 3,9.5A6.5,6.5 0 0,1 9.5,3M9.5,5C7,5 5,7 5,9.5C5,12 7,14 9.5,14C12,14 14,12 14,9.5C14,7 12,5 9.5,5Z' />
-            </svg>
-          </span>
-          {
-            filteredType && (<ul className="filters">
-              <li className="bundle">
-                <button className="button">Content: {filteredType}</button>
-                <button className="button icon tooltip" onClick={::this.removeFilterType}>
+
+          <ul className="filters">
+            {
+              filteredType && <li>
+                <span>Type: {filteredType}</span>
+                <a className="remove" onClick={::this.removeFilterType}>
                   <svg height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
                     <path d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z"></path>
                   </svg>
-                  <span>Remove</span>
-                </button>
+                </a>
               </li>
-            </ul>)
-          }
+            }
+            <li>
+              <span>Language: English</span>
+              <a className="remove">
+                <svg height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z"></path>
+                </svg>
+              </a>
+            </li>
+          </ul>
         </header>
-        <section className={this.state.loadingIndex ? 'body list loading' : 'body list'}>
+        <section className='body list'>
           {
             records && records.sort((curr, next) => {
               return Date.parse(next.lastUpdatedAt) - Date.parse(curr.lastUpdatedAt)
@@ -189,13 +180,40 @@ export default class ContentSidebar extends Component {
                   onClick={this.selectItem.bind(this, c)}
                   key={`${c.path}-${idx}`}>
                   <h2>{parseFilenameFromYaml(c.content)}</h2>
-                  <small className='meta'>{c.collectionType} . {moment(Date.parse(c.lastUpdatedAt)).fromNow()}</small>
+                  <small className='meta'>
+                    <strong>{c.collectionType}</strong>&nbsp;
+                    Updated&nbsp;
+                    {moment(Date.parse(c.lastUpdatedAt)).fromNow()}&nbsp;
+                    by&nbsp;
+                    {c.lastUpdatedBy}
+                  </small>
                 </a>
               )
             })
          }
         </section>
-      </nav>
+      </section>
     )
   }
 }
+
+function mapStateToProps(state, {
+  params: { collectionType, branch, splat: path },
+  location: { pathname, query } }) {
+  return {
+    pathname: pathname,
+    query: query,
+    loading: state.repo.get('loading'),
+    collections: state.repo.get('collections'),
+    schemas: state.repo.get('schemas'),
+    treeMeta: state.repo.get('treeMeta'),
+    currentBranch: state.repo.get('currentBranch')
+  }
+}
+
+function mapDispatchToProps (dispatch) {
+  return bindActionCreators({ fetchRepoIndex, toRoute, replaceRoute, changeEditorMode,
+    selectCollectionFile, fetchRepoTree }, dispatch)
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(ContentListing)
