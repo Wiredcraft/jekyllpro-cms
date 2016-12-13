@@ -12,7 +12,7 @@ import BackArrowIcon from '../svg/BackArrowIcon'
 import CaretDownIcon from '../svg/CaretDownIcon'
 import customWidgets from '../JSONSchemaForm/CustomWidgets'
 import CustomArrayField from '../JSONSchemaForm/CustomArrayField'
-import { dateToString, purgeObject, parseFilePathByLang, textValueIsDifferent, parseFilePath } from "../../helpers/utils"
+import { dateToString, purgeObject, textValueIsDifferent, parseFilePath } from "../../helpers/utils"
 import ConfirmDeletionModal from '../Modal/ConfirmDeletionModal'
 import notify from '../common/Notify'
 

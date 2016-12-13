@@ -85,21 +85,32 @@ export function isImageFile (filename) {
   return /\.(jpeg|png|jpg|gif)(\?[a-z0-9]+)?$/.test(filename)
 }
 
-export function parseFilePathByLang (filePath) {
-  const LANGUAGES = ['en']
-  let pathArray = filePath.split('/')
-  let len = pathArray.length
-  let translations = {}
-  LANGUAGES.forEach(lang => {
-    if (len >= 2 && pathArray[pathArray.length - 2] === lang) {
-      pathArray.splice(pathArray.length - 2, 1)
-      translations['cn'] = pathArray.join('/')
+// i.e filepath '_products/en/some_folder/msr.md' will be parsed to
+// 'en'
+//
+// LANGUAGES should be in format:
+// [{name: 'English', code: 'en'}, {name: 'Chinese', code: 'cn'}],
+// THE first one is default site language.
+export function parseFilePathByLang (filePath, LANGUAGES) {
+  let pathArray = filePath.split('/').filter((f) => { return !!f })
+  let lang = null
+
+  // get language code if any
+  if (LANGUAGES) {
+    let possibleCode = pathArray[0]
+
+    let matched = LANGUAGES.filter(item => {
+      return possibleCode === item.code
+    })
+    if (matched[0]) {
+      lang = matched[0].code
+
     } else {
-      pathArray.splice(pathArray.length - 1, 0 , lang)
-      translations[lang] = pathArray.join('/')
+      lang = LANGUAGES[0].code
     }
-  })
-  return translations
+  }
+
+  return lang
 }
 
 // i.e filepath '_products/en/some_folder/msr.md' will be parsed to
