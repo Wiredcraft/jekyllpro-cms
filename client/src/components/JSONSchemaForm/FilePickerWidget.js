@@ -23,6 +23,10 @@ export default class FilePickerWidget extends Component {
 
   }
 
+  handleModalSelect(filePath) {
+    this.props.onChange(filePath)
+  }
+
   render () {
     const {
       schema,
@@ -46,7 +50,6 @@ export default class FilePickerWidget extends Component {
             readOnly
             value={value}
             required={required}
-            onChange={::this.handleChange}
             placeholder='File' />
           <button type='button'
             onClick={::this.handleClick}
@@ -55,6 +58,7 @@ export default class FilePickerWidget extends Component {
           </button>
         </span>
         <FileManagerModal
+          handleSelect={::this.handleModalSelect}
           onclose={::this.onModalClose}
           isOpen={modalIsOpen} />
       </div>

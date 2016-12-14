@@ -44,10 +44,12 @@ export default class FileManager extends Component {
   handleFileClick (file) {
     console.log(file)
     this.setState({ selectedFile: file.path })
+    this.props.fileCallback(file.path)
   }
 
   handleFolderClick (folderName) {
     console.log(folderName)
+    this.props.folderCallback(folderName)
   }
 
   render() {
@@ -55,11 +57,12 @@ export default class FileManager extends Component {
     const records = treeMeta && parseFileTree(treeMeta)
 
     if (!records) {
-      return (<div className='loading' style={{height: '300px'}} />)
+      return (<div className='loading' style={{height: '400px'}} />)
     }
 
     return (
       <NestedFileTreeView
+        selectedFilePath={this.state.selectedFile}
         fileTemplate={CustomFile}
         folderTemplate={CustomFolder}
         fileClickHandler={::this.handleFileClick}
