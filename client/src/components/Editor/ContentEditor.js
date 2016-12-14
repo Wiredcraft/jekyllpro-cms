@@ -51,6 +51,7 @@ export default class ContentEditor extends Component {
 
   componentWillMount() {
     const { selectedCollectionFile, params, config } = this.props
+
     if (selectedCollectionFile) {
       return this.getCurrentSchema(selectedCollectionFile.collectionType, this.updateEditorForm)
     }
@@ -66,6 +67,14 @@ export default class ContentEditor extends Component {
           this.updateCurrentFilePath()
         })
       })
+    }
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const { selectedCollectionFile } = nextProps
+
+    if (selectedCollectionFile !== this.props.selectedCollectionFile) {
+      this.getCurrentSchema(selectedCollectionFile.collectionType, this.updateEditorForm)
     }
   }
 
@@ -323,10 +332,6 @@ export default class ContentEditor extends Component {
     }
     newPathArray.push(newFilename)
     this.setState({ currentFilePath: newPathArray.join('/')})
-  }
-
-  afterOpenModal() {
-    document.body.classList.add('ReactModal__Body--open')
   }
 
   toContentListing() {
