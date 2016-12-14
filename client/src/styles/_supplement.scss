@@ -284,3 +284,7 @@ legend {
   }
 }
 
+.ReactModal__Content.file-picker .body {
+  max-height: 400px;
+  overflow-y: scroll;
+}

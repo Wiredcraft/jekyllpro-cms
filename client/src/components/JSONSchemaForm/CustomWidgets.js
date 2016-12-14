@@ -10,6 +10,8 @@ import 'codemirror/addon/display/autorefresh'
 import "codemirror/lib/codemirror.css"
 import Tags from './Tags'
 import CustomSelectWidget from './CustomSelectWidget'
+import FilePickerWidget from './FilePickerWidget'
+
 const cmOptions = {
   theme: "default",
   height: "auto",
@@ -78,6 +80,7 @@ export default {
   CheckboxWidget: customCheckbox,
   TextareaWidget: customTextarea,
   customSelect: CustomSelectWidget,
+  FilePicker: FilePickerWidget,
   customCodeMirror,
   JSONCode,
   Tags
