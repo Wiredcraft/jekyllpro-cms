@@ -1,10 +1,7 @@
 import React, { Component } from 'react'
 import NestedFileTreeView from 'react-nested-file-tree'
-import { connect } from 'react-redux'
-import { bindActionCreators } from 'redux'
 
 import { parseFileTree, parseFileArray } from '../../helpers/utils'
-import { fetchRepoTree } from '../../actions/repoActions'
 import FileIcon from '../svg/FileIcon'
 import FolderIcon from '../svg/FolderIcon'
 import ClosedFolderIcon from '../svg/ClosedFolderIcon'
@@ -27,7 +24,6 @@ function CustomFile (props) {
   )
 }
 
-@connect(mapStateToProps, mapDispatchToProps)
 export default class FileManager extends Component {
   constructor(props) {
     super(props)
@@ -72,16 +68,3 @@ export default class FileManager extends Component {
   }
 }
 
-function mapStateToProps(state) {
-
-  return {
-    currentBranch: state.repo.get('currentBranch'),
-    treeMeta: state.repo.get('treeMeta')
-  }
-}
-
-function mapDispatchToProps (dispatch) {
-  return bindActionCreators({
-    fetchRepoTree
-  }, dispatch)
-}

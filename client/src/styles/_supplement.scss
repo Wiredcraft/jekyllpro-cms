@@ -295,3 +295,13 @@ legend {
     margin-left: 18px !important;
   }
 }
+
+.upload-box.controls {
+  label,
+  button {
+    display: inline-block;
+  }
+  input[type='file'] + label {
+    width: auto;
+  }
+}

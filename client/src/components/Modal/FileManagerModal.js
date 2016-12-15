@@ -2,9 +2,16 @@ import React, { Component } from 'react'
 import Modal from 'react-modal'
 import ModalCustomStyle from '../Modal'
 import ModalCloseIcon from '../svg/ModalCloseIcon'
-import UploaderIcon from '../svg/UploaderIcon'
-import FileManager from '../common/FileManager'
 
+import FileManager from '../common/FileManager'
+import FileUploader from '../common/FileUploader'
+
+import { connect } from 'react-redux'
+import { bindActionCreators } from 'redux'
+import { fetchRepoTree, fileAdded } from '../../actions/repoActions'
+import { addNewFile } from '../../actions/editorActions'
+
+@connect(mapStateToProps, mapDispatchToProps)
 export default class FileManagerModal extends Component {
   constructor(props) {
     super(props)
@@ -32,7 +39,7 @@ export default class FileManagerModal extends Component {
   }
 
   render() {
-    const { isOpen, onclose } = this.props
+    const { isOpen, onclose, treeMeta, currentBranch, addNewFile, fileAdded, fetchRepoTree } = this.props
     const { disableSelectBtn } = this.state
 
     return (
@@ -50,16 +57,18 @@ export default class FileManagerModal extends Component {
         </header>
         <section className='body'>
           <FileManager
+            treeMeta={treeMeta}
+            currentBranch={currentBranch}
+            fetchRepoTree={fetchRepoTree}
             folderCallback={::this.folderCallback}
             fileCallback={::this.fileCallback} />
         </section>
         <footer className='footer'>
-          <div className='controls'>
-            <button className='button primary tooltip'>
-              Upload a file
-              <UploaderIcon />
-            </button>
-          </div>
+          <FileUploader
+            currentBranch={currentBranch}
+            addNewFile={addNewFile}
+            fileAdded={fileAdded}
+            uploadFolder='/' />
           <button
             onClick={::this.handleSelectBtn}
             className={disableSelectBtn ? 'button primary disabled' : 'button primary'}>
@@ -71,3 +80,18 @@ export default class FileManagerModal extends Component {
   }
 }
 
+function mapStateToProps(state) {
+
+  return {
+    currentBranch: state.repo.get('currentBranch'),
+    treeMeta: state.repo.get('treeMeta')
+  }
+}
+
+function mapDispatchToProps (dispatch) {
+  return bindActionCreators({
+    addNewFile,
+    fileAdded,
+    fetchRepoTree
+  }, dispatch)
+}
