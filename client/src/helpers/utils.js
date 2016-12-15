@@ -77,6 +77,35 @@ export function parseFileArray (fileArray) {
   return directory
 }
 
+// '/folder0/folder1/folder2' will be processed to
+// [
+// {name: 'folder0', pathArray: ['folder0']},
+// {name: 'folder1', pathArray: ['folder0', 'folder1']},
+// {name: 'folder2', pathArray: ['folder0', 'folder1', 'folder2']}
+// ]
+export function parseFolderPath (folderPath) {
+  return folderPath.split('/')
+    .filter(p => { return !!p })
+    .map(function (item, index, array) {
+      return {
+        name: item,
+        pathArray: array.slice(0, index + 1)
+      }
+    })
+}
+
+export function parseFolderObj (folderPath, directoryObj) {
+  if (folderPath === '/') {
+    return directoryObj
+  }
+  
+  return folderPath.split('/')
+    .filter(p => { return !!p })
+    .reduce(function (pre, cur) {
+      return pre[cur]
+    }, directoryObj)
+}
+
 export function notTextFile (filename) {
   return /\.(jpeg|png|jpg|gif|ico|ttf|eot|svg|woff(2)?)(\?[a-z0-9]+)?$/.test(filename)
 }
