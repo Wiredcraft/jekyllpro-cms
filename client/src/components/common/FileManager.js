@@ -4,6 +4,7 @@ import NestedFileTreeView from 'react-nested-file-tree'
 import { parseFileTree, parseFolderPath, parseFolderObj } from '../../helpers/utils'
 import FileIcon from '../svg/FileIcon'
 import FolderIcon from '../svg/FolderIcon'
+import HomeIcon from '../svg/HomeIcon'
 import ClosedFolderIcon from '../svg/ClosedFolderIcon'
 
 function CustomFolder (props) {
@@ -90,13 +91,13 @@ export default class FileManager extends Component {
 
     return (
       <div className='file-manager'>
-        <nav>
-          <span>
-            <a onClick={() => {this.setState({
+        <header className='breadcrumb'>
+          <a onClick={() => {this.setState({
               currentPath: '/',
               records: treeMeta && parseFileTree(treeMeta)
-            })}}> . /</a>
-          </span>
+            })}}>
+            <HomeIcon />
+          </a>/
           {
             parseFolderPath(currentPath).map((folder, idx) => {
               return (
@@ -108,7 +109,7 @@ export default class FileManager extends Component {
               )
             })
           }
-        </nav>
+        </header>
         <NestedFileTreeView
           selectedFilePath={this.state.selectedFile}
           fileTemplate={CustomFile}
