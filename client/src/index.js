@@ -6,7 +6,7 @@ import { Router, Route, browserHistory } from 'react-router'
 import { syncHistoryWithStore } from 'react-router-redux'
 
 import App from './components/Main'
-import Navigation from './components/Navigation'
+import ContentListing from './components/ContentListing'
 import Editor from './components/Editor'
 import TransitionView from './components/TransitionView'
 import NotFound from './components/NotFound'
@@ -21,11 +21,11 @@ ReactDOM.render((
   <Provider store={store}>
     <Router history={history}>
       <Route path='/' component={App} >
-        <Route path='/:repoOwner/:repoName(/)' components={{navigation: Navigation, editor: Editor}} />
-        <Route path='/:repoOwner/:repoName/link/(:branch)/*' components={{transitionView: TransitionView}} />
-        <Route path='/:repoOwner/:repoName/(:collectionType)/(:branch)/*' components={{navigation: Navigation, editor: Editor}} />        
-        <Route path='/select' components={{selectRepo: SelectRepo}} />
-        <Route path='/*' components={{notFound: NotFound}} />
+        <Route path='/:repoOwner/:repoName(/)' component={ContentListing} />
+        <Route path='/:repoOwner/:repoName/link/(:branch)/*' components={TransitionView} />
+        <Route path='/:repoOwner/:repoName/(:collectionType)/(:branch)/*' component={Editor} />        
+        <Route path='/select' component={SelectRepo} />
+        <Route path='/*' components={NotFound} />
       </Route>
     </Router>
   </Provider>

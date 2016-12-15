@@ -1,0 +1,97 @@
+import React, { Component } from 'react'
+import Modal from 'react-modal'
+import ModalCustomStyle from '../Modal'
+import ModalCloseIcon from '../svg/ModalCloseIcon'
+
+import FileManager from '../common/FileManager'
+import FileUploader from '../common/FileUploader'
+
+import { connect } from 'react-redux'
+import { bindActionCreators } from 'redux'
+import { fetchRepoTree, fileAdded } from '../../actions/repoActions'
+import { addNewFile } from '../../actions/editorActions'
+
+@connect(mapStateToProps, mapDispatchToProps)
+export default class FileManagerModal extends Component {
+  constructor(props) {
+    super(props)
+    this.state = { disableSelectBtn: true }
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.isOpen && !this.props.isOpen) {
+      this.setState({ disableSelectBtn: true })
+    }
+  }
+
+  fileCallback(filepath) {
+    this.setState({ selectedFilePath: filepath, disableSelectBtn: false })
+  }
+
+  folderCallback(name) {
+    this.setState({ selectedFilePath: '', disableSelectBtn: true })
+
+  }
+
+  handleSelectBtn() {
+    this.props.handleSelect(this.state.selectedFilePath)
+    this.props.onclose()
+  }
+
+  render() {
+    const { isOpen, onclose, treeMeta, currentBranch, addNewFile, fileAdded, fetchRepoTree } = this.props
+    const { disableSelectBtn } = this.state
+
+    return (
+      <Modal
+        contentLabel='File manager'
+        className='file-picker'
+        style={ModalCustomStyle}
+        isOpen={isOpen}
+        onRequestClose={onclose} >
+        <header className='header'>
+          <a className='close' id='close-modal' onClick={onclose}>
+            <ModalCloseIcon />
+          </a>
+          <h2>Select a file?</h2>
+        </header>
+        <section className='body'>
+          <FileManager
+            treeMeta={treeMeta}
+            currentBranch={currentBranch}
+            fetchRepoTree={fetchRepoTree}
+            folderCallback={::this.folderCallback}
+            fileCallback={::this.fileCallback} />
+        </section>
+        <footer className='footer'>
+          <FileUploader
+            currentBranch={currentBranch}
+            addNewFile={addNewFile}
+            fileAdded={fileAdded}
+            uploadFolder='/' />
+          <button
+            onClick={::this.handleSelectBtn}
+            className={disableSelectBtn ? 'button primary disabled' : 'button primary'}>
+            Select
+          </button>
+        </footer>
+      </Modal>
+    )
+  }
+}
+
+function mapStateToProps(state) {
+
+  return {
+    currentBranch: state.repo.get('currentBranch'),
+    treeMeta: state.repo.get('treeMeta')
+  }
+}
+
+function mapDispatchToProps (dispatch) {
+  return bindActionCreators({
+    addNewFile,
+    fileAdded,
+    fetchRepoTree
+  }, dispatch)
+}

@@ -5,14 +5,30 @@ import moment from 'moment'
 import Cookie from 'js-cookie'
 
 import { parseYamlInsideMarkdown, retriveContent, serializeObjtoYaml } from '../../helpers/markdown'
-import DeleteIcon from '../svg/DeleteIcon'
+import TrashIcon from '../svg/TrashIcon'
+import MoreMenuIcon from '../svg/MoreMenuIcon'
+import CheckIcon from '../svg/CheckIcon'
+import BackArrowIcon from '../svg/BackArrowIcon'
+import CaretDownIcon from '../svg/CaretDownIcon'
 import customWidgets from '../JSONSchemaForm/CustomWidgets'
 import CustomArrayField from '../JSONSchemaForm/CustomArrayField'
-import { dateToString, purgeObject, parseFilePathByLang, textValueIsDifferent, parseFilePath } from "../../helpers/utils"
+import { dateToString, purgeObject, textValueIsDifferent, parseFilePath } from "../../helpers/utils"
 import ConfirmDeletionModal from '../Modal/ConfirmDeletionModal'
 import notify from '../common/Notify'
 
+
 const repoUrl = `https://github.com/${Cookie.get('repoOwner')}/${Cookie.get('repoName')}/`
+
+const fileExtMapping = (ext) => {
+  switch (ext) {
+    case 'md':
+      return 'Markdown'
+    case 'html':
+      return 'HTML'
+    default:
+      return ext
+  }
+}
 
 export default class ContentEditor extends Component {
   constructor(props) {
@@ -35,9 +51,11 @@ export default class ContentEditor extends Component {
 
   componentWillMount() {
     const { selectedCollectionFile, params, config } = this.props
+
     if (selectedCollectionFile) {
       return this.getCurrentSchema(selectedCollectionFile.collectionType, this.updateEditorForm)
     }
+
     if (params.splat === 'new') {
       this.getCurrentSchema(params.collectionType, () => {
         this.setState({
@@ -52,30 +70,11 @@ export default class ContentEditor extends Component {
     }
   }
 
-  componentDidUpdate(prevProps) {
-    const { params, selectedCollectionFile, location, config } = this.props
+  componentWillReceiveProps(nextProps) {
+    const { selectedCollectionFile } = nextProps
 
-    const fileChanged = selectedCollectionFile &&
-      (selectedCollectionFile.path !== (prevProps.selectedCollectionFile && prevProps.selectedCollectionFile.path))
-    const newFileMode = (params.splat === 'new') &&
-      ((params.splat !== prevProps.params.splat) || (params.collectionType !== prevProps.params.collectionType))
-
-    if (fileChanged) {
-      this.setState({ currentFilePath: selectedCollectionFile.path })
+    if (selectedCollectionFile !== this.props.selectedCollectionFile) {
       this.getCurrentSchema(selectedCollectionFile.collectionType, this.updateEditorForm)
-    }
-
-    if (newFileMode) {
-      this.getCurrentSchema(params.collectionType, () => {
-        this.setState({
-          formData: {},
-          currentFileSlug: dateToString(new Date()) + '-new-file',
-          currentFileExt: 'md',
-          currentFileLanguage: config && config.languages && config.languages[0].code || undefined
-        }, () => {
-          this.updateCurrentFilePath()
-        })
-      })
     }
   }
 
@@ -164,10 +163,6 @@ export default class ContentEditor extends Component {
     }
     let updatedContent = formData.body
     delete formData.body
-
-    // if (currentSchema.jekyll.type === 'content') {
-    //   formData.lang = language
-    // }
 
     if (isPostPublished === false) {
       formData.published = false
@@ -318,8 +313,8 @@ export default class ContentEditor extends Component {
     })
   }
 
-  changeFileType(evt) {
-    this.setState({currentFileExt: evt.target.value}, () => {
+  changeFileType(ext) {
+    this.setState({currentFileExt: ext}, () => {
       this.updateCurrentFilePath()
     })
   }
@@ -339,19 +334,68 @@ export default class ContentEditor extends Component {
     this.setState({ currentFilePath: newPathArray.join('/')})
   }
 
-  afterOpenModal() {
-    document.body.classList.add('ReactModal__Body--open')
+  toContentListing() {
+    const { toRoute, repoFullName } = this.props
+    toRoute(`/${repoFullName}/`)
   }
 
   render() {
     const { editorUpdating, selectedCollectionFile, params, schemas, config } = this.props
     const { filePathInputClass, formData, currentFilePath, currentSchema, disableActionBtn, currentFileSlug } = this.state
 
-    if (!currentSchema) return (<section id='content'><div className='empty'>Please select an entry</div></section>)
+    if (!currentSchema) return (<section id='content' />)
 
     return (
       <section id='content'>
-        <aside className='sidebar'>   
+        <header className='header'>
+          <div className='controls'>
+            {
+              params.splat !== 'new' &&
+              (<a className='edit tooltip-bottom'
+                href={`${repoUrl}commit/${selectedCollectionFile.lastCommitSha}`} target='_blank'>
+                {selectedCollectionFile.lastUpdatedBy},&nbsp;
+                {moment(Date.parse(selectedCollectionFile.lastUpdatedAt)).fromNow()}
+                <span>View on GitHub</span>
+              </a>)
+            }
+            <span className={disableActionBtn ? 'bundle disabled' : 'bundle'}>
+              <button className={disableActionBtn ? 'button primary save processing' : 'button primary save'} onClick={::this.handleSaveBtn}>Save</button>
+
+              <span className="menu">
+                <button className="button primary">
+                  <MoreMenuIcon />
+                </button>
+                <div className="options">
+                  <a className={this.state.isPostPublished ? 'selected' : 'disabled'} onClick={::this.handlePublishInput}>
+                    <CheckIcon />
+                    <span>Published</span>
+                  </a>
+                  <a className={this.state.isDraft ? 'selected' : 'disabled'} onClick={::this.handleDraftInput}>
+                    <CheckIcon />
+                    <span>Draft</span>
+                  </a>
+                  <hr />
+                  <a className="danger" onClick={evt => {this.setState({showDeleteFileModel: true})}}>
+                    <TrashIcon />
+                    Delete
+                  </a>
+                </div>
+              </span>
+            </span>
+            <ConfirmDeletionModal
+              isOpen={this.state.showDeleteFileModel}
+              onclose={::this.closeDeleteFileModel}
+              onsubmit={::this.handleDeleteFile}
+              oncancel={::this.closeDeleteFileModel} />          
+          </div>
+          <button className="button icon tooltip-bottom"
+            onClick={::this.toContentListing}>
+            <BackArrowIcon />
+            <span>Back to all content</span>
+          </button>
+        </header>
+
+        <div className='body'>
           {config && config.languages &&
             <div className='field'>
               <label>Language</label>
@@ -366,64 +410,7 @@ export default class ContentEditor extends Component {
               </span>
             </div>
           }
-          <div className='field'>
-            <label>Format</label>
-            <span className='select'>
-              <select value={this.state.currentFileExt} onChange={::this.changeFileType}>
-                <option value='md'>markdown</option>
-                <option value='html'>html</option>
-              </select>
-            </span>
-          </div>
-          {params.splat !== 'new' && <div className="field">
-            <span className="label">Latest update</span>
-            <div className="message">
-              <a href={`${repoUrl}commit/${selectedCollectionFile.lastCommitSha}`} target='_blank'>
-                {selectedCollectionFile.lastUpdatedBy},&nbsp;{moment(Date.parse(selectedCollectionFile.lastUpdatedAt)).fromNow()}
-              </a>
-            </div>
-          </div>}
 
-          <span className={disableActionBtn ? 'bundle disabled' : 'bundle'}>
-            <button className={disableActionBtn ? 'button primary save processing' : 'button primary save'} onClick={::this.handleSaveBtn}>Save</button>
-
-            <span className="menu">
-              <button className="button primary">
-                <svg height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M7 10l5 5 5-5z"></path>
-                  <path d="M0 0h24v24H0z" fill="none"></path>
-                </svg>
-              </button>
-              <div className="options">
-                <a className={this.state.isPostPublished ? 'selected' : 'disabled'} onClick={::this.handlePublishInput}>
-                  <svg height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z"></path>
-                  </svg>
-                  <span>Published</span>
-                </a>
-                <a className={this.state.isDraft ? 'selected' : 'disabled'} onClick={::this.handleDraftInput}>
-                  <svg height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z"></path>
-                  </svg>
-                  <span>Draft</span>
-                </a>
-                <hr />
-                <a className="danger" onClick={evt => {this.setState({showDeleteFileModel: true})}}>
-                  <svg height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M19,4H15.5L14.5,3H9.5L8.5,4H5V6H19M6,19A2,2 0 0,0 8,21H16A2,2 0 0,0 18,19V7H6V19Z"></path>
-                  </svg>
-                  Delete
-                </a>
-              </div>
-            </span>
-          </span>
-          <ConfirmDeletionModal
-            isOpen={this.state.showDeleteFileModel}
-            onclose={::this.closeDeleteFileModel}
-            onsubmit={::this.handleDeleteFile}
-            oncancel={::this.closeDeleteFileModel} />
-        </aside>
-        <div className='body'>
           <div className='field'>
             <label>Slug</label>
             <input
@@ -449,6 +436,24 @@ export default class ContentEditor extends Component {
               style={{'display': 'none'}}>
               Submit
             </button>
+            <span className='menu format'>
+              <a>
+                {fileExtMapping(this.state.currentFileExt)}
+                <CaretDownIcon />
+              </a>
+              <div className='options'>
+                <a className={this.state.currentFileExt === 'md' ? 'selected' : ''}
+                  onClick={this.changeFileType.bind(this, 'md')}>
+                  <CheckIcon />
+                  Markdown
+                </a>
+                <a className={this.state.currentFileExt === 'html' ? 'selected' : ''}
+                  onClick={this.changeFileType.bind(this, 'html')}>
+                  <CheckIcon />
+                  HTML
+                </a>
+              </div>
+            </span>
           </Form>
         </div>
       </section>

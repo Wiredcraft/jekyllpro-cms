@@ -48,6 +48,7 @@ const getRepoDetails = (req, res, next) => {
     ])
     details.owner = _.pick(data.data.owner, [
       'login',
+      'avatar_url',
       'type'
     ])
     res.status(200).json(details)

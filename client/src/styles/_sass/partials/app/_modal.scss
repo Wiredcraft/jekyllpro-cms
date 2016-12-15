@@ -1,0 +1,62 @@
+#modal {
+  .header,
+  .footer {
+    padding: $space/2 1.5*$space/2;
+    .controls {
+      float: right;
+    }
+  }
+  .header {
+    .close {
+      svg {
+        fill: $grey;
+        @include transition-property(fill);
+        @include transition-duration($ease);
+      }
+      &:hover {
+        svg {
+          fill: $black;
+        }
+      }
+    }
+  }
+  .footer {
+    border-top: 1px solid $line;
+  }
+  &.file-picker {
+    .body {
+      padding: 0;
+      ul {
+        list-style: none;
+        margin: 0;
+        li {
+          margin: 0;
+          padding: 0;
+          a {
+            border-bottom: 1px solid $light;
+            color: inherit;
+            display: block;
+            padding: $space/3 1.5*$space/2;
+            &:hover {
+              background: $light;
+              text-decoration: none;
+            }
+            &:active,
+            &.active {
+              background: $blue;
+              color: #FFF;
+              svg {
+                fill: tint($blue, 80%);
+              }
+            }
+          }
+          svg {
+            fill: $grey;
+            height: 1.5*$space/2;
+            vertical-align: text-top;
+          }
+        }
+      }
+    }
+  }
+}

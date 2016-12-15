@@ -8,39 +8,30 @@ import { collectionFileRemoved, collectionFileAdded, collectionFileUpdated,
   fileAdded, fileRemoved, fileReplaced } from '../actions/repoActions'
 
 import ContentEditor from './Editor/ContentEditor'
-import FileEditor from './Editor/FileEditor'
+import NotFound from './NotFound'
+import NoSchema from './common/NoSchema'
 
 class Editor extends Component {
-  constructor() {
-    super()
+  constructor(props) {
+    super(props)
   }
 
   render() {
     const { mode, params, schemas, location } = this.props
 
-    if (location.query && location.query.invalidRepo === '1') {
-      return (<section id='content'>
-        <div className='empty'>
-          <h2>Something went wrong...</h2>
-          <p>Jekyll+ need schema files defining the content types.</p>
-          <a className='button primary' href='https://github.com/Wiredcraft/jekyllplus/wiki' target='_blank'>Read more about it...</a>
-        </div>
-      </section>)
+    if (location.query && location.query.invalidRepo) {
+      return (<NoSchema />)
     }
 
-    if (schemas && (mode === 'collection') && params.splat) {
+    if (location.query && location.query.fileNotFound) {
+      return (<NotFound />)
+    }
+
+    if (schemas && params.splat) {
       return (<ContentEditor {...this.props} />)
     }
-    if (mode === 'files' || params.collectionType === 'files') {
-      return <FileEditor {...this.props} />
-    }
 
-    return (<section id='content'>
-      <div className='empty'>
-        <h2>No content selected</h2>
-        <p>You can select an entry using the sidebar.</p>
-      </div>
-    </section>)
+    return (<section id='content' />)
   }
 }
 

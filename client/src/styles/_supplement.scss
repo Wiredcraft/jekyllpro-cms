@@ -253,4 +253,55 @@ legend {
   .input.error {
     border-color: red;
   }
+
+  .empty {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 2px;
+    box-shadow: 0 1px 1px 0 rgba(0,0,0,.1);
+    box-sizing: border-box;
+    bottom: 0;
+    margin: auto;
+    padding: 12px 18px;
+    position: absolute;
+    display: table;
+    height: auto;
+    left: 0;
+    right: 0;
+    text-align: center;
+    top: 0;
+    width: 240px;
+  }
+}
+
+.rjsf {
+  position: relative;
+
+  .format {
+    position: absolute;
+    right: 0;
+    bottom: 300px;
+  }
+}
+
+.ReactModal__Content.file-picker .body {
+  max-height: 400px;
+  overflow-y: scroll;
+  .active a {
+    background: #0A93FF;
+    color: #FFF;  
+  }
+  li ul {
+    margin-left: 18px !important;
+  }
+}
+
+.upload-box.controls {
+  label,
+  button {
+    display: inline-block;
+  }
+  input[type='file'] + label {
+    width: auto;
+  }
 }
