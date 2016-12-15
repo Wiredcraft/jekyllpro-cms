@@ -178,7 +178,7 @@ $panel: 240px;
         .meta {
           color: $grey;
           strong {
-            color: tint($purple, 40%);
+            color: $purple;
             @include font-size($micro);
             font-weight: normal;
             text-transform: uppercase;
