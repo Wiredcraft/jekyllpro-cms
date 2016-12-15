@@ -91,6 +91,11 @@ h3 {
           opacity: 1;
         }
       }
+      &.danger {
+        &:hover {
+          background-color: $red;
+        }
+      }
     }
   }
 }
