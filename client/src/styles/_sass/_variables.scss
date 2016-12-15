@@ -6,12 +6,13 @@ $primary: $blue;
 $red: #FC255D;
 $background: #eee;
 $light: #f4f4f4;
+$purple: #AB47BC;
 
 $shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
 
 /* Fonts */
 
-@import url('https://fonts.googleapis.com/css?family=Roboto:400,700');
+@import url('https://fonts.googleapis.com/css?family=Roboto:400,500,700');
 
 $body: 'Roboto', 'Helvetica Neue', Helvetica, Arial, sans-serif;
 $headline: $body;

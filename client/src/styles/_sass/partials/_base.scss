@@ -91,6 +91,11 @@ h3 {
           opacity: 1;
         }
       }
+      &.danger {
+        &:hover {
+          background-color: $red;
+        }
+      }
     }
   }
 }
@@ -181,10 +186,24 @@ $switch_padding: 2px;
   }
 }
 
+input[readonly],
+input[readonly=readonly]
+input[readonly=true] {
+  background: $light;
+  border-bottom: 1px solid $light;
+  box-shadow: none;
+  color: $grey;
+  &:active,
+  &:hover,
+  &:focus {
+    background: $light;
+  }
+}
+
 .button {
   &.processing {
     &:after {
-      @include spinner(1px, $space/2, 0.6s);
+      @include spinner(1px, $space/2, 0.6s, #FFF, rgba(0, 0, 0, 0.1));
       bottom: 0;
       margin: auto;
       position: absolute;
