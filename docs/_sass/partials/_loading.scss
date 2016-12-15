@@ -1,4 +1,10 @@
-@mixin spinner($thickness: 2px, $size: $space, $ease: 0.6s, $segment: #FFF, $background: rgba(0, 0, 0, 0.1)) {
+$loading: (
+  overlay: rgba(255, 255, 255, 0.6),
+  background: rgba(0, 0, 0, 0.1),
+  foreground: $blue
+);
+
+@mixin spinner($thickness: 2px, $size: $space, $ease: 0.6s, $segment: map-get($loading, foreground), $background: map-get($loading, background)) {
   animation: spin $ease linear infinite;
   border: $thickness solid $background;
   border-top: $thickness solid $segment;
@@ -12,7 +18,7 @@
 @mixin loading($thickness: 2px, $size: $space, $ease: 0.6s) {
   position: relative;
   &:before {
-    background: rgba(0, 0, 0, 0.6);
+    background: map-get($loading, overlay);
     bottom: 0;
     content: '';
     left: 0;

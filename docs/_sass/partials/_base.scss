@@ -181,6 +181,19 @@ $switch_padding: 2px;
   }
 }
 
+input[readonly],
+input[readonly=readonly]
+input[readonly=true] {
+  background: $light;
+  box-shadow: none;
+  color: $grey;
+  &:active,
+  &:hover,
+  &:focus {
+    background: $light;
+  }
+}
+
 .button {
   &.processing {
     &:after {

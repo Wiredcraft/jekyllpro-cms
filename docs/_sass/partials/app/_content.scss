@@ -140,6 +140,11 @@ $panel: 240px;
         right: 0;
       }
     }
+    &.empty {
+      background-color: $light;
+      color: $grey;
+      text-align: center;
+    }
     &.list {
       padding: 0;
       a {
@@ -173,10 +178,9 @@ $panel: 240px;
         .meta {
           color: $grey;
           strong {
-            color: $purple;
+            color: tint($purple, 40%);
             @include font-size($micro);
             font-weight: normal;
-            margin-right: $space/6;
             text-transform: uppercase;
           }
         }
