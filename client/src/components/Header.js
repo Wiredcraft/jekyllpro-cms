@@ -1,7 +1,6 @@
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import React, { Component } from 'react'
-import { Link } from 'react-router'
 import Cookie from 'js-cookie'
 
 import {
@@ -161,7 +160,12 @@ export default class Header extends Component {
             {repoDetails && <img src={repoDetails.ownerAvatar} />}
             {repoName}
           </a>
-          <RepoSelection {...this.props} />
+          <RepoSelection {...this.props}>
+            <a href={`https://github.com/${repoOwner}/${repoName}`} target='_blank'>
+              <ExternalLinkIcon />{repoOwner}/{repoName}
+            </a>
+            <hr />
+          </RepoSelection>
         </span>
         <span className='branch menu'>
           <a className='item'>
