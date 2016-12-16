@@ -125,7 +125,7 @@ class ContentListing extends Component {
       }
       return isMatch
     })
-    console.log(fc)
+
     this.setState({ filtering: true, filteredCollections: fc })
   }
 

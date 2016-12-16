@@ -331,16 +331,14 @@ export default class ContentEditor extends Component {
 
     let fileName = parseNameFromFilePath(selectedCollectionFile.path)
     let availableLanguages = config.languages
-    console.log(fileName)
 
     let translations = collections.filter(col => {
       return (col.path.indexOf(fileName) > -1) && (col.path !== selectedCollectionFile.path) && (col.collectionType === selectedCollectionFile.collectionType)
         
     })
-    console.log(translations)
+
     translations = translations.map(c => {
       let code = parseFilePathByLang(c.path, config.languages, rootFolder)
-      console.log(code)
       let matchedLang = config.languages.find(l => {
         return l.code === code
       })
@@ -392,7 +390,6 @@ export default class ContentEditor extends Component {
     const { filePathInputClass, formData, currentFilePath, availableLanguages, translations,
       currentSchema, disableActionBtn, currentFileSlug } = this.state
 
-    console.log(availableLanguages, translations)
     if (!currentSchema) return (<section id='content' />)
 
     return (

@@ -121,6 +121,7 @@ export function isImageFile (filename) {
 // [{name: 'English', code: 'en'}, {name: 'Chinese', code: 'cn'}],
 // THE first one is default site language.
 export function parseFilePathByLang (filePath, LANGUAGES, rootFolder) {
+  let lang = null
   // slice out root folder
   if (rootFolder && rootFolder !== '/') {
     let idx = filePath.indexOf(rootFolder) + rootFolder.length
@@ -128,14 +129,16 @@ export function parseFilePathByLang (filePath, LANGUAGES, rootFolder) {
   }
   
   let pathArray = filePath.split('/').filter((f) => { return !!f })
-  let lang = null
 
   // get language code if any
   if (LANGUAGES) {
     let possibleCode = pathArray[0]
 
     let matched = LANGUAGES.filter(item => {
-      return possibleCode === item.code
+      if (rootFolder) {
+        return pathArray[0] === item.code
+      }
+      return (pathArray.indexOf(item.code) > -1)
     })
     if (matched[0]) {
       lang = matched[0].code
