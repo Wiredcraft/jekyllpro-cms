@@ -107,16 +107,11 @@ fieldset {
     position: absolute;
     z-index: -1;
     & + label {
-      margin-bottom: 12px;
       width: 100%;
       color: white;
       background-color: #0A93FF;
       display: inline-block;
       @extend .button.primary;
-    }
-    &:focus + label,
-    + label:hover {
-      background-color: #2fa3ff;
     }
   }
 }
@@ -296,12 +291,24 @@ legend {
   }
 }
 
-.upload-box.controls {
-  label,
-  button {
-    display: inline-block;
+.upload-box {
+  .confirm-destination + .button {
+    display: block;
+    clear: both;
   }
-  input[type='file'] + label {
-    width: auto;
+  &.confirm + .button {
+    display: none;
+  }
+  &.confirm {
+    label.button {
+      background-color: #f4f4f4;
+      border: 1px solid #f4f4f4;
+      box-shadow: none;
+      color: #AAAAAA;
+      text-align: left;
+      padding-left: 10px;
+    }
   }
 }
+
+

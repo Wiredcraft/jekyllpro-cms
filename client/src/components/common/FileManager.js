@@ -64,7 +64,7 @@ export default class FileManager extends Component {
     const { currentPath } = this.state
     let newPath = currentPath === '/' ? ('/' + folderName) : (currentPath + '/' + folderName)
 
-    folderCallback(folderName)
+    folderCallback(folderName, newPath)
     this.setState({
       currentPath: newPath,
       records: Obj
@@ -72,8 +72,10 @@ export default class FileManager extends Component {
   }
 
   handleBreadscrumLink (folderPathArray) {
-    const { treeMeta } = this.props
+    const { treeMeta, folderCallback } = this.props
     let newPath = '/' + folderPathArray.join('/')
+
+    folderCallback('', newPath)
 
     this.setState({
       currentPath: newPath,
