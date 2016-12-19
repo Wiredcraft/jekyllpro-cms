@@ -60,6 +60,7 @@ export default class RepoSelection extends Component {
 
     return (
       <div className="options">
+        { this.props.children }
         <header className="header">
           <span className={`search ${searching ? 'processing' : ''}`}>
             <input

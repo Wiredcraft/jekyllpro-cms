@@ -1,7 +1,6 @@
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import React, { Component } from 'react'
-import { Link } from 'react-router'
 import Cookie from 'js-cookie'
 
 import {
@@ -19,6 +18,7 @@ import ExternalLinkIcon from './svg/ExternalLinkIcon'
 import BranchIcon from './svg/BranchIcon'
 import LogoutIcon from './svg/LogoutIcon'
 import RepoSelection from './Header/RepoSelection'
+import notify from './common/Notify'
 
 @connect(mapStateToProps, mapDispatchToProps)
 export default class Header extends Component {
@@ -77,48 +77,70 @@ export default class Header extends Component {
     .then((indexData) => {
       // check if index is out of sync
       if (Date.parse(indexData.updated) < Date.parse(repoDetails.updatedAt)) {
+        notify('warning', 'Rebuilding index data for repository, this may take a few minutes', '', 5000)
 
-        return fetchRepoIndex({ branch: currentBranch, refresh: true })
+        fetchRepoIndex({ branch: currentBranch, refresh: true })
           .then((newIndexData) => {
-            return newIndexData
+            return this.checkIfHasSchema(newIndexData)
+          })
+          .then(data => {
+            this.checkIfExistingFile(data)
+          })
+          .catch(err => {
+            this.indexDataErrorHandler(err)
           })
       }
-      // check if this repo has schemas
-      if (!indexData.schemas || !indexData.schemas.length) {
-        return toRoute({
-          pathname: location.pathname,
-          query: { invalidRepo: 1 }
-        })
-      }
-      return indexData
+      
+      return this.checkIfHasSchema(indexData)
     })
     .then((data) => {
-      if (params.splat && (params.splat !== 'new')) {
-        let fileMatched = data.collections.some(item => {
-          if (item.path === params.splat) {
-            selectCollectionFile(item)
-            // break iteration
-            return true
-          }
-          return false
-        })
-
-        if (!fileMatched) {
-          toRoute({
-            pathname: location.pathname,
-            query: { fileNotFound: 1 }            
-          })
-        }
-      }
+      this.checkIfExistingFile(data)
     })
     .catch(err => {
-      if (err.status === 404) {
+      this.indexDataErrorHandler(err)
+    })
+  }
+
+  checkIfHasSchema(indexData) {
+    const { toRoute, location } = this.props
+    // check if this repo has schemas
+    if (!indexData.schemas || !indexData.schemas.length) {
+      return Promise.reject({ status: 404 })
+    }
+    return Promise.resolve(indexData)
+  }
+
+  checkIfExistingFile(indexData) {
+    const { params, toRoute, location, selectCollectionFile } = this.props
+
+    if (params.splat && (params.splat !== 'new')) {
+      let fileMatched = indexData.collections.some(item => {
+        if (item.path === params.splat) {
+          selectCollectionFile(item)
+          // break iteration
+          return true
+        }
+        return false
+      })
+
+      if (!fileMatched) {
         toRoute({
           pathname: location.pathname,
-          query: { invalidRepo: 1 }
-        })        
+          query: { fileNotFound: 1 }            
+        })
       }
-    })
+    }
+  }
+
+  indexDataErrorHandler(err) {
+    const { toRoute, location } = this.props
+
+    if (err.status === 404) {
+      toRoute({
+        pathname: location.pathname,
+        query: { invalidRepo: 1 }
+      })        
+    }
   }
 
   handleBranchChange(newBranch) {
@@ -161,7 +183,12 @@ export default class Header extends Component {
             {repoDetails && <img src={repoDetails.ownerAvatar} />}
             {repoName}
           </a>
-          <RepoSelection {...this.props} />
+          <RepoSelection {...this.props}>
+            <a href={`https://github.com/${repoOwner}/${repoName}`} target='_blank'>
+              <ExternalLinkIcon />{repoOwner}/{repoName}
+            </a>
+            <hr />
+          </RepoSelection>
         </span>
         <span className='branch menu'>
           <a className='item'>

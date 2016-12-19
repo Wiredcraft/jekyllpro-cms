@@ -125,7 +125,7 @@ class ContentListing extends Component {
       }
       return isMatch
     })
-    console.log(fc)
+
     this.setState({ filtering: true, filteredCollections: fc })
   }
 
@@ -221,6 +221,18 @@ class ContentListing extends Component {
           </ul>
         </header>
         <section className='body list'>
+          {
+            collections && collections.length === 0 &&
+            <section className='body empty'>
+              <span>You haven\'t published any content yet.</span>
+            </section>
+          }        
+          {
+            filtering && filteredCollections.length === 0 &&
+            <section className='body empty'>
+              <span>No content matches your search criteria.</span>
+            </section>
+          }
           {
             records && records.sort((curr, next) => {
               return Date.parse(next.lastUpdatedAt) - Date.parse(curr.lastUpdatedAt)

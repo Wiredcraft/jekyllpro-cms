@@ -77,6 +77,35 @@ export function parseFileArray (fileArray) {
   return directory
 }
 
+// '/folder0/folder1/folder2' will be processed to
+// [
+// {name: 'folder0', pathArray: ['folder0']},
+// {name: 'folder1', pathArray: ['folder0', 'folder1']},
+// {name: 'folder2', pathArray: ['folder0', 'folder1', 'folder2']}
+// ]
+export function parseFolderPath (folderPath) {
+  return folderPath.split('/')
+    .filter(p => { return !!p })
+    .map(function (item, index, array) {
+      return {
+        name: item,
+        pathArray: array.slice(0, index + 1)
+      }
+    })
+}
+
+export function parseFolderObj (folderPath, directoryObj) {
+  if (folderPath === '/') {
+    return directoryObj
+  }
+  
+  return folderPath.split('/')
+    .filter(p => { return !!p })
+    .reduce(function (pre, cur) {
+      return pre[cur]
+    }, directoryObj)
+}
+
 export function notTextFile (filename) {
   return /\.(jpeg|png|jpg|gif|ico|ttf|eot|svg|woff(2)?)(\?[a-z0-9]+)?$/.test(filename)
 }
@@ -91,16 +120,25 @@ export function isImageFile (filename) {
 // LANGUAGES should be in format:
 // [{name: 'English', code: 'en'}, {name: 'Chinese', code: 'cn'}],
 // THE first one is default site language.
-export function parseFilePathByLang (filePath, LANGUAGES) {
-  let pathArray = filePath.split('/').filter((f) => { return !!f })
+export function parseFilePathByLang (filePath, LANGUAGES, rootFolder) {
   let lang = null
+  // slice out root folder
+  if (rootFolder && rootFolder !== '/') {
+    let idx = filePath.indexOf(rootFolder) + rootFolder.length
+    filePath = filePath.slice(idx)
+  }
+  
+  let pathArray = filePath.split('/').filter((f) => { return !!f })
 
   // get language code if any
   if (LANGUAGES) {
     let possibleCode = pathArray[0]
 
     let matched = LANGUAGES.filter(item => {
-      return possibleCode === item.code
+      if (rootFolder) {
+        return pathArray[0] === item.code
+      }
+      return (pathArray.indexOf(item.code) > -1)
     })
     if (matched[0]) {
       lang = matched[0].code
@@ -168,4 +206,12 @@ export function parseFilePath (filePath, LANGUAGES, rootFolder) {
   parsedObj['fileSlug'] = pathArray.join('/')
 
   return parsedObj
+}
+
+export function parseNameFromFilePath (filePath) {
+  let arry = filePath.split('/').filter(s => {
+    return !!s
+  })
+
+  return arry[arry.length - 1]
 }

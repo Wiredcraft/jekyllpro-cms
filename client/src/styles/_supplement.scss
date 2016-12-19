@@ -107,16 +107,11 @@ fieldset {
     position: absolute;
     z-index: -1;
     & + label {
-      margin-bottom: 12px;
       width: 100%;
       color: white;
       background-color: #0A93FF;
       display: inline-block;
       @extend .button.primary;
-    }
-    &:focus + label,
-    + label:hover {
-      background-color: #2fa3ff;
     }
   }
 }
@@ -254,24 +249,6 @@ legend {
     border-color: red;
   }
 
-  .empty {
-    background: #fff;
-    border: 1px solid #ddd;
-    border-radius: 2px;
-    box-shadow: 0 1px 1px 0 rgba(0,0,0,.1);
-    box-sizing: border-box;
-    bottom: 0;
-    margin: auto;
-    padding: 12px 18px;
-    position: absolute;
-    display: table;
-    height: auto;
-    left: 0;
-    right: 0;
-    text-align: center;
-    top: 0;
-    width: 240px;
-  }
 }
 
 .rjsf {
@@ -285,7 +262,7 @@ legend {
 }
 
 .ReactModal__Content.file-picker .body {
-  max-height: 400px;
+  height: 400px;
   overflow-y: scroll;
   .active a {
     background: #0A93FF;
@@ -296,12 +273,24 @@ legend {
   }
 }
 
-.upload-box.controls {
-  label,
-  button {
-    display: inline-block;
+.upload-box {
+  .confirm-destination + .button {
+    display: block;
+    clear: both;
   }
-  input[type='file'] + label {
-    width: auto;
+  &.confirm + .button {
+    display: none;
+  }
+  &.confirm {
+    label.button {
+      background-color: #f4f4f4;
+      border: 1px solid #f4f4f4;
+      box-shadow: none;
+      color: #AAAAAA;
+      text-align: left;
+      padding-left: 10px;
+    }
   }
 }
+
+

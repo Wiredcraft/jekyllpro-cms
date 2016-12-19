@@ -3,8 +3,8 @@ import React, { Component } from 'react'
 import UploaderIcon from '../svg/UploaderIcon'
 
 export default class FileUploader extends Component {
-  constructor() {
-    super()
+  constructor(props) {
+    super(props)
     this.state = {
       files: [],
       uploadBtnClass: 'button primary'
@@ -41,48 +41,68 @@ export default class FileUploader extends Component {
   }
 
   onDone (files) {
-    this.setState({ files: files })
+    const { uploadFolder } = this.props
+    this.setState({
+      uploadPath: uploadFolder === '/' ? ('/' + files[0].name) : (uploadFolder + '/' + files[0].name),
+      files: files
+     })
   }
 
   uploadFile () {
-    const { addNewFile, fileAdded, currentBranch, uploadFolder } = this.props
-    let { files } = this.state
-    let filepath = files[0].name
-    if (uploadFolder) {
-      //normalize path
-      let p = uploadFolder.split('/')
-      p = p.filter(s => {
-        return s !== ''
-      })
-      p.push(files[0].name)
-      filepath = p.join('/')
-    }
-    console.log(filepath)
+    const { addNewFile, fileAdded, currentBranch } = this.props
+    let { files, uploadPath } = this.state
+
+    //normalize path
+    let p = uploadPath.split('/')
+    p = p.filter(s => {
+      return s !== ''
+    })
+    uploadPath = p.join('/')
+
+    // console.log(uploadPath)
     this.setState({ uploadBtnClass: 'button primary disabled processing'})
-    addNewFile(currentBranch, filepath, files[0].base64, { encode: false })
+    addNewFile(currentBranch, uploadPath, files[0].base64, { encode: false })
       .then(() => {
-        fileAdded(filepath)
+        fileAdded(uploadPath)
         this.setState({ uploadBtnClass: 'button primary', files: [] })
       })
   }
 
+  handlePathInput(evt) {
+    this.setState({ uploadPath: evt.target.value })
+  }
+
   render () {
-    const { files, uploadBtnClass } = this.state
+    const { uploadFolder } = this.props
+    const { files, uploadBtnClass, uploadPath } = this.state
 
     return (
-      <div className='upload-box controls'>
-        <input
-          type='file'
-          id='file'
-          onChange={ ::this.handleFileInput }
-          multiple={ false } />
-        <label htmlFor='file' className='button primary'>
-          { files.length > 0 ? files[0].name : 'Upload a file'}
-          { files.length === 0 && <UploaderIcon /> }
-        </label>
+      <div className={files.length > 0 ? 'upload-box confirm' : 'upload-box controls'}>
+        <div className={files.length > 0 ? 'field confirm-filename' : ''}>
+          { files.length > 0 && <label>File</label> }
+
+          <input
+            type='file'
+            id='file'
+            onChange={ ::this.handleFileInput }
+            multiple={ false } />
+          <label htmlFor='file' className='button primary'>
+            { files.length > 0 ? files[0].name : 'Upload a file'}
+            { files.length === 0 && <UploaderIcon /> }
+          </label>
+        </div>
+        {
+          files.length > 0 &&
+          <div className='field confirm-destination'>
+            <label>Destination</label>
+            <input type='text'
+              value={uploadPath}
+              onChange={::this.handlePathInput} />
+          </div>
+        }
         { this.state.files.length !== 0 &&
           <button className={uploadBtnClass} onClick={::this.uploadFile}>
-            <UploaderIcon />
+            Confirm upload
           </button>
         }
       </div>

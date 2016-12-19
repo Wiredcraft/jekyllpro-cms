@@ -3,6 +3,7 @@ import Form from 'react-jsonschema-form'
 import ReactDOM from 'react-dom'
 import moment from 'moment'
 import Cookie from 'js-cookie'
+import { Link } from 'react-router'
 
 import { parseYamlInsideMarkdown, retriveContent, serializeObjtoYaml } from '../../helpers/markdown'
 import TrashIcon from '../svg/TrashIcon'
@@ -10,9 +11,12 @@ import MoreMenuIcon from '../svg/MoreMenuIcon'
 import CheckIcon from '../svg/CheckIcon'
 import BackArrowIcon from '../svg/BackArrowIcon'
 import CaretDownIcon from '../svg/CaretDownIcon'
+import ExternalLinkIcon from '../svg/ExternalLinkIcon'
+
 import customWidgets from '../JSONSchemaForm/CustomWidgets'
 import CustomArrayField from '../JSONSchemaForm/CustomArrayField'
-import { dateToString, purgeObject, textValueIsDifferent, parseFilePath } from "../../helpers/utils"
+import { dateToString, purgeObject, textValueIsDifferent,
+  parseFilePath, parseNameFromFilePath, parseFilePathByLang } from "../../helpers/utils"
 import ConfirmDeletionModal from '../Modal/ConfirmDeletionModal'
 import notify from '../common/Notify'
 
@@ -59,6 +63,8 @@ export default class ContentEditor extends Component {
     if (params.splat === 'new') {
       this.getCurrentSchema(params.collectionType, () => {
         this.setState({
+          availableLanguages: config && config.languages,
+          translations: undefined,
           formData: {},
           currentFileSlug: dateToString(new Date()) + '-new-file',
           currentFileExt: 'md',
@@ -104,7 +110,8 @@ export default class ContentEditor extends Component {
   }
 
   updateEditorForm() {
-    const { content, path } = this.props.selectedCollectionFile
+    const { selectedCollectionFile, config, collections } = this.props
+    const { content, path } = selectedCollectionFile
     const { currentSchema } = this.state
     if (!content) return
     let formData = {}
@@ -133,6 +140,10 @@ export default class ContentEditor extends Component {
     }, () => {
       this.setParsedFileProps(path)
     })
+
+
+    let rootFolder = currentSchema.jekyll.id === 'pages' ? '/' : currentSchema.jekyll.dir
+    this.getTranslation(selectedCollectionFile, collections, config, rootFolder)
   }
 
   updateResult(data) {
@@ -307,10 +318,44 @@ export default class ContentEditor extends Component {
     })
   }
 
-  changeFileLanguage(evt) {
-    this.setState({currentFileLanguage: evt.target.value}, () => {
+  changeFileLanguage(langCode) {
+    this.setState({currentFileLanguage: langCode}, () => {
       this.updateCurrentFilePath()
     })
+  }
+
+  getTranslation(selectedCollectionFile, collections, config, rootFolder) {
+    if (!config || !config.languages) {
+      return
+    }
+
+    let fileName = parseNameFromFilePath(selectedCollectionFile.path)
+    let availableLanguages = config.languages
+
+    let translations = collections.filter(col => {
+      return (col.path.indexOf(fileName) > -1) && (col.path !== selectedCollectionFile.path) && (col.collectionType === selectedCollectionFile.collectionType)
+        
+    })
+
+    translations = translations.map(c => {
+      let code = parseFilePathByLang(c.path, config.languages, rootFolder)
+      let matchedLang = config.languages.find(l => {
+        return l.code === code
+      })
+      return { filePath: c.path, language: matchedLang.name ,code }
+    })
+
+    translations.forEach(t => {
+      availableLanguages = availableLanguages.filter(l => {
+        return l.code !== t.code
+      })
+    })
+
+    this.setState({
+      availableLanguages,
+      translations
+    })
+
   }
 
   changeFileType(ext) {
@@ -340,8 +385,10 @@ export default class ContentEditor extends Component {
   }
 
   render() {
-    const { editorUpdating, selectedCollectionFile, params, schemas, config } = this.props
-    const { filePathInputClass, formData, currentFilePath, currentSchema, disableActionBtn, currentFileSlug } = this.state
+    const { editorUpdating, selectedCollectionFile, params, schemas, config,
+      repoFullName, currentBranch } = this.props
+    const { filePathInputClass, formData, currentFilePath, availableLanguages, translations,
+      currentSchema, disableActionBtn, currentFileSlug } = this.state
 
     if (!currentSchema) return (<section id='content' />)
 
@@ -359,7 +406,11 @@ export default class ContentEditor extends Component {
               </a>)
             }
             <span className={disableActionBtn ? 'bundle disabled' : 'bundle'}>
-              <button className={disableActionBtn ? 'button primary save processing' : 'button primary save'} onClick={::this.handleSaveBtn}>Save</button>
+              <button
+                className={disableActionBtn ? 'button primary save processing' : 'button primary save'}
+                onClick={::this.handleSaveBtn}>
+                Save
+              </button>
 
               <span className="menu">
                 <button className="button primary">
@@ -399,14 +450,43 @@ export default class ContentEditor extends Component {
           {config && config.languages &&
             <div className='field'>
               <label>Language</label>
-              <span className='select'>
-                <select value={this.state.currentFileLanguage} onChange={::this.changeFileLanguage}>
+              <span className='menu'>
+                <button className='button'>
                   {
-                    config.languages.map((lang) => {
-                      return <option value={lang.code} key={lang.code}>{lang.name}</option>
+                    availableLanguages && availableLanguages.filter((lang) => {
+                      return lang.code === this.state.currentFileLanguage
+                    }).map((language) => {
+                      return (<span key={language.code}>{language.name}</span>)
+                    })              
+                  }
+                  <CaretDownIcon />
+                </button>
+                <div className='options'>
+                  {
+                    availableLanguages && availableLanguages.map((lang) => {
+                      return (<a key={lang.code}
+                        onClick={this.changeFileLanguage.bind(this, lang.code)}
+                        className={this.state.currentFileLanguage === lang.code ? 'selected' : ''} >
+                        <CheckIcon />
+                        {lang.name}
+                      </a>)
                     })
                   }
-                </select>
+                  <hr />
+                  { translations && <h2>Existing translations</h2> }
+                  {
+                    translations && translations.map(t => {
+                      return (
+                        <Link
+                          to={`/${repoFullName}/${params.collectionType}/${currentBranch}/${t.filePath}`}
+                          key={t.code}
+                          target='_blank'>
+                          <ExternalLinkIcon />{t.language}
+                        </Link>
+                      )
+                    })
+                  }          
+                </div>
               </span>
             </div>
           }

@@ -15,12 +15,18 @@ import { addNewFile } from '../../actions/editorActions'
 export default class FileManagerModal extends Component {
   constructor(props) {
     super(props)
-    this.state = { disableSelectBtn: true }
+    this.state = {
+      selectedFolderPath: '/',
+      disableSelectBtn: true
+    }
   }
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.isOpen && !this.props.isOpen) {
-      this.setState({ disableSelectBtn: true })
+      this.setState({
+        selectedFolderPath: '/',
+        disableSelectBtn: true
+      })
     }
   }
 
@@ -28,8 +34,12 @@ export default class FileManagerModal extends Component {
     this.setState({ selectedFilePath: filepath, disableSelectBtn: false })
   }
 
-  folderCallback(name) {
-    this.setState({ selectedFilePath: '', disableSelectBtn: true })
+  folderCallback(name, path) {
+    this.setState({
+      selectedFilePath: '',
+      disableSelectBtn: true,
+      selectedFolderPath: path
+     })
 
   }
 
@@ -40,7 +50,7 @@ export default class FileManagerModal extends Component {
 
   render() {
     const { isOpen, onclose, treeMeta, currentBranch, addNewFile, fileAdded, fetchRepoTree } = this.props
-    const { disableSelectBtn } = this.state
+    const { disableSelectBtn, selectedFolderPath } = this.state
 
     return (
       <Modal
@@ -68,7 +78,7 @@ export default class FileManagerModal extends Component {
             currentBranch={currentBranch}
             addNewFile={addNewFile}
             fileAdded={fileAdded}
-            uploadFolder='/' />
+            uploadFolder={selectedFolderPath} />
           <button
             onClick={::this.handleSelectBtn}
             className={disableSelectBtn ? 'button primary disabled' : 'button primary'}>
