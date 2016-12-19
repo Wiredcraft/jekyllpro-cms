@@ -11,7 +11,7 @@ import MoreMenuIcon from '../svg/MoreMenuIcon'
 import CheckIcon from '../svg/CheckIcon'
 import BackArrowIcon from '../svg/BackArrowIcon'
 import CaretDownIcon from '../svg/CaretDownIcon'
-import ExternalLinkIcon from '../svg/ExternalLinkIcon'
+import LockIcon from '../svg/LockIcon'
 
 import customWidgets from '../JSONSchemaForm/CustomWidgets'
 import CustomArrayField from '../JSONSchemaForm/CustomArrayField'
@@ -50,7 +50,19 @@ export default class NewEditor extends Component {
   }
 
   componentWillMount() {
-    const { params, config } = this.props
+    const { collections, params, config, location: { query } } = this.props
+
+    if (query.baseFile && query.language) {
+      let validBaseFile = collections.find(item => {
+        return item.path === query.baseFile
+      })
+      if (validBaseFile) {
+        return this.getCurrentSchema(
+          params.collectionType,
+          this.updateEditorForm(validBaseFile, query.language)
+        )
+      }
+    }
 
     this.getCurrentSchema(params.collectionType, () => {
       this.setState({
@@ -77,7 +89,41 @@ export default class NewEditor extends Component {
     this.setState({currentSchema: schema}, callback)
   }
 
-  setParsedFileProps(fullFilePath) {
+  updateEditorForm(collectionFile, langCode) {
+    return () => {
+      const { content, path } = collectionFile
+      const { currentSchema } = this.state
+      if (!content) return
+      let formData = {}
+
+      // content is markdown or html
+      const docConfigObj = parseYamlInsideMarkdown(content)
+      // console.log(docConfigObj)
+      if(docConfigObj) {
+        const schemaObj = currentSchema.JSONSchema.properties
+        Object.keys(schemaObj).forEach((prop) => {
+          formData[prop] = docConfigObj[prop]
+        })
+        formData.published = docConfigObj.published
+        formData.draft = docConfigObj.draft
+        // formData.lang = docConfigObj.lang
+        formData.body = retriveContent(content)
+      } else {
+        formData.body = content
+      }
+      
+      this.setState({
+        formData,
+        isPostPublished: (formData.published !== undefined) ? formData.published : true,
+        isDraft: (formData.draft !== undefined) ? formData.draft : false,
+        currentFileLanguage: langCode
+      }, () => {
+        this.setParsedFileProps(path, langCode)
+      })
+    }
+  }
+
+  setParsedFileProps(fullFilePath, langCode) {
     const { config } = this.props
     const { currentSchema } = this.state
     let rootFolder = currentSchema.jekyll.id === 'pages' ? '/' : currentSchema.jekyll.dir
@@ -87,7 +133,9 @@ export default class NewEditor extends Component {
     this.setState({
       currentFileSlug: parsedObj.fileSlug,
       currentFileExt: parsedObj.fileExt,
-      currentFileLanguage: parsedObj.lang
+      currentFileLanguage: langCode
+    }, () => {
+      this.updateCurrentFilePath()
     })
   }
 
@@ -162,6 +210,12 @@ export default class NewEditor extends Component {
     ReactDOM.findDOMNode(this.refs.formSubmitBtn).dispatchEvent(clickEvt)
   }
 
+  changeFileLanguage(langCode) {
+    this.setState({currentFileLanguage: langCode}, () => {
+      this.updateCurrentFilePath()
+    })
+  }
+
   handlePublishInput(evt) {
     const { isPostPublished } = this.state
     this.setState({ isPostPublished: !isPostPublished })
@@ -176,46 +230,6 @@ export default class NewEditor extends Component {
     this.setState({ currentFileSlug: evt.target.value }, () => {
       this.updateCurrentFilePath()
     })
-  }
-
-  changeFileLanguage(langCode) {
-    this.setState({currentFileLanguage: langCode}, () => {
-      this.updateCurrentFilePath()
-    })
-  }
-
-  getTranslation(selectedCollectionFile, collections, config, rootFolder) {
-    if (!config || !config.languages) {
-      return
-    }
-
-    let fileName = parseNameFromFilePath(selectedCollectionFile.path)
-    let availableLanguages = config.languages
-
-    let translations = collections.filter(col => {
-      return (col.path.indexOf(fileName) > -1) && (col.path !== selectedCollectionFile.path) && (col.collectionType === selectedCollectionFile.collectionType)
-        
-    })
-
-    translations = translations.map(c => {
-      let code = parseFilePathByLang(c.path, config.languages, rootFolder)
-      let matchedLang = config.languages.find(l => {
-        return l.code === code
-      })
-      return { filePath: c.path, language: matchedLang.name ,code }
-    })
-
-    translations.forEach(t => {
-      availableLanguages = availableLanguages.filter(l => {
-        return l.code !== t.code
-      })
-    })
-
-    this.setState({
-      availableLanguages,
-      translations
-    })
-
   }
 
   changeFileType(ext) {
@@ -245,9 +259,9 @@ export default class NewEditor extends Component {
   }
 
   render() {
-    const { editorUpdating, selectedCollectionFile, params, schemas, config,
+    const { editorUpdating, location: { query }, params, schemas, config,
       repoFullName, currentBranch } = this.props
-    const { filePathInputClass, formData, currentFilePath, availableLanguages, translations,
+    const { filePathInputClass, formData, currentFilePath, availableLanguages,
       currentSchema, disableActionBtn, currentFileSlug } = this.state
 
     if (!currentSchema) return (<section id='content' />)
@@ -289,33 +303,47 @@ export default class NewEditor extends Component {
 
         <div className='body'>
           {config && config.languages &&
-            <div className='field'>
+            <div className='field language'>
               <label>Language</label>
-              <span className='menu'>
-                <button className='button'>
-                  {
-                    availableLanguages && availableLanguages.filter((lang) => {
-                      return lang.code === this.state.currentFileLanguage
-                    }).map((language) => {
-                      return (<span key={language.code}>{language.name}</span>)
-                    })              
-                  }
-                  <CaretDownIcon />
-                </button>
-                <div className='options'>
-                  {
-                    availableLanguages && availableLanguages.map((lang) => {
-                      return (<a key={lang.code}
-                        onClick={this.changeFileLanguage.bind(this, lang.code)}
-                        className={this.state.currentFileLanguage === lang.code ? 'selected' : ''} >
-                        <CheckIcon />
-                        {lang.name}
-                      </a>)
-                    })
-                  }
-                  <hr />
-                </div>
-              </span>
+              {
+                query.language &&
+                (<span className='menu'>
+                  <button className='button active locked'>
+                    {
+                      config.languages.filter((lang) => {
+                        return lang.code === this.state.currentFileLanguage
+                      }).map((language) => {
+                        return (<span key={language.code}>{language.name}&nbsp;</span>)
+                      })              
+                    }
+                    <LockIcon />
+                  </button>
+                </span>) ||
+                (<span className='menu'>
+                  <button className='button'>
+                    {
+                      config.languages.filter((lang) => {
+                        return lang.code === this.state.currentFileLanguage
+                      }).map((language) => {
+                        return (<span key={language.code}>{language.name}</span>)
+                      })              
+                    }
+                    <CaretDownIcon />
+                  </button>
+                  <div className='options'>
+                    {
+                      config.languages.map((lang) => {
+                        return (<a key={lang.code}
+                          onClick={this.changeFileLanguage.bind(this, lang.code)}
+                          className={this.state.currentFileLanguage === lang.code ? 'selected' : ''} >
+                          <CheckIcon />
+                          {lang.name}
+                        </a>)
+                      })
+                    }
+                  </div>
+                </span>)
+              }
             </div>
           }
 

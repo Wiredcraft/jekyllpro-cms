@@ -12,6 +12,8 @@ import CheckIcon from '../svg/CheckIcon'
 import BackArrowIcon from '../svg/BackArrowIcon'
 import CaretDownIcon from '../svg/CaretDownIcon'
 import ExternalLinkIcon from '../svg/ExternalLinkIcon'
+import LockIcon from '../svg/LockIcon'
+import TranslationIcon from '../svg/TranslationIcon'
 
 import customWidgets from '../JSONSchemaForm/CustomWidgets'
 import CustomArrayField from '../JSONSchemaForm/CustomArrayField'
@@ -140,9 +142,7 @@ export default class ContentEditor extends Component {
       updateFile,
       deleteFile,
       replaceFile,
-      addNewFile,
       collectionFileRemoved,
-      collectionFileAdded,
       collectionFileUpdated,
       toRoute,
       params: { repoOwner, repoName, collectionType, branch, splat }
@@ -175,24 +175,7 @@ export default class ContentEditor extends Component {
 
     this.setState({ disableActionBtn: true, formData: data })
 
-    if (splat === 'new') {
-      updatedContent = serializeObjtoYaml(formData) + updatedContent
-      reqPromise = addNewFile(currentBranch, filePath, updatedContent)
-        .then((data) => {
-          let newItem = {
-            path: filePath,
-            content: updatedContent,
-            collectionType: collectionType,
-            lastUpdatedAt: data.commit.committer.date,
-            lastUpdatedBy: data.commit.committer.name,
-            lastCommitSha: data.commit.sha 
-          }
-          collectionFileAdded(newItem)
-          selectCollectionFile(newItem)
-          toRoute(`/${repoOwner}/${repoName}/${collectionType}/${branch}/${filePath}`)
-          this.setState({ disableActionBtn: false })
-        })
-    } else if (filePath !== selectedCollectionFile.path) {
+    if (filePath !== selectedCollectionFile.path) {
       // file path changed
       let oldPath = selectedCollectionFile.path
       updatedContent = this.updateFileFrontMatter(selectedCollectionFile.content, formData) + updatedContent
@@ -303,9 +286,11 @@ export default class ContentEditor extends Component {
     })
   }
 
-  changeFileLanguage(langCode) {
-    this.setState({currentFileLanguage: langCode}, () => {
-      this.updateCurrentFilePath()
+  makeTranslationFile(langCode) {
+    const { toRoute, params, repoFullName, currentBranch  } = this.props
+    toRoute({
+      pathname: `/${repoFullName}/${params.collectionType}/${currentBranch}/new`,
+      query: { language: langCode, baseFile: params.splat }
     })
   }
 
@@ -381,15 +366,12 @@ export default class ContentEditor extends Component {
       <section id='content'>
         <header className='header'>
           <div className='controls'>
-            {
-              params.splat !== 'new' &&
-              (<a className='edit tooltip-bottom'
-                href={`${repoUrl}commit/${selectedCollectionFile.lastCommitSha}`} target='_blank'>
-                {selectedCollectionFile.lastUpdatedBy},&nbsp;
-                {moment(Date.parse(selectedCollectionFile.lastUpdatedAt)).fromNow()}
-                <span>View on GitHub</span>
-              </a>)
-            }
+            <a className='edit tooltip-bottom'
+              href={`${repoUrl}commit/${selectedCollectionFile.lastCommitSha}`} target='_blank'>
+              {selectedCollectionFile.lastUpdatedBy},&nbsp;
+              {moment(Date.parse(selectedCollectionFile.lastUpdatedAt)).fromNow()}
+              <span>View on GitHub</span>
+            </a>
             <span className={disableActionBtn ? 'bundle disabled' : 'bundle'}>
               <button
                 className={disableActionBtn ? 'button primary save processing' : 'button primary save'}
@@ -433,32 +415,39 @@ export default class ContentEditor extends Component {
 
         <div className='body'>
           {config && config.languages &&
-            <div className='field'>
+            <div className='field language'>
               <label>Language</label>
               <span className='menu'>
-                <button className='button'>
+                <button className='button active locked'>
                   {
                     availableLanguages && availableLanguages.filter((lang) => {
                       return lang.code === this.state.currentFileLanguage
                     }).map((language) => {
-                      return (<span key={language.code}>{language.name}</span>)
+                      return (<span key={language.code}>{language.name}&nbsp;</span>)
                     })              
                   }
-                  <CaretDownIcon />
+                  <LockIcon />
                 </button>
+              </span>
+              <span className='menu'>
+                <button className='button icon'><TranslationIcon /></button>
                 <div className='options'>
+                  <h2>Translate to</h2>
                   {
-                    availableLanguages && availableLanguages.map((lang) => {
-                      return (<a key={lang.code}
-                        onClick={this.changeFileLanguage.bind(this, lang.code)}
-                        className={this.state.currentFileLanguage === lang.code ? 'selected' : ''} >
-                        <CheckIcon />
-                        {lang.name}
-                      </a>)
+                    availableLanguages && availableLanguages.filter((l) => {
+                      return l.code !== this.state.currentFileLanguage
+                    }).map((lang) => {
+                      return (
+                        <a key={lang.code}
+                          onClick={this.makeTranslationFile.bind(this, lang.code)}>
+                          <TranslationIcon />
+                          {lang.name}
+                        </a>
+                      )
                     })
                   }
                   <hr />
-                  { translations && <h2>Existing translations</h2> }
+                  { translations && translations.length && <h2>Existing translations</h2> || '' }
                   {
                     translations && translations.map(t => {
                       return (
