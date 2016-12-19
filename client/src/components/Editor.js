@@ -8,6 +8,7 @@ import { collectionFileRemoved, collectionFileAdded, collectionFileUpdated,
   fileAdded, fileRemoved, fileReplaced } from '../actions/repoActions'
 
 import ContentEditor from './Editor/ContentEditor'
+import NewEditor from './Editor/NewEditor'
 import NotFound from './NotFound'
 import NoSchema from './common/NoSchema'
 
@@ -28,7 +29,7 @@ class Editor extends Component {
     }
 
     if (schemas && params.splat) {
-      return (<ContentEditor {...this.props} />)
+      return (params.splat === 'new') && (<NewEditor {...this.props} />) || (<ContentEditor {...this.props} />)
     }
 
     return (<section id='content' />)
