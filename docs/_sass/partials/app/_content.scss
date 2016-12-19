@@ -120,6 +120,17 @@ $panel: 240px;
         padding-right: $space/3;
       }
     }
+    .language {
+      .locked {
+        padding-left: $space/2;
+        padding-right: $space/2;
+        svg {
+          fill: $grey;
+          margin-left: $space/3;
+          margin-right: -$space/6;
+        }
+      }
+    }
     .format {
       @include font-size($small);
       float: right;
