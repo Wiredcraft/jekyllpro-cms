@@ -59,10 +59,12 @@ export function resetRepoData () {
 
 export function fetchRepoIndex(opts) {
   return dispatch => {
-    dispatch({
-      payload: { loading: true },
-      type: CHANGE_REPO_STATE
-    })
+    if (!opts || !opts.refresh) {
+      dispatch({
+        payload: { loading: true },
+        type: CHANGE_REPO_STATE
+      })
+    }
     return getRepoIndex(opts || {})
       .then(data => {        
         dispatch({
