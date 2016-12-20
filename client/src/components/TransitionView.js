@@ -6,6 +6,13 @@ import { selectCollectionFile } from '../actions/editorActions'
 import { replaceRoute } from '../actions/routeActions'
 
 class TransitionView extends Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      isNonCollectionFile: false
+    }
+  }
+
   componentWillReceiveProps(nextProps) {
     const { replaceRoute } = this.props
     const { repoOwner, repoName, branch, splat } = this.props.params
@@ -21,18 +28,29 @@ class TransitionView extends Component {
         }
         return false
       })
+
       if (isCollectionFile) {
         replaceRoute(`/${repoOwner}/${repoName}/${type}/${branch}/${splat}`)
       } else {
-        replaceRoute(`/${repoOwner}/${repoName}/files/${branch}/${splat}`)
+        this.setState({ isNonCollectionFile: true })
       }
     }
   }
 
   render() {
+    const { repoOwner, repoName, branch, splat } = this.props.params
+
     return (
       <section id='content' className='full-screen'>
-        Analysing, will redirect soon...
+        {
+          this.state.isNonCollectionFile
+          ?  (<p>This is not a collection file, you can try to browse it in github:
+              <a href={`https://github.com/${repoOwner}/${repoName}/blob/${branch}/${splat}`}>
+                {`https://github.com/${repoOwner}/${repoName}/blob/${branch}/${splat}`}
+              </a>
+            </p>)
+          :  (<span>Analysing, will redirect soon...</span>)
+        }
       </section>
     )
   }
