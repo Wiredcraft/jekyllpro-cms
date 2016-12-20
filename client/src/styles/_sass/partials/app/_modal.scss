@@ -73,8 +73,10 @@
               background: $light;
               text-decoration: none;
             }
-            &:active,
-            &.active {
+          }
+          &:active,
+          &.active {
+            a {
               background: $blue;
               color: #FFF;
               svg {

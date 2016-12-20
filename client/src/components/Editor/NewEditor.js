@@ -278,7 +278,7 @@ export default class NewEditor extends Component {
               </button>
 
               <span className="menu">
-                <button className="button primary">
+                <button className="button icon primary">
                   <MoreMenuIcon />
                 </button>
                 <div className="options">

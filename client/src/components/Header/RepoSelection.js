@@ -67,7 +67,7 @@ export default class RepoSelection extends Component {
               className="search"
               type="text"
               onChange={::this.handleChange}
-              placeholder="Search repositories by name" />
+              placeholder="Search by name" />
             <MagnifierIcon />
           </span>
         </header>

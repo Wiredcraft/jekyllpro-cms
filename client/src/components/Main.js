@@ -8,7 +8,7 @@ import { confirmUserIsLogged } from '../actions/userActions'
 import { toRoute } from '../actions/routeActions'
 import Header from './Header'
 import Cookie from 'js-cookie'
-
+import 'codemirror/lib/codemirror.css'
 import 'react-notifications/lib/notifications.css'
 import 'styles/_sass/main.scss'
 import 'styles/_supplement.scss'

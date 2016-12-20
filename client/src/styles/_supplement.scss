@@ -25,12 +25,6 @@ fieldset {
   visibility: hidden;
 }
 
-.ReactCodeMirror {
-  line-height: normal;
-  font-size: 14px;
-  border: 1px solid #c0c0c0;
-}
-
 .ReactModal__Content {
   @extend #modal;
   &.profile-modal {

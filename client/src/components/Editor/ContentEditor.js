@@ -380,7 +380,7 @@ export default class ContentEditor extends Component {
               </button>
 
               <span className="menu">
-                <button className="button primary">
+                <button className="button icon primary">
                   <MoreMenuIcon />
                 </button>
                 <div className="options">
@@ -417,51 +417,53 @@ export default class ContentEditor extends Component {
           {config && config.languages &&
             <div className='field language'>
               <label>Language</label>
-              <span className='menu'>
-                <button className='button active locked'>
-                  {
-                    availableLanguages && availableLanguages.filter((lang) => {
-                      return lang.code === this.state.currentFileLanguage
-                    }).map((language) => {
-                      return (<span key={language.code}>{language.name}&nbsp;</span>)
-                    })              
-                  }
-                  <LockIcon />
-                </button>
-              </span>
-              <span className='menu'>
-                <button className='button icon'><TranslationIcon /></button>
-                <div className='options'>
-                  <h2>Translate to</h2>
-                  {
-                    availableLanguages && availableLanguages.filter((l) => {
-                      return l.code !== this.state.currentFileLanguage
-                    }).map((lang) => {
-                      return (
-                        <a key={lang.code}
-                          onClick={this.makeTranslationFile.bind(this, lang.code)}>
-                          <TranslationIcon />
-                          {lang.name}
-                        </a>
-                      )
-                    })
-                  }
-                  
-                  { translations && translations.length &&
-                    [<hr key='hr1' />, <h2 key='h22'>Existing translations</h2>] || '' }
-                  {
-                    translations && translations.map(t => {
-                      return (
-                        <Link
-                          to={`/${repoFullName}/${params.collectionType}/${currentBranch}/${t.filePath}`}
-                          key={t.code}
-                          target='_blank'>
-                          <ExternalLinkIcon />{t.language}
-                        </Link>
-                      )
-                    })
-                  }          
-                </div>
+              <span className='bundle'>
+                <span className='menu'>
+                  <button className='button active locked'>
+                    {
+                      availableLanguages && availableLanguages.filter((lang) => {
+                        return lang.code === this.state.currentFileLanguage
+                      }).map((language) => {
+                        return (<span key={language.code}>{language.name}&nbsp;</span>)
+                      })              
+                    }
+                    <LockIcon />
+                  </button>
+                </span>
+                <span className='menu'>
+                  <button className='button icon'><TranslationIcon /></button>
+                  <div className='options'>
+                    <h2>Translate to</h2>
+                    {
+                      availableLanguages && availableLanguages.filter((l) => {
+                        return l.code !== this.state.currentFileLanguage
+                      }).map((lang) => {
+                        return (
+                          <a key={lang.code}
+                            onClick={this.makeTranslationFile.bind(this, lang.code)}>
+                            <TranslationIcon />
+                            {lang.name}
+                          </a>
+                        )
+                      })
+                    }
+                    
+                    { translations && translations.length &&
+                      [<hr key='hr1' />, <h2 key='h22'>Existing translations</h2>] || '' }
+                    {
+                      translations && translations.map(t => {
+                        return (
+                          <Link
+                            to={`/${repoFullName}/${params.collectionType}/${currentBranch}/${t.filePath}`}
+                            key={t.code}
+                            target='_blank'>
+                            <ExternalLinkIcon />{t.language}
+                          </Link>
+                        )
+                      })
+                    }          
+                  </div>
+                </span>
               </span>
             </div>
           }

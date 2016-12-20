@@ -1,8 +1,19 @@
+.ReactCodeMirror {
+  font-family: inherit;
+  font-size: inherit;
+}
+
 .CodeMirror {
+  background: $light;
+  border: 1px solid $line;
+  border-radius: $radius;
+  box-shadow: $shadow inset;
+  box-sizing: border-box;
+  color: inherit;
   font-family: inherit;
   font-size: inherit;
   line-height: 160%;
-  padding: 0 $space/12;
+  padding: $space/6 $space/4;
 }
 
 .cm-s-default {
@@ -12,22 +23,30 @@
     font-family: $code;
   }
   .cm-link {
-    color: inherit;
-    font-weight: bold;
+    color: shade($blue, 20%);
     text-decoration: none;
   }
   .cm-url {
-    color: $blue;
+    color: $purple;
   }
   .cm-header {
     color: inherit;
     @include font-size($larger);
   }
   .cm-tag {
-    color: $green;
+    color: $purple;
+  }
+  .cm-attribute {
+    color: shade(#FB8C00, 20%);
   }
   .cm-variable-2 {
     color: inherit;
+  }
+  .cm-string {
+    color: shade($blue, 20%);
+  }
+  .cm-comment {
+    color: $grey;
   }
   .cm-srting,
   .cm-url {
