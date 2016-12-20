@@ -7,7 +7,6 @@ import { NotificationContainer } from 'react-notifications'
 import { confirmUserIsLogged } from '../actions/userActions'
 import { toRoute } from '../actions/routeActions'
 import Header from './Header'
-import SelectRepo from './SelectRepo'
 import Cookie from 'js-cookie'
 
 import 'react-notifications/lib/notifications.css'

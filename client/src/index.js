@@ -22,10 +22,10 @@ ReactDOM.render((
     <Router history={history}>
       <Route path='/' component={App} >
         <Route path='/:repoOwner/:repoName(/)' component={ContentListing} />
-        <Route path='/:repoOwner/:repoName/link/(:branch)/*' components={TransitionView} />
+        <Route path='/:repoOwner/:repoName/link/(:branch)/*' component={TransitionView} />
         <Route path='/:repoOwner/:repoName/(:collectionType)/(:branch)/*' component={Editor} />        
         <Route path='/select' component={SelectRepo} />
-        <Route path='/*' components={NotFound} />
+        <Route path='/*' component={NotFound} />
       </Route>
     </Router>
   </Provider>
