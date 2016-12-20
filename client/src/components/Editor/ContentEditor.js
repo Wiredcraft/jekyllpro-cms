@@ -286,13 +286,13 @@ export default class ContentEditor extends Component {
     })
   }
 
-  makeTranslationFile(langCode) {
-    const { toRoute, params, repoFullName, currentBranch  } = this.props
-    toRoute({
-      pathname: `/${repoFullName}/${params.collectionType}/${currentBranch}/new`,
-      query: { language: langCode, baseFile: params.splat }
-    })
-  }
+  // makeTranslationFile(langCode) {
+  //   const { toRoute, params, repoFullName, currentBranch  } = this.props
+  //   toRoute({
+  //     pathname: `/${repoFullName}/${params.collectionType}/${currentBranch}/new`,
+  //     query: { language: langCode, baseFile: params.splat }
+  //   })
+  // }
 
   getTranslation(selectedCollectionFile, collections, config, rootFolder) {
     if (!config || !config.languages) {
@@ -439,11 +439,12 @@ export default class ContentEditor extends Component {
                         return l.code !== this.state.currentFileLanguage
                       }).map((lang) => {
                         return (
-                          <a key={lang.code}
-                            onClick={this.makeTranslationFile.bind(this, lang.code)}>
+                          <Link key={lang.code}
+                            to={`/${repoFullName}/${params.collectionType}/${currentBranch}/new?baseFile=${params.splat}&language=${lang.code}`}
+                            target='_blank'>
                             <TranslationIcon />
                             {lang.name}
-                          </a>
+                          </Link>
                         )
                       })
                     }
