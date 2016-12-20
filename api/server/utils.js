@@ -29,7 +29,9 @@ export function getCollectionFiles (schemaArray, filesArray) {
     if (/^[^_]+\w*\.html$/i.test(item.path)) {
       // any html files that are not in folders starts with '_' are pages file
       item.collectionType = 'pages' 
-    } else if (item.type === 'blob') {
+    } else if ((item.type === 'blob') &&
+      /\.(html|md|markdown)$/i.test(item.path) &&
+      (item.size <3000000)) {
       // map collection type for files defined in schema
       _.forEach(schemaArray, s => {
         if (item.path.indexOf(s.jekyll.dir) === 0) {
