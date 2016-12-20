@@ -446,8 +446,9 @@ export default class ContentEditor extends Component {
                       )
                     })
                   }
-                  <hr />
-                  { translations && translations.length && <h2>Existing translations</h2> || '' }
+                  
+                  { translations && translations.length &&
+                    [<hr key='hr1' />, <h2 key='h22'>Existing translations</h2>] || '' }
                   {
                     translations && translations.map(t => {
                       return (
