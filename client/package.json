@@ -69,7 +69,7 @@
     "webpack": "^1.12.0"
   },
   "dependencies": {
-    "codemirror": "^5.13.4",
+    "codemirror": "^5.18.2",
     "core-js": "^2.0.0",
     "diff": "^3.0.1",
     "immutable": "^3.8.1",
@@ -78,7 +78,7 @@
     "moment": "^2.15.1",
     "react": "^15.0.0",
     "react-addons-css-transition-group": "^15.0.0",
-    "react-codemirror": "^0.2.6",
+    "react-codemirror": "^0.3.0",
     "react-dom": "^15.0.0",
     "react-jsonschema-form": "^0.41.2",
     "react-modal": "^1.4.0",

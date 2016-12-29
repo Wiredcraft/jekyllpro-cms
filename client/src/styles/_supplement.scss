@@ -256,6 +256,10 @@ legend {
     right: 0;
     bottom: 300px;
   }
+  fieldset {
+    min-width: 100%;
+    width: 100%;
+  }
 }
 
 .ReactModal__Content.file-picker .body {

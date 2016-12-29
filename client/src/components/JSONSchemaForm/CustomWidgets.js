@@ -7,6 +7,7 @@ import 'codemirror/mode/javascript/javascript'
 import 'codemirror/mode/xml/xml'
 import 'codemirror/mode/htmlmixed/htmlmixed'
 import 'codemirror/addon/display/autorefresh'
+import debounce from 'lodash.debounce'
 
 import Tags from './Tags'
 import CustomSelectWidget from './CustomSelectWidget'
@@ -39,8 +40,11 @@ const customTextarea = (props) => {
 }
 
 const customCodeMirror = (props) => {
+  var handler = debounce((code) => {
+    props.onChange(code)
+  }, 800)
   return (
-    <Codemirror value={props.value || ''} required={props.required} onChange={(code) => props.onChange(code)} options={cmOptions} />
+    <Codemirror value={props.value || ''} required={props.required} onChange={handler} options={cmOptions} />
   )
 }
 
