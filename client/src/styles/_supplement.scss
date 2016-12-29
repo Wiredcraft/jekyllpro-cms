@@ -90,6 +90,9 @@ fieldset {
   .button + .menu {
     pointer-events: none;
   }
+  &.button {
+    pointer-events: none;
+  }
 }
 .upload-box {
   @extend .empty;

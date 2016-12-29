@@ -51,7 +51,8 @@ export default class ContentEditor extends Component {
       formData: {},
       currentSchema: null,
       showDeleteFileModel: false,
-      disableActionBtn: false
+      disableActionBtn: false,
+      fileModified: false
     }
   }
 
@@ -193,13 +194,13 @@ export default class ContentEditor extends Component {
           collectionFileUpdated(oldPath, newItem)
           selectCollectionFile(newItem)
           toRoute(`/${repoOwner}/${repoName}/${collectionType}/${branch}/${filePath}`)
-          this.setState({ disableActionBtn: false })
+          this.setState({ disableActionBtn: false, fileModified: false })
         })
     } else {
       updatedContent = this.updateFileFrontMatter(selectedCollectionFile.content, formData) + updatedContent
 
       if (!textValueIsDifferent(selectedCollectionFile.content, updatedContent)) {
-        this.setState({ disableActionBtn: false })
+        this.setState({ disableActionBtn: false, fileModified: false })
         return notify('warning', 'You don\'t have any changes!')
       }
       reqPromise = updateFile(currentBranch, filePath, updatedContent)
@@ -214,7 +215,7 @@ export default class ContentEditor extends Component {
           }
           collectionFileUpdated(filePath, newItem)
           selectCollectionFile(newItem)
-          this.setState({ disableActionBtn: false })
+          this.setState({ disableActionBtn: false, fileModified: false })
         })
     }
 
@@ -268,12 +269,18 @@ export default class ContentEditor extends Component {
 
   handlePublishInput(evt) {
     const { isPostPublished } = this.state
-    this.setState({ isPostPublished: !isPostPublished })
+    this.setState({
+      isPostPublished: !isPostPublished,
+      fileModified: true
+    })
   }
 
   handleDraftInput(evt) {
     const { isDraft } = this.state
-    this.setState({ isDraft: !isDraft })
+    this.setState({
+      isDraft: !isDraft,
+      fileModified: true
+    })
   }
 
   closeDeleteFileModel () {
@@ -346,7 +353,10 @@ export default class ContentEditor extends Component {
       newPathArray.push(currentFileLanguage)
     }
     newPathArray.push(newFilename)
-    this.setState({ currentFilePath: newPathArray.join('/')})
+    this.setState({
+      currentFilePath: newPathArray.join('/'),
+      fileModified: true
+    })
   }
 
   toContentListing() {
@@ -358,7 +368,7 @@ export default class ContentEditor extends Component {
     const { editorUpdating, selectedCollectionFile, params, schemas, config,
       repoFullName, currentBranch } = this.props
     const { filePathInputClass, formData, currentFilePath, availableLanguages, translations,
-      currentSchema, disableActionBtn, currentFileSlug } = this.state
+      currentSchema, disableActionBtn, currentFileSlug, fileModified } = this.state
 
     if (!currentSchema) return (<section id='content' />)
 
@@ -374,13 +384,15 @@ export default class ContentEditor extends Component {
             </a>
             <span className={disableActionBtn ? 'bundle disabled' : 'bundle'}>
               <button
-                className={disableActionBtn ? 'button primary save processing' : 'button primary save'}
+                className={fileModified
+                  ? (disableActionBtn ? 'button disabled save processing' : 'button primary save')
+                  : 'button disabled save'}
                 onClick={::this.handleSaveBtn}>
                 Save
               </button>
 
               <span className="menu">
-                <button className="button icon primary">
+                <button className={fileModified ? 'button icon primary' : 'button icon'}>
                   <MoreMenuIcon />
                 </button>
                 <div className="options">
@@ -480,7 +492,7 @@ export default class ContentEditor extends Component {
             <small className='description'><strong>File path: </strong>{currentFilePath}</small>
           </div>
           <Form
-            onChange={res => this.setState({ formData: res.formData })}
+            onChange={res => this.setState({ formData: res.formData, fileModified: true })}
             onSubmit={res => this.updateResult(res.formData)}
             schema={currentSchema.JSONSchema}
             uiSchema={currentSchema.uiSchema}
