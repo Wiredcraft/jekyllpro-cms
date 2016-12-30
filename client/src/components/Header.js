@@ -19,7 +19,7 @@ import BranchIcon from './svg/BranchIcon'
 import LogoutIcon from './svg/LogoutIcon'
 import RepoSelection from './Header/RepoSelection'
 import notify from './common/Notify'
-import JekyllproStatus from './Header/JekyllproStatus'
+import JekyllProStatus from './Header/JekyllProStatus'
 
 @connect(mapStateToProps, mapDispatchToProps)
 export default class Header extends Component {
@@ -207,7 +207,7 @@ export default class Header extends Component {
             </div>
           )}
         </span>
-        <JekyllproStatus {...{repoOwner, repoName, currentBranch}} />
+        <JekyllProStatus {...{repoOwner, repoName, currentBranch}} />
       </header>
     )
   }
