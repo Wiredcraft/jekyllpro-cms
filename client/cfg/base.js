@@ -8,6 +8,7 @@ let srcPath = path.join(__dirname, '/../src')
 let publicPath = '/'
 
 module.exports = {
+  bail: true,
   additionalPaths: [],
   debug: true,
   devtool: 'eval-source-map',
