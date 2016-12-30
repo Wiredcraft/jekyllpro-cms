@@ -157,3 +157,12 @@ export function removeRepoHook () {
       .end(generalResponseHandler(resolve, reject))
   })
 }
+
+export function checkJekyllProBuild (branch) {
+  var requestUrl = `${API_BASE_URL}/api/status?branch=${branch}`
+  return new Promise((resolve, reject) => {
+    repoRequest('GET', requestUrl)
+      .end(generalResponseHandler(resolve, reject))
+  })
+}
+
