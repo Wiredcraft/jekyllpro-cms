@@ -30,12 +30,21 @@ export default class JekyllProStatus extends Component {
       this.setState({ updating: true })
 
       checkJekyllProBuild(newBranch)
-      .then(({ url, status, hash }) => {
+      .then((res) => {
         this.setState({
           isJekyllProClient: true,
-          buildStatus: { url, status, hash, lastUpdate: Date.now() },
+          buildStatus: {
+            url: res.url,
+            status: res.status,
+            hash: res.hash,
+            lastUpdate: Date.now()
+          },
           updating: false
         })
+      })
+      .catch((err) => {
+        console.log(err)
+        this.setState({ updating: false })
       })
     }
   }
@@ -45,9 +54,9 @@ export default class JekyllProStatus extends Component {
     const { buildStatus, updating } = this.state
 
     // do not update when last update was a minute ago
-    if (buildStatus && ((Date.now() - buildStatus.lastUpdate) < 1000 * 60)) {
-      return
-    }
+    // if (buildStatus && ((Date.now() - buildStatus.lastUpdate) < 1000 * 60)) {
+      // return
+    // }
 
     if (updating) {
       return
@@ -56,12 +65,21 @@ export default class JekyllProStatus extends Component {
     this.setState({ updating: true })
 
     checkJekyllProBuild(currentBranch)
-    .then(({ url, status, hash }) => {
+    .then((res) => {
       this.setState({
         updating: false,
         isJekyllProClient: true,
-        buildStatus: { url, status, hash, lastUpdate: Date.now() }
+        buildStatus: {
+          url: res.url,
+          status: res.status,
+          hash: res.hash,
+          lastUpdate: Date.now()
+        }
       })
+    })
+    .catch((err) => {
+      console.log(err)
+      this.setState({ updating: false })
     })
   }
 
@@ -70,9 +88,12 @@ export default class JekyllProStatus extends Component {
     const { isJekyllProClient, buildStatus, updating } = this.state
 
     let repoUrl = `https://github.com/${repoOwner}/${repoName}/`
+    let mainClass = isJekyllProClient
+      ? updating ? 'website menu loading' : `website menu ${statusClassMapping[buildStatus.status]}`
+      : 'website menu'
 
     return (
-      <span className='website menu'>
+      <span className={mainClass}>
         <a className="view item tooltip-bottom" href='#' onMouseEnter={::this.handleHover}>
           <CloudIcon />
           Website
@@ -86,7 +107,6 @@ export default class JekyllProStatus extends Component {
           <div className={updating ? 'options loading' : 'options'}>
             <span className={`message ${statusClassMapping[buildStatus.status]}`}>
               {`Update ${buildStatus.status} `}
-              {moment(new Date(buildStatus.lastUpdate)).fromNow()}
             </span>
             <a href={buildStatus.url} target='_blank'><ExternalLinkIcon /> See live site</a>
             <hr />
