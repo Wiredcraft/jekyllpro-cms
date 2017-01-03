@@ -99,7 +99,7 @@ export default class JekyllProStatus extends Component {
 
     let repoUrl = `https://github.com/${repoOwner}/${repoName}/`
     let mainClass = isJekyllProClient
-      ? updating ? 'website menu loading' : `website menu ${statusClassMapping[buildStatus.status]}`
+      ? `website menu ${statusClassMapping[buildStatus.status]}`
       : 'website menu'
 
     return (
@@ -115,7 +115,9 @@ export default class JekyllProStatus extends Component {
         {
           isJekyllProClient && buildStatus &&
           <div className={updating ? 'options loading' : 'options'}>
-            <span className={`message ${statusClassMapping[buildStatus.status]}`}>
+            <span className={updating
+              ? `message processing ${statusClassMapping[buildStatus.status]}`
+              : `message ${statusClassMapping[buildStatus.status]}`}>
               {`Update ${buildStatus.status} `}
             </span>
             <a href={buildStatus.url} target='_blank'><ExternalLinkIcon /> See live site</a>
