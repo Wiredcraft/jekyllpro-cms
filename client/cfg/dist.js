@@ -2,7 +2,7 @@
 
 let path = require('path')
 let webpack = require('webpack')
-
+let ExtractTextPlugin = require('extract-text-webpack-plugin')
 let baseConfig = require('./base')
 
 let config = Object.assign({}, baseConfig, {
@@ -12,8 +12,12 @@ let config = Object.assign({}, baseConfig, {
 })
 
 config.output.path = path.join(__dirname, '../dist')
+config.output.filename = 'assets/[name].[chunkhash].js'
+
+config.plugins.pop()
 
 config.plugins.unshift(
+  new ExtractTextPlugin('assets/app.[chunkhash].css'),
   new webpack.optimize.DedupePlugin(),
   new webpack.DefinePlugin({
     '__DEV__': false,
