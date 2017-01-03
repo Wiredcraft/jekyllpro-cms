@@ -12,7 +12,8 @@ const initialState = Immutable.fromJS({
   schemas: undefined,
   config: undefined,
   treeMeta: undefined,
-  hasIndexHook: false
+  hasIndexHook: false,
+  repoUpdateSignal: false
 })
 
 export default function repo (state = initialState, action) {
@@ -24,7 +25,7 @@ export default function repo (state = initialState, action) {
 
     case CHANGE_REPO_STATE:
       var { branches, treeMeta, currentBranch, loading, repoDetails,
-        config, collections, schemas, hasIndexHook } = action.payload
+        config, collections, schemas, hasIndexHook, repoUpdateSignal } = action.payload
       if(repoDetails) state = state.set('repoDetails', repoDetails)
       if(branches) state = state.set('branches', branches)
       if(currentBranch) state = state.set('currentBranch', currentBranch)
@@ -34,6 +35,7 @@ export default function repo (state = initialState, action) {
       if(collections) state = state.set('collections', collections)
       if(treeMeta) state = state.set('treeMeta', treeMeta)
       if(hasIndexHook) state = state.set('hasIndexHook', hasIndexHook)
+      if(repoUpdateSignal) state = state.set('repoUpdateSignal', repoUpdateSignal)
       return state
 
     case FILE_REMOVED:
@@ -65,14 +67,14 @@ export default function repo (state = initialState, action) {
 
     case COLLECTION_FILE_ADDED:
       let addingCol = [...state.get('collections'), action.payload.newFileData]
-      state = state.set('collections', addingCol)
+      state = state.set('collections', addingCol).set('repoUpdateSignal', true)
       return state
 
     case COLLECTION_FILE_REMOVED:
       let removingCol = state.get('collections').filter(i => {
         return i.path !== action.payload.path
       })
-      state = state.set('collections', removingCol)
+      state = state.set('collections', removingCol).set('repoUpdateSignal', true)
       return state
 
     case COLLECTION_FILE_UPDATED:
@@ -83,7 +85,7 @@ export default function repo (state = initialState, action) {
         }
         return i
       })
-      state = state.set('collections', updatingCol)
+      state = state.set('collections', updatingCol).set('repoUpdateSignal', true)
       return state
 
     default:

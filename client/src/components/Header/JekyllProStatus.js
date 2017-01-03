@@ -24,9 +24,15 @@ export default class JekyllProStatus extends Component {
     }
   }
 
-  componentWillReceiveProps(nextProps) {
-    const newBranch = nextProps.currentBranch
-    if (this.props.currentBranch !== nextProps.currentBranch) {
+  componentDidUpdate(prevProps, prevState) {
+    const { updating } = this.state
+    const { currentBranch, repoUpdateSignal } = this.props
+
+    if (updating) {
+      return
+    }
+
+    if ((prevProps.currentBranch !== currentBranch) || (repoUpdateSignal && !prevProps.repoUpdateSignal)) {
       this.setState({ updating: true })
 
       checkJekyllProBuild(newBranch)
@@ -46,17 +52,21 @@ export default class JekyllProStatus extends Component {
         console.log(err)
         this.setState({ updating: false })
       })
-    }
+
+      if (repoUpdateSignal) {
+        this.props.resetUpdateSignal()
+      }
+    } 
   }
 
   handleHover() {
     const { currentBranch } = this.props
     const { buildStatus, updating } = this.state
 
-    // do not update when last update was a minute ago
-    // if (buildStatus && ((Date.now() - buildStatus.lastUpdate) < 1000 * 60)) {
-      // return
-    // }
+    // do not update when last update was three seconds ago
+    if (buildStatus && ((Date.now() - buildStatus.lastUpdate) < 1000 * 3)) {
+      return
+    }
 
     if (updating) {
       return

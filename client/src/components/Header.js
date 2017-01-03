@@ -8,7 +8,8 @@ import {
   checkoutBranch,
   fetchRepoInfo,
   resetRepoData,
-  fetchRepoIndex
+  fetchRepoIndex,
+  resetUpdateSignal
 } from '../actions/repoActions'
 import { resetEditorData, selectCollectionFile } from '../actions/editorActions'
 import { logout } from '../actions/userActions'
@@ -156,8 +157,8 @@ export default class Header extends Component {
   }
 
   render () {
-    const { branches, currentBranch, avatar, userName, userUrl, schemas, repoDetails,
-    params: { repoOwner, repoName, collectionType, branch, splat: filePath} } = this.props
+    const { branches, currentBranch, avatar, userName, userUrl, repoDetails,
+      repoUpdateSignal, resetUpdateSignal, params: { repoOwner, repoName } } = this.props
 
     return (
       <header id='header'>
@@ -207,7 +208,9 @@ export default class Header extends Component {
             </div>
           )}
         </span>
-        <JekyllProStatus {...{repoOwner, repoName, currentBranch}} />
+        <JekyllProStatus
+          {...{ repoOwner, repoName, currentBranch,
+            repoUpdateSignal, resetUpdateSignal }} />
       </header>
     )
   }
@@ -223,7 +226,8 @@ function mapStateToProps(state, { params:
     userName: state.user.get('userName'),
     userUrl: state.user.get('userUrl'),
     branches: state.repo.get('branches'),
-    repoDetails: state.repo.get('repoDetails')
+    repoDetails: state.repo.get('repoDetails'),
+    repoUpdateSignal: state.repo.get('repoUpdateSignal')
   }
 }
 
@@ -237,6 +241,7 @@ function mapDispatchToProps (dispatch) {
     toRoute,
     selectCollectionFile,
     fetchRepoInfo,
-    fetchRepoIndex
+    fetchRepoIndex,
+    resetUpdateSignal
   }, dispatch)
 }

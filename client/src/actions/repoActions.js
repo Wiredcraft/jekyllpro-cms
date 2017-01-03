@@ -221,3 +221,12 @@ export function collectionFileUpdated(oldPath, newFileData) {
     })
   }
 }
+
+export function resetUpdateSignal() {
+  return dispatch => {
+    dispatch({
+      payload: { repoUpdateSignal: false },
+      type: CHANGE_REPO_STATE
+    })
+  }
+}
