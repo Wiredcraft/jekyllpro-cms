@@ -47,7 +47,7 @@ export default class FilePickerWidget extends Component {
       <div>
         <span className='file-picker' id={id}>
           <input type='text'
-            readOnly
+            onChange={(evt) => onChange(evt.target.value)}
             value={value}
             required={required}
             placeholder='File' />
