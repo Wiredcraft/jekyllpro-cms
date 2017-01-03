@@ -114,7 +114,7 @@ export default class JekyllProStatus extends Component {
         }
         {
           isJekyllProClient && buildStatus &&
-          <div className={updating ? 'options loading' : 'options'}>
+          <div className='options'>
             <span className={updating
               ? `message processing ${statusClassMapping[buildStatus.status]}`
               : `message ${statusClassMapping[buildStatus.status]}`}>
@@ -122,7 +122,7 @@ export default class JekyllProStatus extends Component {
             </span>
             <a href={buildStatus.url} target='_blank'><ExternalLinkIcon /> See live site</a>
             <hr />
-            <a href={`${repoUrl}commit/${buildStatus.hash}`} target='_blank'>
+            <a href={`${repoUrl}tree/${buildStatus.hash}`} target='_blank'>
               <ExternalLinkIcon /> Current version #{`${buildStatus.hash.slice(0, 7)}`}
             </a>
             <hr />
