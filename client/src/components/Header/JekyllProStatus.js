@@ -35,7 +35,7 @@ export default class JekyllProStatus extends Component {
     if ((prevProps.currentBranch !== currentBranch) || (repoUpdateSignal && !prevProps.repoUpdateSignal)) {
       this.setState({ updating: true })
 
-      checkJekyllProBuild(newBranch)
+      checkJekyllProBuild(currentBranch)
       .then((res) => {
         this.setState({
           isJekyllProClient: true,
