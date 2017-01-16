@@ -55,7 +55,7 @@ const getRepoDetails = (req, res, next) => {
   })
   .catch((err) => {
     // console.log(err)
-    res.status(err.status).json(err.response.data)
+    res.status(err.response.status).json(err.response.data)
   })
 }
 
@@ -70,7 +70,7 @@ const getRepoContent = (req, res, next) => {
   })
   .catch((err) => {
     // console.log(err)
-    res.status(err.status).json(err.response.data)
+    res.status(err.status || err.response.status).json(err.response.data)
   })
 }
 
@@ -87,7 +87,7 @@ const writeRepoFile = (req, res, next) => {
   })
   .catch((err) => {
     // console.log(err)
-    res.status(err.status).json(err.response.data)
+    res.status(err.status || err.response.status).json(err.response.data)
   })
 }
 
@@ -102,20 +102,24 @@ const deleteRepoFile = (req, res, next) => {
   })
   .catch((err) => {
     // console.log(err)
-    res.status(err.status).json(err.response.data)
+    res.status(err.status || err.response.status).json(err.response.data)
   })
 }
 
 const listBranches = (req, res, next) => {
   var repo = req.githubRepo
-  repo.listBranches()
+  var { branch } = req.query
+
+  var nextPromise = branch ? repo.getBranch(branch) : repo.listBranches()
+
+  return nextPromise
   .then((data) => {
     // console.log(data)
     res.status(200).json(data.data)
   })
   .catch((err) => {
     // console.log(err)
-    res.status(err.status).json(err.response.data)
+    res.status(err.status || err.response.status || err.response.status).json(err.response.data)
   })
 }
 
@@ -130,7 +134,7 @@ const createBranches = (req, res, next) => {
   })
   .catch((err) => {
     // console.log(err)
-    res.status(err.status).json(err.response.data)
+    res.status(err.status || err.response.status).json(err.response.data)
   })
 }
 
@@ -160,7 +164,7 @@ const getBranchSchema = (req, res, next) => {
   })
   .catch((err) => {
     console.log(err)
-    res.status(err.status).json(err.response.data)
+    res.status(err.status || err.response.status).json(err.response.data)
   })
 }
 
@@ -238,7 +242,7 @@ const refreshIndexAndSave = (req, res) => {
     })
     .catch((err) => {
       console.log(err)
-      return res.status(err.status).json(err.response.data)    
+      return res.status(err.status || err.response.status).json(err.response.data)    
     })
 }
 
@@ -356,7 +360,7 @@ const listHooks = (req, res) => {
     })
     .catch(err => {
       console.log(err)
-      return res.status(err.status).json(err.response.data)
+      return res.status(err.status || err.response.status).json(err.response.data)
     })
 }
 
@@ -376,7 +380,7 @@ const manageHook = (req, res) => {
       })
       .catch(err => {
         console.log(err)
-        return res.status(err.status).json(err.response.data)
+        return res.status(err.status || err.response.status).json(err.response.data)
       })
   }
   if (req.body.action === 'delete') {
@@ -392,7 +396,7 @@ const manageHook = (req, res) => {
       })
       .catch(err => {
         console.log(err)
-        return res.status(err.status).json(err.response.data)
+        return res.status(err.status || err.response.status).json(err.response.data)
       })
   }
 }
@@ -406,7 +410,7 @@ const listBranchTree = (req, res) => {
     })
     .catch(err => {
       console.log(err)
-      return res.status(err.status).json(err.response.data)
+      return res.status(err.status || err.response.status).json(err.response.data)
     })
 }
 
