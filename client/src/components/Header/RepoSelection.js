@@ -1,5 +1,4 @@
 import React, { Component } from 'react'
-import Cookie from 'js-cookie'
 import { checkRepoAvailability } from '../../helpers/api'
 import MagnifierIcon from '../svg/MagnifierIcon'
 import RepoIcon from '../svg/RepoIcon'
@@ -39,20 +38,12 @@ export default class RepoSelection extends Component {
   }
 
   handleClick (evt) {
-    const { getAllBranch, resetRepoData, resetEditorData, toRoute, fetchRepoInfo } = this.props
+    const { resetRepoData, resetEditorData, toRoute } = this.props
     const { searchResult: { repoName, repoOwner } } = this.state
-    Cookie.set('repoOwner', repoOwner, { expires: 100 })
-    Cookie.set('repoName', repoName, { expires: 100 })
+
     resetEditorData()
     resetRepoData()
-    fetchRepoInfo().then(() => {
-      getAllBranch()
-      toRoute(`/${repoOwner}/${repoName}/`)
-    })
-    .catch(err => {
-      Cookie.remove('repoOwner')
-      Cookie.remove('repoName')
-    })
+    toRoute(`/${repoOwner}/${repoName}/`)
   }
 
   render () {

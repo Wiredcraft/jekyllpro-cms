@@ -27,18 +27,6 @@ class ContentListing extends Component {
     }
   }
 
-  componentDidUpdate(prevProps) {
-    const { params, schemas, toRoute, location } = this.props
-
-    // switched branch and branch has no schemas
-    if ((!schemas || !schemas.length) && (schemas !== prevProps.schemas)) {
-      toRoute({
-        pathname: location.pathname,
-        query: { invalidRepo: 1 }
-      })
-    }
-  }
-
   createNewFileByType(type) {
     const { resetEditorData, toRoute, currentBranch, params: { repoOwner, repoName } } = this.props
     resetEditorData()

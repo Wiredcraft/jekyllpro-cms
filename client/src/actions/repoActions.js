@@ -1,10 +1,11 @@
 /* global API_BASE_URL */
-import { getRepoDetails, getRepoMeta, getRepoBranchList, getRepoIndex, getRepoTree,
-  listRepoHooks, registerRepoHook } from '../helpers/api'
+import { getRepoDetails, getRepoMeta, getRepoBranchList, getRepoIndex, getRepoBranchDetails,
+  getRepoTree, listRepoHooks, registerRepoHook } from '../helpers/api'
 import { resetEditorData } from './editorActions'
 
 export const CHANGE_REPO_STATE = 'CHANGE_REPO_STATE'
 export const RESET_REPO_DATA = 'RESET_REPO_DATA'
+export const CHECKOUT_BRANCH = 'CHECKOUT_BRANCH'
 export const FILE_REMOVED = 'FILE_REMOVED'
 export const FILE_ADDED = 'FILE_ADDED'
 export const FILE_REPLACED = 'FILE_REPLACED'
@@ -68,9 +69,16 @@ export function fetchRepoIndex(opts) {
     return getRepoIndex(opts || {})
       .then(data => {        
         dispatch({
-          payload: { collections: data.collections, schemas: data.schemas, config: data.config, loading: false },
+          payload: {
+            collections: data.collections,
+            schemas: data.schemas,
+            config: data.config,
+            indexUpdatedAt: data.updated,
+            loading: false
+          },
           type: CHANGE_REPO_STATE
         })
+
         return data
       })
       .catch(err => {
@@ -152,14 +160,28 @@ export function getAllBranch() {
   }
 }
 
+export function getCurrentBranchUpdateTime(branch) {
+  return dispatch => {
+    return getRepoBranchDetails(branch)
+      .then(data => {
+        dispatch({
+          payload: { currentBranchUpdatedAt: data.commit.commit.author.date },
+          type: CHANGE_REPO_STATE
+        })
+      })
+  }
+}
+
 export function checkoutBranch(branch) {
   return dispatch => {
-    Promise.all([
+    return Promise.all([
       dispatch({
-        payload: { currentBranch: branch },
-        type: CHANGE_REPO_STATE
+        payload: {
+          currentBranch: branch
+         },
+        type: CHECKOUT_BRANCH
       }),
-      dispatch(fetchRepoIndex({ branch })),
+      // dispatch(fetchRepoIndex({ branch })),
       dispatch(resetEditorData())
     ])
   }

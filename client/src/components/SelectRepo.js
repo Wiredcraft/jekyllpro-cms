@@ -5,15 +5,8 @@ import Cookie from 'js-cookie'
 import MagnifierIcon from './svg/MagnifierIcon'
 import RepoIcon from './svg/RepoIcon'
 import { checkRepoAvailability } from '../helpers/api'
-import { resetEditorData } from '../actions/editorActions'
 import { toRoute } from '../actions/routeActions'
-import {
-  getAllBranch,
-  checkoutBranch,
-  fetchRepoInfo,
-  resetRepoData,
-  listHooks
-} from '../actions/repoActions'
+import { resetRepoData } from '../actions/repoActions'
 
 let timeout = null
 
@@ -58,10 +51,14 @@ export default class SelectRepo extends Component {
   }
 
   handleClick (evt) {
-    const { getAllBranch, resetRepoData, resetEditorData, toRoute, fetchRepoInfo } = this.props
+    const { toRoute, resetRepoData, repoDetails } = this.props
     const { searchResult: { repoName, repoOwner } } = this.state
     Cookie.set('repoOwner', repoOwner, { expires: 100 })
     Cookie.set('repoName', repoName, { expires: 100 })
+
+    if (repoDetails) {
+      resetRepoData()
+    }
     toRoute(`/${repoOwner}/${repoName}/`)
   }
 
@@ -95,19 +92,13 @@ function mapStateToProps(state, { params:
   { collectionType, branch, splat: path } }) {
 
   return {
-    currentBranch: state.repo.get('currentBranch'),
-    branches: state.repo.get('branches'),
     repoDetails: state.repo.get('repoDetails')
   }
 }
 
 function mapDispatchToProps (dispatch) {
   return bindActionCreators({
-    getAllBranch,
-    checkoutBranch,
     resetRepoData,
-    resetEditorData,
-    toRoute,
-    fetchRepoInfo
+    toRoute
   }, dispatch)
 }

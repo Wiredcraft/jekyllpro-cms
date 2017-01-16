@@ -97,6 +97,13 @@ export function getRepoBranchList () {
   }) 
 }
 
+export function getRepoBranchDetails (branch) {
+  return new Promise((resolve, reject) => {
+    repoRequest('GET', `${API_BASE_URL}/api/repository/branch` + setQueryParam({ branch }))
+      .end(generalResponseHandler(resolve, reject))
+  }) 
+}
+
 export function updateRepoFile ({ branch, path, content, message }) {
   return new Promise((resolve, reject) => {
     repoRequest('POST', `${API_BASE_URL}/api/repository`)

@@ -6,6 +6,7 @@ import Cookie from 'js-cookie'
 import {
   getAllBranch,
   checkoutBranch,
+  getCurrentBranchUpdateTime,
   fetchRepoInfo,
   resetRepoData,
   fetchRepoIndex,
@@ -32,10 +33,43 @@ export default class Header extends Component {
   }
 
   componentWillMount() {
-    const { repoOwner, repoName, collectionType, branch, splat: path } = this.props.params
-    const { fetchRepoInfo, getAllBranch, listHooks, toRoute } = this.props
+    this.loadBasicRepoData()
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    const { params: { repoOwner, repoName } } = this.props
+    const { repoOwner: prevRepoOwner, repoName: prevRepoName } = prevProps.params
+    // happens when user select different repository
+    if (prevRepoOwner && prevRepoName &&
+      (repoOwner !== prevRepoOwner) || (repoName !== prevRepoName)) {
+      this.loadBasicRepoData()
+    }
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const { currentBranchUpdatedAt, indexUpdatedAt, currentBranch, fetchRepoIndex } = nextProps
+
+    // check if index is out of sync
+    if (currentBranchUpdatedAt && indexUpdatedAt &&
+      (currentBranchUpdatedAt !== this.props.currentBranchUpdatedAt) &&
+      (Date.parse(indexUpdatedAt) < Date.parse(currentBranchUpdatedAt))) {
+      
+      notify('warning', 'Rebuilding index data for repository, this may take a few minutes', '', 5000)
+
+      fetchRepoIndex({ branch: currentBranch, refresh: true })
+        .then(data => {
+          this.checkIfExistingFile(data)
+        })
+        .catch(err => {
+          this.indexDataErrorHandler(err)
+        })
+    }
+  }
+
+  loadBasicRepoData() {
     const repoOwnerCk = Cookie.get('repoOwner')
     const repoNameCk = Cookie.get('repoName')
+    const { fetchRepoInfo, getAllBranch, toRoute, params: { repoOwner, repoName } } = this.props
 
     if (repoOwner && repoName) {
       Cookie.set('repoOwner', repoOwner, { expires: 100 })
@@ -72,30 +106,15 @@ export default class Header extends Component {
   }
 
   fetchLatestIndex() {
-    const { fetchRepoIndex, params, toRoute, location,
-      selectCollectionFile, currentBranch, query, repoDetails } = this.props
+    const { fetchRepoIndex, getCurrentBranchUpdateTime, currentBranch } = this.props
 
     fetchRepoIndex({ branch: currentBranch })
     .then((indexData) => {
-      // check if index is out of sync
-      if (Date.parse(indexData.updated) < Date.parse(repoDetails.updatedAt)) {
-        notify('warning', 'Rebuilding index data for repository, this may take a few minutes', '', 5000)
-
-        fetchRepoIndex({ branch: currentBranch, refresh: true })
-          .then((newIndexData) => {
-            return this.checkIfHasSchema(newIndexData)
-          })
-          .then(data => {
-            this.checkIfExistingFile(data)
-          })
-          .catch(err => {
-            this.indexDataErrorHandler(err)
-          })
-      }
-      
       return this.checkIfHasSchema(indexData)
     })
     .then((data) => {
+      getCurrentBranchUpdateTime(currentBranch)
+
       this.checkIfExistingFile(data)
     })
     .catch(err => {
@@ -104,10 +123,12 @@ export default class Header extends Component {
   }
 
   checkIfHasSchema(indexData) {
-    const { toRoute, location } = this.props
-    // check if this repo has schemas
+    const { toRoute, location, fetchRepoIndex, currentBranch } = this.props
+    // this repo branch might have legacy index data even it does not have schemas,
+    // in this case, do a refresh index build,
+    // if it still does not have schemas, the request will return error.
     if (!indexData.schemas || !indexData.schemas.length) {
-      return Promise.reject({ status: 404 })
+      return fetchRepoIndex({ branch: currentBranch, refresh: true })
     }
     return Promise.resolve(indexData)
   }
@@ -149,6 +170,9 @@ export default class Header extends Component {
     const {checkoutBranch, toRoute} = this.props
     const { repoOwner, repoName } = this.props.params
     checkoutBranch(newBranch)
+    .then(() => {
+      this.fetchLatestIndex()
+    })
     toRoute(`/${repoOwner}/${repoName}/`)
   }
 
@@ -227,7 +251,9 @@ function mapStateToProps(state, { params:
     userUrl: state.user.get('userUrl'),
     branches: state.repo.get('branches'),
     repoDetails: state.repo.get('repoDetails'),
-    repoUpdateSignal: state.repo.get('repoUpdateSignal')
+    repoUpdateSignal: state.repo.get('repoUpdateSignal'),
+    currentBranchUpdatedAt: state.repo.get('currentBranchUpdatedAt'),
+    indexUpdatedAt: state.repo.get('indexUpdatedAt')
   }
 }
 
@@ -235,6 +261,7 @@ function mapDispatchToProps (dispatch) {
   return bindActionCreators({
     getAllBranch,
     checkoutBranch,
+    getCurrentBranchUpdateTime,
     logout,
     resetRepoData,
     resetEditorData,
