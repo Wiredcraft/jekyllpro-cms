@@ -205,13 +205,18 @@ const getRepoBranchIndex = (req, res, next) => {
       record.repository,
       record.updated
     )
-    let data = {
-      updated: record.updated,
-      collections: JSON.parse(record.collections),
-      schemas: JSON.parse(record.schemas),
-      config: JSON.parse(record.config),
+    // some repo branches might have legacy index data built when it didn't have schemas.
+    if (JSON.parse(record.schemas).length) {
+      let data = {
+        updated: record.updated,
+        collections: JSON.parse(record.collections),
+        schemas: JSON.parse(record.schemas),
+        config: JSON.parse(record.config),
+      }
+      return res.status(200).json(data)
     }
-    return res.status(200).json(data)
+    // next middleware should be refreshIndexAndSave()
+    return next()
   })
 }
 
