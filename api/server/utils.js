@@ -1,4 +1,6 @@
 import _ from 'lodash'
+import jsyaml from 'js-yaml'
+import iso from './iso'
 
 export class TaskQueue {
   constructor (concurrency) {
@@ -47,4 +49,21 @@ export function getCollectionFiles (schemaArray, filesArray) {
   .map(i => {
     return _.pick(i, ['path', 'collectionType'])
   })
+}
+
+export function getLangFromConfigYaml (content) {
+  var config = jsyaml.safeLoad(content)
+  var lanArray = config['lang']
+    
+  if (lanArray) {
+    let cmsConfig = {}
+    cmsConfig['languages'] = lanArray.map((lanCode) => {
+      return {
+        'name': iso[lanCode] || lanCode,
+        'code': lanCode
+      }
+    })
+    return cmsConfig
+  }
+  return null
 }

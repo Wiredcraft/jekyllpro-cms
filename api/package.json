@@ -27,6 +27,7 @@
     "express-session": "^1.14.1",
     "github-api": "^3.0.0",
     "helmet": "^2.1.2",
+    "js-yaml": "^3.7.0",
     "lodash": "^4.15.0",
     "lusca": "^1.4.1",
     "method-override": "^2.3.6",

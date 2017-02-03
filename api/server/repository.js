@@ -1,7 +1,8 @@
 import config from '../config'
 import GithubAPI from 'github-api'
 import _ from 'lodash'
-import { TaskQueue, getCollectionFiles } from './utils'
+
+import { TaskQueue, getCollectionFiles, getLangFromConfigYaml } from './utils'
 import { RepoIndex, RepoAccessToken } from './database'
 import { hookConfig } from './webhook'
 
@@ -273,10 +274,10 @@ const getFreshIndexFromGithub = (repoObject, branch) => {
       })
 
       treeArray.forEach((item) => {
-        if (item.path === '.JekyllPro/config.json') {
-          jekyllProConfigReq = repoObject.getContents(branch, '.JekyllPro/config.json', true)
+        if (item.path === '_config.yml') {
+          jekyllProConfigReq = repoObject.getContents(branch, '_config.yml', true)
           .then((data) => {
-            formatedIndex['config'] = data.data
+            formatedIndex['config'] = getLangFromConfigYaml(data.data)
           })
           .catch(err => {
             console.log(err)
