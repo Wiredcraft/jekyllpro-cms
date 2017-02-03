@@ -14,10 +14,5 @@ module.exports = {
     callbackURL: (process.env.SERVER_URL || 'http://localhost:3000') + '/api/auth/github/callback'
   },
   // redirectUrl should be the client service URL the github Oauth redirecting to
-  redirectUrl: process.env.REDIRECT_URL || 'http://localhost:8000/',
-  // the api service will be pointing to https://github.com/wiredcraft/beta.starbucks.com.cn if not specified
-  repo: {
-    user: process.env.REPO_ORG || 'wiredcraft',
-    name: process.env.REPO_NAME || 'beta.starbucks.com.cn'
-  }
+  redirectUrl: process.env.REDIRECT_URL || 'http://localhost:8000/'
 }

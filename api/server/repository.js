@@ -1,4 +1,3 @@
-import config from '../config'
 import GithubAPI from 'github-api'
 import _ from 'lodash'
 

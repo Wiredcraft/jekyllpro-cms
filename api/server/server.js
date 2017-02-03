@@ -28,7 +28,6 @@ const init = function init (callback) {
 }
 
 module.exports.start = function start (callback) {
-  console.log(config.github.callbackURL)
   init(function (app, db, config) {
     app.listen(config.port, config.host, function () {
       // Create server URL
