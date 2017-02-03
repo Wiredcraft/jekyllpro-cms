@@ -296,341 +296,179 @@ GET /api/repository/index?branch=<branchname>
 GET /api/repository/index?branch=<branchname>&refresh=true
 // will rebuild a new index from github
 ```
-<details>
-<summary>Example of success response body:</summary>
-<p>
+Example of success response body:
 ```javascript
-{
-    "updated": "2017-02-03T08:49:44.000Z",
-    "collections": [
-        {
-            "path": "_posts/2016-09-08-welcome-to-jekyll.md",
-            "collectionType": "posts",
-            "lastCommitSha": "7edb850806edaffd031e9897ac2786d1cd1e6045",
-            "lastUpdatedAt": "2016-12-29T07:33:02Z",
-            "lastUpdatedBy": "GitHub",
-            "content": "---\nlayout: post\ntitle: Welcome to Jekyll!\ndate: '2016-09-08 15:56:50 +0800'\ncategories: jekyll update\nauthor: Ronan\ntag:\n  - product\n  - guide\n  - good\n---\nYou’ll find this post in your `_posts` directory. Go ahead and edit it and re-build the site to see your changes. You can rebuild the site in many different ways, but the most common way is to run `jekyll serve`, which launches a web server and auto-regenerates your site when a file is updated.\n\nTo add new posts, simply add a file in the `_posts` directory that follows the convention `YYYY-MM-DD-name-of-post.ext` and includes the necessary front matter. Take a look at the source for this post to get an idea about how it works.\n\nJekyll also offers powerful support for code snippets:\n\n{% highlight ruby %}\ndef print_hi(name)\n  puts \"Hi, #{name}\"\nend\nprint_hi('Tom')\n#=> prints 'Hi, Tom' to STDOUT.\n{% endhighlight %}\n\nCheck out the [Jekyll docs][jekyll-docs] for more info on how to get the most out of Jekyll. File all bugs/feature requests at [Jekyll’s GitHub repo][jekyll-gh]. If you have questions, you can ask them on [Jekyll Talk][jekyll-talk].\n\n[jekyll-docs]: http://jekyllrb.com/docs/home\n[jekyll-gh]:   https://github.com/jekyll/jekyll\n[jekyll-talk]: https://talk.jekyllrb.com/\n"
-        },
-        {
-            "path": "_products/en/mobile-app.md",
-            "collectionType": "products",
-            "lastCommitSha": "0c041665d2b46a875ad530ae42632e19a554e619",
-            "lastUpdatedAt": "2016-09-27T01:52:17Z",
-            "lastUpdatedBy": "Ronan Berder",
-            "content": "---\nlang: en\ntitle: Starbucks mobile app\nexcerpt: You can now use your My Starbucks Rewards card and pay in the store, all from within the app. Download or upgrade to the new version of the Starbucks app and start using the new features.\ncover: /media/cover-new-app.png\nactions:\n  - label: Download iOS\n  - label: Download Android\ncategory: Misc\nfeatured: true\n---\n"
-        },
-        {
-            "path": "_products/en/msr.md",
-            "collectionType": "products",
-            "content": "---\ntitle: Starbucks Mobile App\npitch: \"星巴克首次在中国推出旗下高端茶品牌——Teavana。凭借品质卓越的茶原料和精心研发的配方，Teavana将带来星巴克专属的时尚茶饮新体验\"\ncover: media/cover-new-app.png\ncategory: Tea\n---\n\n星巴克首次在中国推出旗下高端茶品牌——Teavana\n\n凭借品质卓越的茶原料和精心研发的配方，Teavana将带来星巴克专属的时尚茶饮新体验\n",
-            "lastCommitSha": "5710b4fd004b6988ea6e89ec3f5db14ed593a87e",
-            "lastUpdatedAt": "2016-09-26T21:11:50Z",
-            "lastUpdatedBy": "Vincent Viallet"
-        },
-        {
-            "path": "_products/mobile-app.md",
-            "collectionType": "products",
-            "content": "---\nlang: cn\ntitle: 星巴克移动应用\nexcerpt: 更新或下载全新星巴克中国官方APP，开启更快速便捷的星巴克体验。\ncover: /media/cover-new-app.png\nactions:\n  - label: 下载iOS\n  - label: 下载Android\ncategory: Misc\nfeatured: true\n---\n",
-            "lastCommitSha": "49fb1a9d73ab85c87b3309714f3e90893b467532",
-            "lastUpdatedAt": "2016-09-27T02:20:54Z",
-            "lastUpdatedBy": "Ronan Berder"
-        },
-        {
-            "path": "_products/en/teavana.md",
-            "collectionType": "products",
-            "content": "---\nlang: en\ntitle: Teavana\nheader: /media/header-teavana.png\nexcerpt: >-\n  new !! This autumn Starbucks brings you the exclusive handcrafted experience\n  Teavana for the first time in China. Teavana is made from high quality\n  loose-leaf tea and each hand shaken recipe is carefully developed.\ncover: /media/cover-teavana.jpg\npreview: /media/product-teavana.png\nactions:\n  - label: Read more\n  - label: More about drinks\n    url: /en/drinks\npromoted: true\ncategory: Tea\nexperiment: ''\n---\nThis autumn Starbucks brings you the exclusive handcrafted experience  for the first time in China.  is made from high quality loose-leaf tea and each hand shaken recipe is carefully developed.\n",
-            "lastCommitSha": "0c041665d2b46a875ad530ae42632e19a554e619",
-            "lastUpdatedAt": "2016-09-27T01:52:17Z",
-            "lastUpdatedBy": "Ronan Berder"
-        },
-        {
-            "path": "_products/some-new-products.md",
-            "collectionType": "products",
-            "content": "---\ntitle: Awesome product\nheader: Cool stuff\nexcerpt: gonna get them all\ncover: media/cover-new-app.png\nexperiment: ''\ncategory: Food\npromoted: false\nactions: []\nlang: cn\n---\nVery important and cool product ! ",
-            "lastCommitSha": "a336500691de7c3d8b0d86c0fc45e2973233280f",
-            "lastUpdatedAt": "2017-01-09T09:46:19Z",
-            "lastUpdatedBy": "Vincent Viallet"
-        },
-        {
-            "path": "_sample/sample-widgets-test.md",
-            "collectionType": "sample",
-            "content": "---\ntitle: Preview form widgets\ndate: '2016-12-21'\ndatetime: '2016-12-20T00:22:00.000Z'\nbool: true\nnumber: 1234\nemail: emal@tet.com\nuri: 'http://tet.com'\npassword: 1234d\ncategory1: Tea\ncategory2:\n  - Coffee\n  - Food\n  - Card\ntag:\n  - test\n  - created\n  - form\n  - expe\ntext: |-\n  星巴克首次在中国推出旗下高\n  端茶品牌——Teavana\n\n  凭借品质卓越的茶原料和精\n  心研发的配方，Teavana将带来星巴克\n  专属的时尚茶饮新体验\n---\n# ttt\n## ddd\n*ddt*\n- t1\n- t2\n星巴克首次在中国推出旗下高端茶品牌——Teavana\n\n凭借品质卓越的茶原料和精心研发的配方，Teavana将带来星巴克专属的时尚茶饮新体验",
-            "lastCommitSha": "c9b3c50a1e065ba722b0bf68a44a788f540c58e7",
-            "lastUpdatedAt": "2016-12-19T04:56:24Z",
-            "lastUpdatedBy": "Kate Wu"
-        },
-        {
-            "path": "en/index.html",
-            "collectionType": "pages",
-            "content": "---\nlang: en\nlayout: front\ntitle: The Best Coffee and Espresso Drinks\n---\n",
-            "lastCommitSha": "c7c3d341e06a486b6ce6457c3d1cc03d9dee178b",
-            "lastUpdatedAt": "2016-12-01T09:27:26Z",
-            "lastUpdatedBy": "Kate Wu"
-        },
-        {
-            "path": "_products/teavana.md",
-            "collectionType": "products",
-            "content": "---\nlang: cn\ntitle: Teavana\nheader: /media/header-teavana.png\nexcerpt: Updated\ncover: /media/cover-teavana.jpg\npreview: /media/product-teavana.png\nactions:\n  - label: 阅读更多\n    url: /more\n  - label: 更多关于饮料\n    url: /drinks\nexperiment: 118442932-0\npromoted: true\ncategory: Tea\n---\nUpdated body",
-            "lastCommitSha": "709ef32fc3cbf7c8ee88ef692c2b28aa0e350327",
-            "lastUpdatedAt": "2017-01-03T05:16:45Z",
-            "lastUpdatedBy": "Kate Wu"
-        },
-        {
-            "path": "index.html",
-            "collectionType": "pages",
-            "content": "---\nlayout: front\ntitle: The Best Coffee and Espresso Drinks\nlang: cn\n---\n## test\n\n<h1>title</h2>",
-            "lastCommitSha": "f8cac62aafea5e8e0c0949f0ad408e8ac32b4459",
-            "lastUpdatedAt": "2016-12-30T10:13:19Z",
-            "lastUpdatedBy": "Kate Wu"
-        }
-    ],
-    "schemas": [
-        {
-            "title": "Pages",
-            "jekyll": {
-                "type": "content",
-                "id": "pages",
-                "dir": "_pages"
+    {
+        "updated": "2017-02-03T08:49:44.000Z",
+        "collections": [
+            {
+                "path": "_posts/2016-09-08-welcome-to-jekyll.md",
+                "collectionType": "posts",
+                "lastCommitSha": "7edb850806edaffd031e9897ac2786d1cd1e6045",
+                "lastUpdatedAt": "2016-12-29T07:33:02Z",
+                "lastUpdatedBy": "GitHub",
+                "content": "---\nlayout: post\ntitle: Welcome to Jekyll!\ndate: '2016-09-08 15:56:50 +0800'\ncategories: jekyll update\nauthor: Ronan\ntag:\n  - product\n  - guide\n  - good\n---\nYou’ll find this post in your `_posts` directory. Go ahead and edit it and re-build the site to see your changes. You can rebuild the site in many different ways, but the most common way is to run `jekyll serve`, which launches a web server and auto-regenerates your site when a file is updated.\n\nTo add new posts, simply add a file in the `_posts` directory that follows the convention `YYYY-MM-DD-name-of-post.ext` and includes the necessary front matter. Take a look at the source for this post to get an idea about how it works.\n\nJekyll also offers powerful support for code snippets:\n\n{% highlight ruby %}\ndef print_hi(name)\n  puts \"Hi, #{name}\"\nend\nprint_hi('Tom')\n#=> prints 'Hi, Tom' to STDOUT.\n{% endhighlight %}\n\nCheck out the [Jekyll docs][jekyll-docs] for more info on how to get the most out of Jekyll. File all bugs/feature requests at [Jekyll’s GitHub repo][jekyll-gh]. If you have questions, you can ask them on [Jekyll Talk][jekyll-talk].\n\n[jekyll-docs]: http://jekyllrb.com/docs/home\n[jekyll-gh]:   https://github.com/jekyll/jekyll\n[jekyll-talk]: https://talk.jekyllrb.com/\n"
             },
-            "JSONSchema": {
-                "type": "object",
-                "required": [
-                    "body"
-                ],
-                "properties": {
-                    "layout": {
-                        "type": "string",
-                        "title": "Layout"
-                    },
-                    "title": {
-                        "type": "string",
-                        "title": "Title"
-                    },
-                    "experiment": {
-                        "type": "string",
-                        "title": "Experiment"
-                    },
-                    "body": {
-                        "type": "string",
-                        "title": "Body"
-                    }
-                }
+            {
+                "path": "en/index.html",
+                "collectionType": "pages",
+                "content": "---\nlang: en\nlayout: front\ntitle: The Best Coffee and Espresso Drinks\n---\n",
+                "lastCommitSha": "c7c3d341e06a486b6ce6457c3d1cc03d9dee178b",
+                "lastUpdatedAt": "2016-12-01T09:27:26Z",
+                "lastUpdatedBy": "Kate Wu"
             },
-            "uiSchema": {
-                "body": {
-                    "ui:widget": "customCodeMirror"
-                }
+            {
+                "path": "_products/teavana.md",
+                "collectionType": "products",
+                "content": "---\nlang: cn\ntitle: Teavana\nheader: /media/header-teavana.png\nexcerpt: Updated\ncover: /media/cover-teavana.jpg\npreview: /media/product-teavana.png\nactions:\n  - label: 阅读更多\n    url: /more\n  - label: 更多关于饮料\n    url: /drinks\nexperiment: 118442932-0\npromoted: true\ncategory: Tea\n---\nUpdated body",
+                "lastCommitSha": "709ef32fc3cbf7c8ee88ef692c2b28aa0e350327",
+                "lastUpdatedAt": "2017-01-03T05:16:45Z",
+                "lastUpdatedBy": "Kate Wu"
+            },
+            {
+                "path": "index.html",
+                "collectionType": "pages",
+                "content": "---\nlayout: front\ntitle: The Best Coffee and Espresso Drinks\nlang: cn\n---\n## test\n\n<h1>title</h2>",
+                "lastCommitSha": "f8cac62aafea5e8e0c0949f0ad408e8ac32b4459",
+                "lastUpdatedAt": "2016-12-30T10:13:19Z",
+                "lastUpdatedBy": "Kate Wu"
             }
-        },
-        {
-            "title": "Posts",
-            "jekyll": {
-                "type": "content",
-                "id": "posts",
-                "dir": "_posts"
-            },
-            "JSONSchema": {
-                "type": "object",
-                "required": [
-                    "title",
-                    "date",
-                    "author"
-                ],
-                "properties": {
-                    "title": {
-                        "type": "string",
-                        "title": "Title"
-                    },
-                    "date": {
-                        "type": "string",
-                        "title": "Creation Date"
-                    },
-                    "category": {
-                        "type": "string",
-                        "title": "Category",
-                        "enum": [
-                            "Marketing",
-                            "DevOps",
-                            "Development",
-                            "Operation",
-                            "Design"
-                        ]
-                    },
-                    "author": {
-                        "type": "string",
-                        "title": "Author"
-                    },
-                    "tag": {
-                        "type": "array",
-                        "title": "tags",
-                        "items": {
-                            "type": "string"
-                        }
-                    },
-                    "body": {
-                        "type": "string",
-                        "title": "Body"
-                    }
-                }
-            },
-            "uiSchema": {
-                "category": {
-                    "ui:widget": "customSelect"
+        ],
+        "schemas": [
+            {
+                "title": "Pages",
+                "jekyll": {
+                    "type": "content",
+                    "id": "pages",
+                    "dir": "_pages"
                 },
-                "body": {
-                    "ui:widget": "customCodeMirror"
-                }
-            }
-        },
-        {
-            "title": "Products",
-            "jekyll": {
-                "type": "content",
-                "id": "products",
-                "dir": "_products"
-            },
-            "JSONSchema": {
-                "type": "object",
-                "properties": {
-                    "title": {
-                        "type": "string",
-                        "title": "Title"
-                    },
-                    "header": {
-                        "type": "string",
-                        "title": "Header"
-                    },
-                    "excerpt": {
-                        "type": "string",
-                        "title": "Excerpt"
-                    },
-                    "cover": {
-                        "type": "string",
-                        "title": "Cover"
-                    },
-                    "preview": {
-                        "type": "string",
-                        "title": "Preview"
-                    },
-                    "experiment": {
-                        "type": "string",
-                        "title": "Experiment"
-                    },
-                    "category": {
-                        "type": "string",
-                        "title": "Category",
-                        "enum": [
-                            "Coffee",
-                            "Tea",
-                            "Food",
-                            "Card",
-                            "Coffeehouse"
-                        ]
-                    },
-                    "promoted": {
-                        "type": "boolean",
-                        "title": "Promoted"
-                    },
-                    "actions": {
-                        "type": "array",
-                        "title": "Actions",
-                        "items": {
-                            "type": "object",
-                            "required": [
-                                "label"
-                            ],
-                            "properties": {
-                                "label": {
-                                    "type": "string",
-                                    "title": "label"
-                                },
-                                "url": {
-                                    "type": "string",
-                                    "title": "url"
-                                }
-                            }
-                        }
-                    },
-                    "body": {
-                        "type": "string",
-                        "title": "Content"
-                    }
-                },
-                "required": [
-                    "title",
-                    "header",
-                    "excerpt",
-                    "cover",
-                    "category"
-                ]
-            },
-            "uiSchema": {
-                "body": {
-                    "ui:widget": "customCodeMirror"
-                }
-            }
-        },
-        {
-            "title": "Sample",
-            "jekyll": {
-                "type": "content",
-                "id": "sample",
-                "dir": "_sample"
-            },
-            "JSONSchema": {
-                "type": "object",
-                "properties": {
-                    "title": {
-                        "type": "string",
-                        "title": "Title"
-                    },
-                    "date": {
-                        "type": "string",
-                        "title": "Date",
-                        "format": "date"
-                    },
-                    "datetime": {
-                        "type": "string",
-                        "title": "Date+Time",
-                        "format": "date-time"
-                    },
-                    "bool": {
-                        "type": "boolean",
-                        "title": "Bool",
-                        "default": true
-                    },
-                    "number": {
-                        "type": "number",
-                        "title": "A number"
-                    },
-                    "email": {
-                        "type": "string",
-                        "format": "email"
-                    },
-                    "uri": {
-                        "type": "string",
-                        "format": "uri"
-                    },
-                    "password": {
-                        "type": "string",
-                        "title": "Password"
-                    },
-                    "category1": {
-                        "type": "string",
-                        "title": "Category (single)",
-                        "enum": [
-                            "Coffee",
-                            "Tea",
-                            "Food",
-                            "Card",
-                            "Coffeehouse"
-                        ]
-                    },
-                    "category2": {
-                        "type": "array",
-                        "title": "Category (multiple)",
-                        "items": {
+                "JSONSchema": {
+                    "type": "object",
+                    "required": [
+                        "body"
+                    ],
+                    "properties": {
+                        "layout": {
                             "type": "string",
+                            "title": "Layout"
+                        },
+                        "title": {
+                            "type": "string",
+                            "title": "Title"
+                        },
+                        "experiment": {
+                            "type": "string",
+                            "title": "Experiment"
+                        },
+                        "body": {
+                            "type": "string",
+                            "title": "Body"
+                        }
+                    }
+                },
+                "uiSchema": {
+                    "body": {
+                        "ui:widget": "customCodeMirror"
+                    }
+                }
+            },
+            {
+                "title": "Posts",
+                "jekyll": {
+                    "type": "content",
+                    "id": "posts",
+                    "dir": "_posts"
+                },
+                "JSONSchema": {
+                    "type": "object",
+                    "required": [
+                        "title",
+                        "date",
+                        "author"
+                    ],
+                    "properties": {
+                        "title": {
+                            "type": "string",
+                            "title": "Title"
+                        },
+                        "date": {
+                            "type": "string",
+                            "title": "Creation Date"
+                        },
+                        "category": {
+                            "type": "string",
+                            "title": "Category",
+                            "enum": [
+                                "Marketing",
+                                "DevOps",
+                                "Development",
+                                "Operation",
+                                "Design"
+                            ]
+                        },
+                        "author": {
+                            "type": "string",
+                            "title": "Author"
+                        },
+                        "tag": {
+                            "type": "array",
+                            "title": "tags",
+                            "items": {
+                                "type": "string"
+                            }
+                        },
+                        "body": {
+                            "type": "string",
+                            "title": "Body"
+                        }
+                    }
+                },
+                "uiSchema": {
+                    "category": {
+                        "ui:widget": "customSelect"
+                    },
+                    "body": {
+                        "ui:widget": "customCodeMirror"
+                    }
+                }
+            },
+            {
+                "title": "Products",
+                "jekyll": {
+                    "type": "content",
+                    "id": "products",
+                    "dir": "_products"
+                },
+                "JSONSchema": {
+                    "type": "object",
+                    "properties": {
+                        "title": {
+                            "type": "string",
+                            "title": "Title"
+                        },
+                        "header": {
+                            "type": "string",
+                            "title": "Header"
+                        },
+                        "excerpt": {
+                            "type": "string",
+                            "title": "Excerpt"
+                        },
+                        "cover": {
+                            "type": "string",
+                            "title": "Cover"
+                        },
+                        "preview": {
+                            "type": "string",
+                            "title": "Preview"
+                        },
+                        "experiment": {
+                            "type": "string",
+                            "title": "Experiment"
+                        },
+                        "category": {
+                            "type": "string",
+                            "title": "Category",
                             "enum": [
                                 "Coffee",
                                 "Tea",
@@ -639,85 +477,79 @@ GET /api/repository/index?branch=<branchname>&refresh=true
                                 "Coffeehouse"
                             ]
                         },
-                        "uniqueItems": true
-                    },
-                    "tag": {
-                        "type": "array",
-                        "title": "tags",
-                        "items": {
-                            "type": "string"
-                        }
-                    },
-                    "preview": {
-                        "type": "string",
-                        "title": "Preview"
-                    },
-                    "actions": {
-                        "type": "array",
-                        "title": "Actions",
-                        "items": {
-                            "type": "object",
-                            "required": [
-                                "label"
-                            ],
-                            "properties": {
-                                "label": {
-                                    "type": "string",
-                                    "title": "label"
-                                },
-                                "url": {
-                                    "type": "string",
-                                    "title": "url"
+                        "promoted": {
+                            "type": "boolean",
+                            "title": "Promoted"
+                        },
+                        "actions": {
+                            "type": "array",
+                            "title": "Actions",
+                            "items": {
+                                "type": "object",
+                                "required": [
+                                    "label"
+                                ],
+                                "properties": {
+                                    "label": {
+                                        "type": "string",
+                                        "title": "label"
+                                    },
+                                    "url": {
+                                        "type": "string",
+                                        "title": "url"
+                                    }
                                 }
                             }
+                        },
+                        "body": {
+                            "type": "string",
+                            "title": "Content"
                         }
                     },
+                    "required": [
+                        "title",
+                        "header",
+                        "excerpt",
+                        "cover",
+                        "category"
+                    ]
+                },
+                "uiSchema": {
+                    "body": {
+                        "ui:widget": "customCodeMirror"
+                    }
+                }
+            },
+                "uiSchema": {
+                    "password": {
+                        "ui:widget": "password",
+                        "ui:help": "This is a hint!"
+                    },
                     "text": {
-                        "type": "string",
-                        "title": "Multi-line text"
+                        "ui:widget": "textarea"
+                    },
+                    "preview": {
+                        "ui:widget": "FilePicker"
                     },
                     "body": {
-                        "type": "string",
-                        "title": "Content (supported by CodeMirrow)"
+                        "ui:widget": "customCodeMirror"
                     }
-                },
-                "required": [
-                    "title",
-                    "category2"
-                ]
-            },
-            "uiSchema": {
-                "password": {
-                    "ui:widget": "password",
-                    "ui:help": "This is a hint!"
-                },
-                "text": {
-                    "ui:widget": "textarea"
-                },
-                "preview": {
-                    "ui:widget": "FilePicker"
-                },
-                "body": {
-                    "ui:widget": "customCodeMirror"
                 }
             }
+        ],
+        "config": {
+            "languages": [
+                {
+                    "name": "Chinese",
+                    "code": "zh"
+                },
+                {
+                    "name": "English",
+                    "code": "en"
+                }
+            ]
         }
-    ],
-    "config": {
-        "languages": [
-            {
-                "name": "Chinese",
-                "code": "zh"
-            },
-            {
-                "name": "English",
-                "code": "en"
-            }
-        ]
     }
-}
 ```
-</p>
-</details>
 
 
