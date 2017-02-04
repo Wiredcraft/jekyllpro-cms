@@ -259,6 +259,27 @@ const getFreshIndexFromGithub = (repoObject, branch) => {
       var formatedIndex = {collections: []}
       var jekyllProConfigReq = Promise.resolve()
 
+      var isJekyllRepo = treeArray.filter((item) => {
+        return (item.path === '_config.yml')
+      })
+
+      if (isJekyllRepo.length) {
+        jekyllProConfigReq = repoObject.getContents(branch, '_config.yml', true)
+        .then((data) => {
+          formatedIndex['config'] = getLangFromConfigYaml(data.data)
+        })
+        .catch(err => {
+          console.log(err)
+        })
+      } else {
+        jekyllProConfigReq = Promise.reject({
+          status: 404,
+          response: {
+            data: { message: 'Not a valid jekyll repository', errorCode: 4041 }
+          }
+        })
+      }
+
       var schemaFilesReq = treeArray.filter((item) => {
         return (item.type === 'blob') && (item.path.indexOf('_schemas/') === 0)
       })
@@ -272,18 +293,6 @@ const getFreshIndexFromGithub = (repoObject, branch) => {
           })
       })
 
-      treeArray.forEach((item) => {
-        if (item.path === '_config.yml') {
-          jekyllProConfigReq = repoObject.getContents(branch, '_config.yml', true)
-          .then((data) => {
-            formatedIndex['config'] = getLangFromConfigYaml(data.data)
-          })
-          .catch(err => {
-            console.log(err)
-          })
-        }
-      })
-
       var nextPromiseFlow = Promise.all(schemaFilesReq)
         .then(schemas => {
           // if no schemas at all, end the request flow here
@@ -291,7 +300,7 @@ const getFreshIndexFromGithub = (repoObject, branch) => {
             return Promise.reject({
               status: 404,
               response: {
-                data: { message: 'no schemas of this repository branch!' }
+                data: { message: 'no schemas of this repository branch!', errorCode: 4042 }
               }
             })
           }
