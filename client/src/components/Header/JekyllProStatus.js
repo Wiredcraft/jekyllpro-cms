@@ -110,7 +110,9 @@ export default class JekyllProStatus extends Component {
         </a>   
         { 
           !isJekyllProClient &&
-          <div className='options'><a><PlusIcon/> Enable JekyllPro hosting </a></div>
+          <div className='options'>
+            <a href='http://jekyllpro.com' target='_blank'><PlusIcon/> Enable JekyllPro hosting </a>
+          </div>
         }
         {
           isJekyllProClient && buildStatus &&
@@ -126,7 +128,7 @@ export default class JekyllProStatus extends Component {
               <ExternalLinkIcon /> Current version #{`${buildStatus.hash.slice(0, 7)}`}
             </a>
             <hr />
-            <a className='danger'>
+            <a className='danger' href='http://jekyllpro.com' target='_blank'>
               <RemoveIcon />Disable JekyllPro hosting
             </a>
           </div>
