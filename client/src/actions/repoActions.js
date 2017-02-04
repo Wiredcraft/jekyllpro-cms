@@ -252,3 +252,15 @@ export function resetUpdateSignal() {
     })
   }
 }
+
+//a trick to trigger a index refresh
+export function triggerIndexRefresh(date) {
+  return dispatch => {
+    let now = (new Date).toISOString()
+    let past = (new Date(Date.now() - 1000 * 60 * 60)).toISOString()
+    dispatch({
+      payload: { currentBranchUpdatedAt: now, indexUpdatedAt: past },
+      type: CHANGE_REPO_STATE
+    })
+  }
+}

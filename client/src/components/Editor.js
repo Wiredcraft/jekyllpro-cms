@@ -11,6 +11,7 @@ import ContentEditor from './Editor/ContentEditor'
 import NewEditor from './Editor/NewEditor'
 import NotFound from './NotFound'
 import NoSchema from './common/NoSchema'
+import InvalidRepo from './common/InvalidRepo'
 
 class Editor extends Component {
   constructor(props) {
@@ -18,10 +19,14 @@ class Editor extends Component {
   }
 
   render() {
-    const { mode, params, schemas, location } = this.props
+    const { mode, params, schemas, location, repoFullName } = this.props
 
     if (location.query && location.query.invalidRepo) {
-      return (<NoSchema />)
+      return (<InvalidRepo />)
+    }
+
+    if (location.query && location.query.noSchema === '1') {
+      return (<NoSchema repoFullName={repoFullName} />)
     }
 
     if (location.query && location.query.fileNotFound) {

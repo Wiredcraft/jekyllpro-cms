@@ -10,6 +10,7 @@ import { selectCollectionFile, resetEditorData } from '../actions/editorActions'
 import { fetchRepoIndex, fetchRepoTree } from '../actions/repoActions'
 import { toRoute, replaceRoute } from '../actions/routeActions'
 import NoSchema from './common/NoSchema'
+import InvalidRepo from './common/InvalidRepo'
 
 import CaretDownIcon from './svg/CaretDownIcon'
 import RemoveIcon from './svg/RemoveIcon'
@@ -124,12 +125,15 @@ class ContentListing extends Component {
   }
 
   render() {
-    const { config, schemas, collections, pathname, query } = this.props
+    const { config, schemas, collections, pathname, query, repoFullName } = this.props
     const { filteredCollections, filtering, filteredType, filteredLanguage } = this.state
     let records = filtering ? filteredCollections : collections
 
     if (query && query.invalidRepo === '1') {
-      return (<NoSchema />)
+      return (<InvalidRepo />)
+    }
+    if (query && query.noSchema === '1') {
+      return (<NoSchema repoFullName={repoFullName} />)
     }
 
     return (
@@ -248,9 +252,10 @@ class ContentListing extends Component {
 }
 
 function mapStateToProps(state, {
-  params: { collectionType, branch, splat: path },
+  params: { repoOwner, repoName, collectionType, branch, splat: path },
   location: { pathname, query } }) {
   return {
+    repoFullName: `${repoOwner}/${repoName}`,
     pathname: pathname,
     query: query,
     loading: state.repo.get('loading'),

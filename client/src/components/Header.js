@@ -157,8 +157,14 @@ export default class Header extends Component {
 
   indexDataErrorHandler(err) {
     const { toRoute, location } = this.props
-
+    const customError = JSON.parse(err.response.text)
     if (err.status === 404) {
+      if (customError.errorCode === 4042) {
+        return toRoute({
+          pathname: location.pathname,
+          query: { noSchema: 1 }          
+        })
+      }
       toRoute({
         pathname: location.pathname,
         query: { invalidRepo: 1 }

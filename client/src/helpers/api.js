@@ -1,6 +1,8 @@
 /* global API_BASE_URL */
 import superagent from 'superagent'
 import Cookie from 'js-cookie'
+import pages from '../schema/pages.json'
+import posts from '../schema/posts.json'
 
 const request = (method, url) => {
   return superagent(method, url)
@@ -173,3 +175,22 @@ export function checkJekyllProBuild (branch) {
   })
 }
 
+export function injectDefaultSchema (branch) {
+  let pagesData = {
+    branch,
+    path: '_schemas/pages.json',
+    content: JSON.stringify(pages, undefined, 2),
+    message: 'Add default schema pages.json'
+  }
+  let postsData = {
+    branch,
+    path: '_schemas/posts.json',
+    content: JSON.stringify(posts, undefined, 2),
+    message: 'Add default schema posts.json'
+  }
+
+  return Promise.all([
+    updateRepoFile(pagesData),
+    updateRepoFile(postsData)
+  ])
+}
