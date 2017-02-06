@@ -5,6 +5,8 @@ import { TaskQueue, getCollectionFiles, getLangFromConfigYaml } from './utils'
 import { RepoIndex, RepoAccessToken } from './database'
 import { hookConfig } from './webhook'
 
+const RUNNING_JOBS = {}
+
 const cb = (error, result, request) => {
   console.log(error)
   console.log(result)
@@ -229,6 +231,14 @@ const refreshIndexAndSave = (req, res) => {
   var repo = req.githubRepo
   var branch = req.query.branch || 'master'
   var repoFullname = req.get('X-REPO-OWNER') + '/' + req.get('X-REPO-NAME')
+  var jobKey = repo + '_' + branch
+
+  //avoid doing multiple refresh to same repo branch at same time
+  if (RUNNING_JOBS[jobKey]) {
+    return res.status(409).json({ message: 'is building index for ' + jobKey, errorCode: 4091 })
+  }
+
+  RUNNING_JOBS[jobKey] = true
 
   return getFreshIndexFromGithub(repo, branch)
     .then(formatedIndex => {
@@ -247,11 +257,16 @@ const refreshIndexAndSave = (req, res) => {
       }, (err) => {
         if (err) console.log(err)
       })
+
+      delete RUNNING_JOBS[jobKey]
+
       formatedIndex.updated = new Date()
       return res.status(200).json(formatedIndex)
     })
     .catch((err) => {
       console.log(err)
+      delete RUNNING_JOBS[jobKey]
+
       // remove obsolete index data
       if ((err.status === 404) && req.purgeDb) {
         RepoIndex.findOneAndRemove({
