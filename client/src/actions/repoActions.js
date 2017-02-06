@@ -181,7 +181,6 @@ export function checkoutBranch(branch) {
          },
         type: CHECKOUT_BRANCH
       }),
-      // dispatch(fetchRepoIndex({ branch })),
       dispatch(resetEditorData())
     ])
   }

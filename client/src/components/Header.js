@@ -69,7 +69,8 @@ export default class Header extends Component {
   loadBasicRepoData() {
     const repoOwnerCk = Cookie.get('repoOwner')
     const repoNameCk = Cookie.get('repoName')
-    const { fetchRepoInfo, getAllBranch, toRoute, params: { repoOwner, repoName } } = this.props
+    const { fetchRepoInfo, getAllBranch, toRoute, checkoutBranch,
+      location: { query }, params: { repoOwner, repoName } } = this.props
 
     if (repoOwner && repoName) {
       Cookie.set('repoOwner', repoOwner, { expires: 100 })
@@ -78,7 +79,10 @@ export default class Header extends Component {
       fetchRepoInfo()
       .then(res => {
         getAllBranch()
-        this.fetchLatestIndex()
+        if (query && query.branch) {
+          checkoutBranch(query.branch)
+        }
+        this.fetchLatestIndex(query && query.branch)
       })
       .catch(err => {
         Cookie.remove('repoOwner')
@@ -105,15 +109,16 @@ export default class Header extends Component {
     }
   }
 
-  fetchLatestIndex() {
+  fetchLatestIndex(branchInRoute) {
     const { fetchRepoIndex, getCurrentBranchUpdateTime, currentBranch } = this.props
+    let branch = branchInRoute || currentBranch
 
-    fetchRepoIndex({ branch: currentBranch })
+    fetchRepoIndex({ branch })
     .then((indexData) => {
-      return this.checkIfHasSchema(indexData)
+      return this.checkIfHasSchema(indexData, branchInRoute)
     })
     .then((data) => {
-      getCurrentBranchUpdateTime(currentBranch)
+      getCurrentBranchUpdateTime(branch)
 
       this.checkIfExistingFile(data)
     })
@@ -122,13 +127,13 @@ export default class Header extends Component {
     })
   }
 
-  checkIfHasSchema(indexData) {
+  checkIfHasSchema(indexData, branchInRoute) {
     const { toRoute, location, fetchRepoIndex, currentBranch } = this.props
     // this repo branch might have legacy index data even it does not have schemas,
     // in this case, do a refresh index build,
     // if it still does not have schemas, the request will return error.
     if (!indexData.schemas || !indexData.schemas.length) {
-      return fetchRepoIndex({ branch: currentBranch, refresh: true })
+      return fetchRepoIndex({ branch: branchInRoute || currentBranch, refresh: true })
     }
     return Promise.resolve(indexData)
   }
@@ -156,18 +161,18 @@ export default class Header extends Component {
   }
 
   indexDataErrorHandler(err) {
-    const { toRoute, location } = this.props
+    const { toRoute, location: { pathname, query } } = this.props
     const customError = JSON.parse(err.response.text)
     if (err.status === 404) {
       if (customError.errorCode === 4042) {
         return toRoute({
-          pathname: location.pathname,
-          query: { noSchema: 1 }          
+          pathname,
+          query: Object.assign({ noSchema: 1 }, query)         
         })
       }
       toRoute({
-        pathname: location.pathname,
-        query: { invalidRepo: 1 }
+        pathname,
+        query: Object.assign({ invalidRepo: 1 }, query)
       })        
     }
   }
@@ -179,7 +184,7 @@ export default class Header extends Component {
     .then(() => {
       this.fetchLatestIndex()
     })
-    toRoute(`/${repoOwner}/${repoName}/`)
+    toRoute(`/${repoOwner}/${repoName}/?branch=${newBranch}`)
   }
 
   logout () {
