@@ -189,6 +189,8 @@ const getRepoBranchIndex = (req, res, next) => {
   })
 
   if (refreshIndex) {
+    // set flag to clean old db record later if a new index cannot be built
+    req.purgeDb = true
     return next()
   }
 
@@ -206,6 +208,7 @@ const getRepoBranchIndex = (req, res, next) => {
       record.updated
     )
     // some repo branches might have legacy index data built when it didn't have schemas.
+    // only return record if it has schemas.
     if (JSON.parse(record.schemas).length) {
       let data = {
         updated: record.updated,
@@ -215,6 +218,8 @@ const getRepoBranchIndex = (req, res, next) => {
       }
       return res.status(200).json(data)
     }
+    // set flag to clean old db record later if a new index cannot be built
+    req.purgeDb = true
     // next middleware should be refreshIndexAndSave()
     return next()
   })
@@ -247,6 +252,16 @@ const refreshIndexAndSave = (req, res) => {
     })
     .catch((err) => {
       console.log(err)
+      // remove obsolete index data
+      if ((err.status === 404) && req.purgeDb) {
+        RepoIndex.findOneAndRemove({
+          repository: repoFullname,
+          branch: branch        
+        }, (dberr, record) => {
+          if (dberr) console.log(dberr)
+          console.log(repoFullname + ' ' + branch + ' index data was obsolete, thus removed')
+        })
+      }
       return res.status(err.status || err.response.status).json(err.response.data)    
     })
 }
