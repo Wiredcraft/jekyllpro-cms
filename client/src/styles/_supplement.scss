@@ -294,4 +294,11 @@ legend {
   }
 }
 
-
+.confirm-schema-create {
+  p {
+    text-align: center;
+    .button {
+      margin: 0 5px;
+    }
+  }
+}
