@@ -25,7 +25,7 @@ export default class NoSchema extends Component {
   }
 
   handleCreateBtn () {
-    const { toRoute, currentBranch, repoFullName } = this.props
+    const { toRoute, currentBranch, repoFullName, triggerIndexRefresh } = this.props
     this.setState({ processing: true })
 
     injectDefaultSchema(currentBranch).then(res => {
@@ -42,6 +42,7 @@ export default class NoSchema extends Component {
     
   render () {
     const { processing, modalOpen } = this.state
+    const { currentBranch, repoFullName } = this.props
 
     return (
       <section id='content' className='empty'>
@@ -60,7 +61,8 @@ export default class NoSchema extends Component {
             <h2>Create default schemas</h2>
           </header>
           <section className='body'>
-            <p>Would you like to add default schemas for Pages and Posts to this repository branch?</p>
+            <p>Would you like to add default schemas for Pages and Posts to &nbsp;
+              <strong>{repoFullName}</strong> branch <strong>{currentBranch}</strong>?</p>
             <p>
               <button
                 className={processing ? 'button disabled processing' : 'button primary'}

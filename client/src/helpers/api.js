@@ -189,8 +189,7 @@ export function injectDefaultSchema (branch) {
     message: 'Add default schema posts.json'
   }
 
-  return Promise.all([
-    updateRepoFile(pagesData),
-    updateRepoFile(postsData)
-  ])
+  return updateRepoFile(pagesData).then(res => {
+    return updateRepoFile(postsData)
+  })
 }

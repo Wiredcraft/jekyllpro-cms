@@ -254,7 +254,7 @@ export function resetUpdateSignal() {
 }
 
 //a trick to trigger a index refresh
-export function triggerIndexRefresh(date) {
+export function triggerIndexRefresh() {
   return dispatch => {
     let now = (new Date).toISOString()
     let past = (new Date(Date.now() - 1000 * 60 * 60)).toISOString()
