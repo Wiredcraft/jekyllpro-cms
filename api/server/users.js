@@ -30,6 +30,13 @@ const githubOauthCallback = function (redirectUrl) {
     var sessionRedirectURL = req.session.redirect_to
     delete req.session.redirect_to
 
+    // check if redirecUrl ends with "/"
+    if (redirectUrl[redirectUrl.length - 1] === '/') {
+      redirectUrl = redirectUrl.slice(0, -1)
+    }
+
+    var finalRedirectUrl = sessionRedirectURL ? (redirectUrl + sessionRedirectURL) : redirectUrl
+
     passport.authenticate('github', (err, user, info) => {
       if (err || !user) {
         console.log(err)
@@ -39,8 +46,8 @@ const githubOauthCallback = function (redirectUrl) {
         if (err) {
           return res.status(400).send(err)
         }
-        // redirectUrl = (redirectUrl || '/') + '?code=' + user.accessToken
-        return res.redirect(redirectUrl || sessionRedirectURL || '/')
+
+        return res.redirect(finalRedirectUrl)
       })
     })(req, res, next)
   }
