@@ -6,6 +6,7 @@ import { Router, Route, browserHistory } from 'react-router'
 import { syncHistoryWithStore } from 'react-router-redux'
 
 import App from './components/Main'
+import Login from './components/Login'
 import ContentListing from './components/ContentListing'
 import Editor from './components/Editor'
 import TransitionView from './components/TransitionView'
@@ -21,6 +22,7 @@ ReactDOM.render((
   <Provider store={store}>
     <Router history={history}>
       <Route path='/' component={App} >
+        <Route path='/login' component={Login} />
         <Route path='/:repoOwner/:repoName(/)' component={ContentListing} />
         <Route path='/:repoOwner/:repoName/link/(:branch)/*' component={TransitionView} />
         <Route path='/:repoOwner/:repoName/(:collectionType)/(:branch)/*' component={Editor} />        

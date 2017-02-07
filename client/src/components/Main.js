@@ -18,80 +18,40 @@ import 'react-select/dist/react-select.css'
 export default class AppComponent extends React.Component {
   constructor(props) {
     super(props)
-    this.state = { loadingUserInfo: true, hasSavedRepo: true }
   }
 
   componentWillMount() {
     const { confirmUserIsLogged, toRoute } = this.props
     confirmUserIsLogged().then(() => {
       if (!Cookie.get('repoOwner') || !Cookie.get('repoName')) {
-        this.setState({
-          loadingUserInfo: false,
-          hasSavedRepo: false
-        })
-        return toRoute('/select')
+        toRoute('/select')
       }
-      return this.setState({ loadingUserInfo: false, hasSavedRepo: true })
+    }).catch(err => {
+      toRoute('/login')
     })
-    .catch(() => {
-      this.setState({ loadingUserInfo: false })
-    })
-  }
-
-  componentWillUpdate(nextProps, nextState) {
-    const { hasSavedRepo } = this.state
-    if ((nextProps.location.pathname === '/select')
-      && (nextProps.location.query.reset === '1')
-      && hasSavedRepo) {
-      this.setState({ hasSavedRepo: false })
-    } else if (Cookie.get('repoOwner') && Cookie.get('repoName') && !hasSavedRepo) {
-      this.setState({ hasSavedRepo: true })
-    }
-  }
-
-  login() {
-    const url = `${API_BASE_URL}/api/auth/github`
-    window.location = url
   }
 
   render() {
-    const { isLoggedIn, repoLoading } = this.props
-    const { loadingUserInfo, hasSavedRepo } = this.state
+    const { isLoggedIn, userLoaded, repoLoading, location: { pathname } } = this.props
 
-    return isLoggedIn
-      ? hasSavedRepo ? (
-        <div id='app' className={repoLoading? 'loading' : ''}>
+    return isLoggedIn && (pathname !== '/select')
+      ? (<div id='app' className={repoLoading? 'loading' : ''}>
           <Header params={this.props.params} location={this.props.location} />
           {
             this.props.children
           }
           <NotificationContainer />
-        </div>
-      ) : (
-        <div id='landing'>
+        </div>)
+      : (<div id='landing' className={userLoaded ? '' : 'coating'}>
           {this.props.children}
-        </div>
-      )
-    : (
-      <div id='landing' className={loadingUserInfo ? 'coating' : ''}>
-        <div className='box login'>
-          <section className='card'>
-            <img src={require('../assets/logo.svg')} className='logo' alt='Jekyll+' />
-            <button className='button primary' onClick={() => this.login()}>Login with GitHub</button>
-          </section>
-          <small>Built by <a href='http://wiredcraft.com' target='_blank'>Wiredcraft</a>
-            | <a href='http://github.com/Wiredcraft/jekyllplus/wiki' target='_blank'>Documentation</a>
-            | <a href='http://github.com/Wiredcraft/jekyllplus' target='_blank'>Code</a></small>
-        </div>
-      </div>
-    )
+        </div>)
   }
 }
 
 function mapStateToProps(state) {
   return {
     repoLoading: state.repo.get('loading'),
-    currentBranch: state.repo.get('currentBranch'),
+    userLoaded: state.user.get('loaded'),
     isLoggedIn: state.user.get('isLoggedIn')
   }
 }

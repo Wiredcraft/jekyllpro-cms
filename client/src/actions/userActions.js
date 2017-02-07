@@ -9,8 +9,22 @@ export function confirmUserIsLogged() {
       .then(data => {
         dispatch({
           type: CHANGE_LOGIN_STATE,
-          payload: { isLoggedIn: true, userName: data.login, avatar: data.avatar_url, userUrl: data.html_url }
+          payload: {
+            loaded: true,
+            isLoggedIn: true,
+            userName: data.login,
+            avatar: data.avatar_url,
+            userUrl: data.html_url
+          }
         })
+        return Promise.resolve()
+      })
+      .catch(err => {
+         dispatch({
+          type: CHANGE_LOGIN_STATE,
+          payload: { loaded: true }
+        })
+        return Promise.reject()  
       })
   }
 }
