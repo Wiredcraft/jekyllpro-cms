@@ -5,7 +5,7 @@ import { connect } from 'react-redux'
 import { NotificationContainer } from 'react-notifications'
 
 import { confirmUserIsLogged } from '../actions/userActions'
-import { toRoute } from '../actions/routeActions'
+import { toRoute, replaceRoute } from '../actions/routeActions'
 import Header from './Header'
 import Cookie from 'js-cookie'
 import 'codemirror/lib/codemirror.css'
@@ -21,13 +21,12 @@ export default class AppComponent extends React.Component {
   }
 
   componentWillMount() {
-    const { confirmUserIsLogged, toRoute } = this.props
-    confirmUserIsLogged().then(() => {
-      if (!Cookie.get('repoOwner') || !Cookie.get('repoName')) {
-        toRoute('/select')
-      }
-    }).catch(err => {
-      toRoute('/login')
+    const { confirmUserIsLogged, toRoute, replaceRoute ,location: { pathname, search } } = this.props
+    confirmUserIsLogged().catch(err => {
+      replaceRoute({
+        pathname: '/login',
+        query: { redirect_to: pathname + search }
+      })
     })
   }
 
@@ -57,5 +56,5 @@ function mapStateToProps(state) {
 }
 
 function mapDispatchToProps (dispatch) {
-  return bindActionCreators({ confirmUserIsLogged, toRoute }, dispatch)
+  return bindActionCreators({ confirmUserIsLogged, toRoute, replaceRoute }, dispatch)
 }

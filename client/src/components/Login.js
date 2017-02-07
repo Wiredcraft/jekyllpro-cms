@@ -9,7 +9,8 @@ export default class Login extends React.Component {
   }
 
   login() {
-    const url = `${API_BASE_URL}/api/auth/github`
+    const {location: { query }} = this.props
+    const url = `${API_BASE_URL}/api/auth/github?redirect_to=${query.redirect_to}`
     window.location = url
   }
 
