@@ -32,7 +32,7 @@ export default class Header extends Component {
     }
   }
 
-  componentWillMount() {
+  componentDidMount() {
     this.loadBasicRepoData()
   }
 
@@ -188,7 +188,11 @@ export default class Header extends Component {
   }
 
   logout () {
-    this.props.logout()
+    const { logout } = this.props
+    const appUrl = window.location.origin
+    logout().then(res => {
+      window.location = appUrl
+    })
   }
 
   render () {

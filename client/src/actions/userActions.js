@@ -1,7 +1,10 @@
 /* global API_BASE_URL */
 import { getUser, logoutUser } from '../helpers/api'
+import { resetEditorData } from './editorActions'
+import { resetRepoData } from './repoActions'
 
 export const CHANGE_LOGIN_STATE = 'CHANGE_LOGIN_STATE'
+export const USER_LOG_OUT = 'USER_LOG_OUT'
 
 export function confirmUserIsLogged() {
   return dispatch => {
@@ -33,9 +36,13 @@ export function logout() {
   return dispatch => {
     return logoutUser()
       .then(() => {
-        dispatch({
-          type: 'APP_RESET'
-        })       
+        return Promise.all([
+          dispatch(resetRepoData),
+          dispatch(resetEditorData),
+          dispatch({
+            type: USER_LOG_OUT
+          })
+        ])    
       })
   }
 }
