@@ -56,7 +56,7 @@ export function getUser () {
 
 export function logoutUser () {
   return new Promise((resolve, reject) => {
-    request('GET', `${API_BASE_URL}/logout`)
+    request('GET', `${API_BASE_URL}/api/logout`)
       .end(generalResponseHandler(resolve, reject))
   })
 }

@@ -102,33 +102,10 @@ const initHelmet = (app) => {
 }
 
 const initRoutes = (app) => {
-  app.get('/', function (req, res) {
-    console.log(req.sessionID)
-    if (req.user) {
-      return res.render('index', { title: 'Hey', message: 'Hello ' + req.user.name })
-    }
-    return res.render('index', { title: 'Hey', message: 'Hello there! you are not login' })
-  })
-
-  app.get('/login', function (req, res) {
-    if (req.user) {
-      return res.render('login', {
-        title: 'Login',
-        message: 'you are already logged in'
-      })
-    }
-    res.render('login', {
-      title: 'Login',
-      message: 'click on the link to login',
-      link: '/api/auth/github'
-    })
-  })
-
-  app.get('/logout', users.logout)
-
   // Setting the github oauth routes
   app.route('/api/auth/github').get(users.githubOauthCall())
   app.route('/api/auth/github/callback').get(users.githubOauthCallback(config.redirectUrl))
+  app.route('/api/logout').get(users.logout)
   app.route('/api/me').get(users.getUserInfo)
   app.route('/api/me/orgs')
   .all(users.requireAuthentication)
