@@ -293,14 +293,6 @@ export default class ContentEditor extends Component {
     })
   }
 
-  // makeTranslationFile(langCode) {
-  //   const { toRoute, params, repoFullName, currentBranch  } = this.props
-  //   toRoute({
-  //     pathname: `/${repoFullName}/${params.collectionType}/${currentBranch}/new`,
-  //     query: { language: langCode, baseFile: params.splat }
-  //   })
-  // }
-
   getTranslation(selectedCollectionFile, collections, config, rootFolder) {
     if (!config || !config.languages) {
       return
@@ -310,8 +302,8 @@ export default class ContentEditor extends Component {
     let availableLanguages = config.languages
 
     let translations = collections.filter(col => {
-      return (col.path.indexOf(fileName) > -1) && (col.path !== selectedCollectionFile.path) && (col.collectionType === selectedCollectionFile.collectionType)
-        
+      return (col.path.indexOf(fileName) > -1) && (col.path !== selectedCollectionFile.path) &&
+        (col.collectionType === selectedCollectionFile.collectionType)
     })
 
     translations = translations.map(c => {
@@ -369,6 +361,10 @@ export default class ContentEditor extends Component {
       repoFullName, currentBranch } = this.props
     const { filePathInputClass, formData, currentFilePath, availableLanguages, translations,
       currentSchema, disableActionBtn, currentFileSlug, fileModified } = this.state
+
+    let needTranslation = availableLanguages && availableLanguages.filter((lang) => {
+      return lang.code !== this.state.currentFileLanguage
+    })
 
     if (!currentSchema) return (<section id='content' />)
 
@@ -445,11 +441,9 @@ export default class ContentEditor extends Component {
                 <span className='menu'>
                   <button className='button icon'><TranslationIcon /></button>
                   <div className='options'>
-                    <h2>Translate to</h2>
+                    { needTranslation && needTranslation.length && (<h2>Translate to</h2>) || '' }
                     {
-                      availableLanguages && availableLanguages.filter((l) => {
-                        return l.code !== this.state.currentFileLanguage
-                      }).map((lang) => {
+                      needTranslation && needTranslation.map((lang) => {
                         return (
                           <Link key={lang.code}
                             to={`/${repoFullName}/${params.collectionType}/${currentBranch}/new?baseFile=${params.splat}&language=${lang.code}`}
@@ -460,9 +454,8 @@ export default class ContentEditor extends Component {
                         )
                       })
                     }
-                    
-                    { translations && translations.length &&
-                      [<hr key='hr1' />, <h2 key='h22'>Existing translations</h2>] || '' }
+                    { needTranslation && needTranslation.length && translations && translations.length && (<hr />) || '' }
+                    { translations && translations.length && (<h2>Existing translations</h2>) || '' }
                     {
                       translations && translations.map(t => {
                         return (
@@ -474,7 +467,7 @@ export default class ContentEditor extends Component {
                           </Link>
                         )
                       })
-                    }          
+                    }
                   </div>
                 </span>
               </span>
