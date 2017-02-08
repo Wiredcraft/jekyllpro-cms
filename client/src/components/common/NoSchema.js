@@ -34,14 +34,14 @@ export default class NoSchema extends Component {
 
     return (
       <section id='content' className='empty'>
-        <h2>Something went wrong...</h2>
-        <p>JekyllPro CMS need schema files defining the content types. You can first add default schemas for Pages and Posts.</p>
+        <h2>Just one more thing...</h2>
+        <p>You need to define the content types by adding "schema files" to your repo.</p>
         <button
           className={processing ? 'button disabled processing' : 'button primary'}
           onClick={::this.handleCreateBtn}>
-          Create
+          Add defaults (<i>Posts</i> & <i>Pages</i>)
         </button>
-        <a href='https://github.com/Wiredcraft/jekyllplus/wiki' target='_blank' className='readmore'>Read more about it...</a>
+        <small><a href='https://github.com/Wiredcraft/jekyllplus/wiki' target='_blank' className='readmore'>Read more about schema files</a></small>
       </section>
     )
   }

@@ -15,11 +15,20 @@
     position: absolute;
     right: 0;
     top: 0;
-    h2 {
+    h2,
+    p {
       margin-bottom: $space/2;
+    }
+    *:last-child {
+      margin-bottom: 0;
     }
     .button {
       width: 100%;
+      & + small {
+        display: block;
+        margin-top: $space/4;
+        text-align: center;
+      }
     }
   }
   .header {
