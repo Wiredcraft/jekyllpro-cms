@@ -8,6 +8,7 @@ import { confirmUserIsLogged } from '../actions/userActions'
 import { toRoute, replaceRoute } from '../actions/routeActions'
 import Header from './Header'
 import Cookie from 'js-cookie'
+import { queryToUrlString } from '../helpers/utils'
 import 'codemirror/lib/codemirror.css'
 import 'react-notifications/lib/notifications.css'
 import 'styles/_sass/main.scss'
@@ -21,11 +22,13 @@ export default class AppComponent extends React.Component {
   }
 
   componentWillMount() {
-    const { confirmUserIsLogged, toRoute, replaceRoute ,location: { pathname, search } } = this.props
+    const { confirmUserIsLogged, toRoute, replaceRoute ,location: { pathname, query } } = this.props
+    delete query.redirect_to
+
     confirmUserIsLogged().catch(err => {
       replaceRoute({
         pathname: '/login',
-        query: { redirect_to: pathname + search }
+        query: { redirect_to: pathname + queryToUrlString(query) }
       })
     })
   }

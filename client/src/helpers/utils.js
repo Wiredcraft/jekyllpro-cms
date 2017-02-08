@@ -215,3 +215,12 @@ export function parseNameFromFilePath (filePath) {
 
   return arry[arry.length - 1]
 }
+
+// converting a url query Object to a search string
+export function queryToUrlString (query) {
+  var strs = []
+  Object.keys(query).forEach(keyName =>{
+    strs.push(keyName + '=' + query[keyName])
+  })
+  return '?' + strs.join('&')
+}
