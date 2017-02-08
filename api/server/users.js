@@ -88,6 +88,7 @@ const getUserInfo = (req, res) => {
 const logout = (req, res) => {
   delete req.githubRepo
   req.logout()
+  req.session.destroy()
   res.status(200).json({status: 'ok'})
 }
 
