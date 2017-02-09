@@ -54,6 +54,12 @@ example success response body
   updated_at: "2016-08-27T04:03:00Z"
 }
 ```
+## Log user out
+
+```
+GET /api/logout
+```
+
 ## Repository related operations
 
 > Below requests require to have header `X-REPO-OWNER` and `X-REPO-NAME`,
