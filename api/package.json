@@ -1,7 +1,7 @@
 {
-  "name": "gh-repo-cms",
+  "name": "jekyllpro-cms-api",
   "version": "0.0.1",
-  "description": "CMS for github repository",
+  "description": "CMS for github repository powered by JekyllPro",
   "main": "index.js",
   "scripts": {
     "dev": "NODE_ENV=development nodemon --ignore /indexFiles index.js",
@@ -14,7 +14,7 @@
     "express"
   ],
   "author": "wiredcraft",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "babel-preset-es2015": "^6.14.0",
     "babel-register": "^6.14.0",

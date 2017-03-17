@@ -1,8 +1,7 @@
 {
-  "name": "JekyllPlus-client",
-  "private": true,
+  "name": "jekyllpro-cms-client",
   "version": "0.0.1",
-  "description": "",
+  "description": "CMS for github repository powered by JekyllPro",
   "main": "",
   "scripts": {
     "clean": "rimraf dist/*",
@@ -19,6 +18,7 @@
   "repository": "",
   "keywords": [],
   "author": "Wiredcraft",
+  "license": "MIT",
   "devDependencies": {
     "autoprefixer": "^6.3.6",
     "babel-core": "^6.0.0",
