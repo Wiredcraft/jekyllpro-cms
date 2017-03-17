@@ -1,0 +1,112 @@
+$login: 12*$space;
+$box: 18*$space;
+
+.box {
+  bottom: 0;
+  margin: auto;
+  position: absolute;
+  display: table;
+  height: auto;
+  left: 0;
+  right: 0;
+  text-align: center;
+  top: 0;
+  width: $box;
+  &.login {
+    width: $login;
+  }
+  .logo {
+    display: inline-block;
+    margin: $space/2 0;
+    width: 4*$space;
+  }
+  .card {
+    background: #FFF;
+    border: 1px solid $line;
+    border-radius: $radius;
+    box-shadow: $shadow;
+    box-sizing: border-box;
+    padding: $space/2;
+    h2 {
+      @include font-size($larger);
+      margin-bottom: $space/2;
+    }
+    .button {
+      @include font-size($larger);
+      line-height: 160%;
+      padding: $space/3;
+      width: 100%;
+    }
+    .search {
+      display: inline-block;
+      position: relative;
+      width: 100%;
+      input {
+        box-sizing: border-box;
+        padding-left: 1.25*$space;
+        width: 100%;
+      }
+      svg {
+        fill: $grey;
+        height: $space;
+        left: $space/4;
+        position: absolute;
+        top: $space/4;
+        width: $space;
+      }
+    }
+    .empty,
+    .repo {
+      border-radius: $radius;
+      box-sizing: border-box;
+      @include font-size($smaller);
+      overflow: hidden;
+      margin-top: $space/2;
+      padding: $space/4 $space/2;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      width: $box - ($space + 2);
+    }
+    .empty {
+      background: $light;
+      color: $grey;
+    }
+    .repo {
+      border: 1px solid $line;
+      color: inherit;
+      display: block;
+      @include transition-property(border);
+      @include transition-duration($ease);
+      white-space: nowrap;
+      svg {
+        display: inline-block;
+        fill: $grey;
+        margin-right: $space/6;
+        height: 1.5*$space/2;
+        vertical-align: text-bottom;
+        width: 1.5*$space/2;
+      }
+      &:hover {
+        border-color: $blue;
+        text-decoration: none;
+      }
+    }
+  }
+  small {
+    color: $grey;
+    display: block;
+    @include font-size($pico);
+    letter-spacing: 1px;
+    margin-top: $space/4;
+    text-align: center;
+    text-transform: uppercase;
+    a {
+      border-bottom: 1px solid $line;
+      color: inherit;
+      &:hover {
+        color: $black;
+        text-decoration: none;
+      }
+    }
+  }
+}

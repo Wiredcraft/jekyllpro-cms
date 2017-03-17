@@ -1,0 +1,159 @@
+#sidebar {
+  background: #FFF;
+  border-right: 1px solid $line;
+  box-sizing: border-box;
+  .header {
+    border-bottom: 1px solid $line;
+    @include font-size($smaller);
+    padding: $space/3 $space/2;
+    .controls {
+      float: right;
+    }
+    .button {
+      padding: $space/12 $space/2;
+      &.icon {
+        padding-left: $space/4;
+        padding-right: $space/4;
+      }
+    }
+    .menu {
+      .button {
+        padding-right: $space/4;
+        svg {
+          height: 1.5*$space/2 - 2;
+          width: 1.5*$space/2 - 2;
+        }
+      }
+    }
+    .search {
+      display: inline-block;
+      position: relative;
+      width: 50%;
+      input {
+        box-sizing: border-box;
+        padding: $space/12 $space/4;
+        padding-left: $space;
+        max-width: 100%;
+      }
+      svg {
+        fill: $grey;
+        height: 1.5*$space/2;
+        left: $space/4;
+        position: absolute;
+        top: $space/4;
+        width: 1.5*$space/2;
+      }
+    }
+    .filters {
+      display: block;
+      @include clearfix;
+      @include font-size($small);
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      li {
+        display: block;
+        float: left;
+        margin: $space/4 $space/4 0 0;
+        .button {
+          padding: 0 $space/3;
+          &.icon {
+            padding-left: $space/8;
+            padding-right: $space/8;
+          }
+          svg {
+            fill: $grey;
+            height: $space/2;
+            vertical-align: middle;
+            width: $space/2;
+          }
+          &:hover {
+            svg {
+              fill: $black;
+            }
+          }
+        }
+      }
+    }
+  }
+  .tree {
+    @include font-size($smaller);
+    padding: $space/3;
+    ul {
+      list-style: none;
+      margin: 0;
+      ul {
+        margin-left: 1.5*$space/2;
+      }
+      li {
+        margin: 0;
+        padding: 0;
+      }
+      a {
+        border-radius: $radius;
+        border-left: 4px solid transparent;
+        display: block;
+        color: inherit;
+        margin-bottom: $space/8;
+        padding: $space/8;
+        span {
+          display: block;
+          margin-left: $space;
+        }
+        svg {
+          display: inline-block;
+          float: left;
+          fill: $grey;
+          height: 1.5*$space/2;
+          margin-top: $space/12;
+          width: 1.5*$space/2;
+        }
+        &:hover {
+          background: $light;
+          text-decoration: none;
+        }
+        &.active {
+          background: $blue;
+          color: #FFF;
+          text-decoration: none;
+          svg {
+            fill: #FFF;
+          }
+        }
+      }
+    }
+  }
+  .list {
+    a {
+      border-bottom: 1px solid $line;
+      display: block;
+      line-height: 1;
+      padding: 1.5*$space/2 $space/2;
+      @include transition-property(background);
+      @include transition-duration($ease);
+      &.active {
+        border-left: 4px solid $primary;
+      }
+      &:hover {
+        background: $light;
+        text-decoration: none;
+      }
+      &.active:hover {
+        background: #FFF;
+      }
+    }
+    h2 {
+      font-size: inherit;
+      margin-bottom: $space/6;
+    }
+    small {
+      color: $grey;
+    }
+    h2,
+    small {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  }
+}

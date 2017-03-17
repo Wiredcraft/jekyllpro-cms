@@ -1,0 +1,126 @@
+#header {
+  background: $black;
+  border-bottom: 1px solid shade($black, 40%);
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1);
+  @include clearfix;
+  .menu {
+    float: left;
+    .options {
+      .message {
+        background: $light;
+        display: block;
+        @include font-size($smaller);
+        margin: $space/6;
+        padding: $space/12 $space/2;
+        text-align: center;
+        &.ok {
+          background: tint($green, 90%);
+          color: $green;
+        }
+        &.error {
+          background: tint($red, 90%);
+          color: $red;
+        }
+        &.pending {
+          background: tint($blue, 90%);
+          color: $blue;
+        }
+      }
+      .header {
+        @include font-size($smaller);
+        padding: $space/3 $space/2;
+        .search {
+          display: inline-block;
+          position: relative;
+          width: 100%;
+          input {
+            box-sizing: border-box;
+            padding: $space/12 $space/4;
+            padding-left: $space;
+            width: 100%;
+          }
+          svg {
+            fill: $grey;
+            height: 1.5*$space/2;
+            left: $space/4;
+            position: absolute;
+            top: $space/4;
+            width: 1.5*$space/2;
+          }
+        }
+      }
+      .empty {
+        color: $grey;
+        display: block;
+        @include font-size($smaller);
+        padding: $space/12 $space/2;
+        margin: $space/6 0;
+        text-align: center;
+        white-space: nowrap;
+      }
+    }
+    &.error {
+      .item {
+        svg {
+          fill: $red;
+        }
+      }
+    }
+    &.pending {
+      .item {
+        svg {
+          fill: $blue;
+        }
+      }
+    }
+    &.user {
+      float: right;
+      .item {
+        border-left: 1px solid shade($black, 40%);
+        border-right: 0;
+        img {
+          margin: 0;
+        }
+      }
+      .options {
+        left: auto;
+        right: 0;
+      }
+    }
+  }
+  .item {
+    border-right: 1px solid shade($black, 40%);
+    color: #FFF;
+    display: block;
+    float: left;
+    opacity: 0.8;
+    padding: $space/3 1.5*$space/3;
+    @include transition-property(opacity);
+    @include transition-duration($ease);
+    &:hover {
+      background: shade($black, 10%);
+      opacity: 1;
+      text-decoration: none;
+    }
+    &.active {
+      opacity: 1;
+    }
+    svg {
+      display: inline-block;
+      fill: #FFF;
+      height: 1.5*$space/2;
+      margin-right: $space/4;
+      vertical-align: text-top;
+      width: 1.5*$space/2;
+    }
+    img {
+      border-radius: $radius;
+      float: left;
+      margin-right: $space/3;
+      width: $space;
+    }
+  }
+  @include breakpoint(mobile) {
+
+  };
+}

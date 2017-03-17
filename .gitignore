@@ -1,0 +1,7 @@
+.*
+!.gitignore
+!.gitmodules
+*~
+
+node_modules/
+docs/_site/

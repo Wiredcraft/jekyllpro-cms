@@ -1,0 +1,214 @@
+html,
+body {
+  height: 100%;
+}
+
+h1 {
+  @include font-size($larger);
+}
+
+h2 {
+  @include font-size($regular);
+}
+
+h3,
+h4,
+h5,
+h6 {
+  @include font-size($smaller);
+  text-transform: none;
+}
+
+h1,
+h2,
+h3 {
+  font-weight: 500;
+}
+
+.button {
+  font-weight: normal;
+  svg {
+    display: inline-block;
+    height: 1.5*$space/2;
+    margin-right: -$space/3;
+    vertical-align: text-top;
+    width: 1.5*$space/2;
+    @include transition-property(fill);
+    @include transition-duration($ease);
+  }
+  &.primary {
+    fill: #FFF;
+  }
+  &.icon {
+    padding-left: $space/3;
+    padding-right: $space/3;
+    svg {
+      margin-right: 0;
+    }
+  }
+}
+
+.menu {
+  > .button {
+    padding-left: $space/2;
+    padding-right: $space/2;
+    &.icon {
+      padding-left: $space/3;
+      padding-right: $space/3;
+      svg {
+        margin-right: 0;
+      }
+    }
+  }
+  .options {
+    h2 {
+      color: $grey;
+      @include font-size($micro);
+      margin: $space/8 0;
+      padding: $space/6 $space/2 $space/12;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+    a {
+      svg {
+        display: inline-block;
+        fill: $black;
+        height: 1.5*$space/2;
+        margin-right: $space/6;
+        opacity: 0.2;
+        width: 1.5*$space/2;
+        vertical-align: text-bottom;
+      }
+      &:hover {
+        svg {
+          fill: #FFF;
+          opacity: 1;
+        }
+      }
+      &.selected {
+        font-weight: 500;
+        svg {
+          opacity: 1;
+        }
+      }
+      &.danger {
+        &:hover {
+          background-color: $red;
+        }
+      }
+    }
+  }
+}
+
+/* The switch - the box around the slider */
+$switch_size: 18px;
+$switch_padding: 2px;
+
+.switch {
+  height: $switch_size + 2*$switch_padding;
+  margin: 0;
+  opacity: 1;
+  position: relative;
+  width: 2*$switch_size + 2*$switch_padding;
+  input {
+    display: none;
+    &:checked + .slider {
+      background: $blue;
+      border: 1px solid shade($blue, 20%);
+    }
+    &:checked + .slider:before {
+      @include transform(translateX($switch_size));
+    }
+  }
+  .slider {
+    background: $background;
+    border: 1px solid $line;
+    box-shadow: $shadow inset;
+    border-radius: 2*$switch_size;
+    bottom: 0;
+    cursor: pointer;
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+    @include transition-duration($ease);
+    &:before {
+      background: #FFF;
+      box-shadow: 0 0 2px 1px rgba(0, 0, 0, 0.1);
+      border-radius: 50%;
+      bottom: $switch_padding;
+      content: '';
+      height: $switch_size - 2;
+      left: $switch_padding;
+      position: absolute;
+      width: $switch_size - 2;
+      @include transition-duration($ease);
+    }
+    &:hover {
+      border-color: shade($line, 20%);
+    }
+  }
+  & + label {
+    cursor: pointer;
+    display: inline-block;
+    margin: 0 0 0 $space/3;
+    vertical-align: bottom;
+  }
+}
+
+.field {
+  .message {
+    border: 1px solid $line;
+    border-radius: $radius;
+    @include font-size($small);
+    padding: $space/6 $space/2;
+  }
+}
+
+@import '_loading';
+
+.loading {
+  @include loading;
+}
+
+.processing {
+  position: relative;
+  &:after {
+    @include spinner(1px, $space/2, 0.6s, $grey);
+    bottom: 0;
+    margin: auto;
+    position: absolute;
+    right: $space/4;
+    top: 0;
+  }
+  input {
+    padding-right: $space !important;
+  }
+}
+
+input[readonly],
+input[readonly=readonly]
+input[readonly=true] {
+  background: $light;
+  border-bottom: 1px solid $light;
+  box-shadow: none;
+  color: $grey;
+  &:active,
+  &:hover,
+  &:focus {
+    background: $light;
+  }
+}
+
+.button {
+  &.processing {
+    &:after {
+      @include spinner(1px, $space/2, 0.6s, #FFF, rgba(0, 0, 0, 0.1));
+      bottom: 0;
+      margin: auto;
+      position: absolute;
+      right: $space/4;
+      top: 0;
+    }
+  }
+}

@@ -1,0 +1,18 @@
+// We override variables and bootstrap egg
+
+@import '_variables';
+@import 'vendors/egg/egg';
+
+/*** CUSTOM ***/
+
+@import 'partials/_base';
+@import 'partials/_codemirror';
+
+#landing {
+  @import 'partials/_landing';
+}
+
+#app {
+  height: 100%;
+  @import 'partials/app/_all';
+}

@@ -1,0 +1,216 @@
+#content {
+  background: #FFF;
+  border-radius: $radius;
+  box-shadow: 0 1px 4px 0 rgba(0,0,0,0.14);
+  margin: $space auto;
+  max-width: $width-body;
+  &.empty {
+    bottom: 0;
+    box-sizing: border-box;
+    display: table;
+    left: 0;
+    margin: auto;
+    max-width: $width-empty;
+    padding: 1.5*$space/2;
+    position: absolute;
+    right: 0;
+    top: 0;
+    h2,
+    p {
+      margin-bottom: $space/2;
+    }
+    *:last-child {
+      margin-bottom: 0;
+    }
+    .button {
+      width: 100%;
+      & + small {
+        display: block;
+        margin-top: $space/4;
+        text-align: center;
+      }
+    }
+  }
+  .header {
+    border-bottom: 1px solid $line;
+    box-sizing: border-box;
+    padding: $space/2 1.5*$space/2;
+    .search {
+      display: inline-block;
+      .menu {
+        float: left;
+        > .button {
+          border-radius: $radius 0 0 $radius;
+          border-right: 0;
+        }
+      }
+      input {
+        border-radius: 0 $radius $radius 0;
+      }
+    }
+    .filters {
+      display: block;
+      @include clearfix;
+      @include font-size($small);
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      li {
+        background: tint($blue, 90%);
+        border: 1px solid tint($blue, 80%);
+        border-radius: $radius;
+        color: $blue;
+        display: block;
+        float: left;
+        line-height: 1;
+        margin: $space/4 $space/4 0 0;
+        padding: $space/4;
+        .remove {
+          display: inline-block;
+          margin: -$space/4;
+          margin-left: 0;
+          padding: $space/4 $space/6;
+          svg {
+            fill: tint($blue, 60%);
+            height: $space/2;
+            @include transition-property(fill);
+            @include transition-duration($ease);
+            vertical-align: bottom;
+            width: $space/2;
+          }
+          &:hover {
+            svg {
+              fill: $blue;
+            }
+          }
+        }
+      }
+    }
+    .controls {
+      float: right;
+      .edit {
+        display: inline-block;
+        color: $grey;
+        float: left;
+        @include font-size($small);
+        margin-right: $space/2;
+        padding: ($space/6 + 1) 0;
+        &:hover {
+          color: $blue;
+          text-decoration: none;
+        }
+      }
+      .bundle {
+        .menu {
+          float: left;
+        }
+      }
+      .options {
+        left: auto;
+        right: 0;
+      }
+    }
+  }
+  .body {
+    padding: 1.5*$space/2;
+    input:not([type=submit]),
+    textarea,
+    .select select {
+      width: 100%;
+    }
+    .field {
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+    .file-picker {
+      display: inline-block;
+      position: relative;
+      width: 100%;
+      .button,
+      input:focus + .button {
+        border-bottom-left-radius: 0;
+        border-top-left-radius: 0;
+        position: absolute;
+        right: 0;
+        top: 0;
+      }
+      input:hover + .button {
+        border-color: shade($line, 20%);
+      }
+      input:focus + .button {
+        @include button($primary);
+        fill: #FFF;
+        padding-left: $space/3;
+        padding-right: $space/3;
+      }
+    }
+    .slug {
+      box-sizing: border-box;
+      float: left;
+      padding-right: $space/2;
+      width: 75%;
+    }
+    .format {
+      float: left;
+      width: 25%;
+    }
+    .language {
+      .locked {
+        padding-left: $space/2;
+        padding-right: $space/2;
+        svg {
+          fill: $grey;
+          margin-left: $space/3;
+          margin-right: -$space/6;
+        }
+      }
+    }
+    &.empty {
+      background-color: $light;
+      color: $grey;
+      text-align: center;
+    }
+    &.list {
+      padding: 0;
+      a {
+        border-top: 1px solid $line;
+        color: inherit;
+        @include clearfix;
+        display: block;
+        line-height: 1;
+        padding: 1.5*$space/2;
+        @include transition-property(background);
+        @include transition-duration($ease);
+        &:hover {
+          background: $light;
+          text-decoration: none;
+        }
+        &:first-child {
+          border: 0;
+        }
+        h2,
+        .meta {
+          box-sizing: border-box;
+          color: inherit;
+          display: block;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+        h2 {
+          margin-bottom: $space/3;
+        }
+        .meta {
+          color: $grey;
+          strong {
+            color: $purple;
+            @include font-size($micro);
+            font-weight: normal;
+            text-transform: uppercase;
+          }
+        }
+      }
+    }
+  }
+}

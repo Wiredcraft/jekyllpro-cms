@@ -1,0 +1,322 @@
+/* special styles for react components */
+
+@import './_sass/main.scss';
+
+@include font-face('icon', '../assets/icons/icons');
+
+#js-app {
+  height: 100%;
+}
+
+.field textarea {
+  height: 448px;
+}
+
+fieldset {
+  border: none;
+  margin: 0;
+  padding: 0;
+  .field {
+    clear: both;
+  }
+}
+
+.field-array-of-string .Select-arrow-zone {
+  visibility: hidden;
+}
+
+.ReactModal__Content {
+  @extend #modal;
+  &.profile-modal {
+    .body {
+      text-align: center;
+      button {
+        margin: 0 8px;
+      }
+    }
+  }
+  &.confirm-deletion {
+    .body {
+      text-align: center;
+    }
+    .button {
+      margin: 0 8px;
+    }
+  }
+}
+.ReactModal__Body--open {
+  @extend body.modal;
+  @extend #app;
+}
+.ReactModal__Overlay {
+  @extend #overlay;
+}
+
+#app #sidebar .tree {
+  .svg {
+    display: inline !important;
+    margin: 0 !important;
+  }
+}
+fieldset {
+  border: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+.full-screen {
+  text-align: center;
+}
+.coating {
+  visibility: hidden;
+}
+
+.loading {
+  .loading:after {
+    display: none;
+  }
+}
+
+.notification-container {
+  top: auto;
+  bottom: 20px;
+}
+
+.disabled {
+  .button {
+    pointer-events: none;
+    @extend .button.primary.disabled;
+  }
+  .button + .menu {
+    pointer-events: none;
+  }
+  &.button {
+    pointer-events: none;
+  }
+}
+.upload-box {
+  @extend .empty;
+  input[type='file'] {
+    width: 0.1px;
+    height: 0.1px;
+    opacity: 0;
+    overflow: hidden;
+    position: absolute;
+    z-index: -1;
+    & + label {
+      width: 100%;
+      color: white;
+      background-color: #0A93FF;
+      display: inline-block;
+      @extend .button.primary;
+    }
+  }
+}
+#app #header .item {
+  &.disabled {
+    opacity: 0.3;
+    pointer-events: none;
+    cursor: default;
+    &:hover {
+      opacity: 0.3;
+    }
+  }
+}
+
+.btn {
+  @extend .button;
+  &-group {
+    position: relative;
+    display: inline-block;
+    vertical-align: middle;
+  }
+}
+.glyphicon {
+  font-family: icon;
+  position: relative;
+  top: 1px;
+  display: inline-block;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  &-remove:before {
+    content: "\2716";
+  }
+  &-arrow-down:before {
+    content: "\2b07";
+  }
+  &-arrow-up:before {
+    content: "\2b06";
+  }
+  &-plus:before {
+    content: "\2795";
+  }
+}
+legend {
+  @include font-size($small);
+  font-weight: bold;
+}
+.btn-group {
+  @include bundle;
+}
+.row {
+  margin: 0;
+  &:after {
+    clear: both;
+  }
+  &:before,
+  &:after {
+    display: table;
+    content: " ";
+  }
+  .array-item {
+    border: 1px solid $line;
+    border-bottom-width: 0;
+    @include clearfix;
+    padding: $space/2;
+
+    &:first-child {
+      border-radius: $radius $radius 0 0;
+    }
+    &:last-child {
+      border-radius: 0 0 $radius $radius;
+      border-bottom-width: 1px;
+    }
+  }
+  fieldset {
+    .field:last-child {
+      margin-bottom: 0;
+    }
+  }
+  .array-item-add {
+    float: none;
+    margin: $space/2 0 0;
+    padding: 0;
+    width: auto;
+    .button {
+      @include button($blue);
+      @include font-size($smaller);
+      padding: $space/12 $space/2;
+      &:before {
+        content: 'Add ';
+      }
+    }
+  }
+}
+.col-xs-9, .col-xs-3 {
+  box-sizing: border-box;
+  position: relative;
+  min-height: 1px;
+}
+.col-xs-9 {
+  float: left;
+  padding-right: 6px;
+  width: 75%;
+}
+.col-xs-3 {
+  float: right;
+  padding-left: 6px;
+  width: 25%;
+}
+.col-xs-offset-9 {
+  margin-left: 75%
+}
+
+#app #content {
+  .field.field-group {
+    select,
+    input {
+      display: inline;
+    }
+    input {
+      width: auto;
+    }
+  }
+  input[readonly] {
+    background: #ddd;
+  }
+  .readonly {
+    @extend input[type=text];
+    background: #ddd;
+  }
+  .input.error {
+    border-color: red;
+  }
+
+}
+
+.rjsf {
+  fieldset {
+    min-width: 100%;
+    width: 100%;
+  }
+}
+
+.ReactModal__Content.file-picker .body {
+  height: 400px;
+  overflow-y: scroll;
+  .active a {
+    background: #0A93FF;
+    color: #FFF;  
+  }
+  li ul {
+    margin-left: 18px !important;
+  }
+}
+
+.upload-box {
+  .confirm-destination + .button {
+    display: block;
+    clear: both;
+  }
+  &.confirm + .button {
+    display: none;
+  }
+  &.confirm {
+    label.button {
+      background-color: #f4f4f4;
+      border: 1px solid #f4f4f4;
+      box-shadow: none;
+      color: #AAAAAA;
+      text-align: left;
+      padding-left: 10px;
+    }
+  }
+}
+
+.confirm-schema-create {
+  p {
+    text-align: center;
+    .button {
+      margin: 0 5px;
+    }
+  }
+}
+
+// .CodeMirror pre z-index is 2
+.form-group .Select-menu-outer {
+  z-index: 5;
+}
+
+.waitingIndexUpdate {
+  background: #FFF;
+  border-radius: 2px;
+  box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.14);
+  margin: 24px auto;
+  max-width: 864px;
+  padding: 15px;
+  box-sizing: border-box;
+  text-align: center;
+
+  &.processing:after {
+    right: 50%;
+  }
+
+  p {
+    margin: 0;
+    color: rgba(0, 0, 0, .6);
+  }
+}

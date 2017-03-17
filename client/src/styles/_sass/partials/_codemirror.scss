@@ -1,0 +1,57 @@
+.ReactCodeMirror {
+  font-family: inherit;
+  font-size: inherit;
+}
+
+.CodeMirror {
+  background: $light;
+  border: 1px solid $line;
+  border-radius: $radius;
+  box-shadow: $shadow inset;
+  box-sizing: border-box;
+  color: inherit;
+  font-family: inherit;
+  font-size: inherit;
+  line-height: 160%;
+  padding: $space/6 $space/4;
+}
+
+.cm-s-default {
+  .cm-comment {
+    background: $light;
+    color: inherit;
+    font-family: $code;
+  }
+  .cm-link,
+  .cm-image {
+    color: $purple;
+    text-decoration: none;
+  }
+  .cm-url {
+    color: shade($blue, 20%);
+  }
+  .cm-header {
+    color: inherit;
+    @include font-size($larger);
+  }
+  .cm-tag {
+    color: $purple;
+  }
+  .cm-attribute {
+    color: shade(#FB8C00, 20%);
+  }
+  .cm-variable-2 {
+    color: inherit;
+  }
+  .cm-string {
+    color: shade($blue, 20%);
+  }
+  .cm-comment {
+    color: $grey;
+  }
+  .cm-srting,
+  .cm-url {
+    word-break: break-all;
+  }
+}
+
