@@ -4,7 +4,7 @@ import React, { Component } from 'react'
 import moment from 'moment'
 
 import { parseFilenameFromYaml } from '../helpers/markdown'
-import { parseFilePathByLang } from "../helpers/utils"
+import { parseFilePathByLang, getFilenameFromPath } from "../helpers/utils"
 
 import { selectCollectionFile, resetEditorData } from '../actions/editorActions'
 import { fetchRepoIndex, fetchRepoTree } from '../actions/repoActions'
@@ -235,7 +235,7 @@ class ContentListing extends Component {
               return (
                 <a onClick={this.selectItem.bind(this, c)}
                   key={`${c.path}-${idx}`}>
-                  <h2>{parseFilenameFromYaml(c.content)}</h2>
+                  <h2>{parseFilenameFromYaml(c.content) || c.path}</h2>
                   <small className='meta'>
                     <strong>{c.collectionType}</strong>&nbsp;
                     Updated&nbsp;
