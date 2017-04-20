@@ -110,7 +110,10 @@ class ContentListing extends Component {
         isMatch = isMatch && (parseFilePathByLang(item.path, config.languages) === filteredLanguage)
       }
       if (filteredName) {
-        isMatch = isMatch && (item.path.toLowerCase().indexOf(filteredName) > -1)
+        let fTitle = parseFilenameFromYaml(item.content).toLowerCase()
+        let fName = item.path.toLowerCase()
+        let filterText = filteredName.toLowerCase()
+        isMatch = isMatch && (fName.indexOf(filterText) > -1 || fTitle.indexOf(filterText) > -1)
       }
       return isMatch
     })
