@@ -224,3 +224,10 @@ export function queryToUrlString (query) {
   })
   return '?' + strs.join('&')
 }
+
+export function getFilenameFromPath(filepath) {
+  if (!filepath) return ''
+
+  let idx = filepath.lastIndexOf('/')
+  return filepath.slice(idx + 1)
+}
