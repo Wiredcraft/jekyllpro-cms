@@ -163,7 +163,7 @@ class ContentListing extends Component {
                   <CaretDownIcon />
                 </button>
                 <div className="options">
-                  <h2>Filter by language</h2>
+                  { config && config.languages && <h2>Filter by language</h2> }
                   {
                     config && config.languages && config.languages.map((lang, idx) => {
                       return (<a key={lang.code}
@@ -235,7 +235,7 @@ class ContentListing extends Component {
               return (
                 <a onClick={this.selectItem.bind(this, c)}
                   key={`${c.path}-${idx}`}>
-                  <h2>{parseFilenameFromYaml(c.content) || c.path}</h2>
+                  <h2>{parseFilenameFromYaml(c.content) || getFilenameFromPath(c.path)}</h2>
                   <small className='meta'>
                     <strong>{c.collectionType}</strong>&nbsp;
                     Updated&nbsp;
