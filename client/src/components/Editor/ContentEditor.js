@@ -370,15 +370,9 @@ export default class ContentEditor extends Component {
     if (!currentSchema) return (<section id='content' />)
 
     return (
-      <section id='content'>
+      <section id='content' className='editor'>
         <header className='header'>
           <div className='controls'>
-            <a className='edit tooltip-bottom'
-              href={`${repoUrl}commit/${selectedCollectionFile.lastCommitSha}`} target='_blank'>
-              {selectedCollectionFile.lastUpdatedBy},&nbsp;
-              {moment(Date.parse(selectedCollectionFile.lastUpdatedAt)).fromNow()}
-              <span>View on GitHub</span>
-            </a>
             <span className={disableActionBtn ? 'bundle disabled' : 'bundle'}>
               <button
                 className={fileModified
@@ -423,6 +417,17 @@ export default class ContentEditor extends Component {
         </header>
 
         <div className='body'>
+          <small className='meta'>
+            <strong>{selectedCollectionFile.collectionType}</strong>&nbsp;
+            <a className='edit tooltip-bottom'
+              href={`${repoUrl}commit/${selectedCollectionFile.lastCommitSha}`} target='_blank'>
+              Updated&nbsp;
+              {moment(Date.parse(selectedCollectionFile.lastUpdatedAt)).fromNow()}&nbsp;
+              by&nbsp;
+              {selectedCollectionFile.lastUpdatedBy}
+              <span>View on GitHub</span>
+            </a>
+          </small>
           {config && config.languages &&
             <div className='field language'>
               <label>Language</label>

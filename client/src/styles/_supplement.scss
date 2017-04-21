@@ -123,6 +123,26 @@ fieldset {
   }
 }
 
+.editor .meta {
+  box-sizing: border-box;
+  color: inherit;
+  display: block;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  margin-bottom: 10px;
+
+  strong {
+    color: $purple;
+    @include font-size($micro);
+    font-weight: normal;
+    text-transform: uppercase;
+  }
+
+  a {
+    color: $grey;
+  }
+}
+
 .btn {
   @extend .button;
   &-group {
