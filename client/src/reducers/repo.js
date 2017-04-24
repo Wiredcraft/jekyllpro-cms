@@ -70,7 +70,7 @@ export default function repo (state = initialState, action) {
       return state
 
     case COLLECTION_FILE_ADDED:
-      let addingCol = [...state.get('collections'), action.payload.newFileData]
+      let addingCol = state.get('collections').push(action.payload.newFileData)
       state = state.set('collections', addingCol).set('repoUpdateSignal', true)
       return state
 
