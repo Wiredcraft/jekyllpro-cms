@@ -149,7 +149,7 @@ export default class ContentEditor extends Component {
       toRoute,
       params: { repoOwner, repoName, collectionType, branch, splat }
     } = this.props
-    const { currentSchema, isPostPublished, isDraft, language } = this.state
+    const { currentSchema, isPostPublished, isDraft, language, currentFileLanguage } = this.state
     const filePath = this.state.currentFilePath
 
     let reqPromise = null
@@ -171,6 +171,9 @@ export default class ContentEditor extends Component {
       formData.draft = true
     } else {
       delete formData.draft
+    }
+    if (currentFileLanguage) {
+      formData.lang = currentFileLanguage
     }
     // delete all undefined property
     purgeObject(formData)
