@@ -56,7 +56,7 @@ export default class FileManager extends Component {
   handleFileClick (file) {
     console.log(file)
     this.setState({ selectedFile: file.path })
-    this.props.fileCallback(file.path)
+    this.props.fileCallback('/' + file.path)
   }
 
   handleFolderClick (folderName, path, Obj) {
