@@ -455,7 +455,7 @@ export default class ContentEditor extends Component {
                       needTranslation && needTranslation.map((lang) => {
                         return (
                           <Link key={lang.code}
-                            to={`/${repoFullName}/${params.collectionType}/${currentBranch}/new?baseFile=${params.splat}&language=${lang.code}`}
+                            to={`/${repoFullName}/${params.collectionType}/${currentBranch}/new?baseFile=${params.splat}&language=${lang.code}&branch=${currentBranch}`}
                             target='_blank'>
                             <TranslationIcon />
                             {lang.name}
