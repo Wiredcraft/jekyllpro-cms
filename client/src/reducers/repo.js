@@ -52,7 +52,8 @@ export default function repo (state = initialState, action) {
 
     case FILE_ADDED:
       var { path } = action.payload
-      updatedTreeMeta = [...state.get('treeMeta'), { type: 'blob', path: path }]
+      updatedTreeMeta = state.get('treeMeta').push({ type: 'blob', path: path })
+
       state = state.set('treeMeta', updatedTreeMeta)
       return state
 

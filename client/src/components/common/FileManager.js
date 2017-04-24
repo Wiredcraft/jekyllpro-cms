@@ -44,9 +44,10 @@ export default class FileManager extends Component {
 
   componentWillReceiveProps(nextProps) {
     const { treeMeta } = nextProps
+    const thisTreeMeta = this.props.treeMeta
     const { currentPath } = this.state
 
-    if (this.treeMeta && (treeMeta.length !== this.treeMeta.length)) {
+    if (thisTreeMeta && (treeMeta.length !== thisTreeMeta.length)) {
       this.setState({
         records: parseFolderObj(currentPath, parseFileTree(treeMeta))
       })
@@ -86,7 +87,6 @@ export default class FileManager extends Component {
   render() {
     const { treeMeta } = this.props
     const { records, currentPath } = this.state
-
     if (!records) {
       return (<div className='loading' style={{height: '400px'}} />)
     }
