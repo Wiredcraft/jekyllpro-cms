@@ -285,7 +285,7 @@ const getFreshIndexFromGithub = (repoObject, branch) => {
   return repoObject.getTree(`${branch}?recursive=1`)
     .then((data) => {
       var treeArray = data.data.tree
-      var requestQueue = new TaskQueue(30)
+      var requestQueue = new TaskQueue(3)
       var formatedIndex = {collections: []}
       var jekyllProConfigReq = Promise.resolve()
 
@@ -337,7 +337,7 @@ const getFreshIndexFromGithub = (repoObject, branch) => {
 
           formatedIndex.schemas = schemas
           var collectionFiles = getCollectionFiles(schemas, treeArray)
-
+          console.log(collectionFiles)
           return new Promise((resolve, reject) => {
             collectionFiles.forEach((item, idx) => {
               requestQueue.pushTask(() => {
