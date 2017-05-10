@@ -106,10 +106,10 @@ export function getRepoBranchDetails (branch) {
   }) 
 }
 
-export function updateRepoFile ({ branch, path, content, message }) {
+export function updateRepoFile ({ branch, path, content, message, options }) {
   return new Promise((resolve, reject) => {
     repoRequest('POST', `${API_BASE_URL}/api/repository`)
-      .send({ branch, path, content, message: message || `update ${path}` })
+      .send({ branch, path, content, message: message || `update ${path}`, options })
       .end(generalResponseHandler(resolve, reject))
   }) 
 }
