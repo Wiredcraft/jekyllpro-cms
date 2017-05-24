@@ -151,6 +151,7 @@ export default class NewEditor extends Component {
       params: { repoOwner, repoName, collectionType, branch, splat }
     } = this.props
     const { currentSchema, isPostPublished, isDraft, language, currentFileLanguage } = this.state
+    const { config } = this.props
     const filePath = this.state.currentFilePath
 
     if (!this.state.currentFileSlug) {
@@ -173,6 +174,9 @@ export default class NewEditor extends Component {
     }
     if (currentFileLanguage) {
       formData.lang = currentFileLanguage
+    }
+    if (config && config.languages && currentFileLanguage !== config.languages[0].code) {
+      formData.categories = currentFileLanguage
     }
     // delete all undefined property
     purgeObject(formData)
