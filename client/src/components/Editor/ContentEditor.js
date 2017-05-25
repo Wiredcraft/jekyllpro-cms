@@ -108,7 +108,7 @@ export default class ContentEditor extends Component {
     // content is markdown or html
     const docConfigObj = parseYamlInsideMarkdown(content)
     // console.log(docConfigObj)
-    if(docConfigObj) {
+    if(docConfigObj && !docConfigObj['__error']) {
       const schemaObj = currentSchema.JSONSchema.properties
       Object.keys(schemaObj).forEach((prop) => {
         formData[prop] = docConfigObj[prop]
@@ -122,6 +122,7 @@ export default class ContentEditor extends Component {
     }
     
     this.setState({
+      parsorError: docConfigObj && docConfigObj['__error'],
       formData,
       isPostPublished: (formData.published !== undefined) ? formData.published : true,
       isDraft: (formData.draft !== undefined) ? formData.draft : false,
@@ -364,7 +365,7 @@ export default class ContentEditor extends Component {
     const { editorUpdating, selectedCollectionFile, params, schemas, config,
       repoFullName, currentBranch } = this.props
     const { filePathInputClass, formData, currentFilePath, availableLanguages, translations,
-      currentSchema, disableActionBtn, currentFileSlug, fileModified } = this.state
+      currentSchema, disableActionBtn, currentFileSlug, fileModified, parsorError } = this.state
 
     let needTranslation = availableLanguages && availableLanguages.filter((lang) => {
       return lang.code !== this.state.currentFileLanguage
@@ -431,6 +432,12 @@ export default class ContentEditor extends Component {
               <span>View on GitHub</span>
             </a>
           </small>
+          {
+            parsorError &&
+            <div className='error-msg-block'>
+              Unable to parse fields properly as {parsorError}
+            </div>
+          }
           {config && config.languages &&
             <div className='field language'>
               <label>Language</label>

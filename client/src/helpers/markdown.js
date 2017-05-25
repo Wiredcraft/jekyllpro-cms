@@ -29,10 +29,18 @@ export function parseYamlInsideMarkdown(text) {
   }
   if (indexes.length > 1) {
     let text = ''
+    let doc = null
     for (let i = indexes[0] + 1; i < indexes[1]; i++) {
       text += targetLines[i] + '\n'
     }
-    const doc = yaml.safeLoad(text)
+    try {
+      doc = yaml.safeLoad(text)
+    } catch (e) {
+      console.error(e)
+      doc = {
+        __error: `${e.name}: ${e.reason}`
+      }
+    }
     return doc
   }
   return null
