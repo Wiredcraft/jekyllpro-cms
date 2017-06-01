@@ -1,6 +1,6 @@
 import { diffChars } from 'diff/lib/diff/character'
 import tinytime from 'tinytime';
-import slug from 'limax';
+import slug from 'speakingurl';
 const timeTemplate = tinytime('{YYYY}-{Mo}-{DD}', { padMonth: true, padDays: true });
 
 export function textValueIsDifferent (origin, other) {
