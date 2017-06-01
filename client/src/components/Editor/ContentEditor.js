@@ -18,7 +18,7 @@ import TranslationIcon from '../svg/TranslationIcon'
 
 import customWidgets from '../JSONSchemaForm/CustomWidgets'
 import CustomArrayField from '../JSONSchemaForm/CustomArrayField'
-import { dateToString, purgeObject, textValueIsDifferent,
+import { slugify, purgeObject, textValueIsDifferent,
   parseFilePath, parseNameFromFilePath, parseFilePathByLang } from "../../helpers/utils"
 import ConfirmDeletionModal from '../Modal/ConfirmDeletionModal'
 import notify from '../common/Notify'
@@ -53,7 +53,13 @@ export default class ContentEditor extends Component {
       currentSchema: null,
       showDeleteFileModel: false,
       disableActionBtn: false,
-      fileModified: false
+      fileModified: false,
+      subPath: '',
+      fileDate: '',
+      title: '',
+      shouldRenderTitle: false,
+      titleTitle: 'Title',
+      showFilename: false
     }
   }
 
@@ -78,10 +84,35 @@ export default class ContentEditor extends Component {
     schemas = schemas ? schemas : []
 
     let schema = schemas.find(item => {
-        return (item.jekyll.id === type)
-      })
+      return (item.jekyll.id === type)
+    })
 
-    this.setState({currentSchema: schema}, callback)
+    let shouldRenderTitle = false;
+    let titleTitle = 'Title';
+    if (schema.JSONSchema && schema.JSONSchema.properties && schema.JSONSchema.properties.title) {
+      if (schema.JSONSchema.properties.title.title) {
+        titleTitle = schema.JSONSchema.properties.title.title;
+      }
+      let required = [];
+      if (schema.JSONSchema.required) {
+        schema.JSONSchema.required.forEach(item => {
+          if (item === 'title') {
+            titleTitle += '*';
+          } else {
+            required.push(item)
+          }
+        });
+      }
+      schema.JSONSchema.required = required;
+      delete schema.JSONSchema.properties.title
+      shouldRenderTitle = true
+    }
+
+    this.setState({
+      shouldRenderTitle,
+      titleTitle,
+      currentSchema: schema
+    }, callback)
   }
 
   setParsedFileProps(fullFilePath) {
@@ -92,6 +123,8 @@ export default class ContentEditor extends Component {
     let parsedObj = parseFilePath(fullFilePath, langs, rootFolder)
     // console.log(parsedObj)
     this.setState({
+      subPath: parsedObj.subPath,
+      fileDate: parsedObj.fileDate,
       currentFileSlug: parsedObj.fileSlug,
       currentFileExt: parsedObj.fileExt,
       currentFileLanguage: parsedObj.lang
@@ -120,9 +153,10 @@ export default class ContentEditor extends Component {
     } else {
       formData.body = content
     }
-    
+
     this.setState({
       parsorError: docConfigObj && docConfigObj['__error'],
+      title: docConfigObj && docConfigObj['title'],
       formData,
       isPostPublished: (formData.published !== undefined) ? formData.published : true,
       isDraft: (formData.draft !== undefined) ? formData.draft : false,
@@ -136,7 +170,7 @@ export default class ContentEditor extends Component {
     this.getTranslation(selectedCollectionFile, collections, config, rootFolder)
   }
 
-  updateResult(data) {
+  onFormSubmit = ({ formData: data }) => {
     const formData = Object.assign({}, data)
     const {
       selectedCollectionFile,
@@ -292,7 +326,7 @@ export default class ContentEditor extends Component {
     this.setState({showDeleteFileModel: false})
   }
 
-  handleFileSlugInput(evt) {
+  handleFileSlugInput = (evt) => {
     this.setState({ currentFileSlug: evt.target.value }, () => {
       this.updateCurrentFilePath()
     })
@@ -338,16 +372,54 @@ export default class ContentEditor extends Component {
 
   }
 
+  isDefaultLanguage = () => {
+    const { config } = this.props
+    const { currentFileLanguage } = this.state
+    if (config && config.languages && currentFileLanguage !== config.languages[0].code) {
+      return false;
+    }
+    return true;
+  }
+
+  handleTitleOnChange = (evt) => {
+    // slug is like "2017-05-25-hello-world"
+    // no directory name and extension
+
+    // note this method is different from the one on NewEditor
+    // we won't update filepath while changing title
+    const val = evt.target.value;
+    this.setState({
+      title: val
+    })
+  }
+
+  handleShowFilename = (evt) => {
+    evt.preventDefault();
+    this.setState({
+      showFilename: true
+    });
+  }
+
+  handleHideFilename = (evt) => {
+    evt.preventDefault();
+    this.setState({
+      showFilename: false
+    });
+  }
+
   updateCurrentFilePath () {
     const { config } = this.props
-    const { currentFileSlug, currentFileExt, currentFileLanguage, currentSchema } = this.state
+    const { currentFileSlug, currentFileExt, currentFileLanguage, currentSchema, subPath } = this.state
     let newPathArray = []
     let newFilename = currentFileExt ? (currentFileSlug + '.' + currentFileExt) : currentFileSlug
     if (currentSchema.jekyll.id !== 'pages') {
       newPathArray.push(currentSchema.jekyll.dir)
     }
-    if (config && config.languages && currentFileLanguage !== config.languages[0].code) {
+    if (false === this.isDefaultLanguage()) {
       newPathArray.push(currentFileLanguage)
+    }
+    if (subPath !== '') {
+      newPathArray.push(subPath)
     }
     newPathArray.push(newFilename)
     this.setState({
@@ -359,6 +431,57 @@ export default class ContentEditor extends Component {
   toContentListing() {
     const { toRoute, repoFullName } = this.props
     toRoute(`/${repoFullName}/`)
+  }
+
+  renderTitle = () => {
+    const {
+      shouldRenderTitle,
+      currentFileSlug,
+      currentFilePath,
+      showFilename,
+      titleTitle,
+      title,
+      fileDate
+    } = this.state;
+    if (shouldRenderTitle === false) return null;
+    return (
+      <div>
+        <div className='field title'>
+          <label>{titleTitle}</label>
+          <input
+            type='text'
+            value={title}
+            onChange={this.handleTitleOnChange}
+          />
+          { showFilename === false ?
+            <small className='description'>
+              <strong>File path: </strong>{currentFilePath}{'  '}
+              (<a
+                href="javascript:;"
+                onClick={this.handleShowFilename}
+              >
+                edit
+              </a>)
+            </small>
+              :
+            null
+          }
+        </div>
+        { showFilename === true ?
+          <div className='field filename'>
+            <label>Filename{'  '}(<a href="javascript:;" onClick={this.handleHideFilename}>hide</a>)</label>
+            <input
+              type='text'
+              value={currentFileSlug}
+              onChange={this.handleFileSlugInput}
+            />
+            <small className='description'><strong>File path: </strong>{currentFilePath}</small>
+          </div>
+            :
+          null
+        }
+      </div>
+    );
   }
 
   render() {
@@ -490,27 +613,11 @@ export default class ContentEditor extends Component {
             </div>
           }
 
-          <div className='field slug'>
-            <label>Slug</label>
-            <input
-              className={`${filePathInputClass}`}
-              type='text'
-              value={currentFileSlug}
-              onChange={::this.handleFileSlugInput}
-              placeholder='File slug' />
-            <small className='description'><strong>File path: </strong>{currentFilePath}</small>
-          </div>
-          <div className='field format'>
-            <label>Format</label>
-            <Select
-              clearable={false}
-              value={this.state.currentFileExt}
-              options={[{value: 'md', label: 'Markdown'}, {value: 'html', label: 'HTML'}]}
-              onChange={::this.handleSlugSelect} />
-          </div>
+          {this.renderTitle()}
+
           <Form
             onChange={res => this.setState({ formData: res.formData, fileModified: true })}
-            onSubmit={res => this.updateResult(res.formData)}
+            onSubmit={this.onFormSubmit}
             schema={currentSchema.JSONSchema}
             uiSchema={currentSchema.uiSchema}
             fields={{ArrayField: CustomArrayField}}

@@ -1,4 +1,7 @@
 import { diffChars } from 'diff/lib/diff/character'
+import tinytime from 'tinytime';
+import slug from 'limax';
+const timeTemplate = tinytime('{YYYY}-{Mo}-{DD}', { padMonth: true, padDays: true });
 
 export function textValueIsDifferent (origin, other) {
   let diff = diffChars(origin, other)
@@ -8,7 +11,23 @@ export function textValueIsDifferent (origin, other) {
 }
 
 export function dateToString (dateObj) {
-  return [dateObj.getFullYear(), dateObj.getMonth() + 1, dateObj.getDate()].join('-')
+  return timeTemplate.render(dateObj);
+}
+
+export function slugify(value, dateString = dateToString(new Date())) {
+  // TODO simple slugify
+  // return dateString + '-' + value.toLowerCase().trim()
+  //   .replace(/[^\w\d\s-]/g, '')
+  //   .replace(/\s+/g, '-');
+  return dateString + '-' + slug(value, { tone: false });
+}
+
+export function parseFileDate(filename) {
+  // TODO mayby specify word boundary or start of line
+  const dateCapture = filename.match(/(\d{4}-\d{1,2}-\d{1,2})/);
+  if (dateCapture) {
+    return dateCapture[0];
+  }
 }
 
 export function purgeObject (obj) {
@@ -151,12 +170,23 @@ export function parseFilePathByLang (filePath, LANGUAGES, rootFolder) {
   return lang
 }
 
-// i.e filepath '_products/en/some_folder/msr.md' will be parsed to
-// {lang: 'en', fileExt: 'md', fileSlug: 'some_folder/msr'}
-//
-// LANGUAGES should be in format:
-// [{name: 'English', code: 'en'}, {name: 'Chinese', code: 'cn'}],
-// THE first one is default site language.
+/**
+ * parse filepath
+ *
+ * input filePath = '_products/en/path0/path1/2017-05-25-msr.md'
+ * will produce:
+ *  {
+ *    lang: 'en',
+ *    fileExt: 'md',
+ *    subPath: 'paht0/path1',
+ *    fileSlug: '2017-05-25-msr',
+ *    fileDate: '2017-05-25'
+ *  }
+ *
+ * LANGUAGES should be in format:
+ * [{name: 'English', code: 'en'}, {name: 'Chinese', code: 'cn'}],
+ * The first one is default site language.
+ */
 export function parseFilePath (filePath, LANGUAGES, rootFolder) {
   // slice out root folder
   if (rootFolder && rootFolder !== '/') {
@@ -187,6 +217,8 @@ export function parseFilePath (filePath, LANGUAGES, rootFolder) {
   let len = pathArray[pathArray.length - 1]
   let filenames = pathArray[pathArray.length - 1].split('.')
 
+  const fileDate = parseFileDate(filenames[0]);
+
   switch (filenames[filenames.length - 1]) {
     case 'md':
     case 'MD':
@@ -203,7 +235,14 @@ export function parseFilePath (filePath, LANGUAGES, rootFolder) {
     default:
       break
   }
-  parsedObj['fileSlug'] = pathArray.join('/')
+
+  parsedObj['subPath'] = pathArray.slice(0, pathArray.length - 1).join('/')
+  parsedObj['fileSlug'] = pathArray[pathArray.length - 1]
+  if (fileDate) {
+    parsedObj['fileDate'] = fileDate
+  } else {
+    parsedObj['fileDate'] = fileDate
+  }
 
   return parsedObj
 }
