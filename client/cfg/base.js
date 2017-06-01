@@ -40,7 +40,10 @@ module.exports = {
     hot: true,
     port: 8000,
     publicPath: `${publicPath}`,
-    noInfo: false
+    noInfo: false,
+    stats: {
+      colors: true
+    }
   },
   resolve: {
     extensions: ['', '.js', '.jsx'],
