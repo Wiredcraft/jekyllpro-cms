@@ -47,6 +47,7 @@ export default class NewEditor extends Component {
       formData: {},
       currentSchema: null,
       disableActionBtn: false,
+      subPath: '',
       title: '',
       shouldRenderTitle: false,
       titleTitle: 'Title',
@@ -144,6 +145,7 @@ export default class NewEditor extends Component {
 
       this.setState({
         formData,
+        title: docConfigObj && docConfigObj['title'],
         isPostPublished: (formData.published !== undefined) ? formData.published : true,
         isDraft: (formData.draft !== undefined) ? formData.draft : false,
         currentFileLanguage: langCode
@@ -161,6 +163,7 @@ export default class NewEditor extends Component {
     let parsedObj = parseFilePath(fullFilePath, langs, rootFolder)
     // console.log(parsedObj)
     this.setState({
+      subPath: parsedObj.subPath,
       currentFileSlug: parsedObj.fileSlug,
       currentFileExt: parsedObj.fileExt,
       currentFileLanguage: langCode
@@ -290,12 +293,20 @@ export default class NewEditor extends Component {
     // slug is like "2017-05-25-hello-world"
     // no directory name and extension
     const val = evt.target.value;
-    this.setState({
-      title: val,
-      currentFileSlug: slugify(val)
-    }, () => {
-      this.updateCurrentFilePath()
-    })
+    const { location: { query } } = this.props
+    if (query.baseFile && query.language) {
+      // this new entry is created from existing one
+      return this.setState({
+        title: val
+      })
+    } else {
+      return this.setState({
+        title: val,
+        currentFileSlug: slugify(val === '' ? 'untitled' : val)
+      }, () => {
+        this.updateCurrentFilePath()
+      })
+    }
   }
 
   handleShowFilename = (evt) => {
@@ -313,7 +324,7 @@ export default class NewEditor extends Component {
   }
 
   updateCurrentFilePath () {
-    const { currentFileSlug, currentFileExt, currentFileLanguage, currentSchema } = this.state
+    const { currentFileSlug, currentFileExt, currentFileLanguage, currentSchema, subPath } = this.state
     let newPathArray = []
     let newFilename = currentFileExt ? (currentFileSlug + '.' + currentFileExt) : currentFileSlug
     if (currentSchema.jekyll.id !== 'pages') {
@@ -321,6 +332,9 @@ export default class NewEditor extends Component {
     }
     if (false === this.isDefaultLanguage()) {
       newPathArray.push(currentFileLanguage)
+    }
+    if (subPath !== '') {
+      newPathArray.push(subPath)
     }
     newPathArray.push(newFilename)
     this.setState({ currentFilePath: newPathArray.join('/')})
@@ -338,7 +352,7 @@ export default class NewEditor extends Component {
   }
 
   renderTitle = () => {
-    const { shouldRenderTitle, currentFileSlug, currentFilePath, showFilename, titleTitle } = this.state;
+    const { shouldRenderTitle, currentFileSlug, currentFilePath, showFilename, titleTitle, title } = this.state;
     if (shouldRenderTitle === false) return null;
     return (
       <div>
@@ -346,6 +360,7 @@ export default class NewEditor extends Component {
           <label>{titleTitle}</label>
           <input
             type='text'
+            value={title}
             onChange={this.handleTitleOnChange}
           />
           { showFilename === false ?
