@@ -184,7 +184,7 @@ export default class ContentEditor extends Component {
       toRoute,
       params: { repoOwner, repoName, collectionType, branch, splat }
     } = this.props
-    const { currentSchema, isPostPublished, isDraft, language, currentFileLanguage } = this.state
+    const { currentSchema, isPostPublished, isDraft, language, currentFileLanguage, title } = this.state
     const filePath = this.state.currentFilePath
 
     let reqPromise = null
@@ -209,6 +209,9 @@ export default class ContentEditor extends Component {
     }
     if (currentFileLanguage) {
       formData.lang = currentFileLanguage
+    }
+    if (title !== '') {
+      formData.title = title;
     }
     // delete all undefined property
     purgeObject(formData)
@@ -389,7 +392,8 @@ export default class ContentEditor extends Component {
     // we won't update filepath while changing title
     const val = evt.target.value;
     this.setState({
-      title: val
+      title: val,
+      fileModified: true
     })
   }
 
