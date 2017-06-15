@@ -225,7 +225,7 @@ const getRepoBranchIndex = (req, res, next) => {
           }
         }
       }).execPopulate().then(record => {
-        debug('record id is: ', record._id);
+        debug('record id is %s', record._id);
         let data = {
           updated: record.updated,
           collections: record.collections,
@@ -234,12 +234,13 @@ const getRepoBranchIndex = (req, res, next) => {
         }
         return res.status(200).json(data)
       });
+    } else {
+      debug('record invalid');
+      // set flag to clean old db record later if a new index cannot be built
+      req.purgeDb = true
+      // next middleware should be refreshIndexAndSave()
+      return next()
     }
-    debug('record invalid');
-    // set flag to clean old db record later if a new index cannot be built
-    req.purgeDb = true
-    // next middleware should be refreshIndexAndSave()
-    return next()
   })
 }
 
@@ -256,7 +257,11 @@ const refreshIndexAndSave = (req, res) => {
 
   RUNNING_JOBS[jobKey] = true
 
-  return getFreshIndexFromGithub(repo, branch)
+  return getFreshIndexFromGithub({
+    repoObject: repo,
+    repoFullname,
+    branch
+  })
     .then(formatedIndex => {
       // update database
       return RepoIndex.findOneAndUpdate({
@@ -288,7 +293,7 @@ const refreshIndexAndSave = (req, res) => {
               lastCommitSha: item.lastCommitSha,
               lastUpdatedAt: item.lastUpdatedAt,
               lastUpdatedBy: item.lastUpdatedBy,
-              path: item.pah,
+              path: item.path,
               repoBranch: repoIndex
             });
             return entry.save().then(() => repoIndex.collections.push(entry));
@@ -322,9 +327,27 @@ const refreshIndexAndSave = (req, res) => {
     })
 }
 
-const getFreshIndexFromGithub = (repoObject, branch) => {
+
+const getFreshIndexFromGithub = ({ repoObject, repoFullname, branch }) => {
   debug('enter func getFreshIndexFromGithub');
   return repoObject.getTree(`${branch}?recursive=1`)
+    .then(data => {
+      // update tipCommitSha
+      debug('update tipCommitSha to %s', data.data.sha);
+      return RepoIndex.findOneAndUpdate({
+        repository: repoFullname,
+        branch: branch
+      }, {
+        repository: repoFullname,
+        branch: branch,
+        tipCommitSha: data.data.sha,
+        updated: Date()
+      }, {
+        upsert: true,
+        new: true
+      })
+        .then(() => data);
+    })
     .then((data) => {
       var treeArray = data.data.tree
       var requestQueue = new TaskQueue(3)
@@ -409,7 +432,7 @@ const getFreshIndexFromGithub = (repoObject, branch) => {
                     formatedIndex.collections.push(item)
                     if (idx === collectionFiles.length - 1) {
                       return resolve(formatedIndex)
-                    }                    
+                    }
                   })
               })
             })
