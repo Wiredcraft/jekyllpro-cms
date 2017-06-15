@@ -2,7 +2,7 @@ import mongoose from 'mongoose'
 
 const Schema = mongoose.Schema
 
-const repoSchema = new Schema({
+const repoIndexSchema = new Schema({
   updated: {
     type: Date,
     default: Date.now
@@ -34,6 +34,11 @@ const repoSchema = new Schema({
     trim: true
   },
   updatedBy: {
+    type: String,
+    default: ''
+  },
+  // tip commit of the branch
+  tipCommitSha: {
     type: String,
     default: ''
   }
@@ -84,10 +89,10 @@ const repoFileEntrySchema = new Schema({
   }
 });
 
-repoSchema.statics.findByRepoInfo = function (repository, branch, cb) {
+repoIndexSchema.statics.findByRepoInfo = function (repository, branch, cb) {
   return this.findOne({ repository, branch }, cb)
 }
 
-export const RepoIndex = mongoose.model('RepoIndex', repoSchema)
+export const RepoIndex = mongoose.model('RepoIndex', repoIndexSchema)
 export const RepoAccessToken = mongoose.model('RepoAccessToken', repoAccessTokenSchema)
 export const RepoFileEntry = mongoose.model('RepoFileEntry', repoFileEntrySchema)

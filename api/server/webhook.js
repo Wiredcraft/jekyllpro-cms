@@ -87,7 +87,11 @@ export const pushHook = (req, res) => {
 
     if (strategy.rebuild) {
       // rebuild
-      return getFreshIndexFromGithub(repoObject, branch)
+      return getFreshIndexFromGithub({
+        repoObject,
+        repoFullname: repository.full_name,
+        branch
+      })
         .then(saveIndexToDb(repository.full_name, branch))
     } else {
       // partial update
@@ -97,7 +101,11 @@ export const pushHook = (req, res) => {
         }
         if (!record) {
           // fresh build
-          return getFreshIndexFromGithub(repoObject, branch)
+          return getFreshIndexFromGithub({
+            repoObject,
+            repoFullname: repository.full_name,
+            branch
+          })
             .then(saveIndexToDb(repository.full_name, branch))
         }
         let existingCollections = JSON.parse(record.collections).filter(file => {
