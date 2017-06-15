@@ -19,11 +19,13 @@
   "dependencies": {
     "babel-preset-es2015": "^6.14.0",
     "babel-register": "^6.14.0",
+    "bluebird": "^3.5.0",
     "body-parser": "^1.15.2",
     "chalk": "^1.1.3",
     "connect-mongo": "^1.3.2",
     "cookie-parser": "^1.4.3",
     "cors": "^2.8.0",
+    "debug": "^2.6.8",
     "express": "^4.14.0",
     "express-session": "^1.14.1",
     "github-api": "^3.0.0",
