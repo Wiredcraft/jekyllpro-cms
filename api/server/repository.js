@@ -1,5 +1,12 @@
 import GithubAPI from 'github-api'
 import _ from 'lodash'
+import Bluebird from 'bluebird'
+import mongoose from 'mongoose'
+import _debug from 'debug'
+
+const debug = _debug('jekyllpro-cms:repository');
+mongoose.Promise = Bluebird;
+const RepoFileEntry = mongoose.model('RepoFileEntry')
 
 import { TaskQueue, getCollectionFiles, getLangFromConfigYaml } from './utils'
 import { RepoIndex, RepoAccessToken } from './database'
@@ -176,9 +183,9 @@ const getRepoBranchIndex = (req, res, next) => {
   var refreshIndex = req.query.refresh === true || req.query.refresh === 'true'
   var repoFullname = req.get('X-REPO-OWNER') + '/' + req.get('X-REPO-NAME')
 
-  //update access token in db, which can be used to run the webhook service
+  // update access token in db, which can be used to run the webhook service
   RepoAccessToken.findOneAndUpdate({
-    repository: repoFullname       
+    repository: repoFullname
   }, {
     repository: repoFullname,
     accessToken: req.user.accessToken,
@@ -204,22 +211,31 @@ const getRepoBranchIndex = (req, res, next) => {
     if (!record) {
       return next()
     }
-    console.log('get database record:',
-      record.branch,
-      record.repository,
-      record.updated
-    )
+    debug('get database record:', record.repository, record.branch, record.updated);
     // some repo branches might have legacy index data built when it didn't have schemas.
     // only return record if it has schemas.
-    if (JSON.parse(record.schemas).length) {
-      let data = {
-        updated: record.updated,
-        collections: JSON.parse(record.collections),
-        schemas: JSON.parse(record.schemas),
-        config: JSON.parse(record.config),
-      }
-      return res.status(200).json(data)
+
+    // collections now should be an array though unpopulated
+    if (Array.isArray(record.collections)) {
+      record.populate({
+        path: 'collections',
+        options: {
+          sort: {
+            lastUpdatedAt: 'desc'
+          }
+        }
+      }).execPopulate().then(record => {
+        debug('record id is: ', record._id);
+        let data = {
+          updated: record.updated,
+          collections: record.collections,
+          schemas: JSON.parse(record.schemas),
+          config: JSON.parse(record.config),
+        }
+        return res.status(200).json(data)
+      });
     }
+    debug('record invalid');
     // set flag to clean old db record later if a new index cannot be built
     req.purgeDb = true
     // next middleware should be refreshIndexAndSave()
@@ -242,26 +258,51 @@ const refreshIndexAndSave = (req, res) => {
 
   return getFreshIndexFromGithub(repo, branch)
     .then(formatedIndex => {
-      RepoIndex.findOneAndUpdate({
+      // update database
+      return RepoIndex.findOneAndUpdate({
         repository: repoFullname,
-        branch: branch        
+        branch: branch
       }, {
         repository: repoFullname,
         branch: branch,
-        collections: JSON.stringify(formatedIndex.collections),
+        // collections: JSON.stringify(formatedIndex.collections),
         schemas: JSON.stringify(formatedIndex.schemas),
         config: JSON.stringify(formatedIndex.config),
         updated: Date()
       }, {
-        upsert: true
-      }, (err) => {
-        if (err) console.log(err)
+        upsert: true,
+        new: true
       })
+        .then(repoIndex => {
+          debug('get repoIndex: %j', {
+            _id: repoIndex._id,
+            __v: repoIndex.__v,
+            updated: repoIndex.updated,
+            updatedBy: repoIndex.updatedBy
+          });
+          // TODO separate this into a method/func
+          return Bluebird.map(formatedIndex.collections, item => {
+            const entry = new RepoFileEntry({
+              collectionType: item.collectionType,
+              content: item.content,
+              lastCommitSha: item.lastCommitSha,
+              lastUpdatedAt: item.lastUpdatedAt,
+              lastUpdatedBy: item.lastUpdatedBy,
+              path: item.pah,
+              repoBranch: repoIndex
+            });
+            return entry.save().then(() => repoIndex.collections.push(entry));
+          }, {
+            concurrency: 5
+          }).then(() => repoIndex.save());
+        })
+        .catch(err => console.log(err));
 
       delete RUNNING_JOBS[jobKey]
 
       formatedIndex.updated = new Date()
-      return res.status(200).json(formatedIndex)
+      res.status(200).json(formatedIndex)
+      return formatedIndex;
     })
     .catch((err) => {
       console.log(err)
@@ -282,6 +323,7 @@ const refreshIndexAndSave = (req, res) => {
 }
 
 const getFreshIndexFromGithub = (repoObject, branch) => {
+  debug('enter func getFreshIndexFromGithub');
   return repoObject.getTree(`${branch}?recursive=1`)
     .then((data) => {
       var treeArray = data.data.tree
@@ -337,7 +379,7 @@ const getFreshIndexFromGithub = (repoObject, branch) => {
 
           formatedIndex.schemas = schemas
           var collectionFiles = getCollectionFiles(schemas, treeArray)
-          console.log(collectionFiles)
+          debug('got %d entries from GitHub, showing the 1st one %o', collectionFiles.length, collectionFiles[0]);
           return new Promise((resolve, reject) => {
             collectionFiles.forEach((item, idx) => {
               requestQueue.pushTask(() => {
