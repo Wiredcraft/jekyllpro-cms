@@ -10,6 +10,7 @@ import {
   fetchRepoInfo,
   resetRepoData,
   fetchRepoIndex,
+  fetchUpdatedCollections,
   resetUpdateSignal,
   retryIndexFetchRequest
 } from '../actions/repoActions'
@@ -39,6 +40,13 @@ export default class Header extends Component {
 
   componentDidMount() {
     this.loadBasicRepoData()
+    setInterval(() => {
+      const { fetchUpdatedCollections, currentBranch } = this.props
+      const { location: { query } } = this.props
+      const branchInRoute = query && query.branch;
+      const branch = branchInRoute || currentBranch
+      fetchUpdatedCollections(branch)
+    }, 8000);
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -78,6 +86,7 @@ export default class Header extends Component {
       location: { query }, params: { repoOwner, repoName } } = this.props
 
     if (repoOwner && repoName) {
+      // find repo info in url
       Cookie.set('repoOwner', repoOwner, { expires: 100 })
       Cookie.set('repoName', repoName, { expires: 100 })
 
@@ -95,6 +104,7 @@ export default class Header extends Component {
         toRoute({ pathname: '/select', query: { reset: 1 } })
       })
     } else if (repoOwnerCk && repoNameCk) {
+      // find repo info in cookie
       fetchRepoInfo()
       .then(res => {
         toRoute({
@@ -116,7 +126,7 @@ export default class Header extends Component {
 
   fetchLatestIndex(branchInRoute) {
     const { fetchRepoIndex, getCurrentBranchUpdateTime, currentBranch } = this.props
-    let branch = branchInRoute || currentBranch
+    const branch = branchInRoute || currentBranch
 
     fetchRepoIndex({ branch })
     .then((indexData) => {
@@ -175,13 +185,13 @@ export default class Header extends Component {
       if (customError.errorCode === 4042) {
         return toRoute({
           pathname,
-          query: Object.assign({ noSchema: 1 }, query)         
+          query: Object.assign({ noSchema: 1 }, query)
         })
       }
       toRoute({
         pathname,
         query: Object.assign({ invalidRepo: 1 }, query)
-      })        
+      })
     } else if (err.status === 409) {
       // Calling the function only at first time,
       // Not to display waitingIndexUpdate message box when it is an index refresh request,
@@ -328,6 +338,7 @@ function mapDispatchToProps (dispatch) {
     selectCollectionFile,
     fetchRepoInfo,
     fetchRepoIndex,
+    fetchUpdatedCollections,
     resetUpdateSignal,
     retryIndexFetchRequest
   }, dispatch)

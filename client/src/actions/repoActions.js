@@ -1,6 +1,15 @@
 /* global API_BASE_URL */
-import { getRepoDetails, getRepoMeta, getRepoBranchList, getRepoIndex, getRepoBranchDetails,
-  getRepoTree, listRepoHooks, registerRepoHook } from '../helpers/api'
+import { 
+  getRepoDetails,
+  getRepoMeta,
+  getRepoBranchList,
+  getRepoIndex,
+  getUpdatedCollections,
+  getRepoBranchDetails,
+  getRepoTree,
+  listRepoHooks,
+  registerRepoHook
+} from '../helpers/api'
 import { resetEditorData } from './editorActions'
 
 export const CHANGE_REPO_STATE = 'CHANGE_REPO_STATE'
@@ -12,6 +21,7 @@ export const FILE_REPLACED = 'FILE_REPLACED'
 export const COLLECTION_FILE_REMOVED = 'COLLECTION_FILE_REMOVED'
 export const COLLECTION_FILE_ADDED = 'COLLECTION_FILE_ADDED'
 export const COLLECTION_FILE_UPDATED = 'COLLECTION_FILE_UPDATED'
+export const UPDATE_COLLECTION_COMPLETED = 'UPDATE_COLLECTION_COMPLETED'
 
 /*
 * Repository
@@ -92,6 +102,20 @@ export function fetchRepoIndex(opts, silent) {
         return Promise.reject(err)       
       })
   }
+}
+
+export function fetchUpdatedCollections(branch) {
+  return dispatch => {
+    return getUpdatedCollections({ branch })
+      .then(data => {
+        dispatch({
+          type: UPDATE_COLLECTION_COMPLETED,
+          payload: {
+            updatedCollections: data.collections
+          }
+        });
+      });
+  };
 }
 
 export function fetchRepoTree(branch) {

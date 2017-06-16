@@ -125,6 +125,10 @@ const initRoutes = (app) => {
   .all(users.requireAuthentication, repository.requireGithubAPI)
   .get(repository.getRepoBranchIndex, repository.refreshIndexAndSave)
 
+  app.route('/api/repository/updated-collections')
+  .all(users.requireAuthentication, repository.requireGithubAPI)
+  .get(repository.getRepoBranchUpdatedCollections);
+
   app.route('/api/repository/details')
   .all(users.requireAuthentication, repository.requireGithubAPI)
   .get(repository.getRepoDetails)
