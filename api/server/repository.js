@@ -8,7 +8,7 @@ const debug = _debug('jekyllpro-cms:repository');
 mongoose.Promise = Bluebird;
 const RepoFileEntry = mongoose.model('RepoFileEntry')
 
-import { TaskQueue, getCollectionFiles, getLangFromConfigYaml } from './utils'
+import { TaskQueue, getCollectionFiles, getCollectionType, getLangFromConfigYaml } from './utils'
 import { RepoIndex, RepoAccessToken } from './database'
 import { hookConfig } from './webhook'
 
@@ -181,6 +181,8 @@ const getRepoBranchIndex = (req, res, next) => {
   var repo = req.githubRepo
   var branch = req.query.branch || 'master'
   var refreshIndex = req.query.refresh === true || req.query.refresh === 'true'
+  // TODO for test force this to false
+  refreshIndex = false;
   var repoFullname = req.get('X-REPO-OWNER') + '/' + req.get('X-REPO-NAME')
 
   // update access token in db, which can be used to run the webhook service
@@ -225,6 +227,8 @@ const getRepoBranchIndex = (req, res, next) => {
           }
         }
       }).execPopulate().then(record => {
+        // @see mongoose doc
+        // http://mongoosejs.com/docs/api.html#document_Document-execPopulate
         debug('record id is %s', record._id);
         let data = {
           updated: record.updated,
@@ -242,6 +246,158 @@ const getRepoBranchIndex = (req, res, next) => {
       return next()
     }
   })
+}
+
+function getRepoBranchUpdatedCollections(req, res) {
+  const repo = req.githubRepo;
+  const branch = req.query.branch || 'master';
+  const repoFullname = req.get('X-REPO-OWNER') + '/' + req.get('X-REPO-NAME');
+  return refreshIndexIncremental({
+    repoObject: repo,
+    repoFullname,
+    branch
+  }).then(collections =>
+    res.status(200).json({
+      collections
+    })
+  );
+}
+
+function refreshIndexIncremental({ repoObject, repoFullname, branch }) {
+  debug('enter refreshIndexIncremental %j', {
+    repoFullname,
+    branch
+  });
+  let repoIndex = null;
+  let schemaArray = null;
+  let branchSha = null;
+  const collections = {
+    modified: [], // consider added as modified
+    removed: []
+  };
+  let entries = [];
+
+  // throttle
+  const jobKey = `refreshIndexIncremental:${repoFullname}:${branch}`;
+  if (RUNNING_JOBS[jobKey]) {
+    debug('another refreshIndexIncremental is running, returning');
+    return Promise.resolve([]);
+  }
+  RUNNING_JOBS[jobKey] = true
+
+  const dispose = () => {
+    delete RUNNING_JOBS[jobKey]
+  };
+
+  // get last commit
+  return Promise.all([
+    RepoIndex.findOne({ repository: repoFullname, branch }),
+    repoObject.getRef(`heads/${branch}`)
+  ])
+    .then(([_repoIndex, refData]) => {
+      if (refData.data.object &&
+        refData.data.object.sha &&
+        refData.data.object.sha === _repoIndex.tipCommitSha
+      ) {
+        throw 'break';
+      }
+
+      repoIndex = _repoIndex;
+      branchSha = refData.data.object.sha;
+      schemaArray = JSON.parse(repoIndex.schemas);
+      if (repoIndex.tipCommitSha) {
+        // doc https://developer.github.com/v3/repos/commits/#compare-two-commits
+        return repoObject.compareBranches(repoIndex.tipCommitSha, branch);
+      } else {
+        // TODO to handle
+        debug('Error: not tipCommitSha on repoIndex %s', repoIndex._id);
+      }
+    })
+    .then(data => {
+      debug('%d commits between %s and %s', data.data.total_commits, repoIndex.tipCommitSha, branch);
+      return Bluebird.map(data.data.files, f => {
+        // TODO we should saparate logic out
+        // and take excludes in _config.yml into account
+        const files = data.data.files.filter(f => /\.(html|md|markdown)$/i.test(f.filename));
+        const collectionType = getCollectionType(schemaArray, f.filename);
+
+        if (collectionType === '') {
+          return Bluebird.resolve();
+        }
+
+        if (f.status === 'removed') {
+          return RepoFileEntry.findOne({
+            path: f.filename,
+            repoBranch: repoIndex
+          }).then(entryInst => {
+            if (!entryInst) {
+              return;
+            }
+            repoIndex.collections.remove(entryInst._id);
+            collections.removed.push({
+              _id: entryInst._id,
+              path: entryInst.path
+            });
+            return repoIndex.save()
+              .then(() => RepoFileEntry.find({ _id: entryInst._id }).remove().exec());
+          });
+        } else { // consider added as modified
+          return Promise.all([
+            repoObject.getContents(branch, f.filename, true),
+            repoObject.listCommits({ sha: branch, path: f.filename })
+          ]).then(([data, commits]) => {
+            const content = data.data;
+            const lastCommit = commits.data[0];
+
+            const cond = {
+              path: f.filename,
+              repoBranch: repoIndex
+            };
+            const entry = {
+              collectionType,
+              content,
+              lastCommitSha: lastCommit.sha,
+              lastUpdatedAt: lastCommit.commit.committer.date,
+              lastUpdatedBy: lastCommit.commit.committer.name,
+              path: f.filename,
+              repoBranch: repoIndex
+            };
+            const opt = { upsert: true, new: true };
+            return RepoFileEntry.findOneAndUpdate(cond, entry, opt)
+              .then(entryInst => {
+                if (!entryInst) {
+                  debug('faild to upsert file entry: %o', cond);
+                  // TODO better throw here
+                  return;
+                }
+                repoIndex.collections.addToSet(entryInst);
+
+                collections.modified.push(entry);
+
+                // db save
+                return repoIndex.save();
+              })
+          });
+        }
+      }, {
+        concurrency: 5
+      });
+    })
+    .then(() => {
+      // update the tipCommitSha
+      repoIndex.tipCommitSha = branchSha;
+      return repoIndex.save();
+    })
+    .then(() => {
+      dispose();
+      debug('returning, %d added/modified entries', entries.length);
+      return collections;
+    })
+    .catch(err => {
+      dispose();
+      if (err === 'break') return collections;
+      debug('Error: %o', err);
+    }); // TODO
 }
 
 const refreshIndexAndSave = (req, res) => {
@@ -264,6 +420,8 @@ const refreshIndexAndSave = (req, res) => {
   })
     .then(formatedIndex => {
       // update database
+      const startTime = new Date();
+      debug('create repo index');
       return RepoIndex.findOneAndUpdate({
         repository: repoFullname,
         branch: branch
@@ -299,7 +457,10 @@ const refreshIndexAndSave = (req, res) => {
             return entry.save().then(() => repoIndex.collections.push(entry));
           }, {
             concurrency: 5
-          }).then(() => repoIndex.save());
+          }).then(() => {
+            debug('it takes %s to build the complete index', new Date() - startTime);
+            return repoIndex.save();
+          });
         })
         .catch(err => console.log(err));
 
@@ -327,7 +488,9 @@ const refreshIndexAndSave = (req, res) => {
     })
 }
 
-
+/**
+ * @param {string} repoFullname - e.g. `wiredcraft/pipelines`
+ */
 const getFreshIndexFromGithub = ({ repoObject, repoFullname, branch }) => {
   debug('enter func getFreshIndexFromGithub');
   return repoObject.getTree(`${branch}?recursive=1`)
@@ -354,11 +517,9 @@ const getFreshIndexFromGithub = ({ repoObject, repoFullname, branch }) => {
       var formatedIndex = {collections: []}
       var jekyllProConfigReq = Promise.resolve()
 
-      var isJekyllRepo = treeArray.filter((item) => {
-        return (item.path === '_config.yml')
-      })
+      const isJekyllRepo = treeArray.some(entry => entry.path === '_config.yml');
 
-      if (isJekyllRepo.length) {
+      if (isJekyllRepo) {
         jekyllProConfigReq = repoObject.getContents(branch, '_config.yml', true)
         .then((data) => {
           formatedIndex['config'] = getLangFromConfigYaml(data.data)
@@ -375,20 +536,14 @@ const getFreshIndexFromGithub = ({ repoObject, repoFullname, branch }) => {
         })
       }
 
-      var schemaFilesReq = treeArray.filter((item) => {
-        return (item.type === 'blob') && (item.path.indexOf('_schemas/') === 0)
-      })
-      .map((f) => {
+      const schemaFiles = treeArray.filter(i => i.type === 'blob' && i.path.indexOf('_schemas/') === 0);
+      const schemaFilesReqPromises = schemaFiles.map((f) => {
         return repoObject.getContents(branch, f.path, true)
-          .then((data) => {
-            return data.data
-          })
-          .catch(err => {
-            console.log(err)
-          })
+          .then(data => data.data)
+          .catch(err => console.log(err));
       })
 
-      var nextPromiseFlow = Promise.all(schemaFilesReq)
+      const nextPromiseFlow = Promise.all(schemaFilesReqPromises)
         .then(schemas => {
           // if no schemas at all, end the request flow here
           if (!schemas || !schemas.length) {
@@ -401,7 +556,7 @@ const getFreshIndexFromGithub = ({ repoObject, repoFullname, branch }) => {
           }
 
           formatedIndex.schemas = schemas
-          var collectionFiles = getCollectionFiles(schemas, treeArray)
+          const collectionFiles = getCollectionFiles(schemas, treeArray)
           debug('got %d entries from GitHub, showing the 1st one %o', collectionFiles.length, collectionFiles[0]);
           return new Promise((resolve, reject) => {
             collectionFiles.forEach((item, idx) => {
@@ -439,9 +594,7 @@ const getFreshIndexFromGithub = ({ repoObject, repoFullname, branch }) => {
           })
         })
 
-      return jekyllProConfigReq.then(() => {
-        return nextPromiseFlow
-      })
+      return jekyllProConfigReq.then(() => nextPromiseFlow);
     })
 }
 
@@ -533,6 +686,7 @@ export default {
   writeRepoFile,
   deleteRepoFile,
   getRepoBranchIndex,
+  getRepoBranchUpdatedCollections,
   refreshIndexAndSave,
   getFreshIndexFromGithub,
   listBranchTree,

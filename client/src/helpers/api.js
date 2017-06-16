@@ -132,6 +132,14 @@ export function getRepoIndex ({ branch, refresh }) {
   })
 }
 
+export function getUpdatedCollections({ branch = 'master' } = {}) {
+  const requestUrl = `${API_BASE_URL}/api/repository/updated-collections?branch=${branch}`;
+  return new Promise((resolve, reject) => {
+    repoRequest('GET', requestUrl)
+      .end(generalResponseHandler(resolve, reject));
+  });
+}
+
 export function getRepoTree (branch) {
   branch = branch ? branch : 'master'
   var requestUrl = `${API_BASE_URL}/api/repository/tree?branch=${branch}`

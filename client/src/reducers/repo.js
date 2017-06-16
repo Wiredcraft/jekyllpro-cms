@@ -1,7 +1,17 @@
 import Immutable from 'immutable'
 
-import { CHANGE_REPO_STATE, FILE_REMOVED, FILE_ADDED, FILE_REPLACED, RESET_REPO_DATA, CHECKOUT_BRANCH,
-  COLLECTION_FILE_ADDED, COLLECTION_FILE_REMOVED, COLLECTION_FILE_UPDATED } from '../actions/repoActions'
+import {
+  CHANGE_REPO_STATE,
+  FILE_REMOVED,
+  FILE_ADDED,
+  FILE_REPLACED,
+  RESET_REPO_DATA,
+  CHECKOUT_BRANCH,
+  COLLECTION_FILE_ADDED,
+  COLLECTION_FILE_REMOVED,
+  COLLECTION_FILE_UPDATED,
+  UPDATE_COLLECTION_COMPLETED
+} from '../actions/repoActions'
 
 const initialState = Immutable.fromJS({
   loading: false,
@@ -98,6 +108,32 @@ export default function repo (state = initialState, action) {
         'collections': updatingCol,
         'repoUpdateSignal': true
       })
+
+    case UPDATE_COLLECTION_COMPLETED: {
+      const { updatedCollections } = action.payload;
+      const { modified, removed } = updatedCollections;
+      console.log(updatedCollections);
+      let newCollections = state.get('collections'); // to track immutable List
+      modified.forEach(c => {
+        const idx = newCollections.findIndex(val => val.get('path') === c.path);
+        console.log(idx);
+        if (idx === -1) {
+          // this is a new entry
+          newCollections = newCollections.push(Immutable.Map(c));
+        } else {
+          // update existed entry
+          newCollections = newCollections.update(idx, _val => Immutable.Map(c));
+        }
+      });
+
+      removed.forEach(c => {
+        const idx = newCollections.findIndex(val => val.get('path') === c.path);
+        newCollections = newCollections.delete(idx);
+      });
+      return state
+        .set('collections', newCollections)
+        .set('repoUpdateSignal', true);
+    }
 
     default:
       return state
