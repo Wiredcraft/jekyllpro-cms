@@ -1,4 +1,4 @@
-# JekyllPro-CMS
+# JekyllPro CMS
 
 A Web interface to manage your Jekyll site content.
 
