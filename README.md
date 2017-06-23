@@ -1,7 +1,5 @@
 # JekyllPro-CMS
 
-<img src="https://wiredcraft.github.io/jekyllpro-cms/assets/logo.svg"  width="200" />
-
 A Web interface to manage your Jekyll site content.
 
 It contains two parts:
