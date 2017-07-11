@@ -108,10 +108,18 @@ export function fetchUpdatedCollections(branch) {
   return dispatch => {
     return getUpdatedCollections({ branch })
       .then(data => {
+
+        if (!data.collections) return;
+
+        const { modified = [], removed = [] } = data.collections;
+
+        if (modified.length + removed.length === 0) return;
+
         dispatch({
           type: UPDATE_COLLECTION_COMPLETED,
           payload: {
-            updatedCollections: data.collections
+            modified,
+            removed
           }
         });
       });
