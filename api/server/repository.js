@@ -8,6 +8,7 @@ const ObjectId = mongoose.Types.ObjectId;
 const debug = _debug('jekyllpro-cms:repository');
 mongoose.Promise = Bluebird;
 const RepoFileEntry = mongoose.model('RepoFileEntry')
+const lodash = _; // TODO
 
 import { TaskQueue, getCollectionFiles, getCollectionType, getLangFromConfigYaml } from './utils'
 import { RepoIndex, RepoAccessToken } from './database'
@@ -20,6 +21,10 @@ const cb = (error, result, request) => {
   console.log(result)
 }
 
+/**
+ * middleware
+ * attach github-api instance to `req` - req.githubRepo
+ */
 const requireGithubAPI = (req, res, next) => {
   if (req.githubRepo) {
     return next()
@@ -254,7 +259,7 @@ function getRepoBranchUpdatedCollections(req, res) {
   const branch = req.query.branch || 'master';
   const repoFullname = req.get('X-REPO-OWNER') + '/' + req.get('X-REPO-NAME');
   return refreshIndexIncremental({
-    repoObject: repo,
+    github: repo,
     repoFullname,
     branch
   }).then(collections =>
@@ -264,28 +269,26 @@ function getRepoBranchUpdatedCollections(req, res) {
   );
 }
 
-function refreshIndexIncremental({ repoObject, repoFullname, branch }) {
-  debug('enter refreshIndexIncremental %j', {
-    repoFullname,
-    branch
-  });
+/**
+ * @return {Promise<collections>} - collections: { modified: Array, removed: Array }
+ */
+function refreshIndexIncremental({ github, repoFullname, branch }) {
+  debug(`refreshIndexIncremental ${repoFullname}:${branch}`);
   let repoIndex = null;
   let schemaArray = null;
-  let branchSha = null;
+  let tipCommitSha = null;
   const collections = {
     modified: [], // consider added as modified
     removed: []
   };
-  let entries = [];
 
   // throttle
   const jobKey = `refreshIndexIncremental:${repoFullname}:${branch}`;
   if (RUNNING_JOBS[jobKey]) {
-    debug('another refreshIndexIncremental is running, returning');
-    return Promise.resolve([]);
+    debug('another refreshIndexIncremental task is running, returning');
+    return Promise.resolve(collections);
   }
   RUNNING_JOBS[jobKey] = true
-
   const dispose = () => {
     delete RUNNING_JOBS[jobKey]
   };
@@ -293,29 +296,31 @@ function refreshIndexIncremental({ repoObject, repoFullname, branch }) {
   // get last commit
   return Promise.all([
     RepoIndex.findOne({ repository: repoFullname, branch }),
-    repoObject.getRef(`heads/${branch}`)
+    github.getRef(`heads/${branch}`)
   ])
     .then(([_repoIndex, refData]) => {
-      if (refData.data.object &&
-        refData.data.object.sha &&
-        refData.data.object.sha === _repoIndex.tipCommitSha
-      ) {
+
+      if (!_repoIndex.tipCommitSha) {
+        debug('Error: no tipCommitSha on %s repoIndex %s', repoFullname, _repoIndex._id);
         throw 'break';
       }
 
+      tipCommitSha = lodash.get(refData, 'data.object.sha');
+      // can not get the commit sha
+      if (typeof tipCommitSha !== 'string') throw 'break';
+      // the commit sha is same as the one in database
+      if (tipCommitSha === _repoIndex.tipCommitSha) throw 'break';
+
+      debug(`tip commit: db is ${_repoIndex.tipCommitSha} remote is ${tipCommitSha}`);
       repoIndex = _repoIndex;
-      branchSha = refData.data.object.sha;
       schemaArray = JSON.parse(repoIndex.schemas);
-      if (repoIndex.tipCommitSha) {
-        // doc https://developer.github.com/v3/repos/commits/#compare-two-commits
-        return repoObject.compareBranches(repoIndex.tipCommitSha, branch);
-      } else {
-        // TODO to handle
-        debug('Error: no tipCommitSha on repoIndex %s', repoIndex._id);
-      }
+
+      // doc https://developer.github.com/v3/repos/commits/#compare-two-commits
+      return github.compareBranches(repoIndex.tipCommitSha, branch);
     })
     .then(data => {
       debug('%d commits between %s and %s', data.data.total_commits, repoIndex.tipCommitSha, branch);
+      debug('files %j', data.data.files);
       return Bluebird.map(data.data.files, f => {
         // TODO we should saparate logic out
         // and take excludes in _config.yml into account
@@ -344,8 +349,8 @@ function refreshIndexIncremental({ repoObject, repoFullname, branch }) {
           });
         } else { // consider added as modified
           return Promise.all([
-            repoObject.getContents(branch, f.filename, true),
-            repoObject.listCommits({ sha: branch, path: f.filename })
+            github.getContents(branch, f.filename, true),
+            github.listCommits({ sha: branch, path: f.filename })
           ]).then(([data, commits]) => {
             const content = data.data;
             const lastCommit = commits.data[0];
@@ -386,19 +391,18 @@ function refreshIndexIncremental({ repoObject, repoFullname, branch }) {
     })
     .then(() => {
       // update the tipCommitSha
-      repoIndex.tipCommitSha = branchSha;
+      repoIndex.tipCommitSha = tipCommitSha;
       return repoIndex.save();
     })
     .then(() => {
       dispose();
-      debug('returning, %d added/modified entries', entries.length);
       return collections;
     })
     .catch(err => {
       dispose();
       if (err === 'break') return collections;
       debug('Error: %o', err);
-    }); // TODO
+    });
 }
 
 const refreshIndexAndSave = (req, res) => {
