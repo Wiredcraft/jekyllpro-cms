@@ -4,6 +4,7 @@ import Bluebird from 'bluebird'
 import mongoose from 'mongoose'
 import _debug from 'debug'
 
+const ObjectId = mongoose.Types.ObjectId;
 const debug = _debug('jekyllpro-cms:repository');
 mongoose.Promise = Bluebird;
 const RepoFileEntry = mongoose.model('RepoFileEntry')
@@ -213,12 +214,12 @@ const getRepoBranchIndex = (req, res, next) => {
     if (!record) {
       return next()
     }
-    debug('get database record:', record.repository, record.branch, record.updated);
+    debug('get database record:', record.repository, record.branch, record.updated, record.tipCommitSha);
     // some repo branches might have legacy index data built when it didn't have schemas.
     // only return record if it has schemas.
 
     // collections now should be an array though unpopulated
-    if (Array.isArray(record.collections)) {
+    if (Array.isArray(record.collections) && record.tipCommitSha) {
       record.populate({
         path: 'collections',
         options: {
@@ -310,7 +311,7 @@ function refreshIndexIncremental({ repoObject, repoFullname, branch }) {
         return repoObject.compareBranches(repoIndex.tipCommitSha, branch);
       } else {
         // TODO to handle
-        debug('Error: not tipCommitSha on repoIndex %s', repoIndex._id);
+        debug('Error: no tipCommitSha on repoIndex %s', repoIndex._id);
       }
     })
     .then(data => {
@@ -372,7 +373,7 @@ function refreshIndexIncremental({ repoObject, repoFullname, branch }) {
                 }
                 repoIndex.collections.addToSet(entryInst);
 
-                collections.modified.push(entry);
+                collections.modified.push(_.omit(entry, ['repoBranch']));
 
                 // db save
                 return repoIndex.save();
@@ -401,41 +402,56 @@ function refreshIndexIncremental({ repoObject, repoFullname, branch }) {
 }
 
 const refreshIndexAndSave = (req, res) => {
-  var repo = req.githubRepo
-  var branch = req.query.branch || 'master'
-  var repoFullname = req.get('X-REPO-OWNER') + '/' + req.get('X-REPO-NAME')
-  var jobKey = repoFullname + '_' + branch
+  var repo = req.githubRepo;
+  var branch = req.query.branch || 'master';
+  var repoFullname = req.get('X-REPO-OWNER') + '/' + req.get('X-REPO-NAME');
+  debug(`refreshIndexAndSave - ${repoFullname}`);
+  var jobKey = repoFullname + '_' + branch;
 
-  //avoid doing multiple refresh to same repo branch at same time
+  // avoid doing multiple refresh to same repo branch at same time
   if (RUNNING_JOBS[jobKey]) {
-    return res.status(409).json({ message: 'is building index for ' + jobKey, errorCode: 4091 })
+    return res
+      .status(409)
+      .json({ message: 'is building index for ' + jobKey, errorCode: 4091 });
   }
 
-  RUNNING_JOBS[jobKey] = true
+  RUNNING_JOBS[jobKey] = true;
 
   return getFreshIndexFromGithub({
-    repoObject: repo,
-    repoFullname,
-    branch
-  })
+      repoObject: repo,
+      repoFullname,
+      branch
+    })
     .then(formatedIndex => {
       // update database
       const startTime = new Date();
-      debug('create repo index');
-      return RepoIndex.findOneAndUpdate({
-        repository: repoFullname,
-        branch: branch
-      }, {
-        repository: repoFullname,
-        branch: branch,
-        // collections: JSON.stringify(formatedIndex.collections),
-        schemas: JSON.stringify(formatedIndex.schemas),
-        config: JSON.stringify(formatedIndex.config),
-        updated: Date()
-      }, {
-        upsert: true,
-        new: true
-      })
+      debug(`create repo index - ${repoFullname}`);
+      return RepoIndex.findOneAndUpdate(
+        {
+          repository: repoFullname,
+          branch: branch
+        },
+        {
+          repository: repoFullname,
+          branch: branch,
+          // collections: JSON.stringify(formatedIndex.collections),
+          schemas: JSON.stringify(formatedIndex.schemas),
+          config: JSON.stringify(formatedIndex.config),
+          updated: Date()
+        },
+        {
+          upsert: true,
+          new: true
+        }
+      )
+        .then(repoIndex => {
+          const collections = repoIndex.collections;
+          if (Array.isArray(collections) && repoIndex.tipCommitSha) {
+            // delete all collections
+            return deleteAllEntries(collections).then(() => repoIndex);
+          }
+          return repoIndex;
+        })
         .then(repoIndex => {
           debug('get repoIndex: %j', {
             _id: repoIndex._id,
@@ -444,48 +460,73 @@ const refreshIndexAndSave = (req, res) => {
             updatedBy: repoIndex.updatedBy
           });
           // TODO separate this into a method/func
-          return Bluebird.map(formatedIndex.collections, item => {
-            const entry = new RepoFileEntry({
-              collectionType: item.collectionType,
-              content: item.content,
-              lastCommitSha: item.lastCommitSha,
-              lastUpdatedAt: item.lastUpdatedAt,
-              lastUpdatedBy: item.lastUpdatedBy,
-              path: item.path,
-              repoBranch: repoIndex
-            });
-            return entry.save().then(() => repoIndex.collections.push(entry));
-          }, {
-            concurrency: 5
-          }).then(() => {
-            debug('it takes %s to build the complete index', new Date() - startTime);
+          return Bluebird.map(
+            formatedIndex.collections,
+            item => {
+              const entry = new RepoFileEntry({
+                collectionType: item.collectionType,
+                content: item.content,
+                lastCommitSha: item.lastCommitSha,
+                lastUpdatedAt: item.lastUpdatedAt,
+                lastUpdatedBy: item.lastUpdatedBy,
+                path: item.path,
+                repoBranch: repoIndex
+              });
+              return entry.save().then(() => repoIndex.collections.push(entry));
+            },
+            {
+              concurrency: 5
+            }
+          ).then(() => {
+            debug(
+              `it takes ${new Date() - startTime}ms to build the complete index`
+            );
             return repoIndex.save();
           });
         })
         .catch(err => console.log(err));
 
-      delete RUNNING_JOBS[jobKey]
+      delete RUNNING_JOBS[jobKey];
 
-      formatedIndex.updated = new Date()
-      res.status(200).json(formatedIndex)
-      return formatedIndex;
+      formatedIndex.updated = new Date();
+      return res.status(200).json(formatedIndex);
     })
-    .catch((err) => {
-      console.log(err)
-      delete RUNNING_JOBS[jobKey]
+    .catch(err => {
+      console.log(err);
+      delete RUNNING_JOBS[jobKey];
 
       // remove obsolete index data
-      if ((err.status === 404) && req.purgeDb) {
-        RepoIndex.findOneAndRemove({
-          repository: repoFullname,
-          branch: branch        
-        }, (dberr, record) => {
-          if (dberr) console.log(dberr)
-          console.log(repoFullname + ' ' + branch + ' index data was obsolete, thus removed')
-        })
+      if (err.status === 404 && req.purgeDb) {
+        deleteARepoIndex({ repository: repoFullname, branch }).catch(err =>
+          debug('db error', err)
+        );
       }
-      return res.status(err.status || err.response.status).json(err.response.data)    
-    })
+      return res
+        .status(err.status || err.response.status)
+        .json(err.response.data);
+    });
+};
+
+function deleteARepoIndex({ repository , branch }) {
+  return RepoIndex.findOne({ repository, branch })
+    .then(repoIndex => {
+      if (!repoIndex) return;
+      const collections = repoIndex.collections;
+      if (Array.isArray(collections) && repoIndex.tipCommitSha) {
+        // delete all collections
+        return deleteAllEntries(collections)
+          .then(() => repoIndex.remove());
+      }
+      return repoIndex.remove();
+    });
+}
+
+function deleteAllEntries(entries) {
+  return Bluebird.map(entries, item => {
+    return RepoFileEntry.findByIdAndRemove(item).exec();
+  }, {
+    concurrency: 5
+  });
 }
 
 /**
@@ -495,21 +536,26 @@ const getFreshIndexFromGithub = ({ repoObject, repoFullname, branch }) => {
   debug('enter func getFreshIndexFromGithub');
   return repoObject.getTree(`${branch}?recursive=1`)
     .then(data => {
-      // update tipCommitSha
-      debug('update tipCommitSha to %s', data.data.sha);
-      return RepoIndex.findOneAndUpdate({
+      debug(`clean up existing repo index - ${repoFullname}`);
+      return deleteARepoIndex({
         repository: repoFullname,
         branch: branch
-      }, {
-        repository: repoFullname,
-        branch: branch,
-        tipCommitSha: data.data.sha,
-        updated: Date()
-      }, {
-        upsert: true,
-        new: true
-      })
-        .then(() => data);
+      }).then(() => {
+        // update tipCommitSha
+        debug('update tipCommitSha to %s', data.data.sha);
+        return RepoIndex.findOneAndUpdate({
+          repository: repoFullname,
+          branch: branch
+        }, {
+          repository: repoFullname,
+          branch: branch,
+          tipCommitSha: data.data.sha,
+          updated: Date()
+        }, {
+          upsert: true,
+          new: true
+        })
+      }).then(() => data)
     })
     .then((data) => {
       var treeArray = data.data.tree
