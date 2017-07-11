@@ -69,6 +69,9 @@ const saveIndexToDb = (formatedIndex) => {
 
 // https://developer.github.com/v3/activity/events/types/#pushevent
 export const pushHook = (req, res) => {
+  // TODO ignore webhook request for now
+  return res.json({});
+
   console.log(req.body)
   var {ref, commits, repository} = req.body
   var strategy = indexUpdateStrategy(commits)
