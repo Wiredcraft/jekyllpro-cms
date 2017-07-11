@@ -110,13 +110,11 @@ export default function repo (state = initialState, action) {
       })
 
     case UPDATE_COLLECTION_COMPLETED: {
-      const { updatedCollections } = action.payload;
-      const { modified, removed } = updatedCollections;
-      console.log(updatedCollections);
+      const { modified, removed } = action.payload;
+
       let newCollections = state.get('collections'); // to track immutable List
       modified.forEach(c => {
         const idx = newCollections.findIndex(val => val.get('path') === c.path);
-        console.log(idx);
         if (idx === -1) {
           // this is a new entry
           newCollections = newCollections.push(Immutable.Map(c));
