@@ -258,15 +258,19 @@ function getRepoBranchUpdatedCollections(req, res) {
   const repo = req.githubRepo;
   const branch = req.query.branch || 'master';
   const repoFullname = req.get('X-REPO-OWNER') + '/' + req.get('X-REPO-NAME');
+  // TODO
+  // currently refreshIndexIncremental will always resolve
+  // but we need to figure
   return refreshIndexIncremental({
     github: repo,
     repoFullname,
     branch
-  }).then(collections =>
-    res.status(200).json({
-      collections
-    })
-  );
+  })
+    .then(collections => res.status(200).json({ collections }))
+    .catch(err =>
+      console.log(err) ||
+      res.status(err.status || err.response.status).json(err.response.data)
+    );
 }
 
 /**
@@ -320,69 +324,36 @@ function refreshIndexIncremental({ github, repoFullname, branch }) {
     })
     .then(data => {
       debug('%d commits between %s and %s', data.data.total_commits, repoIndex.tipCommitSha, branch);
-      debug('files %j', data.data.files);
+      // debug('files %j', data.data.files);
       return Bluebird.map(data.data.files, f => {
+        const { filename } = f;
         // TODO we should saparate logic out
         // and take excludes in _config.yml into account
-        const files = data.data.files.filter(f => /\.(html|md|markdown)$/i.test(f.filename));
-        const collectionType = getCollectionType(schemaArray, f.filename);
+        const files = data.data.files.filter(f => /\.(html|md|markdown)$/i.test(filename));
+        const collectionType = getCollectionType(schemaArray, filename);
 
         if (collectionType === '') {
           return Bluebird.resolve();
         }
 
         if (f.status === 'removed') {
-          return RepoFileEntry.findOne({
-            path: f.filename,
-            repoBranch: repoIndex
-          }).then(entryInst => {
-            if (!entryInst) {
-              return;
-            }
-            repoIndex.collections.remove(entryInst._id);
-            collections.removed.push({
-              _id: entryInst._id,
-              path: entryInst.path
-            });
-            return repoIndex.save()
-              .then(() => RepoFileEntry.find({ _id: entryInst._id }).remove().exec());
+          return removeEntryOfRepo({
+            filename: filename,
+            repoIndex
+          }).then(removed => {
+            if (!removed) return;
+            collections.removed.push(removed);
           });
         } else { // consider added as modified
-          return Promise.all([
-            github.getContents(branch, f.filename, true),
-            github.listCommits({ sha: branch, path: f.filename })
-          ]).then(([data, commits]) => {
-            const content = data.data;
-            const lastCommit = commits.data[0];
-
-            const cond = {
-              path: f.filename,
-              repoBranch: repoIndex
-            };
-            const entry = {
-              collectionType,
-              content,
-              lastCommitSha: lastCommit.sha,
-              lastUpdatedAt: lastCommit.commit.committer.date,
-              lastUpdatedBy: lastCommit.commit.committer.name,
-              path: f.filename,
-              repoBranch: repoIndex
-            };
-            const opt = { upsert: true, new: true };
-            return RepoFileEntry.findOneAndUpdate(cond, entry, opt)
-              .then(entryInst => {
-                if (!entryInst) {
-                  debug('faild to upsert file entry: %o', cond);
-                  // TODO better throw here
-                  return;
-                }
-                repoIndex.collections.addToSet(entryInst);
-
-                collections.modified.push(_.omit(entry, ['repoBranch']));
-
-                // db save
-                return repoIndex.save();
-              })
+          return upsertEntryOfRepo({
+            github,
+            branch,
+            collectionType,
+            filename: filename,
+            repoIndex
+          }).then(modified => {
+            if (!modified) return;
+            collections.modified.push(modified);
           });
         }
       }, {
@@ -399,10 +370,100 @@ function refreshIndexIncremental({ github, repoFullname, branch }) {
       return collections;
     })
     .catch(err => {
+      if (err !== 'break') throw err;
+
       dispose();
-      if (err === 'break') return collections;
-      debug('Error: %o', err);
+      return collections;
     });
+}
+
+/**
+ * delete the entry instance and remove it from the repo
+ *
+ * @param {string} filename
+ * @param {object} repoIndex - mongoose RepoIndex doc instance
+ * @return {Promise} - resolve to undefined or { _id: string, path: string }
+ */
+function removeEntryOfRepo({ filename, repoIndex }) {
+  return RepoFileEntry.findOne({
+    path: filename,
+    repoBranch: repoIndex
+  }).then(entryInst => {
+    if (!entryInst) return;
+
+    repoIndex.collections.remove(entryInst._id);
+    const removed = {
+      _id: entryInst._id,
+      path: entryInst.path
+    };
+    return repoIndex
+      .save()
+      .then(() => RepoFileEntry.find({ _id: entryInst._id }).remove().exec())
+      .then(() => removed);
+  });
+}
+
+/**
+ * update or add a entry to a repo
+ * will call github api to fetch file content and commit history
+ *
+ * @param {object} github - github-api instance
+ * @param {string} branch
+ * @param {string} collectionType - e.g. `post`
+ * @param {string} filename
+ * @param {object} repoIndex - mongoose RepoIndex doc instance
+ * @return {Promise} - resolve to undefined or a entry
+ */
+function upsertEntryOfRepo({ github, branch, collectionType, filename, repoIndex }) {
+  return Promise.all([
+    github.getContents(branch, filename, true),
+    github.listCommits({ sha: branch, path: filename })
+  ]).then(([data, commits]) => {
+    const content = data.data;
+    const lastCommit = commits.data[0];
+
+    const cond = {
+      path: filename,
+      repoBranch: repoIndex
+    };
+    const entry = {
+      collectionType,
+      content,
+      lastCommitSha: lastCommit.sha,
+      lastUpdatedAt: lastCommit.commit.committer.date,
+      lastUpdatedBy: lastCommit.commit.committer.name,
+      path: filename,
+      repoBranch: repoIndex
+    };
+    const opt = { upsert: true, new: true };
+    return RepoFileEntry.findOneAndUpdate(cond, entry, opt).then(entryInst => {
+      if (!entryInst) {
+        debug('faild to upsert file entry: %o', cond);
+        // TODO better throw here
+        return Promise.reject({
+          status: 500,
+          response: {
+            data: {
+              message: 'unable to create file entry instance in database'
+              // TODO errorCode
+            }
+          }
+        });
+      }
+
+      repoIndex.collections.addToSet(entryInst);
+      const modified = lodash.pick(entry, [
+        'collectionType',
+        'content',
+        'lastCommitSha',
+        'lastUpdatedAt',
+        'lastUpdatedBy',
+        'path'
+      ]);
+
+      return repoIndex.save().then(() => modified);
+    });
+  });
 }
 
 const refreshIndexAndSave = (req, res) => {
