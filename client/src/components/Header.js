@@ -40,13 +40,6 @@ export default class Header extends Component {
 
   componentDidMount() {
     this.loadBasicRepoData()
-    setInterval(() => {
-      const { fetchUpdatedCollections, currentBranch } = this.props
-      const { location: { query } } = this.props
-      const branchInRoute = query && query.branch;
-      const branch = branchInRoute || currentBranch
-      fetchUpdatedCollections(branch)
-    }, 8000);
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -82,8 +75,15 @@ export default class Header extends Component {
   loadBasicRepoData() {
     const repoOwnerCk = Cookie.get('repoOwner')
     const repoNameCk = Cookie.get('repoName')
-    const { fetchRepoInfo, getAllBranch, toRoute, checkoutBranch,
-      location: { query }, params: { repoOwner, repoName } } = this.props
+    const {
+      fetchRepoInfo,
+      getAllBranch,
+      toRoute,
+      checkoutBranch,
+      fetchUpdatedCollections,
+      location: { query },
+      params: { repoOwner, repoName }
+    } = this.props
 
     if (repoOwner && repoName) {
       // find repo info in url
@@ -97,6 +97,14 @@ export default class Header extends Component {
           checkoutBranch(query.branch)
         }
         this.fetchLatestIndex(query && query.branch)
+      })
+      .then(() => {
+        // arm interval
+        setInterval(() => {
+          const { location: { query }, currentBranch } = this.props;
+          const branch = query && query.branch || currentBranch;
+          fetchUpdatedCollections(branch)
+        }, 8000);
       })
       .catch(err => {
         Cookie.remove('repoOwner')
