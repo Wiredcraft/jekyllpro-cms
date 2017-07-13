@@ -1,6 +1,6 @@
-import mongoose from 'mongoose'
+import mongoose from 'mongoose';
 
-const Schema = mongoose.Schema
+const Schema = mongoose.Schema;
 
 const repoIndexSchema = new Schema({
   updated: {
@@ -19,10 +19,12 @@ const repoIndexSchema = new Schema({
     trim: true,
     required: 'branch cannot be blank'
   },
-  collections: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'RepoFileEntry'
-  }],
+  collections: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'RepoFileEntry'
+    }
+  ],
   schemas: {
     type: String,
     default: '[]',
@@ -42,7 +44,7 @@ const repoIndexSchema = new Schema({
     type: String,
     default: ''
   }
-})
+});
 
 const repoAccessTokenSchema = new Schema({
   updated: {
@@ -65,7 +67,7 @@ const repoAccessTokenSchema = new Schema({
     type: String,
     default: ''
   }
-})
+});
 
 // collectionType: "posts"
 // content: "---\ntitle: Hello World..."
@@ -89,10 +91,16 @@ const repoFileEntrySchema = new Schema({
   }
 });
 
-repoIndexSchema.statics.findByRepoInfo = function (repository, branch, cb) {
-  return this.findOne({ repository, branch }, cb)
-}
+repoIndexSchema.statics.findByRepoInfo = function(repository, branch, cb) {
+  return this.findOne({ repository, branch }, cb);
+};
 
-export const RepoIndex = mongoose.model('RepoIndex', repoIndexSchema)
-export const RepoAccessToken = mongoose.model('RepoAccessToken', repoAccessTokenSchema)
-export const RepoFileEntry = mongoose.model('RepoFileEntry', repoFileEntrySchema)
+export const RepoIndex = mongoose.model('RepoIndex', repoIndexSchema);
+export const RepoAccessToken = mongoose.model(
+  'RepoAccessToken',
+  repoAccessTokenSchema
+);
+export const RepoFileEntry = mongoose.model(
+  'RepoFileEntry',
+  repoFileEntrySchema
+);

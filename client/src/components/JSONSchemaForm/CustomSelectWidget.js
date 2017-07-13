@@ -1,48 +1,61 @@
-import React, { Component } from 'react'
-import Select from 'react-select'
+import React, { Component } from 'react';
+import Select from 'react-select';
 
 export default class CustomSelectWidget extends Component {
   constructor(props) {
-    super(props)
+    super(props);
     if (props.multiple) {
       this.state = {
-        selected: props.value && props.value.map(v => { return { label: v, value: v }}) || [],
-      }
+        selected:
+          (props.value &&
+            props.value.map(v => {
+              return { label: v, value: v };
+            })) ||
+          []
+      };
     } else {
       this.state = {
-        selected: props.value && { label: props.value, value: props.value } || undefined
-      }
+        selected:
+          (props.value && { label: props.value, value: props.value }) ||
+          undefined
+      };
     }
   }
 
   componentWillReceiveProps(nextProps) {
-    const { value } = nextProps
+    const { value } = nextProps;
     if (value && value !== this.props.value) {
       if (this.props.multiple) {
         this.setState({
-          selected: value.map(v => { return { label: v, value: v }})
-        })
+          selected: value.map(v => {
+            return { label: v, value: v };
+          })
+        });
       } else {
-        this.setState({ selected: { label: value, value: value }})
+        this.setState({ selected: { label: value, value: value } });
       }
-        
-    }
-  }
-  
-  handleChange (selected) {
-    const { multiple, onChange, required } = this.props
-    if (multiple) {
-      let vals = selected.map(t => { return t.value })
-      // when `required` is true, it does not pass down to this component,
-      // maybe a bug of react-JSONSchema-form
-      vals = (required || required === undefined) ? (vals.length && vals || undefined) : vals
-      onChange(vals)
-    } else {
-      onChange(selected.value)
     }
   }
 
-  render () {
+  handleChange(selected) {
+    const { multiple, onChange, required } = this.props;
+    if (multiple) {
+      let vals = selected.map(t => {
+        return t.value;
+      });
+      // when `required` is true, it does not pass down to this component,
+      // maybe a bug of react-JSONSchema-form
+      vals =
+        required || required === undefined
+          ? (vals.length && vals) || undefined
+          : vals;
+      onChange(vals);
+    } else {
+      onChange(selected.value);
+    }
+  }
+
+  render() {
     const {
       schema,
       id,
@@ -54,7 +67,7 @@ export default class CustomSelectWidget extends Component {
       multiple,
       autofocus,
       onChange
-    } = this.props
+    } = this.props;
 
     return (
       <Select
@@ -67,7 +80,8 @@ export default class CustomSelectWidget extends Component {
         multi={multiple}
         value={this.state.selected}
         options={options.enumOptions}
-        onChange={::this.handleChange} />
-    )
+        onChange={::this.handleChange}
+      />
+    );
   }
 }

@@ -1,4 +1,4 @@
-var bourbon = require("./index");
+var bourbon = require('./index');
 
 module.exports = function(eyeglass, sass) {
   return {

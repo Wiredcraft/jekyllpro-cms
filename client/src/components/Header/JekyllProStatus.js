@@ -1,139 +1,153 @@
-import React, { Component } from 'react'
-import moment from 'moment'
-import { checkJekyllProBuild } from '../../helpers/api'
+import React, { Component } from 'react';
+import moment from 'moment';
+import { checkJekyllProBuild } from '../../helpers/api';
 
-import CloudIcon from '../svg/CloudIcon'
-import PlusIcon from '../svg/PlusIcon'
-import ExternalLinkIcon from '../svg/ExternalLinkIcon'
-import RemoveIcon from '../svg/RemoveIcon'
-let timeout = null
+import CloudIcon from '../svg/CloudIcon';
+import PlusIcon from '../svg/PlusIcon';
+import ExternalLinkIcon from '../svg/ExternalLinkIcon';
+import RemoveIcon from '../svg/RemoveIcon';
+let timeout = null;
 
 const statusClassMapping = {
-  'success': 'ok',
-  'failed': 'error',
-  'running': 'pending',
-  'undefined': ''
-}
+  success: 'ok',
+  failed: 'error',
+  running: 'pending',
+  undefined: ''
+};
 
 export default class JekyllProStatus extends Component {
   constructor(props) {
-    super(props)
+    super(props);
     this.state = {
       isJekyllProClient: false,
-      updating: false,
-    }
+      updating: false
+    };
   }
 
   componentDidUpdate(prevProps, prevState) {
-    const { updating } = this.state
-    const { currentBranch, repoUpdateSignal } = this.props
+    const { updating } = this.state;
+    const { currentBranch, repoUpdateSignal } = this.props;
 
     if (updating) {
-      return
+      return;
     }
 
-    if ((prevProps.currentBranch !== currentBranch) || (repoUpdateSignal && !prevProps.repoUpdateSignal)) {
-      this.setState({ updating: true })
+    if (
+      prevProps.currentBranch !== currentBranch ||
+      (repoUpdateSignal && !prevProps.repoUpdateSignal)
+    ) {
+      this.setState({ updating: true });
 
       checkJekyllProBuild(currentBranch)
-      .then((res) => {
+        .then(res => {
+          this.setState({
+            isJekyllProClient: true,
+            buildStatus: {
+              url: res.url,
+              status: res.status,
+              hash: res.hash,
+              lastUpdate: Date.now()
+            },
+            updating: false
+          });
+        })
+        .catch(err => {
+          console.log(err);
+          this.setState({ updating: false });
+        });
+
+      if (repoUpdateSignal) {
+        this.props.resetUpdateSignal();
+      }
+    }
+  }
+
+  handleHover() {
+    const { currentBranch } = this.props;
+    const { buildStatus, updating } = this.state;
+
+    // do not update when last update was three seconds ago
+    if (buildStatus && Date.now() - buildStatus.lastUpdate < 1000 * 3) {
+      return;
+    }
+
+    if (updating) {
+      return;
+    }
+
+    this.setState({ updating: true });
+
+    checkJekyllProBuild(currentBranch)
+      .then(res => {
         this.setState({
+          updating: false,
           isJekyllProClient: true,
           buildStatus: {
             url: res.url,
             status: res.status,
             hash: res.hash,
             lastUpdate: Date.now()
-          },
-          updating: false
-        })
+          }
+        });
       })
-      .catch((err) => {
-        console.log(err)
-        this.setState({ updating: false })
-      })
-
-      if (repoUpdateSignal) {
-        this.props.resetUpdateSignal()
-      }
-    } 
+      .catch(err => {
+        console.log(err);
+        this.setState({ updating: false });
+      });
   }
 
-  handleHover() {
-    const { currentBranch } = this.props
-    const { buildStatus, updating } = this.state
+  render() {
+    const { repoOwner, repoName, currentBranch } = this.props;
+    const { isJekyllProClient, buildStatus, updating } = this.state;
 
-    // do not update when last update was three seconds ago
-    if (buildStatus && ((Date.now() - buildStatus.lastUpdate) < 1000 * 3)) {
-      return
-    }
-
-    if (updating) {
-      return
-    }
-
-    this.setState({ updating: true })
-
-    checkJekyllProBuild(currentBranch)
-    .then((res) => {
-      this.setState({
-        updating: false,
-        isJekyllProClient: true,
-        buildStatus: {
-          url: res.url,
-          status: res.status,
-          hash: res.hash,
-          lastUpdate: Date.now()
-        }
-      })
-    })
-    .catch((err) => {
-      console.log(err)
-      this.setState({ updating: false })
-    })
-  }
-
-  render () {
-    const { repoOwner, repoName, currentBranch } = this.props
-    const { isJekyllProClient, buildStatus, updating } = this.state
-
-    let repoUrl = `https://github.com/${repoOwner}/${repoName}/`
+    let repoUrl = `https://github.com/${repoOwner}/${repoName}/`;
     let mainClass = isJekyllProClient
       ? `website menu ${statusClassMapping[buildStatus.status]}`
-      : 'website menu'
+      : 'website menu';
 
     return (
       <span className={mainClass}>
-        <a className="view item tooltip-bottom" href='#' onMouseEnter={::this.handleHover}>
+        <a
+          className="view item tooltip-bottom"
+          href="#"
+          onMouseEnter={::this.handleHover}
+        >
           <CloudIcon />
           Website
-        </a>   
-        { 
-          !isJekyllProClient &&
-          <div className='options'>
-            <a href='http://jekyllpro.com' target='_blank'><PlusIcon/> Enable JekyllPro hosting </a>
-          </div>
-        }
-        {
-          isJekyllProClient && buildStatus &&
-          <div className='options'>
-            <span className={updating
-              ? `message processing ${statusClassMapping[buildStatus.status]}`
-              : `message ${statusClassMapping[buildStatus.status]}`}>
+        </a>
+        {!isJekyllProClient &&
+          <div className="options">
+            <a href="http://jekyllpro.com" target="_blank">
+              <PlusIcon /> Enable JekyllPro hosting{' '}
+            </a>
+          </div>}
+        {isJekyllProClient &&
+          buildStatus &&
+          <div className="options">
+            <span
+              className={
+                updating
+                  ? `message processing ${statusClassMapping[
+                      buildStatus.status
+                    ]}`
+                  : `message ${statusClassMapping[buildStatus.status]}`
+              }
+            >
               {`Update ${buildStatus.status} `}
             </span>
-            <a href={buildStatus.url} target='_blank'><ExternalLinkIcon /> See live site</a>
+            <a href={buildStatus.url} target="_blank">
+              <ExternalLinkIcon /> See live site
+            </a>
             <hr />
-            <a href={`${repoUrl}tree/${buildStatus.hash}`} target='_blank'>
+            <a href={`${repoUrl}tree/${buildStatus.hash}`} target="_blank">
               <ExternalLinkIcon /> Current version #{`${buildStatus.hash.slice(0, 7)}`}
             </a>
             <hr />
-            <a className='danger' href='http://jekyllpro.com' target='_blank'>
+            <a className="danger" href="http://jekyllpro.com" target="_blank">
               <RemoveIcon />Disable JekyllPro hosting
             </a>
-          </div>
-        }
+          </div>}
       </span>
-    )
+    );
   }
 }

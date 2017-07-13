@@ -1,4 +1,4 @@
-import Immutable from 'immutable'
+import Immutable from 'immutable';
 
 import {
   CHANGE_REPO_STATE,
@@ -11,7 +11,7 @@ import {
   COLLECTION_FILE_REMOVED,
   COLLECTION_FILE_UPDATED,
   UPDATE_COLLECTION_COMPLETED
-} from '../actions/repoActions'
+} from '../actions/repoActions';
 
 const initialState = Immutable.fromJS({
   loading: false,
@@ -26,16 +26,16 @@ const initialState = Immutable.fromJS({
   treeMeta: undefined,
   hasIndexHook: false,
   repoUpdateSignal: false,
-  indexFetchStatus: undefined,
-})
+  indexFetchStatus: undefined
+});
 
-export default function repo (state = initialState, action) {
+export default function repo(state = initialState, action) {
   switch (action.type) {
     case RESET_REPO_DATA:
-      return initialState
+      return initialState;
 
     case CHANGE_REPO_STATE:
-      return state.merge(action.payload)
+      return state.merge(action.payload);
 
     case CHECKOUT_BRANCH:
       return state.merge({
@@ -47,67 +47,83 @@ export default function repo (state = initialState, action) {
         indexUpdatedAt: undefined,
         treeMeta: undefined,
         indexFetchStatus: undefined
-      })
+      });
 
     case FILE_REMOVED:
-      var { path } = action.payload
-      let removedTreeMeta = state.get('treeMeta')
+      var { path } = action.payload;
+      let removedTreeMeta = state.get('treeMeta');
       removedTreeMeta = removedTreeMeta.delete(
-        removedTreeMeta.findIndex(item => {return item.get('path') === path})
-      )
+        removedTreeMeta.findIndex(item => {
+          return item.get('path') === path;
+        })
+      );
       return state.merge({
-        'treeMeta': removedTreeMeta
-      })
+        treeMeta: removedTreeMeta
+      });
 
     case FILE_ADDED:
-      var { path } = action.payload
-      let addedTreeMeta = state.get('treeMeta').push(Immutable.Map({ type: 'blob', path: path }))
+      var { path } = action.payload;
+      let addedTreeMeta = state
+        .get('treeMeta')
+        .push(Immutable.Map({ type: 'blob', path: path }));
 
       return state.merge({
-        'treeMeta': addedTreeMeta
-      })
+        treeMeta: addedTreeMeta
+      });
 
     case FILE_REPLACED:
-      var { oldPath, newPath } = action.payload
-      let updatedTreeMeta = state.get('treeMeta')
-      
+      var { oldPath, newPath } = action.payload;
+      let updatedTreeMeta = state.get('treeMeta');
+
       updatedTreeMeta = updatedTreeMeta.update(
-        updatedTreeMeta.findIndex((item) => {return item.get('path') === oldPath}),
-        (matched) => {return matched.set('path', newPath)}
-      )
+        updatedTreeMeta.findIndex(item => {
+          return item.get('path') === oldPath;
+        }),
+        matched => {
+          return matched.set('path', newPath);
+        }
+      );
       return state.merge({
-        'treeMeta': updatedTreeMeta
-      })
+        treeMeta: updatedTreeMeta
+      });
 
     case COLLECTION_FILE_ADDED:
-      let addingCol = state.get('collections').push(Immutable.Map(action.payload.newFileData))
+      let addingCol = state
+        .get('collections')
+        .push(Immutable.Map(action.payload.newFileData));
       return state.merge({
-        'collections': addingCol,
-        'repoUpdateSignal': true
-      })
+        collections: addingCol,
+        repoUpdateSignal: true
+      });
 
     case COLLECTION_FILE_REMOVED:
-      let removingCol = state.get('collections')
+      let removingCol = state.get('collections');
       removingCol = removingCol.delete(
-        removingCol.findIndex(i => {return i.get('path') === action.payload.path})
-      )
+        removingCol.findIndex(i => {
+          return i.get('path') === action.payload.path;
+        })
+      );
       return state.merge({
-        'collections': removingCol,
-        'repoUpdateSignal': true
-      })
+        collections: removingCol,
+        repoUpdateSignal: true
+      });
 
     case COLLECTION_FILE_UPDATED:
-      var { oldPath, newFileData } = action.payload
-      let updatingCol = state.get('collections')
+      var { oldPath, newFileData } = action.payload;
+      let updatingCol = state.get('collections');
 
       updatingCol = updatingCol.update(
-        updatingCol.findIndex(i => {return i.get('path') === oldPath}),
-        () => {return Immutable.Map(newFileData)}
-      )
+        updatingCol.findIndex(i => {
+          return i.get('path') === oldPath;
+        }),
+        () => {
+          return Immutable.Map(newFileData);
+        }
+      );
       return state.merge({
-        'collections': updatingCol,
-        'repoUpdateSignal': true
-      })
+        collections: updatingCol,
+        repoUpdateSignal: true
+      });
 
     case UPDATE_COLLECTION_COMPLETED: {
       const { modified, removed } = action.payload;
@@ -134,6 +150,6 @@ export default function repo (state = initialState, action) {
     }
 
     default:
-      return state
+      return state;
   }
 }
