@@ -21,7 +21,7 @@ module.exports = {
   // Lusca config
   csrf: {
     csrf: false,
-    csp: {policy: {'default-src': '*'}},
+    csp: { policy: { 'default-src': '*' } },
     xframe: 'SAMEORIGIN',
     p3p: 'ABCDEF',
     xssProtection: true
@@ -31,4 +31,4 @@ module.exports = {
     clientSecret: process.env.GITHUB_CLIENT_SECRETE,
     callbackURL: '/api/auth/github/callback'
   }
-}
+};

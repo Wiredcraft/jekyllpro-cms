@@ -7,6 +7,7 @@
     "start": "NODE_ENV=development nodemon --ignore /indexFiles index.js",
     "dev": "NODE_ENV=development nodemon --ignore /indexFiles index.js",
     "lint": "eslint ./server/* ./config/*",
+    "pretty": "prettier --single-quote --write './**/*.js'",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
@@ -45,6 +46,7 @@
     "eslint-config-standard": "^6.2.1",
     "eslint-plugin-promise": "^3.3.0",
     "eslint-plugin-standard": "^2.0.0",
-    "nodemon": "^1.10.2"
+    "nodemon": "^1.10.2",
+    "prettier": "^1.5.2"
   }
 }
