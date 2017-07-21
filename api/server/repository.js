@@ -202,8 +202,6 @@ const getRepoBranchIndex = (req, res, next) => {
   var repo = req.githubRepo;
   var branch = req.query.branch || 'master';
   var refreshIndex = req.query.refresh === true || req.query.refresh === 'true';
-  // TODO for test force this to false
-  refreshIndex = false;
   var repoFullname = req.get('X-REPO-OWNER') + '/' + req.get('X-REPO-NAME');
 
   // update access token in db, which can be used to run the webhook service
@@ -295,7 +293,7 @@ function getRepoBranchUpdatedCollections(req, res) {
     repoFullname,
     branch
   })
-    .then(collections => res.status(200).json({ collections }))
+    .then(updatedContent => res.status(200).json(updatedContent))
     .catch(
       err =>
         console.log(err) ||
@@ -304,23 +302,27 @@ function getRepoBranchUpdatedCollections(req, res) {
 }
 
 /**
- * @return {Promise<collections>} - collections: { modified: Array, removed: Array }
+ * @return {Promise<collections>} - {collections: { modified: Array, removed: Array }}
  */
 function refreshIndexIncremental({ github, repoFullname, branch }) {
   debug(`refreshIndexIncremental ${repoFullname}:${branch}`);
   let repoIndex = null;
   let schemaArray = null;
+  let schemaUpdated = false;
   let tipCommitSha = null;
-  const collections = {
-    modified: [], // consider added as modified
-    removed: []
+  let newSchemas = [];
+  const updatedContent = {
+    collections: {
+      modified: [], // consider added as modified
+      removed: []
+    }
   };
 
   // throttle
   const jobKey = `refreshIndexIncremental:${repoFullname}:${branch}`;
   if (RUNNING_JOBS[jobKey]) {
     debug('another refreshIndexIncremental task is running, returning');
-    return Promise.resolve(collections);
+    return Promise.resolve(updatedContent);
   }
   RUNNING_JOBS[jobKey] = true;
   const dispose = () => {
@@ -364,16 +366,49 @@ function refreshIndexIncremental({ github, repoFullname, branch }) {
         repoIndex.tipCommitSha,
         branch
       );
-      // debug('files %j', data.data.files);
+      debug('files %j', data.data.files);
+
+      const committedFiles = data.data.files;
+      const schemaChanges = committedFiles.filter(
+        s => s.filename.indexOf('_schemas/') === 0
+      );
+      const collectionChanges = committedFiles.filter(s =>
+        /\.(html|md|markdown)$/i.test(s.filename)
+      );
+      if (schemaChanges.length === 0) {
+        return Bluebird.resolve(collectionChanges);
+      }
+      // process schema changes first
+      schemaUpdated = true;
       return Bluebird.map(
-        data.data.files,
+        schemaChanges,
+        schema => {
+          let schemaId = /^_schemas\/(\w+)\.json$/gi.exec(schema.filename)[1];
+          schemaArray = schemaArray.filter(s => s.jekyll.id !== schemaId);
+          if (schema.status !== 'removed') {
+            return github
+              .getContents(branch, schema.filename, true)
+              .then(data => {
+                if (schema.status === 'added') {
+                  newSchemas.push(data.data);
+                }
+                schemaArray.push(data.data);
+              });
+          }
+        },
+        {
+          concurrency: 5
+        }
+      ).then(() => {
+        return collectionChanges;
+      });
+    })
+    .then(collectionChanges => {
+      return Bluebird.map(
+        collectionChanges,
         f => {
           const { filename } = f;
-          // TODO we should saparate logic out
-          // and take excludes in _config.yml into account
-          const files = data.data.files.filter(f =>
-            /\.(html|md|markdown)$/i.test(filename)
-          );
+
           const collectionType = getCollectionType(schemaArray, filename);
 
           if (collectionType === '') {
@@ -386,7 +421,7 @@ function refreshIndexIncremental({ github, repoFullname, branch }) {
               repoIndex
             }).then(removed => {
               if (!removed) return;
-              collections.removed.push(removed);
+              updatedContent.collections.removed.push(removed);
             });
           } else {
             // consider added as modified
@@ -398,7 +433,7 @@ function refreshIndexIncremental({ github, repoFullname, branch }) {
               repoIndex
             }).then(modified => {
               if (!modified) return;
-              collections.modified.push(modified);
+              updatedContent.collections.modified.push(modified);
             });
           }
         },
@@ -408,19 +443,26 @@ function refreshIndexIncremental({ github, repoFullname, branch }) {
       );
     })
     .then(() => {
+      if (schemaUpdated) {
+        repoIndex.schemas = JSON.stringify(schemaArray);
+      }
       // update the tipCommitSha
       repoIndex.tipCommitSha = tipCommitSha;
+      repoIndex.updated = Date();
       return repoIndex.save();
     })
     .then(() => {
       dispose();
-      return collections;
+      if (schemaUpdated) {
+        updatedContent.schemas = schemaArray;
+      }
+      return updatedContent;
     })
     .catch(err => {
       if (err !== 'break') throw err;
 
       dispose();
-      return collections;
+      return updatedContent;
     });
 }
 

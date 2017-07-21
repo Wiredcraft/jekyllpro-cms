@@ -10,7 +10,7 @@ import {
   COLLECTION_FILE_ADDED,
   COLLECTION_FILE_REMOVED,
   COLLECTION_FILE_UPDATED,
-  UPDATE_COLLECTION_COMPLETED
+  UPDATE_INDEX_COMPLETED
 } from '../actions/repoActions';
 
 const initialState = Immutable.fromJS({
@@ -125,8 +125,8 @@ export default function repo(state = initialState, action) {
         repoUpdateSignal: true
       });
 
-    case UPDATE_COLLECTION_COMPLETED: {
-      const { modified, removed } = action.payload;
+    case UPDATE_INDEX_COMPLETED: {
+      const { schemas, collections: { modified, removed } } = action.payload;
 
       let newCollections = state.get('collections'); // to track immutable List
       modified.forEach(c => {
@@ -144,6 +144,10 @@ export default function repo(state = initialState, action) {
         const idx = newCollections.findIndex(val => val.get('path') === c.path);
         newCollections = newCollections.delete(idx);
       });
+
+      if (schemas) {
+        state = state.set('schemas', Immutable.List(schemas));
+      }
       return state
         .set('collections', newCollections)
         .set('repoUpdateSignal', true);

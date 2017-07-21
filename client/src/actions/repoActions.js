@@ -21,7 +21,7 @@ export const FILE_REPLACED = 'FILE_REPLACED';
 export const COLLECTION_FILE_REMOVED = 'COLLECTION_FILE_REMOVED';
 export const COLLECTION_FILE_ADDED = 'COLLECTION_FILE_ADDED';
 export const COLLECTION_FILE_UPDATED = 'COLLECTION_FILE_UPDATED';
-export const UPDATE_COLLECTION_COMPLETED = 'UPDATE_COLLECTION_COMPLETED';
+export const UPDATE_INDEX_COMPLETED = 'UPDATE_INDEX_COMPLETED';
 
 /*
 * Repository
@@ -110,14 +110,11 @@ export function fetchUpdatedCollections(branch) {
 
       const { modified = [], removed = [] } = data.collections;
 
-      if (modified.length + removed.length === 0) return;
+      if (!data.schemas && modified.length + removed.length === 0) return;
 
       dispatch({
-        type: UPDATE_COLLECTION_COMPLETED,
-        payload: {
-          modified,
-          removed
-        }
+        type: UPDATE_INDEX_COMPLETED,
+        payload: data
       });
     });
   };
