@@ -6,7 +6,6 @@ import Cookie from 'js-cookie';
 import {
   getAllBranch,
   checkoutBranch,
-  getCurrentBranchUpdateTime,
   fetchRepoInfo,
   resetRepoData,
   fetchRepoIndex,
@@ -60,38 +59,6 @@ export default class Header extends Component {
     }
   }
 
-  componentWillReceiveProps(nextProps) {
-    const {
-      currentBranchUpdatedAt,
-      indexUpdatedAt,
-      currentBranch,
-      fetchRepoIndex
-    } = nextProps;
-
-    // check if index is out of sync
-    if (
-      currentBranchUpdatedAt &&
-      indexUpdatedAt &&
-      currentBranchUpdatedAt !== this.props.currentBranchUpdatedAt &&
-      Date.parse(indexUpdatedAt) < Date.parse(currentBranchUpdatedAt)
-    ) {
-      notify(
-        'warning',
-        'Rebuilding index data for repository, this may take a few minutes',
-        '',
-        5000
-      );
-
-      fetchRepoIndex({ branch: currentBranch, refresh: true }, true)
-        .then(data => {
-          this.checkIfExistingFile(data);
-        })
-        .catch(err => {
-          this.indexDataErrorHandler(err, { isRefresh: true });
-        });
-    }
-  }
-
   loadBasicRepoData() {
     const repoOwnerCk = Cookie.get('repoOwner');
     const repoNameCk = Cookie.get('repoName');
@@ -100,7 +67,6 @@ export default class Header extends Component {
       getAllBranch,
       toRoute,
       checkoutBranch,
-      fetchUpdatedCollections,
       location: { query },
       params: { repoOwner, repoName }
     } = this.props;
@@ -117,14 +83,6 @@ export default class Header extends Component {
             checkoutBranch(query.branch);
           }
           this.fetchLatestIndex(query && query.branch);
-        })
-        .then(() => {
-          // arm interval
-          setInterval(() => {
-            const { location: { query }, currentBranch } = this.props;
-            const branch = (query && query.branch) || currentBranch;
-            fetchUpdatedCollections(branch);
-          }, 8000);
         })
         .catch(err => {
           Cookie.remove('repoOwner');
@@ -151,12 +109,18 @@ export default class Header extends Component {
     }
   }
 
-  fetchLatestIndex(branchInRoute) {
+  startUpdateInterval() {
     const {
-      fetchRepoIndex,
-      getCurrentBranchUpdateTime,
-      currentBranch
+      location: { query },
+      currentBranch,
+      fetchUpdatedCollections
     } = this.props;
+    const branch = (query && query.branch) || currentBranch;
+    fetchUpdatedCollections(branch);
+  }
+
+  fetchLatestIndex(branchInRoute) {
+    const { fetchRepoIndex, currentBranch } = this.props;
     const branch = branchInRoute || currentBranch;
 
     fetchRepoIndex({ branch })
@@ -164,9 +128,11 @@ export default class Header extends Component {
         return this.checkIfHasSchema(indexData, branchInRoute);
       })
       .then(data => {
-        getCurrentBranchUpdateTime(branch);
-
         this.checkIfExistingFile(data);
+        this.updateInterval = setInterval(
+          this.startUpdateInterval.bind(this),
+          8000
+        );
       })
       .catch(err => {
         this.indexDataErrorHandler(err);
@@ -262,7 +228,6 @@ export default class Header extends Component {
           // remove waitingIndexUpdate message box
           retryIndexFetchRequest(false);
           retryTimeout = null;
-
           this.checkIfExistingFile(data);
         })
         .catch(err => {
@@ -274,6 +239,8 @@ export default class Header extends Component {
   handleBranchChange(newBranch) {
     const { checkoutBranch, toRoute } = this.props;
     const { repoOwner, repoName } = this.props.params;
+    this.updateInterval && clearInterval(this.updateInterval);
+
     checkoutBranch(newBranch).then(() => {
       this.fetchLatestIndex();
     });
@@ -398,7 +365,6 @@ function mapDispatchToProps(dispatch) {
     {
       getAllBranch,
       checkoutBranch,
-      getCurrentBranchUpdateTime,
       logout,
       resetRepoData,
       resetEditorData,
