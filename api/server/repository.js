@@ -34,8 +34,17 @@ const requireGithubAPI = (req, res, next) => {
   if (req.githubRepo) {
     return next();
   }
-  var repoOwner = req.get('X-REPO-OWNER');
-  var repoName = req.get('X-REPO-NAME');
+  const repoOwner = req.get('X-REPO-OWNER').toLowerCase();
+  const repoName = req.get('X-REPO-NAME').toLowerCase();
+
+  // attach repo info to request
+  const repo = {
+    owner: repoOwner,
+    name: repoName,
+    fullName: `${repoOwner}/${repoName}`
+  };
+  req.repo = repo;
+
   if (!repoName || !repoOwner) {
     res.status(401).send({ message: 'repository undefined' });
   }
@@ -202,7 +211,7 @@ const getRepoBranchIndex = (req, res, next) => {
   var repo = req.githubRepo;
   var branch = req.query.branch || 'master';
   var refreshIndex = req.query.refresh === true || req.query.refresh === 'true';
-  var repoFullname = req.get('X-REPO-OWNER') + '/' + req.get('X-REPO-NAME');
+  const repoFullname = req.repo.fullName;
 
   // update access token in db, which can be used to run the webhook service
   RepoAccessToken.findOneAndUpdate(
@@ -284,7 +293,7 @@ const getRepoBranchIndex = (req, res, next) => {
 function getRepoBranchUpdatedCollections(req, res) {
   const repo = req.githubRepo;
   const branch = req.query.branch || 'master';
-  const repoFullname = req.get('X-REPO-OWNER') + '/' + req.get('X-REPO-NAME');
+  const repoFullname = req.repo.fullName;
   // TODO
   // currently refreshIndexIncremental will always resolve
   // but we need to figure
@@ -564,7 +573,7 @@ function upsertEntryOfRepo({
 const refreshIndexAndSave = (req, res) => {
   var repo = req.githubRepo;
   var branch = req.query.branch || 'master';
-  var repoFullname = req.get('X-REPO-OWNER') + '/' + req.get('X-REPO-NAME');
+  const repoFullname = req.repo.fullName;
   debug(`refreshIndexAndSave - ${repoFullname}`);
   var jobKey = repoFullname + '_' + branch;
 
