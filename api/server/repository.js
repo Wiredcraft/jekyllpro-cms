@@ -6,8 +6,6 @@ import _debug from 'debug';
 
 const ObjectId = mongoose.Types.ObjectId;
 const debug = _debug('jekyllpro-cms:repository');
-mongoose.Promise = Bluebird;
-const RepoFileEntry = mongoose.model('RepoFileEntry');
 const lodash = _; // TODO
 
 import {
@@ -16,7 +14,7 @@ import {
   getCollectionType,
   getLangFromConfigYaml
 } from './utils';
-import { RepoIndex, RepoAccessToken } from './database';
+import { RepoIndex, RepoAccessToken, RepoFileEntry } from './database';
 import { hookConfig } from './webhook';
 
 const RUNNING_JOBS = {};
@@ -28,6 +26,7 @@ const cb = (error, result, request) => {
 
 /**
  * middleware
+ * attach repo informatino to `req` - req.repo - { owner, name, fullName }
  * attach github-api instance to `req` - req.githubRepo
  */
 const requireGithubAPI = (req, res, next) => {
@@ -48,23 +47,20 @@ const requireGithubAPI = (req, res, next) => {
   if (!repoName || !repoOwner) {
     res.status(401).send({ message: 'repository undefined' });
   }
-  var ak =
+  const token =
     req.get('X-TOKEN') || req.user.accessToken || req.user._json.accessToken;
-  var github = new GithubAPI({
-    token: ak
-  });
+  const github = new GithubAPI({ token });
   req.githubRepo = github.getRepo(repoOwner, repoName);
   next();
 };
 
 const getRepoDetails = (req, res, next) => {
-  var repo = req.githubRepo;
-
-  repo
+  const repo = req.githubRepo;
+  return repo
     .getDetails()
     .then(data => {
-      // console.log(data)
-      var details = _.pick(data.data, [
+      // debug('getRepoDetails github getDetails data %o', data);
+      const details = _.pick(data.data, [
         'name',
         'full_name',
         'description',
@@ -78,27 +74,28 @@ const getRepoDetails = (req, res, next) => {
         'permissions'
       ]);
       details.owner = _.pick(data.data.owner, ['login', 'avatar_url', 'type']);
-      res.status(200).json(details);
+      return res.status(200).json(details);
     })
     .catch(err => {
-      // console.log(err)
-      res.status(err.response.status).json(err.response.data);
+      debug('getRepoDetails error', err);
+      return res.status(err.response.status).json(err.response.data);
     });
 };
 
 const getRepoContent = (req, res, next) => {
-  var repo = req.githubRepo;
-  var { branch, path, raw } = req.query;
+  const repo = req.githubRepo;
+  const { branch, path, raw } = req.query;
 
-  repo
+  return repo
     .getContents(branch, path, raw)
     .then(data => {
-      // console.log(data)
-      res.status(200).json(data.data);
+      return res.status(200).json(data.data);
     })
     .catch(err => {
-      // console.log(err)
-      res.status(err.status || err.response.status).json(err.response.data);
+      debug('getRepoContent error', err);
+      return res
+        .status(err.status || err.response.status)
+        .json(err.response.data);
     });
 };
 
@@ -108,7 +105,7 @@ const writeRepoFile = (req, res, next) => {
   if (!newFile.options) {
     newFile.options = { encode: true };
   }
-  repo
+  return repo
     .writeFile(
       newFile.branch,
       newFile.path,
@@ -118,12 +115,13 @@ const writeRepoFile = (req, res, next) => {
       cb
     )
     .then(data => {
-      // console.log(data)
-      res.status(200).json(data.data);
+      return res.status(200).json(data.data);
     })
     .catch(err => {
-      // console.log(err)
-      res.status(err.status || err.response.status).json(err.response.data);
+      debug('writeRepoFile error: ', err);
+      return res
+        .status(err.status || err.response.status)
+        .json(err.response.data);
     });
 };
 
@@ -131,15 +129,16 @@ const deleteRepoFile = (req, res, next) => {
   var repo = req.githubRepo;
   var toBeDeleted = req.body;
 
-  repo
+  return repo
     .deleteFile(toBeDeleted.branch, toBeDeleted.path, cb)
     .then(data => {
-      // console.log(data)
-      res.status(200).json(data.data);
+      return res.status(200).json(data.data);
     })
     .catch(err => {
-      // console.log(err)
-      res.status(err.status || err.response.status).json(err.response.data);
+      debug('deleteRepoFile error: ', err);
+      return res
+        .status(err.status || err.response.status)
+        .json(err.response.data);
     });
 };
 
@@ -151,30 +150,30 @@ const listBranches = (req, res, next) => {
 
   return nextPromise
     .then(data => {
-      // console.log(data)
-      res.status(200).json(data.data);
+      return res.status(200).json(data.data);
     })
     .catch(err => {
-      // console.log(err)
-      res
+      debug('listBranches error: ', err);
+      return res
         .status(err.status || err.response.status || err.response.status)
         .json(err.response.data);
     });
 };
 
 const createBranches = (req, res, next) => {
-  var repo = req.githubRepo;
-  var formData = req.body;
+  const repo = req.githubRepo;
+  const formData = req.body;
 
-  repo
+  return repo
     .createBranch(formData.oldBranch, formData.newBranch)
     .then(data => {
-      // console.log(data)
-      res.status(200).json(data.data);
+      return res.status(200).json(data.data);
     })
     .catch(err => {
-      // console.log(err)
-      res.status(err.status || err.response.status).json(err.response.data);
+      debug('createBranches error: ', err);
+      return res
+        .status(err.status || err.response.status)
+        .json(err.response.data);
     });
 };
 
@@ -210,7 +209,8 @@ const getBranchSchema = (req, res, next) => {
 const getRepoBranchIndex = (req, res, next) => {
   var repo = req.githubRepo;
   var branch = req.query.branch || 'master';
-  var refreshIndex = req.query.refresh === true || req.query.refresh === 'true';
+  const refreshIndex =
+    req.query.refresh === true || req.query.refresh === 'true';
   const repoFullname = req.repo.fullName;
 
   // update access token in db, which can be used to run the webhook service
@@ -238,59 +238,59 @@ const getRepoBranchIndex = (req, res, next) => {
     return next();
   }
 
-  RepoIndex.findByRepoInfo(repoFullname, branch, (err, record) => {
-    if (err) {
-      console.log(err);
-      return next();
-    }
-    if (!record) {
-      return next();
-    }
-    debug(
-      'get database record:',
-      record.repository,
-      record.branch,
-      record.updated,
-      record.tipCommitSha
-    );
-    // some repo branches might have legacy index data built when it didn't have schemas.
-    // only return record if it has schemas.
-
-    // collections now should be an array though unpopulated
-    if (Array.isArray(record.collections) && record.tipCommitSha) {
-      record
-        .populate({
-          path: 'collections',
-          options: {
-            sort: {
-              lastUpdatedAt: 'desc'
-            }
-          }
+  return RepoIndex.findOne({
+    repository: repoFullname,
+    branch
+  })
+    .then(record => {
+      if (!record) return next();
+      debug(
+        'get database record:',
+        record._id,
+        record.repository,
+        record.branch,
+        record.updated,
+        record.tipCommitSha
+      );
+      // collections now should be an array though unpopulated
+      if (record.tipCommitSha) {
+        return RepoFileEntry.find({
+          repoBranch: record
         })
-        .execPopulate()
-        .then(record => {
-          // @see mongoose doc
-          // http://mongoosejs.com/docs/api.html#document_Document-execPopulate
-          debug('record id is %s', record._id);
-          let data = {
-            updated: record.updated,
-            collections: record.collections,
-            schemas: JSON.parse(record.schemas),
-            config: JSON.parse(record.config)
-          };
-          return res.status(200).json(data);
-        });
-    } else {
-      debug('record invalid');
-      // set flag to clean old db record later if a new index cannot be built
-      req.purgeDb = true;
-      // next middleware should be refreshIndexAndSave()
+          .sort({
+            lastUpdatedAt: 'desc'
+          })
+          .exec()
+          .then(collections => {
+            if (collections.length === 0) {
+              req.purgeDb = true;
+              return next();
+            }
+
+            debug('collections.length', collections.length);
+            let data = {
+              collections,
+              updated: record.updated,
+              schemas: JSON.parse(record.schemas),
+              config: JSON.parse(record.config)
+            };
+            return res.status(200).json(data);
+          });
+      } else {
+        debug('record invalid');
+        // set flag to clean old db record later if a new index cannot be built
+        req.purgeDb = true;
+        // next middleware should be refreshIndexAndSave()
+        return next();
+      }
+    })
+    .catch(err => {
+      debug('getRepoBranchIndex error: ', err);
       return next();
-    }
-  });
+    });
 };
 
-function getRepoBranchUpdatedCollections(req, res) {
+const getRepoBranchUpdatedCollections = (req, res) => {
   const repo = req.githubRepo;
   const branch = req.query.branch || 'master';
   const repoFullname = req.repo.fullName;
@@ -303,12 +303,169 @@ function getRepoBranchUpdatedCollections(req, res) {
     branch
   })
     .then(updatedContent => res.status(200).json(updatedContent))
-    .catch(
-      err =>
-        console.log(err) ||
-        res.status(err.status || err.response.status).json(err.response.data)
-    );
-}
+    .catch(err => {
+      debug('getRepoBranchUpdatedCollections error: ', err);
+      return res
+        .status(err.status || err.response.status)
+        .json(err.response.data);
+    });
+};
+
+const refreshIndexAndSave = (req, res) => {
+  const repo = req.githubRepo;
+  const branch = req.query.branch || 'master';
+  const repoFullname = req.repo.fullName;
+  debug(`refreshIndexAndSave - ${repoFullname}`);
+
+  const jobKey = `${repoFullname}:${branch}`;
+  // avoid doing multiple refresh to same repo branch at same time
+  if (RUNNING_JOBS[jobKey] === true) {
+    return res.status(409).json({
+      message: `is building index for ${jobKey}`,
+      errorCode: 4091
+    });
+  }
+
+  RUNNING_JOBS[jobKey] = true;
+
+  const startTime = new Date();
+  return Promise.all([
+    getFreshIndexFromGithub({
+      repoObject: repo,
+      repoFullname,
+      branch
+    }),
+    findRepoAndCleanEntries({
+      repository: repoFullname,
+      branch
+    })
+  ])
+    .then(([formatedIndex, repoIndex]) => {
+      console.log('formatedIndex.collections.length');
+      console.log(formatedIndex.collections.length);
+      formatedIndex.updated = new Date();
+
+      repoIndex.schemas = JSON.stringify(formatedIndex.schemas);
+      repoIndex.config = JSON.stringify(formatedIndex.config);
+      repoIndex.updated = Date();
+
+      return repoIndex.save().then(() => {
+        return [formatedIndex, repoIndex];
+      });
+    })
+    .then(([formatedIndex, repoIndex]) => {
+      debug('get repoIndex: %j', {
+        _id: repoIndex._id,
+        __v: repoIndex.__v,
+        updated: repoIndex.updated,
+        updatedBy: repoIndex.updatedBy
+      });
+      // TODO separate this into a method/func
+      return Bluebird.map(
+        formatedIndex.collections,
+        item => saveFileEntry(item, repoIndex),
+        {
+          concurrency: 5
+        }
+      )
+        .then(() => {
+          debug(
+            `it takes ${new Date() - startTime}ms to build the complete index`
+          );
+        })
+        .catch(err => {
+          debug('refreshIndexAndSave error: ', err);
+        });
+
+      delete RUNNING_JOBS[jobKey];
+      return res.json(formatedIndex);
+    })
+    .catch(err => {
+      debug('refreshIndexAndSave error: ', err);
+      delete RUNNING_JOBS[jobKey];
+
+      // remove obsolete index data
+      if (err.status === 404 && req.purgeDb) {
+        deleteARepoIndex({ repository: repoFullname, branch }).catch(err => {
+          debug('db error', err);
+        });
+      }
+      return res
+        .status(err.status || err.response.status)
+        .json(err.response.data);
+    });
+};
+
+const listHooks = (req, res) => {
+  var repo = req.githubRepo;
+  repo
+    .listHooks()
+    .then(data => {
+      return res.status(200).json(data.data);
+    })
+    .catch(err => {
+      console.log(err);
+      return res
+        .status(err.status || err.response.status)
+        .json(err.response.data);
+    });
+};
+
+const manageHook = (req, res) => {
+  var repo = req.githubRepo;
+  var mergedConfig = Object.assign({}, hookConfig, req.body.config || {});
+  if (req.body.action === 'create') {
+    listJekyllplusHook(repo, mergedConfig.config.url)
+      .then(hook => {
+        if (hook) {
+          return res.status(200).json(hook);
+        }
+        return repo.createHook(mergedConfig);
+      })
+      .then(data => {
+        return res.status(200).json(data.data);
+      })
+      .catch(err => {
+        console.log(err);
+        return res
+          .status(err.status || err.response.status)
+          .json(err.response.data);
+      });
+  }
+  if (req.body.action === 'delete') {
+    listJekyllplusHook(repo, mergedConfig.config.url)
+      .then(hook => {
+        if (hook) {
+          return repo.deleteHook(hook.id).then(data => {
+            return res.status(200).json(data.data);
+          });
+        }
+        return res.status(204).send('no content');
+      })
+      .catch(err => {
+        console.log(err);
+        return res
+          .status(err.status || err.response.status)
+          .json(err.response.data);
+      });
+  }
+};
+
+const listBranchTree = (req, res) => {
+  var repo = req.githubRepo;
+  var branch = req.query.branch || 'master';
+  repo
+    .getTree(`${branch}?recursive=1`)
+    .then(data => {
+      return res.status(200).json(data.data);
+    })
+    .catch(err => {
+      console.log(err);
+      return res
+        .status(err.status || err.response.status)
+        .json(err.response.data);
+    });
+};
 
 /**
  * @return {Promise<collections>} - {collections: { modified: Array, removed: Array }}
@@ -483,22 +640,14 @@ function refreshIndexIncremental({ github, repoFullname, branch }) {
  * @return {Promise} - resolve to undefined or { _id: string, path: string }
  */
 function removeEntryOfRepo({ filename, repoIndex }) {
+  const removed = { path: filename };
   return RepoFileEntry.findOne({
     path: filename,
     repoBranch: repoIndex
-  }).then(entryInst => {
-    if (!entryInst) return;
-
-    repoIndex.collections.remove(entryInst._id);
-    const removed = {
-      _id: entryInst._id,
-      path: entryInst.path
-    };
-    return repoIndex
-      .save()
-      .then(() => RepoFileEntry.find({ _id: entryInst._id }).remove().exec())
-      .then(() => removed);
-  });
+  })
+    .remove()
+    .exec()
+    .then(() => removed);
 }
 
 /**
@@ -555,7 +704,6 @@ function upsertEntryOfRepo({
         });
       }
 
-      repoIndex.collections.addToSet(entryInst);
       const modified = lodash.pick(entry, [
         'collectionType',
         'content',
@@ -565,139 +713,57 @@ function upsertEntryOfRepo({
         'path'
       ]);
 
-      return repoIndex.save().then(() => modified);
+      return modified;
     });
   });
 }
 
-const refreshIndexAndSave = (req, res) => {
-  var repo = req.githubRepo;
-  var branch = req.query.branch || 'master';
-  const repoFullname = req.repo.fullName;
-  debug(`refreshIndexAndSave - ${repoFullname}`);
-  var jobKey = repoFullname + '_' + branch;
+function saveFileEntry(item, repoIndex) {
+  const entry = new RepoFileEntry({
+    collectionType: item.collectionType,
+    content: item.content,
+    lastCommitSha: item.lastCommitSha,
+    lastUpdatedAt: item.lastUpdatedAt,
+    lastUpdatedBy: item.lastUpdatedBy,
+    path: item.path,
+    repoBranch: repoIndex
+  });
+  return entry.save();
+}
 
-  // avoid doing multiple refresh to same repo branch at same time
-  if (RUNNING_JOBS[jobKey]) {
-    return res
-      .status(409)
-      .json({ message: 'is building index for ' + jobKey, errorCode: 4091 });
-  }
-
-  RUNNING_JOBS[jobKey] = true;
-
-  return getFreshIndexFromGithub({
-    repoObject: repo,
-    repoFullname,
-    branch
-  })
-    .then(formatedIndex => {
-      // update database
-      const startTime = new Date();
-      debug(`create repo index - ${repoFullname}`);
-      return RepoIndex.findOneAndUpdate(
-        {
-          repository: repoFullname,
-          branch: branch
-        },
-        {
-          repository: repoFullname,
-          branch: branch,
-          // collections: JSON.stringify(formatedIndex.collections),
-          schemas: JSON.stringify(formatedIndex.schemas),
-          config: JSON.stringify(formatedIndex.config),
-          updated: Date()
-        },
-        {
-          upsert: true,
-          new: true
-        }
-      )
-        .then(repoIndex => {
-          const collections = repoIndex.collections;
-          if (Array.isArray(collections) && repoIndex.tipCommitSha) {
-            // delete all collections
-            return deleteAllEntries(collections).then(() => repoIndex);
-          }
-          return repoIndex;
-        })
-        .then(repoIndex => {
-          debug('get repoIndex: %j', {
-            _id: repoIndex._id,
-            __v: repoIndex.__v,
-            updated: repoIndex.updated,
-            updatedBy: repoIndex.updatedBy
-          });
-          // TODO separate this into a method/func
-          return Bluebird.map(
-            formatedIndex.collections,
-            item => {
-              const entry = new RepoFileEntry({
-                collectionType: item.collectionType,
-                content: item.content,
-                lastCommitSha: item.lastCommitSha,
-                lastUpdatedAt: item.lastUpdatedAt,
-                lastUpdatedBy: item.lastUpdatedBy,
-                path: item.path,
-                repoBranch: repoIndex
-              });
-              return entry.save().then(() => repoIndex.collections.push(entry));
-            },
-            {
-              concurrency: 5
-            }
-          ).then(() => {
-            debug(
-              `it takes ${new Date() - startTime}ms to build the complete index`
-            );
-            return repoIndex.save();
-          });
-        })
-        .catch(err => console.log(err));
-
-      delete RUNNING_JOBS[jobKey];
-
-      formatedIndex.updated = new Date();
-      return res.status(200).json(formatedIndex);
-    })
-    .catch(err => {
-      console.log(err);
-      delete RUNNING_JOBS[jobKey];
-
-      // remove obsolete index data
-      if (err.status === 404 && req.purgeDb) {
-        deleteARepoIndex({ repository: repoFullname, branch }).catch(err =>
-          debug('db error', err)
-        );
-      }
-      return res
-        .status(err.status || err.response.status)
-        .json(err.response.data);
-    });
-};
+/**
+ * find or create a repoIndex and remove all it's file entries
+ *
+ * @param {string} repository - repo fullname
+ * @param {string} branch
+ * @return {Promise<repoIndex>}
+ */
+function findRepoAndCleanEntries({ repository, branch }) {
+  const cond = { repository, branch };
+  const opts = {
+    upsert: true,
+    new: true
+  };
+  return RepoIndex.findOneAndUpdate(cond, cond, opts).then(repoIndex => {
+    debug('repoIndex id', repoIndex._id);
+    return deleteAllEntriesOfIndex(repoIndex).then(() => repoIndex);
+  });
+}
 
 function deleteARepoIndex({ repository, branch }) {
   return RepoIndex.findOne({ repository, branch }).then(repoIndex => {
     if (!repoIndex) return;
-    const collections = repoIndex.collections;
-    if (Array.isArray(collections) && repoIndex.tipCommitSha) {
-      // delete all collections
-      return deleteAllEntries(collections).then(() => repoIndex.remove());
-    }
+    deleteAllEntriesOfIndex(repoIndex);
     return repoIndex.remove();
   });
 }
 
-function deleteAllEntries(entries) {
-  return Bluebird.map(
-    entries,
-    item => {
-      return RepoFileEntry.findByIdAndRemove(item).exec();
-    },
-    {
-      concurrency: 5
-    }
-  );
+function deleteAllEntriesOfIndex(repoIndex) {
+  return RepoFileEntry.find({
+    repoBranch: repoIndex
+  })
+    .remove()
+    .exec();
 }
 
 /**
@@ -708,32 +774,24 @@ const getFreshIndexFromGithub = ({ repoObject, repoFullname, branch }) => {
   return repoObject
     .getTree(`${branch}?recursive=1`)
     .then(data => {
-      debug(`clean up existing repo index - ${repoFullname}`);
-      return deleteARepoIndex({
-        repository: repoFullname,
-        branch: branch
-      })
-        .then(() => {
-          // update tipCommitSha
-          debug('update tipCommitSha to %s', data.data.sha);
-          return RepoIndex.findOneAndUpdate(
-            {
-              repository: repoFullname,
-              branch: branch
-            },
-            {
-              repository: repoFullname,
-              branch: branch,
-              tipCommitSha: data.data.sha,
-              updated: Date()
-            },
-            {
-              upsert: true,
-              new: true
-            }
-          );
-        })
-        .then(() => data);
+      // update tipCommitSha
+      debug('update tipCommitSha to %s', data.data.sha);
+      return RepoIndex.findOneAndUpdate(
+        {
+          repository: repoFullname,
+          branch: branch
+        },
+        {
+          repository: repoFullname,
+          branch: branch,
+          tipCommitSha: data.data.sha,
+          updated: Date()
+        },
+        {
+          upsert: true,
+          new: true
+        }
+      ).then(() => data);
     })
     .then(data => {
       var treeArray = data.data.tree;
@@ -851,77 +909,6 @@ const listJekyllplusHook = (repoObject, hookUrl) => {
     }
     return null;
   });
-};
-
-const listHooks = (req, res) => {
-  var repo = req.githubRepo;
-  repo
-    .listHooks()
-    .then(data => {
-      return res.status(200).json(data.data);
-    })
-    .catch(err => {
-      console.log(err);
-      return res
-        .status(err.status || err.response.status)
-        .json(err.response.data);
-    });
-};
-
-const manageHook = (req, res) => {
-  var repo = req.githubRepo;
-  var mergedConfig = Object.assign({}, hookConfig, req.body.config || {});
-  if (req.body.action === 'create') {
-    listJekyllplusHook(repo, mergedConfig.config.url)
-      .then(hook => {
-        if (hook) {
-          return res.status(200).json(hook);
-        }
-        return repo.createHook(mergedConfig);
-      })
-      .then(data => {
-        return res.status(200).json(data.data);
-      })
-      .catch(err => {
-        console.log(err);
-        return res
-          .status(err.status || err.response.status)
-          .json(err.response.data);
-      });
-  }
-  if (req.body.action === 'delete') {
-    listJekyllplusHook(repo, mergedConfig.config.url)
-      .then(hook => {
-        if (hook) {
-          return repo.deleteHook(hook.id).then(data => {
-            return res.status(200).json(data.data);
-          });
-        }
-        return res.status(204).send('no content');
-      })
-      .catch(err => {
-        console.log(err);
-        return res
-          .status(err.status || err.response.status)
-          .json(err.response.data);
-      });
-  }
-};
-
-const listBranchTree = (req, res) => {
-  var repo = req.githubRepo;
-  var branch = req.query.branch || 'master';
-  repo
-    .getTree(`${branch}?recursive=1`)
-    .then(data => {
-      return res.status(200).json(data.data);
-    })
-    .catch(err => {
-      console.log(err);
-      return res
-        .status(err.status || err.response.status)
-        .json(err.response.data);
-    });
 };
 
 export default {

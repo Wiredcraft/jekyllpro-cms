@@ -1,5 +1,8 @@
 import mongoose from 'mongoose';
 
+import Bluebird from 'bluebird';
+mongoose.Promise = Bluebird;
+
 const Schema = mongoose.Schema;
 
 const repoIndexSchema = new Schema({
@@ -19,12 +22,6 @@ const repoIndexSchema = new Schema({
     trim: true,
     required: 'branch cannot be blank'
   },
-  collections: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'RepoFileEntry'
-    }
-  ],
   schemas: {
     type: String,
     default: '[]',
@@ -85,10 +82,7 @@ const repoFileEntrySchema = new Schema({
   lastUpdatedAt: Date,
   lastUpdatedBy: String,
   path: String,
-  repoBranch: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'RepoIndex'
-  }
+  repoBranch: Schema.ObjectId
 });
 
 repoIndexSchema.statics.findByRepoInfo = function(repository, branch, cb) {
