@@ -476,7 +476,8 @@ function refreshIndexIncremental({ github, repoFullname, branch }) {
   let schemaArray = null;
   let schemaUpdated = false;
   let tipCommitSha = null;
-  let newSchemas = [];
+  let newAndRemovedSchemas = [];
+  let newConfig = null;
   const updatedContent = {
     collections: {
       modified: [], // consider added as modified
@@ -535,10 +536,29 @@ function refreshIndexIncremental({ github, repoFullname, branch }) {
       debug('files %j', data.data.files);
 
       const committedFiles = data.data.files;
+      let configChange = committedFiles.filter(
+        s => s.filename === '_config.yml'
+      );
+
+      if (configChange.length === 0) {
+        return Bluebird.resolve(committedFiles);
+      }
+
+      return github
+        .getContents(branch, '_config.yml', true)
+        .then(data => {
+          newConfig = getLangFromConfigYaml(data.data);
+          debug('New config %s', newConfig);
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    })
+    .then(committedFiles => {
       const schemaChanges = committedFiles.filter(
         s => s.filename.indexOf('_schemas/') === 0
       );
-      const collectionChanges = committedFiles.filter(s =>
+      let collectionChanges = committedFiles.filter(s =>
         /\.(html|md|markdown)$/i.test(s.filename)
       );
       if (schemaChanges.length === 0) {
@@ -546,40 +566,83 @@ function refreshIndexIncremental({ github, repoFullname, branch }) {
       }
       // process schema changes first
       schemaUpdated = true;
+
       return Bluebird.map(
         schemaChanges,
         schema => {
           let schemaId = /^_schemas\/(\w+)\.json$/gi.exec(schema.filename)[1];
+          let changedItem = schemaArray.find(s => s.jekyll.id === schemaId);
+          // remove either removed or modified schema file from original schemaArray
           schemaArray = schemaArray.filter(s => s.jekyll.id !== schemaId);
-          if (schema.status !== 'removed') {
-            return github
-              .getContents(branch, schema.filename, true)
-              .then(data => {
-                if (schema.status === 'added') {
-                  newSchemas.push(data.data);
-                }
-                schemaArray.push(data.data);
-              });
+          if (schema.status === 'removed') {
+            newAndRemovedSchemas.push(
+              Object.assign({ status: 'removed' }, changedItem)
+            );
+            return Bluebird.resolve();
           }
+          return github
+            .getContents(branch, schema.filename, true)
+            .then(data => {
+              let fileCont = data.data;
+              // make sure only process valid schema
+              if (typeof fileCont === 'string') {
+                return Bluebird.resolve();
+              }
+              if (schema.status === 'added') {
+                newAndRemovedSchemas.push(
+                  Object.assign({ status: 'added' }, fileCont)
+                );
+              }
+              schemaArray.push(fileCont);
+            });
         },
         {
           concurrency: 5
         }
       ).then(() => {
+        if (newAndRemovedSchemas.length > 0) {
+          debug('New and Removed schema files %j', newAndRemovedSchemas);
+          return github
+            .getContents(branch)
+            .then(data => {
+              var rootDirCont = data.data;
+
+              return Bluebird.map(
+                newAndRemovedSchemas,
+                schema => {
+                  let cfolder = rootDirCont.find(
+                    c => c.path === schema.jekyll.dir
+                  );
+                  return github
+                    .getTree(`${cfolder.sha}?recursive=1`)
+                    .then(data => {
+                      let nrFiles = data.data.tree
+                        .filter(t => t.type === 'blob')
+                        .map(f => ({
+                          filename: cfolder.path + '/' + f.path,
+                          status: schema.status
+                        }));
+
+                      collectionChanges = collectionChanges.concat(nrFiles);
+                    });
+                },
+                {
+                  concurrency: 5
+                }
+              );
+            })
+            .then(() => collectionChanges);
+        }
         return collectionChanges;
       });
     })
     .then(collectionChanges => {
+      debug('Number of Changed collection files %s', collectionChanges.length);
       return Bluebird.map(
         collectionChanges,
         f => {
           const { filename } = f;
-
-          const collectionType = getCollectionType(schemaArray, filename);
-
-          if (collectionType === '') {
-            return Bluebird.resolve();
-          }
+          debug(`${f.status} filename ${f.filename}`);
 
           if (f.status === 'removed') {
             return removeEntryOfRepo({
@@ -590,6 +653,11 @@ function refreshIndexIncremental({ github, repoFullname, branch }) {
               updatedContent.collections.removed.push(removed);
             });
           } else {
+            const collectionType = getCollectionType(schemaArray, filename);
+            if (collectionType === '') {
+              return Bluebird.resolve();
+            }
+
             // consider added as modified
             return upsertEntryOfRepo({
               github,
@@ -609,6 +677,9 @@ function refreshIndexIncremental({ github, repoFullname, branch }) {
       );
     })
     .then(() => {
+      if (newConfig) {
+        repoIndex.config = JSON.stringify(newConfig);
+      }
       if (schemaUpdated) {
         repoIndex.schemas = JSON.stringify(schemaArray);
       }
@@ -619,6 +690,9 @@ function refreshIndexIncremental({ github, repoFullname, branch }) {
     })
     .then(() => {
       dispose();
+      if (newConfig) {
+        updatedContent.config = newConfig;
+      }
       if (schemaUpdated) {
         updatedContent.schemas = schemaArray;
       }
@@ -641,7 +715,7 @@ function refreshIndexIncremental({ github, repoFullname, branch }) {
  */
 function removeEntryOfRepo({ filename, repoIndex }) {
   const removed = { path: filename };
-  return RepoFileEntry.findOne({
+  return RepoFileEntry.find({
     path: filename,
     repoBranch: repoIndex
   })
