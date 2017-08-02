@@ -329,53 +329,13 @@ const refreshIndexAndSave = (req, res) => {
   RUNNING_JOBS[jobKey] = true;
 
   const startTime = new Date();
-  return Promise.all([
-    getFreshIndexFromGithub({
-      repoObject: repo,
-      repoFullname,
-      branch
-    }),
-    findRepoAndCleanEntries({
-      repository: repoFullname,
-      branch
-    })
-  ])
-    .then(([formatedIndex, repoIndex]) => {
-      console.log('formatedIndex.collections.length');
-      console.log(formatedIndex.collections.length);
-      formatedIndex.updated = new Date();
-
-      repoIndex.schemas = JSON.stringify(formatedIndex.schemas);
-      repoIndex.config = JSON.stringify(formatedIndex.config);
-      repoIndex.updated = Date();
-
-      return repoIndex.save().then(() => {
-        return [formatedIndex, repoIndex];
-      });
-    })
-    .then(([formatedIndex, repoIndex]) => {
-      debug('get repoIndex: %j', {
-        _id: repoIndex._id,
-        __v: repoIndex.__v,
-        updated: repoIndex.updated,
-        updatedBy: repoIndex.updatedBy
-      });
-      // TODO separate this into a method/func
-      return Bluebird.map(
-        formatedIndex.collections,
-        item => saveFileEntry(item, repoIndex),
-        {
-          concurrency: 5
-        }
-      )
-        .then(() => {
-          debug(
-            `it takes ${new Date() - startTime}ms to build the complete index`
-          );
-        })
-        .catch(err => {
-          debug('refreshIndexAndSave error: ', err);
-        });
+  return getFreshIndexFromGithub({
+    repoObject: repo,
+    repoFullname,
+    branch
+  })
+    .then(formatedIndex => {
+      debug(`it takes ${new Date() - startTime}ms to build the complete index`);
 
       delete RUNNING_JOBS[jobKey];
       return res.json(formatedIndex);
@@ -502,20 +462,20 @@ function refreshIndexIncremental({ github, repoFullname, branch }) {
     github.getRef(`heads/${branch}`)
   ])
     .then(([_repoIndex, refData]) => {
-      if (!_repoIndex.tipCommitSha) {
+      if (!_repoIndex || !_repoIndex.tipCommitSha) {
         debug(
           'Error: no tipCommitSha on %s repoIndex %s',
           repoFullname,
-          _repoIndex._id
+          _repoIndex && _repoIndex._id || 'n/a'
         );
-        throw 'break';
+        throw new Error('break');
       }
 
       tipCommitSha = lodash.get(refData, 'data.object.sha');
       // can not get the commit sha
-      if (typeof tipCommitSha !== 'string') throw 'break';
+      if (typeof tipCommitSha !== 'string') throw new Error('invalid tipCommitSha');
       // the commit sha is same as the one in database
-      if (tipCommitSha === _repoIndex.tipCommitSha) throw 'break';
+      if (tipCommitSha === _repoIndex.tipCommitSha) throw new Error('no change in tipCommitSha');
 
       debug(
         `tip commit: db is ${_repoIndex.tipCommitSha} remote is ${tipCommitSha}`
@@ -699,7 +659,7 @@ function refreshIndexIncremental({ github, repoFullname, branch }) {
       return updatedContent;
     })
     .catch(err => {
-      if (err !== 'break') throw err;
+      console.log(err)
 
       dispose();
       return updatedContent;
@@ -845,72 +805,49 @@ function deleteAllEntriesOfIndex(repoIndex) {
  */
 const getFreshIndexFromGithub = ({ repoObject, repoFullname, branch }) => {
   debug('enter func getFreshIndexFromGithub');
+  var formatedIndex = { collections: [] };
+
   return repoObject
     .getTree(`${branch}?recursive=1`)
     .then(data => {
-      // update tipCommitSha
-      debug('update tipCommitSha to %s', data.data.sha);
-      return RepoIndex.findOneAndUpdate(
-        {
-          repository: repoFullname,
-          branch: branch
-        },
-        {
-          repository: repoFullname,
-          branch: branch,
-          tipCommitSha: data.data.sha,
-          updated: Date()
-        },
-        {
-          upsert: true,
-          new: true
-        }
-      ).then(() => data);
-    })
-    .then(data => {
       var treeArray = data.data.tree;
-      var requestQueue = new TaskQueue(3);
-      var formatedIndex = { collections: [] };
-      var jekyllProConfigReq = Promise.resolve();
+      formatedIndex.tipCommitSha = data.data.sha;
 
       const isJekyllRepo = treeArray.some(
         entry => entry.path === '_config.yml'
       );
+      return Bluebird.try(() => {
+        if (!isJekyllRepo) {
+          throw {
+            status: 404,
+            response: {
+              data: {
+                message: 'Not a valid jekyll repository',
+                errorCode: 4041
+              }
+            }
+          };
+        }
 
-      if (isJekyllRepo) {
-        jekyllProConfigReq = repoObject
+        return repoObject
           .getContents(branch, '_config.yml', true)
           .then(data => {
             formatedIndex['config'] = getLangFromConfigYaml(data.data);
+            return treeArray;
           })
           .catch(err => {
             console.log(err);
           });
-      } else {
-        jekyllProConfigReq = Promise.reject({
-          status: 404,
-          response: {
-            data: { message: 'Not a valid jekyll repository', errorCode: 4041 }
-          }
-        });
-      }
-
+      });
+    })
+    .then(treeArray => {
       const schemaFiles = treeArray.filter(
         i => i.type === 'blob' && i.path.indexOf('_schemas/') === 0
       );
-      const schemaFilesReqPromises = schemaFiles.map(f => {
-        return repoObject
-          .getContents(branch, f.path, true)
-          .then(data => data.data)
-          .catch(err => console.log(err));
-      });
 
-      const nextPromiseFlow = Promise.all(
-        schemaFilesReqPromises
-      ).then(schemas => {
-        // if no schemas at all, end the request flow here
-        if (!schemas || !schemas.length) {
-          return Promise.reject({
+      return Bluebird.try(() => {
+        if (schemaFiles.length === 0) {
+          throw {
             status: 404,
             response: {
               data: {
@@ -918,55 +855,109 @@ const getFreshIndexFromGithub = ({ repoObject, repoFullname, branch }) => {
                 errorCode: 4042
               }
             }
-          });
+          };
         }
 
-        formatedIndex.schemas = schemas;
+        return Bluebird.map(
+          schemaFiles,
+          f => {
+            return repoObject
+              .getContents(branch, f.path, true)
+              .then(data => data.data)
+              .catch(err => console.log(err));
+          },
+          {
+            concurrency: 5
+          }
+        ).then(schemas => {
+          let validSchemas = schemas.filter(s => {
+            return typeof s === 'object' && s.jekyll;
+          });
+          if (validSchemas.length === 0) {
+            return Bluebird.reject({
+              status: 404,
+              response: {
+                data: {
+                  message: 'no schemas of this repository branch!',
+                  errorCode: 4042
+                }
+              }
+            });
+          }
+          formatedIndex.schemas = validSchemas;
+          // update repoIndex schema, config, tipCommitSha
+          debug('update tipCommitSha to %s', formatedIndex.tipCommitSha);
+          return RepoIndex.findOneAndUpdate(
+            {
+              repository: repoFullname,
+              branch: branch
+            },
+            {
+              repository: repoFullname,
+              branch: branch,
+              schemas: JSON.stringify(formatedIndex.schemas),
+              config: JSON.stringify(formatedIndex.config),
+              tipCommitSha: formatedIndex.tipCommitSha,
+              updatedBy: 'refreshed',
+              updated: Date()
+            },
+            {
+              upsert: true,
+              new: true
+            }
+          ).then(repoIndex => {
+            debug('get repoIndex: %j', {
+              _id: repoIndex._id,
+              __v: repoIndex.__v,
+              updated: repoIndex.updated,
+              updatedBy: repoIndex.updatedBy
+            });
+            debug('clean up old collection files in database');
+            return deleteAllEntriesOfIndex(repoIndex).then(() => ({
+              repoIndex,
+              treeArray,
+              schemas: validSchemas
+            }));
+          });
+        });
+      }).then(({ repoIndex, treeArray, schemas }) => {
         const collectionFiles = getCollectionFiles(schemas, treeArray);
         debug(
           'got %d entries from GitHub, showing the 1st one %o',
           collectionFiles.length,
           collectionFiles[0]
         );
-        return new Promise((resolve, reject) => {
-          collectionFiles.forEach((item, idx) => {
-            requestQueue.pushTask(() => {
-              let getContentReq = repoObject
-                .getContents(branch, item.path, true)
-                .then(content => {
-                  item.content = content.data;
-                  return 'ok';
-                });
-              let getCommitsReq = repoObject
-                .listCommits({ sha: branch, path: item.path })
-                .then(commits => {
-                  var lastCommit = commits.data[0];
-                  item.lastCommitSha = lastCommit.sha;
-                  item.lastUpdatedAt = lastCommit.commit.committer.date;
-                  item.lastUpdatedBy = lastCommit.commit.committer.name;
-                  return 'ok';
-                });
 
-              return Promise.all([getContentReq, getCommitsReq])
-                .then(results => {
-                  formatedIndex.collections.push(item);
-                  if (idx === collectionFiles.length - 1) {
-                    return resolve(formatedIndex);
-                  }
-                })
-                .catch(err => {
-                  console.log(err);
-                  formatedIndex.collections.push(item);
-                  if (idx === collectionFiles.length - 1) {
-                    return resolve(formatedIndex);
-                  }
-                });
+        return Bluebird.map(
+          collectionFiles,
+          item => {
+            let cfile = Object.assign({}, item);
+            let getContentReq = repoObject.getContents(branch, item.path, true);
+            let getCommitsReq = repoObject.listCommits({
+              sha: branch,
+              path: item.path
             });
-          });
-        });
-      });
 
-      return jekyllProConfigReq.then(() => nextPromiseFlow);
+            return Bluebird.join(
+              getContentReq,
+              getCommitsReq,
+              (content, commits) => {
+                var lastCommit = commits.data[0];
+                cfile.content = content.data;
+                cfile.lastCommitSha = lastCommit.sha;
+                cfile.lastUpdatedAt = lastCommit.commit.committer.date;
+                cfile.lastUpdatedBy = lastCommit.commit.committer.name;
+
+                formatedIndex.collections.push(cfile);
+                return saveFileEntry(cfile, repoIndex);
+              }
+            );
+          },
+          {
+            concurrency: 5
+          }
+        ).then(() => formatedIndex);
+      });
     });
 };
 
