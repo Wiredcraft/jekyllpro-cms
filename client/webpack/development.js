@@ -56,7 +56,10 @@ module.exports = merge(baseConfig, {
     new webpack.DefinePlugin({
       '__DEV__': true,
       API_BASE_URL:
-        JSON.stringify(process.env.API_BASE_URL || 'http://localhost:3000')
+        JSON.stringify(process.env.API_BASE_URL || 'http://localhost:3000'),
+      'process.env': {
+        'NODE_ENV': JSON.stringify('development')
+      }
     })
   ]
 })
