@@ -573,6 +573,8 @@ function refreshIndexIncremental({ github, repoFullname, branch }) {
                   let cfolder = rootDirCont.find(
                     c => c.path === schema.jekyll.dir
                   );
+                  // the folder might not be existed
+                  if (!cfolder) return Bluebird.resolve();
                   return github
                     .getTree(`${cfolder.sha}?recursive=1`)
                     .then(data => {
