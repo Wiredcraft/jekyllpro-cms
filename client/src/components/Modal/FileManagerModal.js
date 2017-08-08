@@ -16,7 +16,7 @@ export default class FileManagerModal extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      selectedFolderPath: '/',
+      selectedFolderPath: this.getDefaultPath(props.dir),
       disableSelectBtn: true
     };
   }
@@ -24,10 +24,17 @@ export default class FileManagerModal extends Component {
   componentWillReceiveProps(nextProps) {
     if (nextProps.isOpen && !this.props.isOpen) {
       this.setState({
-        selectedFolderPath: '/',
+        selectedFolderPath: this.getDefaultPath(nextProps.dir),
         disableSelectBtn: true
       });
     }
+  }
+
+  getDefaultPath(dir) {
+    if (dir) {
+      return dir.indexOf('/') === 0 ? dir : '/' + dir;
+    }
+    return '/';
   }
 
   fileCallback(filepath) {
@@ -49,6 +56,7 @@ export default class FileManagerModal extends Component {
 
   render() {
     const {
+      dir,
       isOpen,
       onclose,
       treeMeta,
@@ -75,6 +83,7 @@ export default class FileManagerModal extends Component {
         </header>
         <section className="body">
           <FileManager
+            defaultPath={dir}
             treeMeta={treeMeta}
             currentBranch={currentBranch}
             fetchRepoTree={fetchRepoTree}

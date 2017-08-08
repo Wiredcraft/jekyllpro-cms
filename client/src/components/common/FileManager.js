@@ -39,17 +39,19 @@ export default class FileManager extends Component {
     super(props);
     this.state = {
       updating: false,
-      gridView: false,
-      currentPath: '/',
-      records: props.treeMeta && parseFileTree(props.treeMeta)
+      gridView: false
     };
   }
 
   componentWillMount() {
-    const { fetchRepoTree, currentBranch } = this.props;
-    fetchRepoTree(currentBranch).then(data => {
-      this.setState({ records: parseFileTree(data.tree) });
-    });
+    const { treeMeta, fetchRepoTree, currentBranch, defaultPath } = this.props;
+    if (treeMeta) {
+      this.setInitialRecordsAndPath(treeMeta, defaultPath);
+    } else {
+      fetchRepoTree(currentBranch).then(data => {
+        this.setInitialRecordsAndPath(data.tree, defaultPath);
+      });
+    }
   }
 
   componentWillReceiveProps(nextProps) {
@@ -78,6 +80,25 @@ export default class FileManager extends Component {
         });
       }
     }
+  }
+
+  setInitialRecordsAndPath(treeMeta, defaultPath) {
+    let currRecords = parseFileTree(treeMeta);
+    let currPath = '/';
+    if (defaultPath) {
+      try {
+        currPath =
+          defaultPath.indexOf('/') === 0 ? defaultPath : '/' + defaultPath;
+        currRecords = parseFolderObj(defaultPath, currRecords);
+      } catch (err) {
+        console.log(defaultPath, ' is not existing path');
+      }
+      console.log(defaultPath, currRecords);
+    }
+    this.setState({
+      currentPath: currPath,
+      records: currRecords
+    });
   }
 
   handleFileClick(file) {
@@ -226,18 +247,28 @@ export default class FileManager extends Component {
           </div>
           <div className="view-control">
             <button
-              className={gridView ? 'button tooltip-bottom icon' : 'button tooltip-bottom icon active'}
-              onClick={::this.handleListView}>
+              className={
+                gridView
+                  ? 'button tooltip-bottom icon'
+                  : 'button tooltip-bottom icon active'
+              }
+              onClick={::this.handleListView}
+            >
               <svg className="icon-svg icon-view_list">
-                <use xlinkHref="#icon-view_list"></use>
+                <use xlinkHref="#icon-view_list" />
               </svg>
               <span>List view</span>
             </button>
             <button
-              className={gridView ? 'button tooltip-bottom icon active' : 'button tooltip-bottom icon'}
-              onClick={::this.handleGridView}>
+              className={
+                gridView
+                  ? 'button tooltip-bottom icon active'
+                  : 'button tooltip-bottom icon'
+              }
+              onClick={::this.handleGridView}
+            >
               <svg className="icon-svg icon-view_module">
-                <use xlinkHref="#icon-view_module"></use>
+                <use xlinkHref="#icon-view_module" />
               </svg>
               <span>Icon view</span>
             </button>
