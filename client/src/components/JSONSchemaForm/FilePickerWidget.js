@@ -39,7 +39,6 @@ export default class FilePickerWidget extends Component {
     } = this.props;
 
     const { modalIsOpen } = this.state;
-
     return (
       <div>
         <span className="file-picker" id={id}>
@@ -59,6 +58,7 @@ export default class FilePickerWidget extends Component {
           </button>
         </span>
         <FileManagerModal
+          dir={options.file_dir}
           handleSelect={::this.handleModalSelect}
           onclose={::this.onModalClose}
           isOpen={modalIsOpen}
