@@ -140,7 +140,7 @@ export default class FileManager extends Component {
   handleListView() {
     const { gridView, records } = this.state;
     if (gridView) {
-      let newCont = records['_contents'].map(r => ({
+      let newCont = records['_contents'].map(f => ({
         name: f.name,
         path: f.path
       }));
@@ -196,37 +196,53 @@ export default class FileManager extends Component {
 
     return (
       <div className="file-manager">
-        <div className="view-control">
-          <button onClick={::this.handleListView}>List View</button>
-          <button onClick={::this.handleGridView}>Icon View</button>
-        </div>
-        <div className="breadcrumb">
-          <a
-            onClick={() => {
-              this.setState({
-                currentPath: '/',
-                records: treeMeta && parseFileTree(treeMeta)
-              });
-            }}
-          >
-            <HomeIcon />
-          </a>/
-          {parseFolderPath(currentPath).map((folder, idx) => {
-            return (
-              <span key={idx}>
-                &nbsp;
-                <a
-                  onClick={this.handleBreadscrumLink.bind(
-                    this,
-                    folder.pathArray
-                  )}
-                >
-                  {folder.name}&nbsp;/
-                </a>
-              </span>
-            );
-          })}
-        </div>
+        <header>
+          <div className="breadcrumb">
+            <a
+              onClick={() => {
+                this.setState({
+                  currentPath: '/',
+                  records: treeMeta && parseFileTree(treeMeta)
+                });
+              }}
+            >
+              <HomeIcon />
+            </a>/
+            {parseFolderPath(currentPath).map((folder, idx) => {
+              return (
+                <span key={idx}>
+                  &nbsp;
+                  <a
+                    onClick={this.handleBreadscrumLink.bind(
+                      this,
+                      folder.pathArray
+                    )}
+                  >
+                    {folder.name}&nbsp;/
+                  </a>
+                </span>
+              );
+            })}
+          </div>
+          <div className="view-control">
+            <button
+              className={gridView ? 'button tooltip-bottom icon' : 'button tooltip-bottom icon active'}
+              onClick={::this.handleListView}>
+              <svg className="icon-svg icon-view_list">
+                <use xlinkHref="#icon-view_list"></use>
+              </svg>
+              <span>List view</span>
+            </button>
+            <button
+              className={gridView ? 'button tooltip-bottom icon active' : 'button tooltip-bottom icon'}
+              onClick={::this.handleGridView}>
+              <svg className="icon-svg icon-view_module">
+                <use xlinkHref="#icon-view_module"></use>
+              </svg>
+              <span>Icon view</span>
+            </button>
+          </div>
+        </header>
         <NestedFileTreeView
           className={gridView ? 'grid-view' : ''}
           selectedFilePath={this.state.selectedFile}
