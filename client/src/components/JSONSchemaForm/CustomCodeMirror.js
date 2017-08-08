@@ -190,7 +190,7 @@ export default class CustomCodeMirror extends Component {
   }
 
   handleModalSelect(filePath) {
-    const img = `![](/${filePath})`;
+    const img = `![](${filePath})`;
     const editor = this.refs.cmBody.getCodeMirror();
     editor.replaceSelection(img + editor.getSelection());
   }
