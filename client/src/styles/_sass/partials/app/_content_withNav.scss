@@ -1,0 +1,13 @@
+#content.withNav {
+  display: flex;
+  align-content: stretch;
+  max-width: 960px;
+  nav {
+    width: 300px;
+    border-right: 1px solid #ddd;
+  }
+
+  .listing {
+    flex-grow: 2;
+  }
+}

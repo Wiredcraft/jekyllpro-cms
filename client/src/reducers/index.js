@@ -5,12 +5,14 @@ import app from './app';
 import editor from './editor';
 import repo from './repo';
 import user from './user';
+import nav from './nav';
 
 const appReducer = combineReducers({
   app,
   editor,
   repo,
   user,
+  nav,
   routing: routerReducer
 });
 

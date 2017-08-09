@@ -1,14 +1,14 @@
 import React from 'react';
+import cx from 'classnames';
 
 const FileView = props => {
   let { file, fileClickHandler, selectedFilePath, fileTemplate } = props;
 
-  let fileClassName = (props.fileClassName || '') + ' item nft-item';
   let selectedClassName = props.selectedClassName || 'active';
-  let cns =
-    selectedFilePath === file.path
-      ? selectedClassName + ' ' + fileClassName
-      : fileClassName;
+  let cns = cx('item nft-item', props.fileClassName, {
+    [selectedClassName]: selectedFilePath === file.path
+  });
+
   let onclickFn = () => {
     fileClickHandler && fileClickHandler(file);
   };

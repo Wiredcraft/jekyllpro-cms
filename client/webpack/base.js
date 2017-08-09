@@ -60,6 +60,9 @@ module.exports = {
         'sass-loader'
       ]
     }, {
+      test: /\.(yaml|yml)$/,
+      use: 'yaml-loader'
+    }, {
       test: /\.json$/,
       use: 'json-loader'
     }]
