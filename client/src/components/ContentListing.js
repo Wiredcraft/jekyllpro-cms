@@ -18,7 +18,8 @@ import InvalidRepo from './common/InvalidRepo';
 import CaretDownIcon from './svg/CaretDownIcon';
 import RemoveIcon from './svg/RemoveIcon';
 import CheckIcon from './svg/CheckIcon';
-
+const cmsSettings = require('json-loader!yaml-loader!../_cms-setting.yml');
+console.log(cmsSettings);
 class ContentListing extends Component {
   constructor(props) {
     super(props);

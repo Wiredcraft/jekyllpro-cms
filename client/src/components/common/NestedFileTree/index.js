@@ -42,7 +42,7 @@ function NestedFileTreeView(props) {
       {directory &&
         Object.keys(directory)
           .filter(k => {
-            return k !== '_contents';
+            return k !== '_contents' && k !== '_meta';
           })
           .map(prop => {
             return (
@@ -53,7 +53,6 @@ function NestedFileTreeView(props) {
                 maxFolderLevel={maxFolderLevel}
                 folderObj={directory[prop]}
                 name={prop}
-                parentPath=""
                 folderClickHandler={folderClickHandler}
                 folderTemplate={folderTemplate}
                 {...passedProps}
