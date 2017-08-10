@@ -1,4 +1,4 @@
-import yaml from 'js-yaml'
+import yaml from 'js-yaml';
 
 /*
 Raw markdown file example:
@@ -18,50 +18,56 @@ We have been using Flux for months now and we are genuinely impressed with its p
 ## About Flux
 */
 
-
 export function parseYamlInsideMarkdown(text) {
-  const splitter = '---'
-  const targetLines = text.split('\n')
-  const indexes = []
-  const lineCount = targetLines.length
+  const splitter = '---';
+  const targetLines = text.split('\n');
+  const indexes = [];
+  const lineCount = targetLines.length;
   for (let i = 0; i < lineCount; i++) {
-    if (targetLines[i] === splitter) indexes.push(i)
+    if (targetLines[i] === splitter) indexes.push(i);
   }
   if (indexes.length > 1) {
-    let text = ''
+    let text = '';
+    let doc = null;
     for (let i = indexes[0] + 1; i < indexes[1]; i++) {
-      text += targetLines[i] + '\n'
+      text += targetLines[i] + '\n';
     }
-    const doc = yaml.safeLoad(text)
-    return doc
+    try {
+      doc = yaml.safeLoad(text);
+    } catch (e) {
+      console.error(e);
+      doc = {
+        __error: `${e.name}: ${e.reason}`
+      };
+    }
+    return doc;
   }
-  return null
+  return null;
 }
 
 export function retriveContent(text) {
-  const splitter = '---'
-  const targetLines = text.split('\n')
-  const indexes = []
-  const lineCount = targetLines.length
+  const splitter = '---';
+  const targetLines = text.split('\n');
+  const indexes = [];
+  const lineCount = targetLines.length;
   for (let i = 0; i < lineCount; i++) {
-    if (targetLines[i] === splitter) indexes.push(i)
+    if (targetLines[i] === splitter) indexes.push(i);
   }
   if (indexes.length > 1) {
-    let text = ''
+    let text = '';
     for (let i = indexes[1] + 1; i < lineCount; i++) {
-      text += targetLines[i] + (i === lineCount - 1 ? '' : '\n')
+      text += targetLines[i] + (i === lineCount - 1 ? '' : '\n');
     }
-    return text
+    return text;
   }
-  return ''
+  return '';
 }
 
 export function serializeObjtoYaml(obj) {
-  return '---\n' + yaml.safeDump(obj) + '---\n'
+  return '---\n' + yaml.safeDump(obj) + '---\n';
 }
 
-
-export function parseFilenameFromYaml (text) {
-  let doc = parseYamlInsideMarkdown(text)
-  return doc ? doc.title : null
+export function parseFilenameFromYaml(text) {
+  let doc = parseYamlInsideMarkdown(text);
+  return doc ? doc.title : null;
 }

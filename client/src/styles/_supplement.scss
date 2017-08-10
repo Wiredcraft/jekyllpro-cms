@@ -18,6 +18,13 @@ fieldset {
   padding: 0;
   .field {
     clear: both;
+
+    .help-block {
+      display: block;
+      font-size: 12px;
+      font-size: 1.2rem;
+      color: #aaa;
+    }
   }
 }
 
@@ -120,6 +127,26 @@ fieldset {
     &:hover {
       opacity: 0.3;
     }
+  }
+}
+
+.editor .meta {
+  box-sizing: border-box;
+  color: inherit;
+  display: block;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  margin-bottom: 10px;
+
+  strong {
+    color: $purple;
+    @include font-size($micro);
+    font-weight: normal;
+    text-transform: uppercase;
+  }
+
+  a {
+    color: $grey;
   }
 }
 
@@ -319,4 +346,9 @@ legend {
     margin: 0;
     color: rgba(0, 0, 0, .6);
   }
+}
+
+.error-msg-block {
+  color: red;
+  padding: 20px 0;
 }

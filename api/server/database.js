@@ -1,8 +1,11 @@
-import mongoose from 'mongoose'
+import mongoose from 'mongoose';
 
-const Schema = mongoose.Schema
+import Bluebird from 'bluebird';
+mongoose.Promise = Bluebird;
 
-const repoSchema = new Schema({
+const Schema = mongoose.Schema;
+
+const repoIndexSchema = new Schema({
   updated: {
     type: Date,
     default: Date.now
@@ -19,11 +22,6 @@ const repoSchema = new Schema({
     trim: true,
     required: 'branch cannot be blank'
   },
-  collections: {
-    type: String,
-    default: '[]',
-    trim: true
-  },
   schemas: {
     type: String,
     default: '[]',
@@ -37,8 +35,13 @@ const repoSchema = new Schema({
   updatedBy: {
     type: String,
     default: ''
+  },
+  // tip commit of the branch
+  tipCommitSha: {
+    type: String,
+    default: ''
   }
-})
+});
 
 const repoAccessTokenSchema = new Schema({
   updated: {
@@ -61,12 +64,37 @@ const repoAccessTokenSchema = new Schema({
     type: String,
     default: ''
   }
-})
+});
 
-repoSchema.statics.findByRepoInfo = function (repository, branch, cb) {
-  return this.findOne({ repository, branch }, cb)
-}
+// collectionType: "posts"
+// content: "---\ntitle: Hello World..."
+// lastCommitSha: "966a95de..."
+// lastUpdatedAt: '2017-06-12T10:06:23Z'
+// lastUpdatedBy: "Jone Doe"
+// path: "_posts/2016-10-19-hello-world.md"
+const repoFileEntrySchema = new Schema({
+  collectionType: String,
+  content: {
+    type: String,
+    default: ''
+  },
+  lastCommitSha: String,
+  lastUpdatedAt: Date,
+  lastUpdatedBy: String,
+  path: String,
+  repoBranch: Schema.ObjectId
+});
 
-export const RepoIndex = mongoose.model('RepoIndex', repoSchema)
+repoIndexSchema.statics.findByRepoInfo = function(repository, branch, cb) {
+  return this.findOne({ repository, branch }, cb);
+};
 
-export const RepoAccessToken = mongoose.model('RepoAccessToken', repoAccessTokenSchema)
+export const RepoIndex = mongoose.model('RepoIndex', repoIndexSchema);
+export const RepoAccessToken = mongoose.model(
+  'RepoAccessToken',
+  repoAccessTokenSchema
+);
+export const RepoFileEntry = mongoose.model(
+  'RepoFileEntry',
+  repoFileEntrySchema
+);

@@ -1,17 +1,27 @@
 /* global API_BASE_URL */
-import { getRepoDetails, getRepoMeta, getRepoBranchList, getRepoIndex, getRepoBranchDetails,
-  getRepoTree, listRepoHooks, registerRepoHook } from '../helpers/api'
-import { resetEditorData } from './editorActions'
+import {
+  getRepoDetails,
+  getRepoMeta,
+  getRepoBranchList,
+  getRepoIndex,
+  getUpdatedCollections,
+  getRepoBranchDetails,
+  getRepoTree,
+  listRepoHooks,
+  registerRepoHook
+} from '../helpers/api';
+import { resetEditorData } from './editorActions';
 
-export const CHANGE_REPO_STATE = 'CHANGE_REPO_STATE'
-export const RESET_REPO_DATA = 'RESET_REPO_DATA'
-export const CHECKOUT_BRANCH = 'CHECKOUT_BRANCH'
-export const FILE_REMOVED = 'FILE_REMOVED'
-export const FILE_ADDED = 'FILE_ADDED'
-export const FILE_REPLACED = 'FILE_REPLACED'
-export const COLLECTION_FILE_REMOVED = 'COLLECTION_FILE_REMOVED'
-export const COLLECTION_FILE_ADDED = 'COLLECTION_FILE_ADDED'
-export const COLLECTION_FILE_UPDATED = 'COLLECTION_FILE_UPDATED'
+export const CHANGE_REPO_STATE = 'CHANGE_REPO_STATE';
+export const RESET_REPO_DATA = 'RESET_REPO_DATA';
+export const CHECKOUT_BRANCH = 'CHECKOUT_BRANCH';
+export const FILE_REMOVED = 'FILE_REMOVED';
+export const FILE_ADDED = 'FILE_ADDED';
+export const FILE_REPLACED = 'FILE_REPLACED';
+export const COLLECTION_FILE_REMOVED = 'COLLECTION_FILE_REMOVED';
+export const COLLECTION_FILE_ADDED = 'COLLECTION_FILE_ADDED';
+export const COLLECTION_FILE_UPDATED = 'COLLECTION_FILE_UPDATED';
+export const UPDATE_INDEX_COMPLETED = 'UPDATE_INDEX_COMPLETED';
 
 /*
 * Repository
@@ -21,9 +31,9 @@ export function fetchRepoInfo() {
     dispatch({
       payload: { loading: true },
       type: CHANGE_REPO_STATE
-    })
+    });
     return getRepoDetails()
-      .then(data => {        
+      .then(data => {
         dispatch({
           payload: {
             loading: false,
@@ -33,29 +43,28 @@ export function fetchRepoInfo() {
               updatedAt: data.pushed_at,
               url: data.html_url,
               ownerAvatar: data.owner.avatar_url
-            },
+            }
           },
           type: CHANGE_REPO_STATE
-        })
+        });
       })
       .catch(err => {
         dispatch({
           payload: { loading: false },
           type: CHANGE_REPO_STATE
-        })
+        });
         // make sure the caller can catch to do more error handler
-        return Promise.reject(err)
-      })
-  }
+        return Promise.reject(err);
+      });
+  };
 }
 
-
-export function resetRepoData () {
+export function resetRepoData() {
   return dispatch => {
     dispatch({
       type: RESET_REPO_DATA
-    })
-  }
+    });
+  };
 }
 
 export function fetchRepoIndex(opts, silent) {
@@ -64,10 +73,10 @@ export function fetchRepoIndex(opts, silent) {
       dispatch({
         payload: { loading: true },
         type: CHANGE_REPO_STATE
-      })
+      });
     }
     return getRepoIndex(opts || {})
-      .then(data => {        
+      .then(data => {
         dispatch({
           payload: {
             collections: data.collections,
@@ -77,21 +86,38 @@ export function fetchRepoIndex(opts, silent) {
             loading: false
           },
           type: CHANGE_REPO_STATE
-        })
+        });
 
-        return data
+        return data;
       })
       .catch(err => {
         if (!silent) {
           dispatch({
             payload: { loading: false },
             type: CHANGE_REPO_STATE
-          }) 
+          });
         }
         // make sure the caller can catch to do more error handler
-        return Promise.reject(err)       
-      })
-  }
+        return Promise.reject(err);
+      });
+  };
+}
+
+export function fetchUpdatedCollections(branch) {
+  return dispatch => {
+    return getUpdatedCollections({ branch }).then(data => {
+      if (!data.collections) return;
+
+      const { modified = [], removed = [] } = data.collections;
+
+      if (!data.schemas && modified.length + removed.length === 0) return;
+
+      dispatch({
+        type: UPDATE_INDEX_COMPLETED,
+        payload: data
+      });
+    });
+  };
 }
 
 export function fetchRepoTree(branch) {
@@ -99,40 +125,40 @@ export function fetchRepoTree(branch) {
     dispatch({
       payload: { loading: true },
       type: CHANGE_REPO_STATE
-    })
+    });
     return getRepoTree(branch)
-      .then(data => {        
+      .then(data => {
         dispatch({
           payload: { treeMeta: data.tree, loading: false },
           type: CHANGE_REPO_STATE
-        })
-        return data
+        });
+        return data;
       })
       .catch(err => {
         dispatch({
           payload: { loading: false },
           type: CHANGE_REPO_STATE
-        })        
-      })
-  }
+        });
+      });
+  };
 }
 
-export function listHooks () {
+export function listHooks() {
   return dispatch => {
     return listRepoHooks()
       .then(data => {
-        let hasIndexHook = data.some((hook) => {
-          return hook.config.url === `${API_BASE_URL}/api/webhook`
-        })
+        let hasIndexHook = data.some(hook => {
+          return hook.config.url === `${API_BASE_URL}/api/webhook`;
+        });
         dispatch({
           payload: { hasIndexHook },
           type: CHANGE_REPO_STATE
-        })  
+        });
       })
       .catch(err => {
-        console.log(err)      
-      })
-  }
+        console.log(err);
+      });
+  };
 }
 
 /*
@@ -144,34 +170,33 @@ export function getAllBranch() {
     dispatch({
       payload: { loading: true },
       type: CHANGE_REPO_STATE
-    })
+    });
 
     return getRepoBranchList()
       .then(data => {
         dispatch({
           payload: { branches: data, loading: false },
           type: CHANGE_REPO_STATE
-        })
+        });
       })
       .catch(() => {
         dispatch({
           payload: { loading: false },
           type: CHANGE_REPO_STATE
-        })        
-      })
-  }
+        });
+      });
+  };
 }
 
 export function getCurrentBranchUpdateTime(branch) {
   return dispatch => {
-    return getRepoBranchDetails(branch)
-      .then(data => {
-        dispatch({
-          payload: { currentBranchUpdatedAt: data.commit.commit.author.date },
-          type: CHANGE_REPO_STATE
-        })
-      })
-  }
+    return getRepoBranchDetails(branch).then(data => {
+      dispatch({
+        payload: { currentBranchUpdatedAt: data.commit.commit.author.date },
+        type: CHANGE_REPO_STATE
+      });
+    });
+  };
 }
 
 export function checkoutBranch(branch) {
@@ -180,12 +205,12 @@ export function checkoutBranch(branch) {
       dispatch({
         payload: {
           currentBranch: branch
-         },
+        },
         type: CHECKOUT_BRANCH
       }),
       dispatch(resetEditorData())
-    ])
-  }
+    ]);
+  };
 }
 
 /*
@@ -195,10 +220,10 @@ export function checkoutBranch(branch) {
 export function fileAdded(path) {
   return dispatch => {
     dispatch({
-      payload: {path},
+      payload: { path },
       type: FILE_ADDED
-    })
-  }
+    });
+  };
 }
 
 export function fileRemoved(path) {
@@ -206,8 +231,8 @@ export function fileRemoved(path) {
     dispatch({
       payload: { path },
       type: FILE_REMOVED
-    })
-  }
+    });
+  };
 }
 
 export function fileReplaced(oldPath, newPath) {
@@ -215,8 +240,8 @@ export function fileReplaced(oldPath, newPath) {
     dispatch({
       payload: { oldPath, newPath },
       type: FILE_REPLACED
-    })
-  }
+    });
+  };
 }
 
 export function collectionFileAdded(newFileData) {
@@ -224,16 +249,16 @@ export function collectionFileAdded(newFileData) {
     dispatch({
       payload: { newFileData },
       type: COLLECTION_FILE_ADDED
-    })
-  }
+    });
+  };
 }
 export function collectionFileRemoved(path) {
   return dispatch => {
     dispatch({
       payload: { path },
       type: COLLECTION_FILE_REMOVED
-    })
-  }
+    });
+  };
 }
 
 export function collectionFileUpdated(oldPath, newFileData) {
@@ -241,8 +266,8 @@ export function collectionFileUpdated(oldPath, newFileData) {
     dispatch({
       payload: { oldPath, newFileData },
       type: COLLECTION_FILE_UPDATED
-    })
-  }
+    });
+  };
 }
 
 export function resetUpdateSignal() {
@@ -250,20 +275,20 @@ export function resetUpdateSignal() {
     dispatch({
       payload: { repoUpdateSignal: false },
       type: CHANGE_REPO_STATE
-    })
-  }
+    });
+  };
 }
 
 //a trick to trigger a index refresh
 export function triggerIndexRefresh() {
   return dispatch => {
-    let now = (new Date).toISOString()
-    let past = (new Date(Date.now() - 1000 * 60 * 60)).toISOString()
+    let now = new Date().toISOString();
+    let past = new Date(Date.now() - 1000 * 60 * 60).toISOString();
     dispatch({
       payload: { currentBranchUpdatedAt: now, indexUpdatedAt: past },
       type: CHANGE_REPO_STATE
-    })
-  }
+    });
+  };
 }
 
 export function retryIndexFetchRequest(status) {
@@ -271,6 +296,6 @@ export function retryIndexFetchRequest(status) {
     dispatch({
       payload: { indexFetchStatus: status },
       type: CHANGE_REPO_STATE
-    })
-  }
+    });
+  };
 }

@@ -5,8 +5,17 @@
     "stage-0"
   ],
   "plugins": [
-    "transform-es2015-parameters",
-    "transform-object-rest-spread",
+    "transform-runtime",
     "transform-decorators-legacy",
+    "react-hot-loader/babel",
+    ["module-resolver", {
+      "root": ["./src"],
+      "alias": {
+        "actions": "../src/actions",
+        "components": "../src/components",
+        "stores": "../src/stores",
+        "styles": "../src/styles"
+      }
+    }]
   ]
 }

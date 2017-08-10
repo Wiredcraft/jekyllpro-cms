@@ -1,33 +1,30 @@
-import React, { Component } from 'react'
-import FilePickerIcon from '../svg/FilePickerIcon'
-import FileManagerModal from '../Modal/FileManagerModal'
+import React, { Component } from 'react';
+import FilePickerIcon from '../svg/FilePickerIcon';
+import FileManagerModal from '../Modal/FileManagerModal';
 
 export default class FilePickerWidget extends Component {
   constructor(props) {
-    super(props)
-    this.state = { modalIsOpen: false }
+    super(props);
+    this.state = { modalIsOpen: false };
   }
 
-  
-  handleChange (selected) {
-    const { onChange } = this.props
-
+  handleChange(selected) {
+    const { onChange } = this.props;
   }
 
-  handleClick () {
-    this.setState({ modalIsOpen: true })
+  handleClick() {
+    this.setState({ modalIsOpen: true });
   }
 
-  onModalClose () {
-    this.setState({ modalIsOpen: false })
-
+  onModalClose() {
+    this.setState({ modalIsOpen: false });
   }
 
   handleModalSelect(filePath) {
-    this.props.onChange(filePath)
+    this.props.onChange(filePath);
   }
 
-  render () {
+  render() {
     const {
       schema,
       id,
@@ -39,29 +36,34 @@ export default class FilePickerWidget extends Component {
       multiple,
       autofocus,
       onChange
-    } = this.props
+    } = this.props;
 
-    const { modalIsOpen } = this.state
+    const { modalIsOpen } = this.state;
 
     return (
       <div>
-        <span className='file-picker' id={id}>
-          <input type='text'
-            onChange={(evt) => onChange(evt.target.value)}
+        <span className="file-picker" id={id}>
+          <input
+            type="text"
+            onChange={evt => onChange(evt.target.value)}
             value={value}
             required={required}
-            placeholder='File' />
-          <button type='button'
+            placeholder="File"
+          />
+          <button
+            type="button"
             onClick={::this.handleClick}
-            className='button icon'>
+            className="button icon"
+          >
             <FilePickerIcon />
           </button>
         </span>
         <FileManagerModal
           handleSelect={::this.handleModalSelect}
           onclose={::this.onModalClose}
-          isOpen={modalIsOpen} />
+          isOpen={modalIsOpen}
+        />
       </div>
-    )
+    );
   }
 }
