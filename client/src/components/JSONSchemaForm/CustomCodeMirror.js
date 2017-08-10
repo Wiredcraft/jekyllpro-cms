@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import debounce from 'lodash.debounce';
-import Codemirror from 'react-codemirror';
+import Codemirror from '@skidding/react-codemirror';
 import 'codemirror/mode/markdown/markdown';
 import 'codemirror/mode/javascript/javascript';
 import 'codemirror/mode/xml/xml';

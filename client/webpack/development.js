@@ -13,7 +13,6 @@ module.exports = merge(baseConfig, {
       'react',
       'react-dom',
       'react-router',
-      'react-codemirror',
       'react-jsonschema-form',
       'moment',
       'superagent',
