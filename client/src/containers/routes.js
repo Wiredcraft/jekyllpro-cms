@@ -4,7 +4,7 @@ import { syncHistoryWithStore } from 'react-router-redux';
 
 import App from 'components/Main';
 import Login from 'components/Login';
-import ContentListing from 'components/AltContentListing';
+import ContentListing from 'components/ContentListing';
 import Editor from 'components/Editor';
 import TransitionView from 'components/TransitionView';
 import NotFound from 'components/NotFound';

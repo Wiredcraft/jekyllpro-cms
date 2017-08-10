@@ -41,7 +41,7 @@ export default class Tags extends Component {
   }
 
   render() {
-    const {readonly} = this.props;
+    const { readonly } = this.props;
 
     return (
       <Creatable
