@@ -11,6 +11,7 @@ import {
   registerRepoHook
 } from '../helpers/api';
 import { resetEditorData } from './editorActions';
+import { resetNav } from './navActions';
 
 export const CHANGE_REPO_STATE = 'CHANGE_REPO_STATE';
 export const RESET_REPO_DATA = 'RESET_REPO_DATA';
@@ -208,7 +209,8 @@ export function checkoutBranch(branch) {
         },
         type: CHECKOUT_BRANCH
       }),
-      dispatch(resetEditorData())
+      dispatch(resetEditorData()),
+      dispatch(resetNav())
     ]);
   };
 }
