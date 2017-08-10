@@ -76,19 +76,26 @@ export function getCollectionFiles(schemaArray, filesArray) {
     });
 }
 
-export function getLangFromConfigYaml(content) {
+export function getCMSConfigFromJekyllYaml(content) {
   var config = jsyaml.safeLoad(content);
   var lanArray = config['lang'];
-
+  var otherConfig = config['jekyllpro_cms_config'];
+  let cmsConfig = null;
   if (lanArray) {
-    let cmsConfig = {};
+    cmsConfig = {};
     cmsConfig['languages'] = lanArray.map(lanCode => {
       return {
         name: iso[lanCode] || lanCode,
         code: lanCode
       };
     });
-    return cmsConfig;
   }
-  return null;
+
+  if (otherConfig) {
+    cmsConfig = cmsConfig
+      ? Object.assign(cmsConfig, otherConfig)
+      : Object.assign({}, otherConfig);
+  }
+
+  return cmsConfig;
 }

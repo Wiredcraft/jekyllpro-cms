@@ -12,7 +12,7 @@ import {
   TaskQueue,
   getCollectionFiles,
   getCollectionType,
-  getLangFromConfigYaml
+  getCMSConfigFromJekyllYaml
 } from './utils';
 import { RepoIndex, RepoAccessToken, RepoFileEntry } from './database';
 import { hookConfig } from './webhook';
@@ -466,16 +466,18 @@ function refreshIndexIncremental({ github, repoFullname, branch }) {
         debug(
           'Error: no tipCommitSha on %s repoIndex %s',
           repoFullname,
-          _repoIndex && _repoIndex._id || 'n/a'
+          (_repoIndex && _repoIndex._id) || 'n/a'
         );
         throw new Error('break');
       }
 
       tipCommitSha = lodash.get(refData, 'data.object.sha');
       // can not get the commit sha
-      if (typeof tipCommitSha !== 'string') throw new Error('invalid tipCommitSha');
+      if (typeof tipCommitSha !== 'string')
+        throw new Error('invalid tipCommitSha');
       // the commit sha is same as the one in database
-      if (tipCommitSha === _repoIndex.tipCommitSha) throw new Error('no change in tipCommitSha');
+      if (tipCommitSha === _repoIndex.tipCommitSha)
+        throw new Error('no change in tipCommitSha');
 
       debug(
         `tip commit: db is ${_repoIndex.tipCommitSha} remote is ${tipCommitSha}`
@@ -507,8 +509,10 @@ function refreshIndexIncremental({ github, repoFullname, branch }) {
       return github
         .getContents(branch, '_config.yml', true)
         .then(data => {
-          newConfig = getLangFromConfigYaml(data.data);
+          newConfig = getCMSConfigFromJekyllYaml(data.data);
           debug('New config %s', newConfig);
+
+          return committedFiles;
         })
         .catch(err => {
           console.log(err);
@@ -661,7 +665,7 @@ function refreshIndexIncremental({ github, repoFullname, branch }) {
       return updatedContent;
     })
     .catch(err => {
-      console.log(err)
+      console.log(err);
 
       dispose();
       return updatedContent;
@@ -834,7 +838,7 @@ const getFreshIndexFromGithub = ({ repoObject, repoFullname, branch }) => {
         return repoObject
           .getContents(branch, '_config.yml', true)
           .then(data => {
-            formatedIndex['config'] = getLangFromConfigYaml(data.data);
+            formatedIndex['config'] = getCMSConfigFromJekyllYaml(data.data);
             return treeArray;
           })
           .catch(err => {
