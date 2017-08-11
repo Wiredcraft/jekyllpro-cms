@@ -96,7 +96,7 @@ export default class NewEditor extends Component {
   }
 
   getCurrentSchema(type, callback) {
-    let { schemas } = this.props;
+    let { schemas, defaultFileValues } = this.props;
     schemas = schemas ? schemas : [];
 
     let schema = schemas.find(item => {
@@ -126,6 +126,19 @@ export default class NewEditor extends Component {
       schema.JSONSchema.required = required;
       delete schema.JSONSchema.properties.title;
       shouldRenderTitle = true;
+    }
+
+    if (
+      schema.JSONSchema &&
+      schema.JSONSchema.properties &&
+      defaultFileValues
+    ) {
+      Object.keys(defaultFileValues).forEach(propName => {
+        let propVal = defaultFileValues[propName];
+        if (schema.JSONSchema.properties[propName]) {
+          schema.JSONSchema.properties[propName]['default'] = propVal;
+        }
+      });
     }
 
     this.setState(
@@ -607,8 +620,8 @@ export default class NewEditor extends Component {
 
           <Form
             ref="form"
-            onChange={::this.onFormChange}
-            onSubmit={::this.onFormSubmit}
+            onFormChange={::this.onFormChange}
+            onFormSubmit={::this.onFormSubmit}
             schema={currentSchema.JSONSchema}
             uiSchema={currentSchema.uiSchema}
             formData={formData}
