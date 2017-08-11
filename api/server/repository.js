@@ -12,6 +12,7 @@ import {
   TaskQueue,
   getCollectionFiles,
   getCollectionType,
+  getYamlObj,
   getCMSConfigFromJekyllYaml
 } from './utils';
 import { RepoIndex, RepoAccessToken, RepoFileEntry } from './database';
@@ -484,6 +485,7 @@ function refreshIndexIncremental({ github, repoFullname, branch }) {
       );
       repoIndex = _repoIndex;
       schemaArray = JSON.parse(repoIndex.schemas);
+      newConfig = JSON.parse(repoIndex.config);
 
       // doc https://developer.github.com/v3/repos/commits/#compare-two-commits
       return github.compareBranches(repoIndex.tipCommitSha, branch);
@@ -499,17 +501,26 @@ function refreshIndexIncremental({ github, repoFullname, branch }) {
 
       const committedFiles = data.data.files;
       let configChange = committedFiles.filter(
-        s => s.filename === '_config.yml'
+        s => s.filename === '_config.yml' || s.filename === '_cms-setting.yml'
       );
 
       if (configChange.length === 0) {
         return Bluebird.resolve(committedFiles);
       }
 
-      return github
-        .getContents(branch, '_config.yml', true)
-        .then(data => {
-          newConfig = getCMSConfigFromJekyllYaml(data.data);
+      return Bluebird.map(configChange, item => {
+        return github.getContents(branch, item.filename, true).then(data => {
+          let parsedContent =
+            item.filename === '_config.yml'
+              ? getCMSConfigFromJekyllYaml(data.data)
+              : getYamlObj(data.data);
+
+          newConfig = newConfig
+            ? Object.assign(newConfig, parsedContent)
+            : parsedContent;
+        });
+      })
+        .then(() => {
           debug('New config %s', newConfig);
 
           return committedFiles;
@@ -839,10 +850,27 @@ const getFreshIndexFromGithub = ({ repoObject, repoFullname, branch }) => {
           .getContents(branch, '_config.yml', true)
           .then(data => {
             formatedIndex['config'] = getCMSConfigFromJekyllYaml(data.data);
-            return treeArray;
+
+            return repoObject
+              .getContents(branch, '_cms-setting.yml', true)
+              .then(setting => {
+                let extraConfig = getYamlObj(setting.data);
+                if (extraConfig) {
+                  formatedIndex['config'] = Object.assign(
+                    {},
+                    formatedIndex['config'],
+                    extraConfig
+                  );
+                }
+                return treeArray;
+              })
+              .catch(err => {
+                console.log('cannot get the content of _cms-setting.yml ', err);
+                return treeArray;
+              });
           })
           .catch(err => {
-            console.log(err);
+            console.log('cannot get the content of _config.yml ', err);
           });
       });
     })
