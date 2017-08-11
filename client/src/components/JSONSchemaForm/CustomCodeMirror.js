@@ -190,7 +190,7 @@ export default class CustomCodeMirror extends Component {
   }
 
   handleModalSelect(filePath) {
-    const img = `![](/${filePath})`;
+    const img = `![](${filePath})`;
     const editor = this.refs.cmBody.getCodeMirror();
     editor.replaceSelection(img + editor.getSelection());
   }
@@ -210,6 +210,7 @@ export default class CustomCodeMirror extends Component {
           options={cmOptions}
         />
         <FileManagerModal
+          dir={this.props.options.file_dir}
           handleSelect={::this.handleModalSelect}
           onclose={::this.onModalClose}
           isOpen={this.state.modalIsOpen}

@@ -1,7 +1,7 @@
 /* special styles for react components */
 
 @import './_sass/main.scss';
-
+@import './_nested_file_tree.scss';
 @include font-face('icon', '../assets/icons/icons');
 
 #js-app {

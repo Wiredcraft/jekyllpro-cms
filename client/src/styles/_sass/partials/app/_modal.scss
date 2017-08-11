@@ -24,33 +24,6 @@
     border-top: 1px solid $line;
   }
   &.file-picker {
-    .breadcrumb {
-      border-bottom: 1px solid $light;
-      color: $grey;
-      @include font-size($small);
-      line-height: 140%;
-      padding: $space/3 1.5*$space/2;
-      a {
-        color: $black;
-        @include transition-property(color);
-        @include transition-duration($ease);
-        svg {
-          fill: $black;
-          height: 2*$space/3;
-          vertical-align: text-bottom;
-          width: 2*$space/3;
-          @include transition-property(fill);
-          @include transition-duration($ease);
-        }
-        &:hover {
-          color: $blue;
-          text-decoration: none;
-          svg {
-            fill: $blue;
-          }
-        }
-      }
-    }
     .body {
       padding: 0;
       ul {
@@ -90,24 +63,6 @@
             vertical-align: text-top;
           }
         }
-      }
-    }
-    .footer {
-      .confirm-filename,
-      .confirm-destination {
-        box-sizing: border-box;
-        float: left;
-        width: 50%;
-        input {
-          width: 100%;
-        }
-      }
-      .confirm-filename {
-
-        padding-right: $space/2;
-      }
-      .confirm-destination {
-        padding-left: $space/2;
       }
     }
   }
