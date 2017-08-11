@@ -1,27 +1,23 @@
 import React, { Component } from 'react';
-import Form from 'react-jsonschema-form';
 import ReactDOM from 'react-dom';
 import moment from 'moment';
 import Cookie from 'js-cookie';
 import { Link } from 'react-router';
 import Select from 'react-select';
+import cx from 'classnames';
 
 import {
   parseYamlInsideMarkdown,
   retriveContent,
   serializeObjtoYaml
 } from '../../helpers/markdown';
-import TrashIcon from '../svg/TrashIcon';
-import MoreMenuIcon from '../svg/MoreMenuIcon';
-import CheckIcon from '../svg/CheckIcon';
-import BackArrowIcon from '../svg/BackArrowIcon';
+import Form from './Form';
+import EditorHeader from './EditorHeader';
 import CaretDownIcon from '../svg/CaretDownIcon';
 import ExternalLinkIcon from '../svg/ExternalLinkIcon';
 import LockIcon from '../svg/LockIcon';
 import TranslationIcon from '../svg/TranslationIcon';
 
-import customWidgets from '../JSONSchemaForm/CustomWidgets';
-import CustomArrayField from '../JSONSchemaForm/CustomArrayField';
 import {
   slugify,
   purgeObject,
@@ -342,7 +338,8 @@ export default class ContentEditor extends Component {
       bubbles: true,
       cancelable: true
     });
-    ReactDOM.findDOMNode(this.refs.formSubmitBtn).dispatchEvent(clickEvt);
+    let $formBtn = this.refs.form.refs.formSubmitBtn;
+    ReactDOM.findDOMNode($formBtn).dispatchEvent(clickEvt);
   }
 
   handleDeleteFile() {
@@ -572,6 +569,10 @@ export default class ContentEditor extends Component {
     );
   };
 
+  onFormChange = res => {
+    this.setState({ formData: res.formData, fileModified: true });
+  };
+
   render() {
     const {
       editorUpdating,
@@ -601,79 +602,40 @@ export default class ContentEditor extends Component {
         return lang.code !== this.state.currentFileLanguage;
       });
 
+    let btnBundleClassName = cx('bundle', { disabled: disableActionBtn });
+    let saveBtnClassName = cx('button save', {
+      disabled: !fileModified || disableActionBtn,
+      primary: fileModified && !disableActionBtn,
+      processing: fileModified && disableActionBtn
+    });
+    let menuBtnClassName = cx('button icon', { primary: fileModified });
+
     if (!currentSchema) return <section id="content" />;
 
     return (
       <section id="content" className="editor">
-        <header className="header">
-          <div className="controls">
-            <span className={disableActionBtn ? 'bundle disabled' : 'bundle'}>
-              <button
-                className={
-                  fileModified
-                    ? disableActionBtn
-                      ? 'button disabled save processing'
-                      : 'button primary save'
-                    : 'button disabled save'
-                }
-                onClick={::this.handleSaveBtn}
-              >
-                Save
-              </button>
-
-              <span className="menu">
-                <button
-                  className={
-                    fileModified ? 'button icon primary' : 'button icon'
-                  }
-                >
-                  <MoreMenuIcon />
-                </button>
-                <div className="options">
-                  <a
-                    className={
-                      this.state.isPostPublished ? 'selected' : 'disabled'
-                    }
-                    onClick={::this.handlePublishInput}
-                  >
-                    <CheckIcon />
-                    <span>Published</span>
-                  </a>
-                  <a
-                    className={this.state.isDraft ? 'selected' : 'disabled'}
-                    onClick={::this.handleDraftInput}
-                  >
-                    <CheckIcon />
-                    <span>Draft</span>
-                  </a>
-                  <hr />
-                  <a
-                    className="danger"
-                    onClick={evt => {
-                      this.setState({ showDeleteFileModel: true });
-                    }}
-                  >
-                    <TrashIcon />
-                    Delete
-                  </a>
-                </div>
-              </span>
-            </span>
-            <ConfirmDeletionModal
-              isOpen={this.state.showDeleteFileModel}
-              onclose={::this.closeDeleteFileModel}
-              onsubmit={::this.handleDeleteFile}
-              oncancel={::this.closeDeleteFileModel}
-            />
-          </div>
-          <button
-            className="button icon tooltip-bottom"
-            onClick={::this.toContentListing}
-          >
-            <BackArrowIcon />
-            <span>Back to all content</span>
-          </button>
-        </header>
+        <EditorHeader
+          btnBundleClassName={btnBundleClassName}
+          saveBtnClassName={saveBtnClassName}
+          handleSaveBtn={::this.handleSaveBtn}
+          menuBtnClassName={menuBtnClassName}
+          publishBtnClassName={
+            this.state.isPostPublished ? 'selected' : 'disabled'
+          }
+          handlePublishInput={::this.handlePublishInput}
+          draftBtnClassName={this.state.isDraft ? 'selected' : 'disabled'}
+          handleDraftInput={::this.handleDraftInput}
+          handleDeleteBtn={evt => {
+            this.setState({ showDeleteFileModel: true });
+          }}
+          handleBackBtn={::this.toContentListing}
+        />
+        <ConfirmDeletionModal
+          isOpen={this.state.showDeleteFileModel}
+          onclose={::this.closeDeleteFileModel}
+          onsubmit={::this.handleDeleteFile}
+          oncancel={::this.closeDeleteFileModel}
+        />
 
         <div className="body">
           <small className="meta">
@@ -770,24 +732,13 @@ export default class ContentEditor extends Component {
           {this.renderTitle()}
 
           <Form
-            onChange={res =>
-              this.setState({ formData: res.formData, fileModified: true })}
-            onSubmit={this.onFormSubmit}
+            ref="form"
+            onFormChange={::this.onFormChange}
+            onFormSubmit={::this.onFormSubmit}
             schema={currentSchema.JSONSchema}
             uiSchema={currentSchema.uiSchema}
-            fields={{ ArrayField: CustomArrayField }}
-            widgets={customWidgets}
-            showErrorList={false}
             formData={formData}
-          >
-            <button
-              type="submit"
-              ref="formSubmitBtn"
-              style={{ display: 'none' }}
-            >
-              Submit
-            </button>
-          </Form>
+          />
         </div>
       </section>
     );

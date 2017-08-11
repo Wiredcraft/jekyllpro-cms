@@ -1,25 +1,22 @@
 import React, { Component } from 'react';
-import Form from 'react-jsonschema-form';
+// import Form from 'react-jsonschema-form';
 import ReactDOM from 'react-dom';
 import moment from 'moment';
 import Cookie from 'js-cookie';
 import { Link } from 'react-router';
 import Select from 'react-select';
-
+import cx from 'classnames';
 import {
   parseYamlInsideMarkdown,
   retriveContent,
   serializeObjtoYaml
 } from '../../helpers/markdown';
-import TrashIcon from '../svg/TrashIcon';
-import MoreMenuIcon from '../svg/MoreMenuIcon';
+import Form from './Form';
+import EditorHeader from './EditorHeader';
 import CheckIcon from '../svg/CheckIcon';
-import BackArrowIcon from '../svg/BackArrowIcon';
 import CaretDownIcon from '../svg/CaretDownIcon';
 import LockIcon from '../svg/LockIcon';
 
-import customWidgets from '../JSONSchemaForm/CustomWidgets';
-import CustomArrayField from '../JSONSchemaForm/CustomArrayField';
 import {
   slugify,
   purgeObject,
@@ -287,7 +284,8 @@ export default class NewEditor extends Component {
       bubbles: true,
       cancelable: true
     });
-    ReactDOM.findDOMNode(this.refs.formSubmitBtn).dispatchEvent(clickEvt);
+    let $formBtn = this.refs.form.refs.formSubmitBtn;
+    ReactDOM.findDOMNode($formBtn).dispatchEvent(clickEvt);
   }
 
   changeFileLanguage(langCode) {
@@ -520,57 +518,29 @@ export default class NewEditor extends Component {
       currentFileSlug
     } = this.state;
 
+    let btnBundleClassName = cx('bundle', { disabled: disableActionBtn });
+    let saveBtnClassName = cx('button primary save', {
+      'disabled processing': disableActionBtn
+    });
+
     if (!currentSchema) return <section id="content" />;
 
     return (
       <section id="content">
-        <header className="header">
-          <div className="controls">
-            <span className={disableActionBtn ? 'bundle disabled' : 'bundle'}>
-              <button
-                className={
-                  disableActionBtn
-                    ? 'button primary save processing'
-                    : 'button primary save'
-                }
-                onClick={::this.handleSaveBtn}
-              >
-                Save
-              </button>
-
-              <span className="menu">
-                <button className="button icon primary">
-                  <MoreMenuIcon />
-                </button>
-                <div className="options">
-                  <a
-                    className={
-                      this.state.isPostPublished ? 'selected' : 'disabled'
-                    }
-                    onClick={::this.handlePublishInput}
-                  >
-                    <CheckIcon />
-                    <span>Published</span>
-                  </a>
-                  <a
-                    className={this.state.isDraft ? 'selected' : 'disabled'}
-                    onClick={::this.handleDraftInput}
-                  >
-                    <CheckIcon />
-                    <span>Draft</span>
-                  </a>
-                </div>
-              </span>
-            </span>
-          </div>
-          <button
-            className="button icon tooltip-bottom"
-            onClick={::this.toContentListing}
-          >
-            <BackArrowIcon />
-            <span>Back to all content</span>
-          </button>
-        </header>
+        <EditorHeader
+          btnBundleClassName={btnBundleClassName}
+          saveBtnClassName={saveBtnClassName}
+          handleSaveBtn={::this.handleSaveBtn}
+          menuBtnClassName="button icon primary"
+          publishBtnClassName={
+            this.state.isPostPublished ? 'selected' : 'disabled'
+          }
+          handlePublishInput={::this.handlePublishInput}
+          draftBtnClassName={this.state.isDraft ? 'selected' : 'disabled'}
+          handleDraftInput={::this.handleDraftInput}
+          handleDeleteBtn={evt => {}}
+          handleBackBtn={::this.toContentListing}
+        />
 
         <div className="body">
           {config &&
@@ -636,23 +606,13 @@ export default class NewEditor extends Component {
           {this.renderTitle()}
 
           <Form
-            onChange={this.onFormChange}
-            onSubmit={this.onFormSubmit}
+            ref="form"
+            onChange={::this.onFormChange}
+            onSubmit={::this.onFormSubmit}
             schema={currentSchema.JSONSchema}
             uiSchema={currentSchema.uiSchema}
-            fields={{ ArrayField: CustomArrayField }}
-            widgets={customWidgets}
-            showErrorList={false}
             formData={formData}
-          >
-            <button
-              type="submit"
-              ref="formSubmitBtn"
-              style={{ display: 'none' }}
-            >
-              Submit
-            </button>
-          </Form>
+          />
         </div>
       </section>
     );
