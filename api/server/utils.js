@@ -77,7 +77,12 @@ export function getCollectionFiles(schemaArray, filesArray) {
 }
 
 export function getCMSConfigFromJekyllYaml(content) {
-  var config = jsyaml.safeLoad(content);
+  var config = null;
+  try {
+    config = jsyaml.safeLoad(content);
+  } catch (err) {
+    return config;
+  }
   var lanArray = config['lang'];
   var otherConfig = config['jekyllpro_cms_config'];
   let cmsConfig = null;
@@ -98,4 +103,15 @@ export function getCMSConfigFromJekyllYaml(content) {
   }
 
   return cmsConfig;
+}
+
+export function getYamlObj(content) {
+  var data = null;
+  try {
+    data = jsyaml.safeLoad(content);
+  } catch (err) {
+    console.log(err);
+  }
+
+  return data;
 }
