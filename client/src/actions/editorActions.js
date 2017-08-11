@@ -3,6 +3,8 @@ import { getRepoMeta, updateRepoFile, deleteRepoFile } from '../helpers/api';
 import { fileRemoved, fileAdded, fileReplaced } from './repoActions';
 
 export const CHANGE_EDITOR_STATE = 'CHANGE_EDITOR_STATE';
+export const EDITOR_NEW_FILE = 'EDITOR_NEW_FILE';
+export const EDITOR_SELECTED_FILE = 'EDITOR_SELECTED_FILE';
 export const RESET_EDITOR_DATA = 'RESET_EDITOR_DATA';
 
 export function updatingEditor(promiseObj) {
@@ -74,11 +76,11 @@ export function resetEditorData() {
   };
 }
 
-export function changeEditorMode(mode) {
+export function openNewFileEditor(predefinedFileMeta) {
   return dispatch => {
     dispatch({
-      payload: { mode },
-      type: CHANGE_EDITOR_STATE
+      payload: predefinedFileMeta,
+      type: EDITOR_NEW_FILE
     });
   };
 }
@@ -86,8 +88,8 @@ export function changeEditorMode(mode) {
 export function selectCollectionFile(item) {
   return dispatch => {
     dispatch({
-      payload: { selectedCollectionFile: item },
-      type: CHANGE_EDITOR_STATE
+      payload: item,
+      type: EDITOR_SELECTED_FILE
     });
   };
 }

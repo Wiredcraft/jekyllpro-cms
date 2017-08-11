@@ -9,7 +9,7 @@ import {
   parseFilenameFromYaml
 } from 'helpers/markdown';
 
-import { selectCollectionFile, resetEditorData } from 'actions/editorActions';
+import { selectCollectionFile, openNewFileEditor } from 'actions/editorActions';
 import { toRoute, replaceRoute } from 'actions/routeActions';
 
 import FileListing from './FileListing';
@@ -42,13 +42,16 @@ class AltCL extends Component {
   createNewFileWithFilter() {
     const {
       menuMeta,
-      resetEditorData,
+      openNewFileEditor,
       toRoute,
       currentBranch,
       params: { repoOwner, repoName }
     } = this.props;
     if (menuMeta && menuMeta.collection_type) {
-      resetEditorData();
+      let defaultFileVals = menuMeta.category
+        ? { category: menuMeta.category }
+        : undefined;
+      openNewFileEditor(defaultFileVals);
       toRoute(
         `/${repoOwner}/${repoName}/${menuMeta.collection_type}/${currentBranch}/new`
       );
@@ -190,7 +193,7 @@ function mapDispatchToProps(dispatch) {
     {
       toRoute,
       replaceRoute,
-      resetEditorData,
+      openNewFileEditor,
       selectCollectionFile
     },
     dispatch

@@ -32,7 +32,7 @@ class Editor extends Component {
   }
 
   render() {
-    const { mode, params, schemas, location, repoFullName } = this.props;
+    const { params, schemas, location, repoFullName } = this.props;
 
     if (location.query && location.query.invalidRepo) {
       return <InvalidRepo />;
@@ -70,7 +70,7 @@ function mapStateToProps(
     schemas: repoState.schemas,
     collections: repoState.collections,
     selectedCollectionFile: editorState.selectedCollectionFile,
-    mode: editorState.mode,
+    defaultFileValues: editorState.defaultValues,
     editorUpdating: editorState.loading
   };
 }
