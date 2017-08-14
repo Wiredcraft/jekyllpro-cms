@@ -99,7 +99,11 @@ class AltCL extends Component {
     let fc = collections.filter(item => {
       let isMatch = true;
       if (isMatch && menuMeta && menuMeta.collection_type) {
-        isMatch = item.collectionType === menuMeta.collection_type;
+        if (typeof menuMeta.collection_type === 'string') {
+          isMatch = item.collectionType === menuMeta.collection_type;
+        } else {
+          isMatch = menuMeta.collection_type.indexOf(item.collectionType) > -1
+        }
       }
       if (isMatch && menuMeta && menuMeta.category) {
         let contentObj = parseYamlInsideMarkdown(item.content);
