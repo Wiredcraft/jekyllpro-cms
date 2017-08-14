@@ -97,7 +97,6 @@ class Nav extends Component {
     return (
       <nav className="nav-filter">
         <NestedFileTreeView
-          expended
           selectedFilePath={selectedMenuPath}
           fileTemplate={CustomFile}
           folderTemplate={CustomFolder}
