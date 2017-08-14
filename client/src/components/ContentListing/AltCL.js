@@ -149,7 +149,7 @@ class AltCL extends Component {
 
     return (
       <section id="content" className="withNav">
-        <Nav />
+        <Nav menu={config.nav_menu} />
         <section className="listing">
           {collections &&
             <AltContentHeader

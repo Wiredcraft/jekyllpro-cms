@@ -6,9 +6,6 @@ import moment from 'moment';
 import NestedFileTreeView from 'components/common/NestedFileTree';
 import { setNavPath } from 'actions/navActions';
 
-const cmsSettings = require('json-loader!yaml-loader!../../_cms-setting.yml');
-console.log(cmsSettings);
-
 function parseNavMenu(navMenuArray) {
   let directory = { _contents: [] };
 
@@ -49,8 +46,6 @@ function parseNavMenu(navMenuArray) {
 
   return directory;
 }
-
-const menuObj = parseNavMenu(cmsSettings.nav_menu);
 
 function CustomFolder(props) {
   return (
@@ -97,7 +92,8 @@ class Nav extends Component {
   render() {
     const { selectedMenuId } = this.state;
     let selectedMenuPath = selectedMenuId.split('_').join('/');
-    console.log(selectedMenuPath);
+    let menuObj = parseNavMenu(this.props.menu);
+
     return (
       <nav className="nav-filter">
         <NestedFileTreeView

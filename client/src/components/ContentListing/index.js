@@ -17,7 +17,7 @@ class ContentListing extends Component {
       return <NoSchema repoFullName={repoFullName} />;
     }
 
-    if (config && config.custom_nav) {
+    if (config && config.custom_nav && config.nav_menu) {
       return <AltCL params={params} pathname={pathname} query={query} />;
     }
 
