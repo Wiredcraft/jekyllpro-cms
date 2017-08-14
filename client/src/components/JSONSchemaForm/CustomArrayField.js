@@ -39,7 +39,7 @@ export default class CustomArrayField extends Component {
             title={title}
             required={required}
           />
-          <Tags value={this.state.items} {...this.props} />
+          <Tags value={this.state.items || schema.default} {...this.props} />
         </fieldset>
       );
     }

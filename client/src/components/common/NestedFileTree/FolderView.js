@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import cx from 'classnames';
 import FileView from './FileView';
 
 class FolderView extends Component {
@@ -37,8 +38,13 @@ class FolderView extends Component {
       folderClickHandler
     } = this.props;
     const { open } = this.state;
-    let styl = open ? { display: 'block' } : { display: 'none' };
-    let cns = (folderClassName || '') + ' subFolder nft-item';
+    let currentPath = parentPath ? parentPath + '/' + name : name;
+    let isExpended = expended || selectedFilePath.indexOf(currentPath) === 0 || open;
+    let styl = isExpended ? { display: 'block' } : { display: 'none' };
+    let cns = cx('subFolder nft-item', folderClassName, {
+      'open': isExpended,
+      'active': currentPath === selectedFilePath
+    });
     let passedFolderProps = {
       maxFolderLevel,
       expended,
@@ -52,12 +58,12 @@ class FolderView extends Component {
     };
 
     return (
-      <div key={`folder-${name}`} className={open ? `open ${cns}` : cns}>
+      <div key={`folder-${name}`} className={cns}>
         {(folderTemplate &&
           folderTemplate({
             name,
             folderObj,
-            currentPath: parentPath + '/' + name,
+            currentPath,
             onclick: this.toggleFolder.bind(this)
           })) ||
           <a onClick={::this.toggleFolder}>
@@ -83,7 +89,7 @@ class FolderView extends Component {
             ? folderObj &&
               Object.keys(folderObj)
                 .filter(k => {
-                  return k !== '_contents';
+                  return k !== '_contents' && k !== '_meta';
                 })
                 .map(prop => {
                   return (
@@ -91,7 +97,7 @@ class FolderView extends Component {
                       key={`folder-${name}-${prop}`}
                       level={level + 1}
                       name={prop}
-                      parentPath={parentPath + '/' + name}
+                      parentPath={parentPath ? `${parentPath}/name` : name}
                       folderObj={folderObj[prop]}
                       {...passedFolderProps}
                     />

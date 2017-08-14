@@ -1,0 +1,96 @@
+nav_menu:
+  - id: menu
+    label: "Menu"
+    collection_type: products
+    category: [menu, category]
+    path: menu/category
+    root: true
+
+  - id: menu_beverages
+    label: "Beverages"
+    collection_type: products
+    category: [menu, category, beverages]
+    path: menu/category/beverages
+
+  - id: menu_beverages_espresso
+    label: "Espresso"
+    collection_type: products
+    category: [menu, category, beverages, espresso]
+    path: menu/category/beverages/espresso
+    creatable: true
+
+  - id: menu_beverages_teavana
+    label: "Teavana"
+    collection_type: products
+    category: [menu, category, beverages, teavana]
+    path: menu/category/beverages/teavana
+    creatable: true
+
+  - id: menu_beverages_frappuccino
+    label: "frappuccino blended"
+    collection_type: products
+    category: [menu, category, beverages, frappuccino_blended_beverage]
+    path: menu/category/beverages/frappuccino_blended_beverage
+    creatable: true
+
+  - id: menu_beverages_signature
+    label: "signature chocolate"
+    collection_type: products
+    category: [menu, category, beverages, signature_chocolate_beverage]
+    path: menu/category/beverages/signature_chocolate_beverage
+    creatable: true
+
+  - id: menu_coffee
+    label: "Coffee"
+    collection_type: products
+    category: [menu, category, coffee]
+    path: menu/category/coffee
+
+  - id: menu_coffee_medium
+    label: "medium roast"
+    collection_type: products
+    category: [menu, category, coffee, medium_roast]
+    path: menu/category/coffee/medium_roast
+    creatable: true
+  - id: menu_coffee_dark
+    label: "Dark roast"
+    collection_type: products
+    category: [menu, category, coffee, dark_roast]
+    path: menu/category/coffee/dark_roast
+    creatable: true
+
+  - id: menu_food
+    label: "Food"
+    collection_type: products
+    category: [menu, category, food]
+    path: menu/category/food
+
+  - id: menu_food_breakfast
+    label: "Breakfast"
+    collection_type: products
+    category: [menu, category, food, breakfast]
+    path: menu/category/food/breakfast
+    creatable: true
+  
+  - id: menu_food_lunch
+    label: "Lunch"
+    collection_type: products
+    category: [menu, category, food, lunch]
+    path: menu/category/food/lunch
+    creatable: true
+
+  - id: menu_food_afternoon
+    label: "afternoon"
+    collection_type: products
+    category: [menu, category, food, afternoon]
+    path: menu/category/food/afternoon
+    creatable: true
+
+  - id: menu_food_other
+    label: "other"
+    collection_type: products
+    category: [menu, category, food, other]
+    path: menu/category/food/other
+    creatable: true
+  
+

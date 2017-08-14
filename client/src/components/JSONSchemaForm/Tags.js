@@ -41,8 +41,11 @@ export default class Tags extends Component {
   }
 
   render() {
+    const { readonly } = this.props;
+
     return (
       <Creatable
+        disabled={readonly}
         placeholder="Enter tags..."
         noResultsText={this.state.noResultsText}
         multi={true}
