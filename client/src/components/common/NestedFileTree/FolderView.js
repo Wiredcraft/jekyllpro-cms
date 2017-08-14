@@ -38,11 +38,12 @@ class FolderView extends Component {
       folderClickHandler
     } = this.props;
     const { open } = this.state;
-    let currentPath = parentPath + '/' + name;
-    let styl = expended || open ? { display: 'block' } : { display: 'none' };
+    let currentPath = parentPath ? parentPath + '/' + name : name;
+    let isExpended = expended || selectedFilePath.indexOf(currentPath) === 0 || open;
+    let styl = isExpended ? { display: 'block' } : { display: 'none' };
     let cns = cx('subFolder nft-item', folderClassName, {
-      open: expended || open,
-      active: currentPath === selectedFilePath
+      'open': isExpended,
+      'active': currentPath === selectedFilePath
     });
     let passedFolderProps = {
       maxFolderLevel,

@@ -3,11 +3,37 @@
   align-content: stretch;
   max-width: 960px;
   nav {
-    width: 300px;
+    flex-basis: 300px;
     border-right: 1px solid #ddd;
   }
 
   .listing {
+    flex-basis: 300px;
     flex-grow: 2;
+
+    .body.list a h2 {
+      white-space: normal;
+    }
+  }
+
+  .nft-container {
+    font-size: 14px;
+    a {
+      border-color: transparent;
+      padding: 5px;
+    }
+    .nft-item.active {
+      background: transparent;
+
+      a {
+        background: transparent;
+        color: #000;
+      }
+      > a {
+        background: #0A93FF;
+        color: #FFF;
+      }
+    }
+
   }
 }
