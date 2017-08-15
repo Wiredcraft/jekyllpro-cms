@@ -86,14 +86,15 @@ export default class FileManager extends Component {
     let currRecords = parseFileTree(treeMeta);
     let currPath = '/';
     if (defaultPath) {
-      try {
+      let folderRecords = parseFolderObj(defaultPath, currRecords);
+
+      if (folderRecords) {
+        currRecords = folderRecords;
         currPath =
           defaultPath.indexOf('/') === 0 ? defaultPath : '/' + defaultPath;
-        currRecords = parseFolderObj(defaultPath, currRecords);
-      } catch (err) {
+      } else {
         console.log(defaultPath, ' is not existing path');
       }
-      console.log(defaultPath, currRecords);
     }
     this.setState({
       currentPath: currPath,

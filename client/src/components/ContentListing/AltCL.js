@@ -102,7 +102,7 @@ class AltCL extends Component {
         if (typeof menuMeta.collection_type === 'string') {
           isMatch = item.collectionType === menuMeta.collection_type;
         } else {
-          isMatch = menuMeta.collection_type.indexOf(item.collectionType) > -1
+          isMatch = menuMeta.collection_type.indexOf(item.collectionType) > -1;
         }
       }
       if (isMatch && menuMeta && menuMeta.category) {
