@@ -441,9 +441,11 @@ export default class NewEditor extends Component {
                 <strong>File path: </strong>
                 {currentFilePath}
                 {'  '}
-                (<a href="javascript:;" onClick={this.handleShowFilename}>
-                  edit
-                </a>)
+                {!this.props.config.file_path_readonly && (
+                  <a href="javascript:;" onClick={this.handleShowFilename}>
+                    ( edit )
+                  </a>
+                )}
               </small>
             : null}
         </div>
