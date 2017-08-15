@@ -39,11 +39,14 @@ class FolderView extends Component {
     } = this.props;
     const { open } = this.state;
     let currentPath = parentPath ? parentPath + '/' + name : name;
-    let isExpended = expended || selectedFilePath.indexOf(currentPath) === 0 || open;
+    let isExpended =
+      expended ||
+      (selectedFilePath && selectedFilePath.indexOf(currentPath) === 0) ||
+      open;
     let styl = isExpended ? { display: 'block' } : { display: 'none' };
     let cns = cx('subFolder nft-item', folderClassName, {
-      'open': isExpended,
-      'active': currentPath === selectedFilePath
+      open: isExpended,
+      active: currentPath === selectedFilePath
     });
     let passedFolderProps = {
       maxFolderLevel,
