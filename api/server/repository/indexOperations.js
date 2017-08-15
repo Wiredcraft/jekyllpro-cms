@@ -3,209 +3,19 @@ import _ from 'lodash';
 import Bluebird from 'bluebird';
 import mongoose from 'mongoose';
 import _debug from 'debug';
-
-const ObjectId = mongoose.Types.ObjectId;
-const debug = _debug('jekyllpro-cms:repository');
-const lodash = _; // TODO
-
 import {
   TaskQueue,
   getCollectionFiles,
   getCollectionType,
   getYamlObj,
   getCMSConfigFromJekyllYaml
-} from './utils';
-import { RepoIndex, RepoAccessToken, RepoFileEntry } from './database';
-import { hookConfig } from './webhook';
+} from '../utils';
+import { RepoIndex, RepoAccessToken, RepoFileEntry } from '../database';
 
+const ObjectId = mongoose.Types.ObjectId;
+const debug = _debug('jekyllpro-cms:repository:index-operations');
+const lodash = _; // TODO
 const RUNNING_JOBS = {};
-
-const cb = (error, result, request) => {
-  console.log(error);
-  console.log(result);
-};
-
-/**
- * middleware
- * attach repo informatino to `req` - req.repo - { owner, name, fullName }
- * attach github-api instance to `req` - req.githubRepo
- */
-const requireGithubAPI = (req, res, next) => {
-  if (req.githubRepo) {
-    return next();
-  }
-  const repoOwner = req.get('X-REPO-OWNER').toLowerCase();
-  const repoName = req.get('X-REPO-NAME').toLowerCase();
-
-  // attach repo info to request
-  const repo = {
-    owner: repoOwner,
-    name: repoName,
-    fullName: `${repoOwner}/${repoName}`
-  };
-  req.repo = repo;
-
-  if (!repoName || !repoOwner) {
-    res.status(401).send({ message: 'repository undefined' });
-  }
-  const token =
-    req.get('X-TOKEN') || req.user.accessToken || req.user._json.accessToken;
-  const github = new GithubAPI({ token });
-  req.githubRepo = github.getRepo(repoOwner, repoName);
-  next();
-};
-
-const getRepoDetails = (req, res, next) => {
-  const repo = req.githubRepo;
-  return repo
-    .getDetails()
-    .then(data => {
-      // debug('getRepoDetails github getDetails data %o', data);
-      const details = _.pick(data.data, [
-        'name',
-        'full_name',
-        'description',
-        'private',
-        'url',
-        'html_url',
-        'default_branch',
-        'created_at',
-        'updated_at',
-        'pushed_at',
-        'permissions'
-      ]);
-      details.owner = _.pick(data.data.owner, ['login', 'avatar_url', 'type']);
-      return res.status(200).json(details);
-    })
-    .catch(err => {
-      debug('getRepoDetails error', err);
-      return res.status(err.response.status).json(err.response.data);
-    });
-};
-
-const getRepoContent = (req, res, next) => {
-  const repo = req.githubRepo;
-  const { branch, path, raw } = req.query;
-
-  return repo
-    .getContents(branch, path, raw)
-    .then(data => {
-      return res.status(200).json(data.data);
-    })
-    .catch(err => {
-      debug('getRepoContent error', err);
-      return res
-        .status(err.status || err.response.status)
-        .json(err.response.data);
-    });
-};
-
-const writeRepoFile = (req, res, next) => {
-  var repo = req.githubRepo;
-  var newFile = req.body;
-  if (!newFile.options) {
-    newFile.options = { encode: true };
-  }
-  return repo
-    .writeFile(
-      newFile.branch,
-      newFile.path,
-      newFile.content,
-      newFile.message,
-      newFile.options,
-      cb
-    )
-    .then(data => {
-      return res.status(200).json(data.data);
-    })
-    .catch(err => {
-      debug('writeRepoFile error: ', err);
-      return res
-        .status(err.status || err.response.status)
-        .json(err.response.data);
-    });
-};
-
-const deleteRepoFile = (req, res, next) => {
-  var repo = req.githubRepo;
-  var toBeDeleted = req.body;
-
-  return repo
-    .deleteFile(toBeDeleted.branch, toBeDeleted.path, cb)
-    .then(data => {
-      return res.status(200).json(data.data);
-    })
-    .catch(err => {
-      debug('deleteRepoFile error: ', err);
-      return res
-        .status(err.status || err.response.status)
-        .json(err.response.data);
-    });
-};
-
-const listBranches = (req, res, next) => {
-  var repo = req.githubRepo;
-  var { branch } = req.query;
-
-  var nextPromise = branch ? repo.getBranch(branch) : repo.listBranches();
-
-  return nextPromise
-    .then(data => {
-      return res.status(200).json(data.data);
-    })
-    .catch(err => {
-      debug('listBranches error: ', err);
-      return res
-        .status(err.status || err.response.status || err.response.status)
-        .json(err.response.data);
-    });
-};
-
-const createBranches = (req, res, next) => {
-  const repo = req.githubRepo;
-  const formData = req.body;
-
-  return repo
-    .createBranch(formData.oldBranch, formData.newBranch)
-    .then(data => {
-      return res.status(200).json(data.data);
-    })
-    .catch(err => {
-      debug('createBranches error: ', err);
-      return res
-        .status(err.status || err.response.status)
-        .json(err.response.data);
-    });
-};
-
-const getBranchSchema = (req, res, next) => {
-  var repo = req.githubRepo;
-  var { ref, path } = req.query;
-  path = path || '_schema';
-
-  repo
-    .getContents(ref, path)
-    .then(data => {
-      let schemaFiles = data.data
-        .filter(item => {
-          // filter out folder files
-          return item.type === 'file';
-        })
-        .map(item => {
-          return repo.getContents(ref, item.path, true).then(data => {
-            return { name: item.name, data: data.data };
-          });
-        });
-
-      return Promise.all(schemaFiles).then(results => {
-        res.status(200).json(results);
-      });
-    })
-    .catch(err => {
-      console.log(err);
-      res.status(err.status || err.response.status).json(err.response.data);
-    });
-};
 
 const getRepoBranchIndex = (req, res, next) => {
   var repo = req.githubRepo;
@@ -351,77 +161,6 @@ const refreshIndexAndSave = (req, res) => {
           debug('db error', err);
         });
       }
-      return res
-        .status(err.status || err.response.status)
-        .json(err.response.data);
-    });
-};
-
-const listHooks = (req, res) => {
-  var repo = req.githubRepo;
-  repo
-    .listHooks()
-    .then(data => {
-      return res.status(200).json(data.data);
-    })
-    .catch(err => {
-      console.log(err);
-      return res
-        .status(err.status || err.response.status)
-        .json(err.response.data);
-    });
-};
-
-const manageHook = (req, res) => {
-  var repo = req.githubRepo;
-  var mergedConfig = Object.assign({}, hookConfig, req.body.config || {});
-  if (req.body.action === 'create') {
-    listJekyllplusHook(repo, mergedConfig.config.url)
-      .then(hook => {
-        if (hook) {
-          return res.status(200).json(hook);
-        }
-        return repo.createHook(mergedConfig);
-      })
-      .then(data => {
-        return res.status(200).json(data.data);
-      })
-      .catch(err => {
-        console.log(err);
-        return res
-          .status(err.status || err.response.status)
-          .json(err.response.data);
-      });
-  }
-  if (req.body.action === 'delete') {
-    listJekyllplusHook(repo, mergedConfig.config.url)
-      .then(hook => {
-        if (hook) {
-          return repo.deleteHook(hook.id).then(data => {
-            return res.status(200).json(data.data);
-          });
-        }
-        return res.status(204).send('no content');
-      })
-      .catch(err => {
-        console.log(err);
-        return res
-          .status(err.status || err.response.status)
-          .json(err.response.data);
-      });
-  }
-};
-
-const listBranchTree = (req, res) => {
-  var repo = req.githubRepo;
-  var branch = req.query.branch || 'master';
-  repo
-    .getTree(`${branch}?recursive=1`)
-    .then(data => {
-      return res.status(200).json(data.data);
-    })
-    .catch(err => {
-      console.log(err);
       return res
         .status(err.status || err.response.status)
         .json(err.response.data);
@@ -995,35 +734,11 @@ const getFreshIndexFromGithub = ({ repoObject, repoFullname, branch }) => {
     });
 };
 
-const listJekyllplusHook = (repoObject, hookUrl) => {
-  return repoObject.listHooks().then(list => {
-    if (!hookUrl) {
-      return list.data;
-    }
-    let arr = list.data.filter(hook => {
-      return hook.config.url === hookUrl;
-    });
-    if (arr.length > 0) {
-      return arr[0];
-    }
-    return null;
-  });
-};
+
 
 export default {
-  requireGithubAPI,
-  getRepoDetails,
-  getRepoContent,
-  listBranches,
-  createBranches,
-  getBranchSchema,
-  writeRepoFile,
-  deleteRepoFile,
   getRepoBranchIndex,
   getRepoBranchUpdatedCollections,
   refreshIndexAndSave,
-  getFreshIndexFromGithub,
-  listBranchTree,
-  listHooks,
-  manageHook
+  getFreshIndexFromGithub
 };

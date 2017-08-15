@@ -2,7 +2,7 @@ import config from '../config';
 import { RepoIndex, RepoAccessToken } from './database';
 import GithubAPI from 'github-api';
 import _ from 'lodash';
-import { getFreshIndexFromGithub } from './repository';
+import { getFreshIndexFromGithub } from './repository/indexOperations';
 import { TaskQueue, getCollectionFiles } from './utils';
 
 export const hookConfig = {

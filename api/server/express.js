@@ -11,7 +11,11 @@ import { Strategy } from 'passport-github';
 import helmet from 'helmet';
 import lusca from 'lusca';
 import users from './users';
-import repository from './repository';
+import repoGeneral from './repository/general';
+import repoContent from './repository/content';
+import repoBranch from './repository/branch';
+import repoIndex from './repository/indexOperations';
+import repoHooks from './repository/hooks';
 import { pushHook } from './webhook';
 
 const MongoStore = connectMongo(session);
@@ -129,47 +133,47 @@ const initRoutes = app => {
 
   app
     .route('/api/repository')
-    .all(users.requireAuthentication, repository.requireGithubAPI)
-    .get(repository.getRepoContent)
-    .post(repository.writeRepoFile)
-    .delete(repository.deleteRepoFile);
+    .all(users.requireAuthentication, repoGeneral.requireGithubAPI)
+    .get(repoContent.getRepoContent)
+    .post(repoContent.writeRepoFile)
+    .delete(repoContent.deleteRepoFile);
 
   app
     .route('/api/repository/index')
-    .all(users.requireAuthentication, repository.requireGithubAPI)
-    .get(repository.getRepoBranchIndex, repository.refreshIndexAndSave);
+    .all(users.requireAuthentication, repoGeneral.requireGithubAPI)
+    .get(repoIndex.getRepoBranchIndex, repoIndex.refreshIndexAndSave);
 
   app
     .route('/api/repository/updated-collections')
-    .all(users.requireAuthentication, repository.requireGithubAPI)
-    .get(repository.getRepoBranchUpdatedCollections);
+    .all(users.requireAuthentication, repoGeneral.requireGithubAPI)
+    .get(repoIndex.getRepoBranchUpdatedCollections);
 
   app
     .route('/api/repository/details')
-    .all(users.requireAuthentication, repository.requireGithubAPI)
-    .get(repository.getRepoDetails);
+    .all(users.requireAuthentication, repoGeneral.requireGithubAPI)
+    .get(repoGeneral.getRepoDetails);
 
   app
     .route('/api/repository/branch')
-    .all(users.requireAuthentication, repository.requireGithubAPI)
-    .get(repository.listBranches)
-    .post(repository.createBranches);
+    .all(users.requireAuthentication, repoGeneral.requireGithubAPI)
+    .get(repoBranch.listBranches)
+    .post(repoBranch.createBranches);
 
   app
     .route('/api/repository/schema')
-    .all(users.requireAuthentication, repository.requireGithubAPI)
-    .get(repository.getBranchSchema);
+    .all(users.requireAuthentication, repoGeneral.requireGithubAPI)
+    .get(repoBranch.getBranchSchema);
 
   app
     .route('/api/repository/tree')
-    .all(users.requireAuthentication, repository.requireGithubAPI)
-    .get(repository.listBranchTree);
+    .all(users.requireAuthentication, repoGeneral.requireGithubAPI)
+    .get(repoBranch.listBranchTree);
 
   app
     .route('/api/repository/hooks')
-    .all(users.requireAuthentication, repository.requireGithubAPI)
-    .get(repository.listHooks)
-    .post(repository.manageHook);
+    .all(users.requireAuthentication, repoGeneral.requireGithubAPI)
+    .get(repoHooks.listHooks)
+    .post(repoHooks.manageHook);
 
   app.route('/api/webhook').post(pushHook);
 };
