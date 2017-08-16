@@ -48,10 +48,7 @@ class AltCL extends Component {
       params: { repoOwner, repoName }
     } = this.props;
     if (menuMeta && menuMeta.collection_type) {
-      let defaultFileVals = menuMeta.category
-        ? { category: menuMeta.category }
-        : undefined;
-      openNewFileEditor(defaultFileVals);
+      openNewFileEditor(menuMeta.default);
       toRoute(
         `/${repoOwner}/${repoName}/${menuMeta.collection_type}/${currentBranch}/new`
       );
