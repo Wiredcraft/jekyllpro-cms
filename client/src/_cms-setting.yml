@@ -1,13 +1,13 @@
 nav_menu:
   - id: menu
-    label: "Menu"
+    label: "Menu/菜单"
     collection_type: products
     category: [menu, category]
     path: menu/category
     root: true
 
   - id: menu_beverages
-    label: "Beverages"
+    label: "Beverages/饮料"
     collection_type: products
     category: [menu, category, beverages]
     path: menu/category/beverages
@@ -18,13 +18,20 @@ nav_menu:
     category: [menu, category, beverages, espresso]
     path: menu/category/beverages/espresso
     creatable: true
+    default:
+      category: [menu, category, beverages, espresso]
+      types: [espresso]
 
   - id: menu_beverages_teavana
     label: "Teavana"
     collection_type: products
     category: [menu, category, beverages, teavana]
+    types: teavana
     path: menu/category/beverages/teavana
     creatable: true
+    default:
+      category: [menu, category, beverages, teavana]
+      types: [teavana]
 
   - id: menu_beverages_frappuccino
     label: "frappuccino blended"
@@ -32,6 +39,9 @@ nav_menu:
     category: [menu, category, beverages, frappuccino_blended_beverage]
     path: menu/category/beverages/frappuccino_blended_beverage
     creatable: true
+    default:
+      category: [menu, category, beverages, frappuccino_blended_beverage]
+      types: [frappuccino_blended_beverage]
 
   - id: menu_beverages_signature
     label: "signature chocolate"
@@ -39,9 +49,12 @@ nav_menu:
     category: [menu, category, beverages, signature_chocolate_beverage]
     path: menu/category/beverages/signature_chocolate_beverage
     creatable: true
+    default:
+      category: [menu, category, beverages, signature_chocolate_beverage]
+      types: [signature_chocolate_beverage]
 
   - id: menu_coffee
-    label: "Coffee"
+    label: "Coffee/咖啡"
     collection_type: products
     category: [menu, category, coffee]
     path: menu/category/coffee
@@ -52,15 +65,22 @@ nav_menu:
     category: [menu, category, coffee, medium_roast]
     path: menu/category/coffee/medium_roast
     creatable: true
+    default:
+      category: [menu, category, coffee, medium_roast]
+      types: [medium roast]
+
   - id: menu_coffee_dark
     label: "Dark roast"
     collection_type: products
     category: [menu, category, coffee, dark_roast]
     path: menu/category/coffee/dark_roast
     creatable: true
+    default:
+      category: [menu, category, coffee, dark_roast]
+      types: [dask roast]
 
   - id: menu_food
-    label: "Food"
+    label: "Food/美食"
     collection_type: products
     category: [menu, category, food]
     path: menu/category/food
@@ -71,6 +91,9 @@ nav_menu:
     category: [menu, category, food, breakfast]
     path: menu/category/food/breakfast
     creatable: true
+    default:
+      category: [menu, category, coffee, breakfast]
+      types: [breakfast]
   
   - id: menu_food_lunch
     label: "Lunch"
@@ -78,6 +101,9 @@ nav_menu:
     category: [menu, category, food, lunch]
     path: menu/category/food/lunch
     creatable: true
+    default:
+      category: [menu, category, coffee, lunch]
+      types: [lunch]
 
   - id: menu_food_afternoon
     label: "afternoon"
@@ -85,6 +111,9 @@ nav_menu:
     category: [menu, category, food, afternoon]
     path: menu/category/food/afternoon
     creatable: true
+    default:
+      category: [menu, category, coffee, afternoon]
+      types: [afternoon]
 
   - id: menu_food_other
     label: "other"
@@ -92,5 +121,162 @@ nav_menu:
     category: [menu, category, food, other]
     path: menu/category/food/other
     creatable: true
-  
+    default:
+      category: [menu, category, coffee, other]
+      types: [other]
 
+  - id: menu_via
+    label: "starbucks_via"
+    collection_type: products
+    category: [menu, category, starbucks_via]
+    path: menu/category/starbucks_via
+
+  - id: menu_via_black
+    label: "VIA Black"
+    collection_type: products
+    category: [menu, category, starbucks_via, via_black]
+    path: menu/category/starbucks_via/via_black
+    creatable: true
+    default:
+      category: [menu, category, starbucks_via, via_black]
+      types: [black]
+
+  - id: menu_via_dairy
+    label: "VIA Dairy"
+    collection_type: products
+    category: [menu, category, starbucks_via, via_dairy]
+    path: menu/category/starbucks_via/via_dairy
+    creatable: true
+    default:
+      category: [menu, category, starbucks_via, via_dairy]
+      types: [dairy]
+
+  - id: menu_merchandise
+    label: "merchandise"
+    collection_type: products
+    category: [menu, category, merchandise]
+    path: menu/category/merchandise
+
+  - id: menu_merchandise_core
+    label: "Core merchandise 2017"
+    collection_type: products
+    category: [menu, category, merchandise, core_merchandise_2017]
+    path: menu/category/merchandise/core_merchandise_2017
+    creatable: true
+    default:
+      category: [menu, category, merchandise, core_merchandise_2017]
+      types: [core_merchandise_2017]
+
+  - id: menu_merchandise_reserve
+    label: "Reserve Store merchandise"
+    collection_type: products
+    category: [menu, category, merchandise, reserve_store_merchandise]
+    path: menu/category/merchandise/reserve_store_merchandise
+    creatable: true
+    default:
+      category: [menu, category, merchandise, reserve_store_merchandise]
+      types: [reserve_store_merchandise]
+    
+  - id: about
+    label: "About/关于星巴克"
+    collection_type: [pages, posts, articles]
+    category: [about]
+    path: about
+    root: true
+
+  - id: about_careers
+    label: "careers/工作机会"
+    collection_type: pages
+    category: [about, careers]
+    path: about/careers
+
+  - id: about_news
+    label: "news/企业新闻"
+    collection_type: posts
+    category: [about, news]
+    path: about/news
+    creatable: true
+    default:
+      category: [about, news]
+
+  - id: about_responsibility
+    label: "responsibility/星巴克责任"
+    collection_type: articles
+    category: [about, responsibility]
+    path: about/responsibility
+    creatable: true
+    default:
+      category: [about, responsibility]
+
+  - id: about_history
+    label: "history/历史回顾"
+    collection_type: [pages]
+    category: [about, history]
+    path: about/history
+
+  - id: about_contact
+    label: "contact/联系我们"
+    collection_type: [pages]
+    category: [about, contact]
+    path: about/contact
+
+  - id: help
+    label: "Help/帮助中心"
+    collection_type: [pages, faq]
+    category: [help]
+    path: help
+    root: true
+
+  - id: help_starbucks
+    label: "starbucks/星巴克中国常见问题"
+    collection_type: faq
+    category: [help, starbucks]
+    path: help/starbucks
+    creatable: true
+    default:
+      category: [help, starbucks]
+
+  - id: help_msr
+    label: "MSR/星享卡常见问题解答"
+    collection_type: faq
+    category: [help, msr]
+    path: help/msr
+    creatable: true
+    default:
+      category: [help, msr]
+
+  - id: help_gift
+    label: "gift card/星礼卡常见问题"
+    collection_type: faq
+    category: [help, gift]
+    path: help/gift
+    creatable: true
+    default:
+      category: [help, gift]
+
+  - id: help_mobile
+    label: "Mobile App/星巴克移动应用常见问题"
+    collection_type: faq
+    category: [help, mobile]
+    path: help/mobile
+    creatable: true
+    default:
+      category: [help, mobile]
+
+  - id: help_efapiao
+    label: "fapiao/电子发票常见问题解答"
+    collection_type: faq
+    category: [help, efapiao]
+    path: help/efapiao
+    creatable: true
+    default:
+      category: [help, efapiao]
+
+  - id: help_legal
+    label: "legal"
+    collection_type: faq
+    category: [help, legal]
+    path: help/legal
+    creatable: true
+    default:
+      category: [help, legal]
