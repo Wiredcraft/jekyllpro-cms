@@ -8,6 +8,7 @@ import {
   parseYamlInsideMarkdown,
   parseFilenameFromYaml
 } from 'helpers/markdown';
+import { filterFn } from 'helpers/filters';
 
 import { selectCollectionFile, openNewFileEditor } from 'actions/editorActions';
 import { toRoute, replaceRoute } from 'actions/routeActions';
@@ -102,15 +103,9 @@ class AltCL extends Component {
           isMatch = menuMeta.collection_type.indexOf(item.collectionType) > -1;
         }
       }
-      if (isMatch && menuMeta && menuMeta.category) {
+      if (isMatch && menuMeta && menuMeta.filter) {
         let contentObj = parseYamlInsideMarkdown(item.content);
-        let itemCategoryStr =
-          (contentObj &&
-            contentObj.category &&
-            contentObj.category.toString().toLowerCase()) ||
-          '';
-        let targetCategoryStr = menuMeta.category.toString().toLowerCase();
-        isMatch = itemCategoryStr.indexOf(targetCategoryStr) === 0;
+        isMatch = contentObj && filterFn(menuMeta.filter, contentObj);
       }
       if (isMatch && filteredLanguage) {
         isMatch =
