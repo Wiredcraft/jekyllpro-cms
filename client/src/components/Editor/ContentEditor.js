@@ -538,11 +538,10 @@ export default class ContentEditor extends Component {
                 <strong>File path: </strong>
                 {currentFilePath}
                 {'  '}
-                {!this.props.config.file_path_readonly && (
+                {!this.props.config.file_path_readonly &&
                   <a href="javascript:;" onClick={this.handleShowFilename}>
                     ( edit )
-                  </a>
-                )}
+                  </a>}
               </small>
             : null}
         </div>
