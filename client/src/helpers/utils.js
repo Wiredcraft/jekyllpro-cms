@@ -284,3 +284,25 @@ export function getFilenameFromPath(filepath) {
   let idx = filepath.lastIndexOf('/');
   return filepath.slice(idx + 1);
 }
+
+// permalink can be "/:category/:title/"
+// filepath can be "_posts/en/2000-1-2-erer-dfdf-dfdf.md"
+export function getUrlPathByPermalinkRule(filepath, fileContentObj, permalink) {
+  let permalinkRules = permalink.replace(/:/g, '').split('/').filter(s => !!s);
+  let filename = getFilenameFromPath(filepath);
+
+  return permalinkRules.reduce((accPath, fieldName) => {
+    let path = null;
+    if (fieldName === 'title') {
+      let fileSlug = /^\d{4}-\d{1,2}-\d{1,2}-(.*)\.md|html|markdown$/gi.exec(
+        filename
+      );
+      path = fileSlug ? fileSlug[1] : '';
+    } else {
+      let fieldVal = fileContentObj[fieldName] || '';
+      // it could be array
+      path = fieldVal.toString().replace(/,/g, '/');
+    }
+    return accPath === '' ? path : `${accPath}/${path}`;
+  }, '');
+}
