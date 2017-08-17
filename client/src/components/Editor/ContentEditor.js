@@ -574,6 +574,38 @@ export default class ContentEditor extends Component {
     this.setState({ formData: res.formData, fileModified: true });
   };
 
+  getBuildSitePath() {
+    const { formData, currentFileLanguage } = this.state;
+    let path = null;
+    if (!formData.category) {
+      return path;
+    }
+    path = formData.category.join('/');
+    if (currentFileLanguage && this.isDefaultLanguage()) {
+      return path;
+    }
+    if (currentFileLanguage) {
+      return currentFileLanguage + '/' + path;
+    }
+  }
+
+  renderBuildSiteUrl = () => {
+    const { config, buildSiteUrl } = this.props;
+    let sitePath = this.getBuildSitePath() || '';
+    let siteUrl = buildSiteUrl + '/' + sitePath;
+    if (!config.displayBuildUrl || !buildSiteUrl) {
+      return null;
+    }
+    return (
+      <small className="meta">
+        Content in this file may appearing on
+        <a href={siteUrl} target="_blank">
+          {' '}{siteUrl}
+        </a>
+      </small>
+    );
+  };
+
   render() {
     const {
       editorUpdating,
@@ -639,21 +671,25 @@ export default class ContentEditor extends Component {
         />
 
         <div className="body">
-          <small className="meta">
-            <strong>{selectedCollectionFile.collectionType}</strong>&nbsp;
-            <a
-              className="edit tooltip-bottom"
-              href={`${repoUrl}commit/${selectedCollectionFile.lastCommitSha}`}
-              target="_blank"
-            >
-              Updated&nbsp;
-              {moment(
-                Date.parse(selectedCollectionFile.lastUpdatedAt)
-              ).fromNow()}&nbsp; by&nbsp;
-              {selectedCollectionFile.lastUpdatedBy}
-              <span>View on GitHub</span>
-            </a>
-          </small>
+          <div className="meta">
+            <small>
+              <strong>{selectedCollectionFile.collectionType}</strong>&nbsp;
+              <a
+                className="edit tooltip-bottom"
+                href={`${repoUrl}commit/${selectedCollectionFile.lastCommitSha}`}
+                target="_blank"
+              >
+                Updated&nbsp;
+                {moment(
+                  Date.parse(selectedCollectionFile.lastUpdatedAt)
+                ).fromNow()}&nbsp; by&nbsp;
+                {selectedCollectionFile.lastUpdatedBy}
+                <span>View on GitHub</span>
+              </a>
+            </small>
+            {this.renderBuildSiteUrl()}
+          </div>
+
           {parsorError &&
             <div className="error-msg-block">
               Unable to parse fields properly as {parsorError}

@@ -14,6 +14,7 @@ import {
   retryIndexFetchRequest
 } from '../actions/repoActions';
 import {
+  setBuildSiteUrl,
   resetEditorData,
   selectCollectionFile
 } from '../actions/editorActions';
@@ -345,6 +346,7 @@ function mapStateToProps(
   { params: { collectionType, branch, splat: path } }
 ) {
   var repoStatus = state.repo.toJSON();
+  var editorStatus = state.editor.toJSON();
   return {
     currentBranch: repoStatus.currentBranch,
     avatar: state.user.get('avatar'),
@@ -356,7 +358,8 @@ function mapStateToProps(
     repoUpdateSignal: repoStatus.repoUpdateSignal,
     currentBranchUpdatedAt: repoStatus.currentBranchUpdatedAt,
     indexUpdatedAt: repoStatus.indexUpdatedAt,
-    indexFetchStatus: repoStatus.indexFetchStatus
+    indexFetchStatus: repoStatus.indexFetchStatus,
+    buildSiteUrl: editorStatus.buildSiteUrl
   };
 }
 
@@ -374,7 +377,8 @@ function mapDispatchToProps(dispatch) {
       fetchRepoIndex,
       fetchUpdatedCollections,
       resetUpdateSignal,
-      retryIndexFetchRequest
+      retryIndexFetchRequest,
+      setBuildSiteUrl
     },
     dispatch
   );
