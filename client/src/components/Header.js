@@ -258,6 +258,8 @@ export default class Header extends Component {
 
   render() {
     const {
+      buildSiteUrl,
+      setBuildSiteUrl,
       branches,
       currentBranch,
       avatar,
@@ -329,6 +331,8 @@ export default class Header extends Component {
         </span>
         <JekyllProStatus
           {...{
+            buildSiteUrl,
+            setBuildSiteUrl,
             repoOwner,
             repoName,
             currentBranch,
