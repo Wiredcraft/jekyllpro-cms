@@ -19,6 +19,7 @@ import LockIcon from '../svg/LockIcon';
 import TranslationIcon from '../svg/TranslationIcon';
 
 import {
+  getUrlPathByPermalinkRule,
   slugify,
   purgeObject,
   textValueIsDifferent,
@@ -575,18 +576,28 @@ export default class ContentEditor extends Component {
   };
 
   getBuildSitePath() {
+    const { selectedCollectionFile, config } = this.props;
     const { formData, currentFileLanguage } = this.state;
+    let collectionType = selectedCollectionFile.collectionType;
+    let filepath = selectedCollectionFile.path;
+    let permalinkConfig = config.collections_permalink;
     let path = null;
-    if (!formData.category) {
+
+    if (!permalinkConfig || !permalinkConfig[collectionType]) {
       return path;
     }
-    path = formData.category.join('/');
-    if (currentFileLanguage && this.isDefaultLanguage()) {
+    path = getUrlPathByPermalinkRule(
+      filepath,
+      formData,
+      permalinkConfig[collectionType]
+    );
+    if (
+      !currentFileLanguage ||
+      (currentFileLanguage && this.isDefaultLanguage())
+    ) {
       return path;
     }
-    if (currentFileLanguage) {
-      return currentFileLanguage + '/' + path;
-    }
+    return currentFileLanguage + '/' + path;
   }
 
   renderBuildSiteUrl = () => {
