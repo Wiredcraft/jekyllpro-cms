@@ -26,7 +26,12 @@ export default class JekyllProStatus extends Component {
 
   componentDidUpdate(prevProps, prevState) {
     const { updating } = this.state;
-    const { currentBranch, repoUpdateSignal } = this.props;
+    const {
+      currentBranch,
+      repoUpdateSignal,
+      setBuildSiteUrl,
+      buildSiteUrl
+    } = this.props;
 
     if (updating) {
       return;
@@ -50,6 +55,10 @@ export default class JekyllProStatus extends Component {
             },
             updating: false
           });
+
+          if (res.url !== buildSiteUrl) {
+            setBuildSiteUrl(res.url);
+          }
         })
         .catch(err => {
           console.log(err);
@@ -63,7 +72,7 @@ export default class JekyllProStatus extends Component {
   }
 
   handleHover() {
-    const { currentBranch } = this.props;
+    const { currentBranch, setBuildSiteUrl, buildSiteUrl } = this.props;
     const { buildStatus, updating } = this.state;
 
     // do not update when last update was three seconds ago
@@ -89,6 +98,9 @@ export default class JekyllProStatus extends Component {
             lastUpdate: Date.now()
           }
         });
+        if (res.url !== buildSiteUrl) {
+          setBuildSiteUrl(res.url);
+        }
       })
       .catch(err => {
         console.log(err);

@@ -71,6 +71,7 @@ function mapStateToProps(
     collections: repoState.collections,
     selectedCollectionFile: editorState.selectedCollectionFile,
     defaultFileValues: editorState.defaultValues,
+    buildSiteUrl: editorState.buildSiteUrl,
     editorUpdating: editorState.loading
   };
 }

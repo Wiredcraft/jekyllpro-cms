@@ -93,3 +93,12 @@ export function selectCollectionFile(item) {
     });
   };
 }
+
+export function setBuildSiteUrl(url) {
+  return dispatch => {
+    dispatch({
+      payload: { buildSiteUrl: url },
+      type: CHANGE_EDITOR_STATE
+    });
+  };
+}
