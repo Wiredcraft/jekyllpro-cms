@@ -69,8 +69,9 @@ export default class Header extends Component {
       toRoute,
       checkoutBranch,
       location: { query },
-      params: { repoOwner, repoName }
+      params: { repoOwner, repoName, branch }
     } = this.props;
+    let branchInRoute = branch || (query && query.branch);
 
     if (repoOwner && repoName) {
       // find repo info in url
@@ -80,10 +81,10 @@ export default class Header extends Component {
       fetchRepoInfo()
         .then(res => {
           getAllBranch();
-          if (query && query.branch) {
-            checkoutBranch(query.branch);
+          if (branchInRoute) {
+            checkoutBranch(branchInRoute);
           }
-          this.fetchLatestIndex(query && query.branch);
+          this.fetchLatestIndex(branchInRoute);
         })
         .catch(err => {
           Cookie.remove('repoOwner');

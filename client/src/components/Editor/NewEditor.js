@@ -441,8 +441,8 @@ class NewEditor extends Component {
   }
 
   toContentListing() {
-    const { toRoute, repoFullName } = this.props;
-    toRoute(`/${repoFullName}/`);
+    const { toRoute, repoFullName, currentBranch } = this.props;
+    toRoute(`/${repoFullName}/?branch=${currentBranch}`);
   }
 
   onFormChange = ({ formData }) => {

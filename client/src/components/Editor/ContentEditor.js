@@ -540,8 +540,8 @@ class ContentEditor extends Component {
   }
 
   toContentListing() {
-    const { toRoute, repoFullName } = this.props;
-    toRoute(`/${repoFullName}/`);
+    const { toRoute, repoFullName, currentBranch } = this.props;
+    toRoute(`/${repoFullName}/?branch=${currentBranch}`);
   }
 
   renderTitle = () => {
