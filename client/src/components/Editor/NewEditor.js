@@ -1,9 +1,8 @@
 import React, { Component } from 'react';
-// import Form from 'react-jsonschema-form';
 import ReactDOM from 'react-dom';
 import moment from 'moment';
 import Cookie from 'js-cookie';
-import { Link } from 'react-router';
+import { Link, withRouter } from 'react-router';
 import Select from 'react-select';
 import cx from 'classnames';
 import {
@@ -38,7 +37,7 @@ const fileExtMapping = ext => {
   }
 };
 
-export default class NewEditor extends Component {
+class NewEditor extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -57,6 +56,7 @@ export default class NewEditor extends Component {
       title: '',
       shouldRenderTitle: false,
       titleTitle: 'Title',
+      fileModified: false,
       showFilename: false
     };
   }
@@ -93,6 +93,39 @@ export default class NewEditor extends Component {
         }
       );
     });
+  }
+
+  componentDidMount() {
+    window.addEventListener(
+      'beforeunload',
+      this.handleEditorUnsavedChange.bind(this)
+    );
+    this.props.router.setRouteLeaveHook(
+      this.props.route,
+      this.routerWillLeave.bind(this)
+    );
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener(
+      'beforeunload',
+      this.handleEditorUnsavedChange.bind(this)
+    );
+  }
+
+  routerWillLeave() {
+    if (this.state.fileModified) {
+      return 'You have unsaved changes on this page. Do you want to leave this page and discard your changes or stay on this page?';
+    }
+  }
+
+  handleEditorUnsavedChange(e) {
+    if (this.state.fileModified) {
+      let warning =
+        'You have unsaved changes on this page. Do you want to leave this page and discard your changes or stay on this page?';
+      e.returnValue = warning;
+      return warning;
+    }
   }
 
   getCurrentSchema(type, callback) {
@@ -280,7 +313,7 @@ export default class NewEditor extends Component {
         toRoute(
           `/${repoOwner}/${repoName}/${collectionType}/${branch}/${filePath}`
         );
-        this.setState({ disableActionBtn: false });
+        this.setState({ disableActionBtn: false, fileModified: false });
       })
       .then(() => {
         notify('success', 'Change saved!');
@@ -309,12 +342,12 @@ export default class NewEditor extends Component {
 
   handlePublishInput(evt) {
     const { isPostPublished } = this.state;
-    this.setState({ isPostPublished: !isPostPublished });
+    this.setState({ isPostPublished: !isPostPublished, fileModified: true });
   }
 
   handleDraftInput(evt) {
     const { isDraft } = this.state;
-    this.setState({ isDraft: !isDraft });
+    this.setState({ isDraft: !isDraft, fileModified: true });
   }
 
   handleFileSlugInput = evt => {
@@ -401,7 +434,10 @@ export default class NewEditor extends Component {
       newPathArray.push(subPath);
     }
     newPathArray.push(newFilename);
-    this.setState({ currentFilePath: newPathArray.join('/') });
+    this.setState({
+      currentFilePath: newPathArray.join('/'),
+      fileModified: true
+    });
   }
 
   toContentListing() {
@@ -411,7 +447,8 @@ export default class NewEditor extends Component {
 
   onFormChange = ({ formData }) => {
     this.setState({
-      formData
+      formData,
+      fileModified: true
     });
   };
 
@@ -529,12 +566,15 @@ export default class NewEditor extends Component {
       availableLanguages,
       currentSchema,
       disableActionBtn,
-      currentFileSlug
+      currentFileSlug,
+      fileModified
     } = this.state;
 
     let btnBundleClassName = cx('bundle', { disabled: disableActionBtn });
-    let saveBtnClassName = cx('button primary save', {
-      'disabled processing': disableActionBtn
+    let saveBtnClassName = cx('button save', {
+      disabled: !fileModified || disableActionBtn,
+      primary: fileModified && !disableActionBtn,
+      processing: fileModified && disableActionBtn
     });
 
     if (!currentSchema) return <section id="content" />;
@@ -632,3 +672,5 @@ export default class NewEditor extends Component {
     );
   }
 }
+
+export default withRouter(NewEditor);
