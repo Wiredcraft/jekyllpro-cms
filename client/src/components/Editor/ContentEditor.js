@@ -2,10 +2,9 @@ import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import moment from 'moment';
 import Cookie from 'js-cookie';
-import { Link } from 'react-router';
+import { Link, withRouter } from 'react-router';
 import Select from 'react-select';
 import cx from 'classnames';
-
 import {
   parseYamlInsideMarkdown,
   retriveContent,
@@ -45,7 +44,7 @@ const fileExtMapping = ext => {
   }
 };
 
-export default class ContentEditor extends Component {
+class ContentEditor extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -82,6 +81,17 @@ export default class ContentEditor extends Component {
     }
   }
 
+  componentDidMount() {
+    window.addEventListener(
+      'beforeunload',
+      this.handleEditorUnsavedChange.bind(this)
+    );
+    this.props.router.setRouteLeaveHook(
+      this.props.route,
+      this.routerWillLeave.bind(this)
+    );
+  }
+
   componentWillReceiveProps(nextProps) {
     const { selectedCollectionFile } = nextProps;
 
@@ -90,6 +100,28 @@ export default class ContentEditor extends Component {
         selectedCollectionFile.collectionType,
         this.updateEditorForm
       );
+    }
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener(
+      'beforeunload',
+      this.handleEditorUnsavedChange.bind(this)
+    );
+  }
+
+  routerWillLeave() {
+    if (this.state.fileModified) {
+      return 'You have unsaved changes on this page. Do you want to leave this page and discard your changes or stay on this page?';
+    }
+  }
+
+  handleEditorUnsavedChange(e) {
+    if (this.state.fileModified) {
+      let warning =
+        'You have unsaved changes on this page. Do you want to leave this page and discard your changes or stay on this page?';
+      e.returnValue = warning;
+      return warning;
     }
   }
 
@@ -792,3 +824,5 @@ export default class ContentEditor extends Component {
     );
   }
 }
+
+export default withRouter(ContentEditor);
