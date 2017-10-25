@@ -357,6 +357,57 @@ const refreshIndexAndSave = (req, res) => {
     });
 };
 
+/**
+ * List all tags
+ *
+ * @param {object} req.githubRepo - github-api instance
+ */
+const listRepoTags = (req, res) => {
+  var repo = req.githubRepo;
+  repo
+    .listTags()
+    .then(data => {
+      return res.status(200).json(data.data);
+    })
+    .catch(err => {
+      console.log(err);
+      return res
+        .status(err.status || err.response.status)
+        .json(err.response.data);
+    });
+};
+
+/**
+ * Create tag ref for a branch
+ *
+ * @param {object} req.githubRepo - github-api instance
+ * @param {string} req.body.branch - branch name e.g. "master"
+ * @param {string} req.body.tagName - e.g. "v1.2.3"
+ */
+const createTag = (req, res) => {
+  var repo = req.githubRepo;
+  var branch = req.body.branch;
+  var ref = 'refs/tags/' + req.body.tagName;
+  debug('Creating new tag %s for branch %s', ref, branch);
+  repo
+    .getBranch(branch)
+    .then(branchData => {
+      debug(`Getting branch data: ${JSON.stringify(branchData.data)}`);
+      let sha = branchData.data.commit.sha;
+
+      return repo.createRef({ ref, sha });
+    })
+    .then(data => {
+      return res.status(200).json(data.data);
+    })
+    .catch(err => {
+      console.log(err);
+      return res
+        .status(err.status || err.response.status)
+        .json(err.response.data);
+    });
+};
+
 const listHooks = (req, res) => {
   var repo = req.githubRepo;
   repo
@@ -1025,5 +1076,7 @@ export default {
   getFreshIndexFromGithub,
   listBranchTree,
   listHooks,
-  manageHook
+  manageHook,
+  listRepoTags,
+  createTag
 };

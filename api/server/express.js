@@ -171,6 +171,12 @@ const initRoutes = app => {
     .get(repository.listHooks)
     .post(repository.manageHook);
 
+  app
+    .route('/api/repository/tags')
+    .all(users.requireAuthentication, repository.requireGithubAPI)
+    .get(repository.listRepoTags)
+    .post(repository.createTag);
+
   app.route('/api/webhook').post(pushHook);
 };
 
