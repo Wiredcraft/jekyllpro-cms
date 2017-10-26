@@ -24,9 +24,11 @@ import { toRoute } from '../actions/routeActions';
 import ExternalLinkIcon from './svg/ExternalLinkIcon';
 import BranchIcon from './svg/BranchIcon';
 import LogoutIcon from './svg/LogoutIcon';
+import TagIcon from './svg/TagIcon';
 import RepoSelection from './Header/RepoSelection';
 import notify from './common/Notify';
 import JekyllProStatus from './Header/JekyllProStatus';
+import TaggingModal from './Modal/TaggingModal';
 
 const RETRY_INTERVAL = 20 * 1000; // 20 seconds
 let MAX_RETRY_COUNTER = 8;
@@ -37,6 +39,7 @@ export default class Header extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      tagModalOpen: false,
       selectedType: undefined
     };
   }
@@ -269,8 +272,13 @@ export default class Header extends Component {
       repoDetails,
       repoUpdateSignal,
       resetUpdateSignal,
+      config,
       params: { repoOwner, repoName }
     } = this.props;
+    let allowedTaggingBranch =
+      config &&
+      config.allow_tagging &&
+      config.allow_tagging.indexOf(currentBranch) > -1;
 
     return (
       <header id="header">
@@ -341,6 +349,23 @@ export default class Header extends Component {
             resetUpdateSignal
           }}
         />
+        {allowedTaggingBranch &&
+          <span
+            className="tag menu"
+            onClick={() => {
+              this.setState({ tagModalOpen: true });
+            }}
+          >
+            <a className="item">
+              <TagIcon />Tagging
+            </a>
+          </span>}
+        <TaggingModal
+          onclose={() => {
+            this.setState({ tagModalOpen: false });
+          }}
+          isOpen={this.state.tagModalOpen}
+        />
       </header>
     );
   }
@@ -354,6 +379,7 @@ function mapStateToProps(
   var editorStatus = state.editor.toJSON();
   return {
     currentBranch: repoStatus.currentBranch,
+    config: repoStatus.config,
     avatar: state.user.get('avatar'),
     schemas: repoStatus.schemas,
     userName: state.user.get('userName'),
