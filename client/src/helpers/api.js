@@ -188,6 +188,22 @@ export function checkJekyllProBuild(branch) {
   });
 }
 
+export function listAllTags() {
+  var requestUrl = `${API_BASE_URL}/api/repository/tags`;
+  return new Promise((resolve, reject) => {
+    repoRequest('GET', requestUrl).end(generalResponseHandler(resolve, reject));
+  });
+}
+
+export function createTag(branch, tagName) {
+  var requestUrl = `${API_BASE_URL}/api/repository/tags`;
+  return new Promise((resolve, reject) => {
+    repoRequest('POST', requestUrl)
+      .send({ branch, tagName })
+      .end(generalResponseHandler(resolve, reject));
+  });
+}
+
 export function injectDefaultSchema(branch) {
   let pagesData = {
     branch,
