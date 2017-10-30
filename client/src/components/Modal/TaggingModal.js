@@ -85,6 +85,7 @@ export default class TaggingModal extends Component {
             <div className="field">
               <input
                 type="text"
+                value={this.state.newTag}
                 onChange={::this.handleInput}
                 placeholder="Tag name"
               />
