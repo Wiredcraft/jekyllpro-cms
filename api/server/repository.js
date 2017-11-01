@@ -19,6 +19,8 @@ import { RepoIndex, RepoAccessToken, RepoFileEntry } from './database';
 import { hookConfig } from './webhook';
 
 const RUNNING_JOBS = {};
+const JOB_PREFIX_REFRESH = 'refreshIndex';
+const JOB_PREFIX_INCREMENT = 'refreshIndexIncremental';
 
 const cb = (error, result, request) => {
   console.log(error);
@@ -318,7 +320,7 @@ const refreshIndexAndSave = (req, res) => {
   const repoFullname = req.repo.fullName;
   debug(`refreshIndexAndSave - ${repoFullname}`);
 
-  const jobKey = `${repoFullname}:${branch}`;
+  const jobKey = `${JOB_PREFIX_REFRESH}:${repoFullname}:${branch}`;
   // avoid doing multiple refresh to same repo branch at same time
   if (RUNNING_JOBS[jobKey] === true) {
     return res.status(409).json({
@@ -498,9 +500,14 @@ function refreshIndexIncremental({ github, repoFullname, branch }) {
   };
 
   // throttle
-  const jobKey = `refreshIndexIncremental:${repoFullname}:${branch}`;
+  const jobKey = `${JOB_PREFIX_INCREMENT}:${repoFullname}:${branch}`;
+  const jobKeyRefresh = `${JOB_PREFIX_REFRESH}:${repoFullname}:${branch}`;
   if (RUNNING_JOBS[jobKey]) {
     debug('another refreshIndexIncremental task is running, returning');
+    return Promise.resolve(updatedContent);
+  }
+  if (RUNNING_JOBS[jobKeyRefresh]) {
+    debug('refresh index task is running, returning');
     return Promise.resolve(updatedContent);
   }
   RUNNING_JOBS[jobKey] = true;
@@ -727,7 +734,7 @@ function refreshIndexIncremental({ github, repoFullname, branch }) {
       return updatedContent;
     })
     .catch(err => {
-      console.log(err);
+      debug('unable to do incremental update as ', err);
 
       dispose();
       return updatedContent;
@@ -1007,36 +1014,43 @@ const getFreshIndexFromGithub = ({ repoObject, repoFullname, branch }) => {
         });
       }).then(({ repoIndex, treeArray, schemas }) => {
         const collectionFiles = getCollectionFiles(schemas, treeArray);
-        debug(
-          'got %d entries from GitHub, showing the 1st one %o',
-          collectionFiles.length,
-          collectionFiles[0]
-        );
+        debug('got %d entries from GitHub', collectionFiles.length);
 
         return Bluebird.map(
           collectionFiles,
           item => {
-            let cfile = Object.assign({}, item);
-            let getContentReq = repoObject.getContents(branch, item.path, true);
-            let getCommitsReq = repoObject.listCommits({
-              sha: branch,
-              path: item.path
+            debug('fetching content for file: %O', {
+              filepath: item.path,
+              branch: branch
             });
+            let cfile = Object.assign({}, item);
 
-            return Bluebird.join(
-              getContentReq,
-              getCommitsReq,
-              (content, commits) => {
-                var lastCommit = commits.data[0];
+            return repoObject
+              .getContents(branch, item.path, true)
+              .then(content => {
                 cfile.content = content.data;
+                return repoObject.listCommits({
+                  sha: branch,
+                  path: item.path
+                });
+              })
+              .then(commits => {
+                var lastCommit = commits.data[0];
                 cfile.lastCommitSha = lastCommit.sha;
                 cfile.lastUpdatedAt = lastCommit.commit.committer.date;
                 cfile.lastUpdatedBy = lastCommit.commit.committer.name;
-
-                formatedIndex.collections.push(cfile);
-                return saveFileEntry(cfile, repoIndex);
-              }
-            );
+                return Bluebird.resolve(cfile);
+              })
+              .catch(err => {
+                debug('fail to fetch either content or commits for %O', err);
+                return Bluebird.resolve(cfile);
+              })
+              .then(cfile => {
+                if (cfile.content) {
+                  formatedIndex.collections.push(cfile);
+                  return saveFileEntry(cfile, repoIndex);
+                }
+              });
           },
           {
             concurrency: 5
