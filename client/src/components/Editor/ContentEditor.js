@@ -194,11 +194,22 @@ class ContentEditor extends Component {
 
     // content is markdown or html
     const docConfigObj = parseYamlInsideMarkdown(content);
-    // console.log(docConfigObj)
     if (docConfigObj && !docConfigObj['__error']) {
       const schemaObj = currentSchema.JSONSchema.properties;
       Object.keys(schemaObj).forEach(prop => {
-        formData[prop] = docConfigObj[prop];
+        let valSchema = schemaObj[prop];
+        let val = docConfigObj[prop];
+        if (val !== undefined && valSchema.type === 'string') {
+          val = String(val);
+        }
+        if (
+          val !== undefined &&
+          valSchema.type === 'array' &&
+          valSchema.items.type === 'string'
+        ) {
+          val = val.map(item => String(item));
+        }
+        formData[prop] = val;
       });
       formData.published = docConfigObj.published;
       formData.draft = docConfigObj.draft;
