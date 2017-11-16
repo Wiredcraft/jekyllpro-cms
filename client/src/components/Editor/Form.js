@@ -12,7 +12,6 @@ export default class Form extends Component {
       uiSchema,
       formData
     } = this.props;
-    console.log(formData);
     return (
       <JSONSchemaForm
         onChange={onFormChange}
