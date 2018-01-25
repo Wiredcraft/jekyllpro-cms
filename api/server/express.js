@@ -10,11 +10,18 @@ import cors from 'cors';
 import { Strategy } from 'passport-github';
 import helmet from 'helmet';
 import lusca from 'lusca';
+import ctimeout from 'connect-timeout';
+
 import users from './users';
 import repository from './repository';
 import { pushHook } from './webhook';
 
 const MongoStore = connectMongo(session);
+const DEFAULT_TIMEOUT = 2 * 60 * 1000;
+const EXTENDED_TIMEOUT = config.httpTimeout;
+const haltOnTimedout = (req, res, next) => {
+  if (!req.timedout) next()
+};
 
 const initMiddleware = app => {
   // Request body parsing middleware should be above methodOverride
@@ -111,73 +118,79 @@ const initHelmet = app => {
 
 const initRoutes = app => {
   // Setting the github oauth routes
-  app.route('/api/auth/github').get(users.githubOauthCall());
+  app
+    .route('/api/auth/github')
+    .get(ctimeout(DEFAULT_TIMEOUT), haltOnTimedout, users.githubOauthCall());
   app
     .route('/api/auth/github/callback')
-    .get(users.githubOauthCallback(config.redirectUrl));
-  app.route('/api/logout').get(users.logout);
-  app.route('/api/me').get(users.getUserInfo);
+    .get(ctimeout(DEFAULT_TIMEOUT), haltOnTimedout, users.githubOauthCallback(config.redirectUrl));
+  app
+    .route('/api/logout')
+    .get(ctimeout(DEFAULT_TIMEOUT), haltOnTimedout, users.logout);
+  app
+    .route('/api/me')
+    .get(ctimeout(DEFAULT_TIMEOUT), haltOnTimedout, users.getUserInfo);
   app
     .route('/api/me/orgs')
-    .all(users.requireAuthentication)
+    .all(ctimeout(DEFAULT_TIMEOUT), haltOnTimedout, users.requireAuthentication)
     .get(users.listUserOrgs);
 
   app
     .route('/api/me/repos')
-    .all(users.requireAuthentication)
+    .all(ctimeout(DEFAULT_TIMEOUT), haltOnTimedout, users.requireAuthentication)
     .get(users.listUserRepos);
 
   app
     .route('/api/repository')
-    .all(users.requireAuthentication, repository.requireGithubAPI)
+    .all(ctimeout(DEFAULT_TIMEOUT), haltOnTimedout, users.requireAuthentication, repository.requireGithubAPI)
     .get(repository.getRepoContent)
     .post(repository.writeRepoFile)
     .delete(repository.deleteRepoFile);
 
   app
     .route('/api/repository/index')
-    .all(users.requireAuthentication, repository.requireGithubAPI)
+    .all(ctimeout(EXTENDED_TIMEOUT), haltOnTimedout, users.requireAuthentication, repository.requireGithubAPI)
     .get(repository.getRepoBranchIndex, repository.refreshIndexAndSave);
 
   app
     .route('/api/repository/updated-collections')
-    .all(users.requireAuthentication, repository.requireGithubAPI)
+    .all(ctimeout(DEFAULT_TIMEOUT), haltOnTimedout, users.requireAuthentication, repository.requireGithubAPI)
     .get(repository.getRepoBranchUpdatedCollections);
 
   app
     .route('/api/repository/details')
-    .all(users.requireAuthentication, repository.requireGithubAPI)
+    .all(ctimeout(DEFAULT_TIMEOUT), haltOnTimedout, users.requireAuthentication, repository.requireGithubAPI)
     .get(repository.getRepoDetails);
 
   app
     .route('/api/repository/branch')
-    .all(users.requireAuthentication, repository.requireGithubAPI)
+    .all(ctimeout(DEFAULT_TIMEOUT), haltOnTimedout, users.requireAuthentication, repository.requireGithubAPI)
     .get(repository.listBranches)
     .post(repository.createBranches);
 
   app
     .route('/api/repository/schema')
-    .all(users.requireAuthentication, repository.requireGithubAPI)
+    .all(ctimeout(DEFAULT_TIMEOUT), haltOnTimedout, users.requireAuthentication, repository.requireGithubAPI)
     .get(repository.getBranchSchema);
 
   app
     .route('/api/repository/tree')
-    .all(users.requireAuthentication, repository.requireGithubAPI)
+    .all(ctimeout(DEFAULT_TIMEOUT), haltOnTimedout, users.requireAuthentication, repository.requireGithubAPI)
     .get(repository.listBranchTree);
 
   app
     .route('/api/repository/hooks')
-    .all(users.requireAuthentication, repository.requireGithubAPI)
+    .all(ctimeout(DEFAULT_TIMEOUT), haltOnTimedout, users.requireAuthentication, repository.requireGithubAPI)
     .get(repository.listHooks)
     .post(repository.manageHook);
 
   app
     .route('/api/repository/tags')
-    .all(users.requireAuthentication, repository.requireGithubAPI)
+    .all(ctimeout(DEFAULT_TIMEOUT), haltOnTimedout, users.requireAuthentication, repository.requireGithubAPI)
     .get(repository.listRepoTags)
     .post(repository.createTag);
 
-  app.route('/api/webhook').post(pushHook);
+  app.route('/api/webhook').post(ctimeout(DEFAULT_TIMEOUT), haltOnTimedout, pushHook);
 };
 
 const initErrorHandler = app => {

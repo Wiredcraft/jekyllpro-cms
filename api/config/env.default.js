@@ -4,6 +4,7 @@ module.exports = {
   },
   port: process.env.PORT || 3000,
   host: process.env.HOST || '0.0.0.0',
+  httpTimeout: process.env.HTTP_TIMEOUT || 30 * 60 * 1000,
   templateEngine: 'pug',
   sessionCookie: {
     // session expiration is set by default to 7 days

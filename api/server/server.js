@@ -29,7 +29,7 @@ const init = function init(callback) {
 
 module.exports.start = function start(callback) {
   init(function(app, db, config) {
-    app.listen(config.port, config.host, function() {
+    var appIns = app.listen(config.port, config.host, function() {
       // Create server URL
       var server =
         (process.env.NODE_ENV === 'secure' ? 'https://' : 'http://') +
@@ -46,5 +46,8 @@ module.exports.start = function start(callback) {
 
       if (callback) callback(app, config);
     });
+    // set HTTP Server timeout, configured 'connect-timeout' will not work without this
+    // https://nodejs.org/api/http.html#http_server_timeout
+    appIns.timeout = config.httpTimeout;
   });
 };
