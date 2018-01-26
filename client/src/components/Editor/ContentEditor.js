@@ -275,7 +275,7 @@ class ContentEditor extends Component {
       this.setState({ filePathInputClass: 'error' });
       return;
     }
-    let updatedContent = formData.body;
+    let updatedContent = formData.body === undefined ? '' : formData.body;
     delete formData.body;
 
     if (isPostPublished === false) {
