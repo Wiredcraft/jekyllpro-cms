@@ -269,7 +269,7 @@ class NewEditor extends Component {
       this.setState({ filePathInputClass: 'error' });
       return;
     }
-    let updatedContent = formData.body;
+    let updatedContent = formData.body === undefined ? '' : formData.body;
     delete formData.body;
 
     if (isPostPublished === false) {
@@ -308,12 +308,17 @@ class NewEditor extends Component {
           lastUpdatedBy: data.commit.committer.name,
           lastCommitSha: data.commit.sha
         };
-        collectionFileAdded(newItem);
-        selectCollectionFile(newItem);
-        toRoute(
-          `/${repoOwner}/${repoName}/${collectionType}/${branch}/${filePath}`
-        );
-        this.setState({ disableActionBtn: false, fileModified: false });
+
+        this.setState({
+          disableActionBtn: false,
+          fileModified: false
+        }, () => {
+          collectionFileAdded(newItem);
+          selectCollectionFile(newItem);
+          toRoute(
+            `/${repoOwner}/${repoName}/${collectionType}/${branch}/${filePath}`
+          );
+        });
       })
       .then(() => {
         notify('success', 'Change saved!');
