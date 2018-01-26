@@ -50,8 +50,8 @@ export function getCollectionType(schemaArray, filepath) {
 
 export function getCollectionFiles(schemaArray, filesArray) {
   filesArray.forEach(item => {
-    if (/^[^_]+\w*\.html$/i.test(item.path)) {
-      // any html files that are not in folders starts with '_' are pages file
+    if (/^[^_]+\w*\.(html|md|markdown)$/i.test(item.path)) {
+      // any html or markdown files that are not in folders starts with '_' are pages file
       item.collectionType = 'pages';
     } else if (
       item.type === 'blob' &&
