@@ -5,6 +5,7 @@ import Cookie from 'js-cookie';
 import { Link, withRouter } from 'react-router';
 import Select from 'react-select';
 import cx from 'classnames';
+import _isArray from 'lodash.isarray';
 import {
   parseYamlInsideMarkdown,
   retriveContent,
@@ -203,11 +204,15 @@ class ContentEditor extends Component {
           val = String(val);
         }
         if (
-          val !== undefined &&
           valSchema.type === 'array' &&
           valSchema.items.type === 'string'
         ) {
-          val = val.map(item => String(item));
+          if (_isArray(val)) {
+            val = val.map(item => String(item));
+          } else if (val !== undefined) {
+            val = [String(val)];
+          }
+
         }
         formData[prop] = val;
       });
