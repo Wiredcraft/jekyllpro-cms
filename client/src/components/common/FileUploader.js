@@ -1,83 +1,83 @@
-import React, { Component } from 'react';
+import React, { Component } from 'react'
 
-import UploaderIcon from '../svg/UploaderIcon';
+import UploaderIcon from '../svg/UploaderIcon'
 
 export default class FileUploader extends Component {
-  constructor(props) {
-    super(props);
+  constructor (props) {
+    super(props)
     this.state = {
       files: [],
       uploadBtnClass: 'button primary'
-    };
+    }
   }
 
-  handleFileInput(e) {
-    let files = e.target.files;
-    var allFiles = [];
+  handleFileInput (e) {
+    let files = e.target.files
+    var allFiles = []
     for (var i = 0; i < files.length; i++) {
-      let file = files[i];
-      let reader = new FileReader();
+      let file = files[i]
+      let reader = new FileReader()
 
-      reader.readAsDataURL(file);
+      reader.readAsDataURL(file)
 
       reader.onload = evt => {
-        let content = evt.target.result.replace(/^(.+,)/, '');
+        let content = evt.target.result.replace(/^(.+,)/, '')
         let fileInfo = {
           name: file.name,
           type: file.type,
           size: Math.round(file.size / 1000) + ' kB',
           base64: content
-        };
+        }
 
-        allFiles.push(fileInfo);
+        allFiles.push(fileInfo)
 
         if (allFiles.length == files.length) {
           // Apply Callback function
-          this.onDone(allFiles);
+          this.onDone(allFiles)
         }
-      };
+      }
     }
   }
 
-  onDone(files) {
-    const { uploadFolder } = this.props;
+  onDone (files) {
+    const { uploadFolder } = this.props
     this.setState({
       uploadPath:
         uploadFolder === '/'
           ? '/' + files[0].name
           : uploadFolder + '/' + files[0].name,
       files: files
-    });
+    })
   }
 
-  uploadFile() {
-    const { addNewFile, fileAdded, currentBranch } = this.props;
-    let { files, uploadPath } = this.state;
+  uploadFile () {
+    const { addNewFile, fileAdded, currentBranch } = this.props
+    let { files, uploadPath } = this.state
 
-    //normalize path
-    let p = uploadPath.split('/');
+    // normalize path
+    let p = uploadPath.split('/')
     p = p.filter(s => {
-      return s !== '';
-    });
-    uploadPath = p.join('/');
+      return s !== ''
+    })
+    uploadPath = p.join('/')
 
     // console.log(uploadPath)
-    this.setState({ uploadBtnClass: 'button primary disabled processing' });
+    this.setState({ uploadBtnClass: 'button primary disabled processing' })
     addNewFile(currentBranch, uploadPath, files[0].base64, {
       encode: false
     }).then(() => {
-      fileAdded(uploadPath);
-      this.setState({ uploadBtnClass: 'button primary', files: [] });
-    });
+      fileAdded(uploadPath)
+      this.setState({ uploadBtnClass: 'button primary', files: [] })
+    })
   }
 
-  handlePathInput(evt) {
-    this.setState({ uploadPath: evt.target.value });
+  handlePathInput (evt) {
+    this.setState({ uploadPath: evt.target.value })
   }
 
-  render() {
-    const { uploadFolder } = this.props;
-    const { files, uploadBtnClass, uploadPath } = this.state;
+  render () {
+    const { uploadFolder } = this.props
+    const { files, uploadBtnClass, uploadPath } = this.state
 
     return (
       <div
@@ -89,21 +89,21 @@ export default class FileUploader extends Component {
           {files.length > 0 && <label>File</label>}
 
           <input
-            type="file"
-            id="file"
+            type='file'
+            id='file'
             onChange={::this.handleFileInput}
             multiple={false}
           />
-          <label htmlFor="file" className="button primary">
+          <label htmlFor='file' className='button primary'>
             {files.length > 0 ? files[0].name : 'Upload a file'}
             {files.length === 0 && <UploaderIcon />}
           </label>
         </div>
         {files.length > 0 &&
-          <div className="field confirm-destination">
+          <div className='field confirm-destination'>
             <label>Destination</label>
             <input
-              type="text"
+              type='text'
               value={uploadPath}
               onChange={::this.handlePathInput}
             />
@@ -113,6 +113,6 @@ export default class FileUploader extends Component {
             Confirm upload
           </button>}
       </div>
-    );
+    )
   }
 }

@@ -1,15 +1,22 @@
-'use strict';
+'use strict'
 
 const path = require('path')
 const webpack = require('webpack')
 const autoprefixer = require('autoprefixer')
+const ExtractTextPlugin = require('extract-text-webpack-plugin')
+
+const extractSass = new ExtractTextPlugin({
+  filename: '[name].css',
+  allChunks: true,
+  disable: process.env.NODE_ENV === 'development'
+})
 
 module.exports = {
   context: path.resolve(__dirname, '..'),
   resolve: {
     modules: [
       path.resolve(__dirname, '..'),
-      path.resolve(__dirname, '../node_modules')
+      path.resolve(__dirname, '../../node_modules')
     ],
     alias: {
       actions: path.resolve(__dirname, '../src/actions'),
@@ -18,6 +25,17 @@ module.exports = {
       styles: path.resolve(__dirname, '../src/styles')
     }
   },
+  stats: {
+    colors: true,
+    reasons: true,
+    hash: false,
+    version: false,
+    timings: true,
+    chunks: true,
+    chunkModules: true,
+    cached: false,
+    cachedAssets: false
+  },
   module: {
     rules: [{
       test: /\.js$/,
@@ -25,18 +43,20 @@ module.exports = {
       use: 'babel-loader'
     }, {
       test: /\.css$/,
-      use: [
-        'style-loader',
-        'css-loader',
-        {
+      use: extractSass.extract({
+        fallback: 'style-loader',
+        use: [{
+          loader: 'css-loader',
+          options: {
+            minimize: process.env.NODE_ENV !== 'development'
+          }
+        }, {
           loader: 'postcss-loader',
           options: {
-            plugins: function () {
-              return [autoprefixer]
-            }
+            plugins: () => [autoprefixer]
           }
-        }
-      ]
+        }]
+      })
     }, {
       test: /\.(png|jpg|gif|ico|ttf|eot|svg|woff(2)?)(\?[a-z0-9]+)?$/,
       loader: 'file-loader',
@@ -46,22 +66,28 @@ module.exports = {
       }
     }, {
       test: /\.scss$/,
-      use: [
-        'style-loader',
-        'css-loader',
-        {
+      use: extractSass.extract({
+        fallback: 'style-loader',
+        use: [{
+          loader: 'css-loader',
+          options: {
+            minimize: process.env.NODE_ENV !== 'development'
+          }
+        }, {
           loader: 'postcss-loader',
           options: {
-            plugins: function () {
-              return [autoprefixer]
-            }
+            plugins: () => [autoprefixer]
           }
-        },
-        'sass-loader'
-      ]
+        }, {
+          loader: 'sass-loader'
+        }]
+      })
     }, {
       test: /\.json$/,
       use: 'json-loader'
     }]
-  }
+  },
+  plugins: [
+    extractSass
+  ]
 }

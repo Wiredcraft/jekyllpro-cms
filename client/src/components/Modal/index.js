@@ -19,6 +19,6 @@ const ModalCustomStyle = {
     padding: 0,
     width: '50%'
   }
-};
+}
 
-export default ModalCustomStyle;
+export default ModalCustomStyle

@@ -1,0 +1,19 @@
+{
+  "presets": ["es2015", "stage-0", "react"],
+  "plugins": [
+    "lodash",
+    "transform-runtime",
+    "syntax-async-functions",
+    "transform-regenerator",
+    "transform-decorators-legacy",
+    ["module-resolver", {
+      "root": ["client/src"],
+      "alias": {
+        "actions": "client/src/actions",
+        "components": "client/src/components",
+        "stores": "client/src/stores",
+        "styles": "client/src/styles"
+      }
+    }]
+  ]
+}
