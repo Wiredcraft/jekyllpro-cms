@@ -1,6 +1,6 @@
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
+import React, { Component } from 'react'
+import { connect } from 'react-redux'
+import { bindActionCreators } from 'redux'
 
 import {
   selectCollectionFile,
@@ -9,8 +9,8 @@ import {
   addNewFile,
   replaceFile,
   updatingEditor
-} from '../actions/editorActions';
-import { toRoute } from '../actions/routeActions';
+} from '../actions/editorActions'
+import { toRoute } from '../actions/routeActions'
 import {
   collectionFileRemoved,
   collectionFileAdded,
@@ -18,51 +18,47 @@ import {
   fileAdded,
   fileRemoved,
   fileReplaced
-} from '../actions/repoActions';
+} from '../actions/repoActions'
 
-import ContentEditor from './Editor/ContentEditor';
-import NewEditor from './Editor/NewEditor';
-import NotFound from './NotFound';
-import NoSchema from './common/NoSchema';
-import InvalidRepo from './common/InvalidRepo';
+import ContentEditor from './Editor/ContentEditor'
+import NewEditor from './Editor/NewEditor'
+import NotFound from './NotFound'
+import NoSchema from './common/NoSchema'
+import InvalidRepo from './common/InvalidRepo'
 
 class Editor extends Component {
-  constructor(props) {
-    super(props);
-  }
-
-  render() {
-    const { mode, params, schemas, location, repoFullName } = this.props;
+  render () {
+    const { params, schemas, location, repoFullName } = this.props
 
     if (location.query && location.query.invalidRepo) {
-      return <InvalidRepo />;
+      return <InvalidRepo />
     }
 
     if (location.query && location.query.noSchema === '1') {
-      return <NoSchema repoFullName={repoFullName} />;
+      return <NoSchema repoFullName={repoFullName} />
     }
 
     if (location.query && location.query.fileNotFound) {
-      return <NotFound />;
+      return <NotFound />
     }
 
     if (schemas && params.splat) {
       return (
         (params.splat === 'new' && <NewEditor {...this.props} />) ||
         <ContentEditor {...this.props} />
-      );
+      )
     }
 
-    return <section id="content" />;
+    return <section id='content' />
   }
 }
 
-function mapStateToProps(
+function mapStateToProps (
   state,
   { params: { repoOwner, repoName, collectionType, branch, splat: path } }
 ) {
-  var repoState = state.repo.toJSON();
-  var editorState = state.editor.toJSON();
+  var repoState = state.repo.toJSON()
+  var editorState = state.editor.toJSON()
   return {
     currentBranch: repoState.currentBranch,
     repoFullName: `${repoOwner}/${repoName}`,
@@ -72,10 +68,10 @@ function mapStateToProps(
     selectedCollectionFile: editorState.selectedCollectionFile,
     mode: editorState.mode,
     editorUpdating: editorState.loading
-  };
+  }
 }
 
-function mapDispatchToProps(dispatch) {
+function mapDispatchToProps (dispatch) {
   return bindActionCreators(
     {
       toRoute,
@@ -93,7 +89,7 @@ function mapDispatchToProps(dispatch) {
       updatingEditor
     },
     dispatch
-  );
+  )
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Editor);
+export default connect(mapStateToProps, mapDispatchToProps)(Editor)

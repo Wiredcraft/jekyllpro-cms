@@ -1,6 +1,6 @@
-import Immutable from 'immutable';
+import Immutable from 'immutable'
 
-import { CHANGE_LOGIN_STATE, USER_LOG_OUT } from '../actions/userActions';
+import { CHANGE_LOGIN_STATE, USER_LOG_OUT } from '../actions/userActions'
 
 const initialState = Immutable.fromJS({
   loaded: false,
@@ -8,15 +8,15 @@ const initialState = Immutable.fromJS({
   userName: '',
   avatar: '',
   userUrl: ''
-});
+})
 
-export default function user(state = initialState, action) {
+export default function user (state = initialState, action) {
   switch (action.type) {
     case USER_LOG_OUT:
-      return initialState;
+      return initialState
     case CHANGE_LOGIN_STATE:
-      return state.merge(action.payload);
+      return state.merge(action.payload)
     default:
-      return state;
+      return state
   }
 }

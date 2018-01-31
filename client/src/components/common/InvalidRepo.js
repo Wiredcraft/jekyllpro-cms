@@ -1,8 +1,8 @@
-import React from 'react';
+import React from 'react'
 
 const InvalidRepo = props => {
   return (
-    <section id="content" className="empty">
+    <section id='content' className='empty'>
       <h2>Uh-oh! Something's wrong...</h2>
       <p>
         This doesn't look like a Jekyll site (we couldn't find a{' '}
@@ -10,7 +10,7 @@ const InvalidRepo = props => {
         repository & branch.
       </p>
     </section>
-  );
-};
+  )
+}
 
-export default InvalidRepo;
+export default InvalidRepo

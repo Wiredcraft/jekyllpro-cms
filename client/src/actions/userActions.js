@@ -1,12 +1,11 @@
-/* global API_BASE_URL */
-import { getUser, logoutUser } from '../helpers/api';
-import { resetEditorData } from './editorActions';
-import { resetRepoData } from './repoActions';
+import { getUser, logoutUser } from '../helpers/api'
+import { resetEditorData } from './editorActions'
+import { resetRepoData } from './repoActions'
 
-export const CHANGE_LOGIN_STATE = 'CHANGE_LOGIN_STATE';
-export const USER_LOG_OUT = 'USER_LOG_OUT';
+export const CHANGE_LOGIN_STATE = 'CHANGE_LOGIN_STATE'
+export const USER_LOG_OUT = 'USER_LOG_OUT'
 
-export function confirmUserIsLogged() {
+export function confirmUserIsLogged () {
   return dispatch => {
     return getUser()
       .then(data => {
@@ -19,20 +18,20 @@ export function confirmUserIsLogged() {
             avatar: data.avatar_url,
             userUrl: data.html_url
           }
-        });
-        return Promise.resolve();
+        })
+        return Promise.resolve()
       })
       .catch(err => {
         dispatch({
           type: CHANGE_LOGIN_STATE,
           payload: { loaded: true }
-        });
-        return Promise.reject();
-      });
-  };
+        })
+        return Promise.reject(err)
+      })
+  }
 }
 
-export function logout() {
+export function logout () {
   return dispatch => {
     return logoutUser().then(() => {
       return Promise.all([
@@ -41,7 +40,7 @@ export function logout() {
         dispatch({
           type: USER_LOG_OUT
         })
-      ]);
-    });
-  };
+      ])
+    })
+  }
 }

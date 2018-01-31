@@ -1,7 +1,7 @@
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
-import React, { Component } from 'react';
-import Cookie from 'js-cookie';
+import { connect } from 'react-redux'
+import { bindActionCreators } from 'redux'
+import React, { Component } from 'react'
+import Cookie from 'js-cookie'
 
 import {
   getAllBranch,
@@ -12,56 +12,56 @@ import {
   fetchUpdatedCollections,
   resetUpdateSignal,
   retryIndexFetchRequest
-} from '../actions/repoActions';
+} from '../actions/repoActions'
 import {
   resetEditorData,
   selectCollectionFile
-} from '../actions/editorActions';
-import { logout } from '../actions/userActions';
-import { toRoute } from '../actions/routeActions';
+} from '../actions/editorActions'
+import { logout } from '../actions/userActions'
+import { toRoute } from '../actions/routeActions'
 
-import ExternalLinkIcon from './svg/ExternalLinkIcon';
-import BranchIcon from './svg/BranchIcon';
-import LogoutIcon from './svg/LogoutIcon';
-import RepoSelection from './Header/RepoSelection';
-import notify from './common/Notify';
-import JekyllProStatus from './Header/JekyllProStatus';
+import ExternalLinkIcon from './svg/ExternalLinkIcon'
+import BranchIcon from './svg/BranchIcon'
+import LogoutIcon from './svg/LogoutIcon'
+import RepoSelection from './Header/RepoSelection'
+// import notify from './common/Notify'
+import JekyllProStatus from './Header/JekyllProStatus'
 
-const RETRY_INTERVAL = 20 * 1000; // 20 seconds
-let MAX_RETRY_COUNTER = 8;
-let retryTimeout = null;
+const RETRY_INTERVAL = 20 * 1000 // 20 seconds
+let MAX_RETRY_COUNTER = 8
+let retryTimeout = null
 
 @connect(mapStateToProps, mapDispatchToProps)
 export default class Header extends Component {
-  constructor(props) {
-    super(props);
+  constructor (props) {
+    super(props)
     this.state = {
       selectedType: undefined
-    };
+    }
   }
 
-  componentDidMount() {
-    this.loadBasicRepoData();
+  componentDidMount () {
+    this.loadBasicRepoData()
   }
 
-  componentDidUpdate(prevProps, prevState) {
-    const { params: { repoOwner, repoName } } = this.props;
+  componentDidUpdate (prevProps, prevState) {
+    const { params: { repoOwner, repoName } } = this.props
     const {
       repoOwner: prevRepoOwner,
       repoName: prevRepoName
-    } = prevProps.params;
+    } = prevProps.params
     // happens when user select different repository
     if (
       (prevRepoOwner && prevRepoName && repoOwner !== prevRepoOwner) ||
       repoName !== prevRepoName
     ) {
-      this.loadBasicRepoData();
+      this.loadBasicRepoData()
     }
   }
 
-  loadBasicRepoData() {
-    const repoOwnerCk = Cookie.get('repoOwner');
-    const repoNameCk = Cookie.get('repoName');
+  loadBasicRepoData () {
+    const repoOwnerCk = Cookie.get('repoOwner')
+    const repoNameCk = Cookie.get('repoName')
     const {
       fetchRepoInfo,
       getAllBranch,
@@ -69,78 +69,78 @@ export default class Header extends Component {
       checkoutBranch,
       location: { query },
       params: { repoOwner, repoName }
-    } = this.props;
+    } = this.props
 
     if (repoOwner && repoName) {
       // find repo info in url
-      Cookie.set('repoOwner', repoOwner, { expires: 100 });
-      Cookie.set('repoName', repoName, { expires: 100 });
+      Cookie.set('repoOwner', repoOwner, { expires: 100 })
+      Cookie.set('repoName', repoName, { expires: 100 })
 
       fetchRepoInfo()
         .then(res => {
-          getAllBranch();
+          getAllBranch()
           if (query && query.branch) {
-            checkoutBranch(query.branch);
+            checkoutBranch(query.branch)
           }
-          this.fetchLatestIndex(query && query.branch);
+          this.fetchLatestIndex(query && query.branch)
         })
-        .catch(err => {
-          Cookie.remove('repoOwner');
-          Cookie.remove('repoName');
-          toRoute({ pathname: '/select', query: { reset: 1 } });
-        });
+        .catch(() => {
+          Cookie.remove('repoOwner')
+          Cookie.remove('repoName')
+          toRoute({ pathname: '/app/select', query: { reset: 1 } })
+        })
     } else if (repoOwnerCk && repoNameCk) {
       // find repo info in cookie
       fetchRepoInfo()
         .then(res => {
           toRoute({
             pathname: `/${repoOwnerCk}/${repoNameCk}/`
-          });
-          getAllBranch();
-          this.fetchLatestIndex();
+          })
+          getAllBranch()
+          this.fetchLatestIndex()
         })
-        .catch(err => {
-          Cookie.remove('repoOwner');
-          Cookie.remove('repoName');
-          toRoute({ pathname: '/select', query: { reset: 1 } });
-        });
+        .catch(() => {
+          Cookie.remove('repoOwner')
+          Cookie.remove('repoName')
+          toRoute({ pathname: '/app/select', query: { reset: 1 } })
+        })
     } else {
-      toRoute({ pathname: '/select', query: { reset: 1 } });
+      toRoute({ pathname: '/app/select', query: { reset: 1 } })
     }
   }
 
-  startUpdateInterval() {
+  startUpdateInterval () {
     const {
       location: { query },
       currentBranch,
       fetchUpdatedCollections
-    } = this.props;
-    const branch = (query && query.branch) || currentBranch;
-    fetchUpdatedCollections(branch);
+    } = this.props
+    const branch = (query && query.branch) || currentBranch
+    fetchUpdatedCollections(branch)
   }
 
-  fetchLatestIndex(branchInRoute) {
-    const { fetchRepoIndex, currentBranch } = this.props;
-    const branch = branchInRoute || currentBranch;
+  fetchLatestIndex (branchInRoute) {
+    const { fetchRepoIndex, currentBranch } = this.props
+    const branch = branchInRoute || currentBranch
 
     fetchRepoIndex({ branch })
       .then(indexData => {
-        return this.checkIfHasSchema(indexData, branchInRoute);
+        return this.checkIfHasSchema(indexData, branchInRoute)
       })
       .then(data => {
-        this.checkIfExistingFile(data);
+        this.checkIfExistingFile(data)
         this.updateInterval = setInterval(
           this.startUpdateInterval.bind(this),
           8000
-        );
+        )
       })
       .catch(err => {
-        this.indexDataErrorHandler(err);
-      });
+        this.indexDataErrorHandler(err)
+      })
   }
 
-  checkIfHasSchema(indexData, branchInRoute) {
-    const { toRoute, location, fetchRepoIndex, currentBranch } = this.props;
+  checkIfHasSchema (indexData, branchInRoute) {
+    const { fetchRepoIndex, currentBranch } = this.props
     // this repo branch might have legacy index data even it does not have schemas,
     // in this case, do a refresh index build,
     // if it still does not have schemas, the request will return error.
@@ -148,114 +148,114 @@ export default class Header extends Component {
       return fetchRepoIndex({
         branch: branchInRoute || currentBranch,
         refresh: true
-      });
+      })
     }
-    return Promise.resolve(indexData);
+    return Promise.resolve(indexData)
   }
 
-  checkIfExistingFile(indexData) {
-    const { params, toRoute, location, selectCollectionFile } = this.props;
+  checkIfExistingFile (indexData) {
+    const { params, toRoute, location, selectCollectionFile } = this.props
 
     if (params.splat && params.splat !== 'new') {
       let fileMatched = indexData.collections.some(item => {
         if (item.path === params.splat) {
-          selectCollectionFile(item);
+          selectCollectionFile(item)
           // break iteration
-          return true;
+          return true
         }
-        return false;
-      });
+        return false
+      })
 
       if (!fileMatched) {
         toRoute({
           pathname: location.pathname,
           query: { fileNotFound: 1 }
-        });
+        })
       }
     }
   }
 
-  indexDataErrorHandler(err, options) {
+  indexDataErrorHandler (err, options) {
     const {
       retryIndexFetchRequest,
       toRoute,
       location: { pathname, query }
-    } = this.props;
+    } = this.props
     if (err.status === 404) {
-      const customError = JSON.parse(err.response.text);
+      const customError = JSON.parse(err.response.text)
       // remove waitingIndexUpdate message box if any
-      retryIndexFetchRequest(false);
+      retryIndexFetchRequest(false)
 
       if (customError.errorCode === 4042) {
         return toRoute({
           pathname,
           query: Object.assign({ noSchema: 1 }, query)
-        });
+        })
       }
       toRoute({
         pathname,
         query: Object.assign({ invalidRepo: 1 }, query)
-      });
+      })
     } else if (err.status === 409) {
       // Calling the function only at first time,
       // Not to display waitingIndexUpdate message box when it is an index refresh request,
       if (!options || (!options.isRetry && !options.isRefresh)) {
-        retryIndexFetchRequest('WAITING');
+        retryIndexFetchRequest('WAITING')
       }
 
       retryTimeout = setTimeout(() => {
-        this.fetchLatestIndexCountDown(options && options.isRefresh);
-      }, RETRY_INTERVAL);
+        this.fetchLatestIndexCountDown(options && options.isRefresh)
+      }, RETRY_INTERVAL)
     }
   }
 
-  fetchLatestIndexCountDown(isRefresh) {
+  fetchLatestIndexCountDown (isRefresh) {
     const {
       retryIndexFetchRequest,
       currentBranch,
       fetchRepoIndex
-    } = this.props;
+    } = this.props
 
     if (MAX_RETRY_COUNTER < 1) {
       // display waitingIndexUpdate failed message box
-      retryIndexFetchRequest('FAILED');
-      retryTimeout = null;
+      retryIndexFetchRequest('FAILED')
+      retryTimeout = null
     } else if (retryTimeout) {
-      MAX_RETRY_COUNTER = MAX_RETRY_COUNTER - 1;
+      MAX_RETRY_COUNTER = MAX_RETRY_COUNTER - 1
 
       fetchRepoIndex({ branch: currentBranch }, true)
         .then(data => {
           // remove waitingIndexUpdate message box
-          retryIndexFetchRequest(false);
-          retryTimeout = null;
-          this.checkIfExistingFile(data);
+          retryIndexFetchRequest(false)
+          retryTimeout = null
+          this.checkIfExistingFile(data)
         })
         .catch(err => {
-          this.indexDataErrorHandler(err, { isRefresh, isRetry: true });
-        });
+          this.indexDataErrorHandler(err, { isRefresh, isRetry: true })
+        })
     }
   }
 
-  handleBranchChange(newBranch) {
-    const { checkoutBranch, toRoute } = this.props;
-    const { repoOwner, repoName } = this.props.params;
-    this.updateInterval && clearInterval(this.updateInterval);
+  handleBranchChange (newBranch) {
+    const { checkoutBranch, toRoute } = this.props
+    const { repoOwner, repoName } = this.props.params
+    this.updateInterval && clearInterval(this.updateInterval)
 
     checkoutBranch(newBranch).then(() => {
-      this.fetchLatestIndex();
-    });
-    toRoute(`/${repoOwner}/${repoName}/?branch=${newBranch}`);
+      this.fetchLatestIndex()
+    })
+    toRoute(`/${repoOwner}/${repoName}/?branch=${newBranch}`)
   }
 
-  logout() {
-    const { logout } = this.props;
-    const appUrl = window.location.origin;
+  logout () {
+    const { logout } = this.props
+    const appUrl = window.location.origin
     logout().then(res => {
-      window.location = appUrl;
-    });
+      window.location = appUrl
+    })
   }
 
-  render() {
+  render () {
     const {
       branches,
       currentBranch,
@@ -266,16 +266,16 @@ export default class Header extends Component {
       repoUpdateSignal,
       resetUpdateSignal,
       params: { repoOwner, repoName }
-    } = this.props;
+    } = this.props
 
     return (
-      <header id="header">
-        <span className="menu user">
-          <a className="item">
+      <header id='header'>
+        <span className='menu user'>
+          <a className='item'>
             <img src={avatar} />
           </a>
-          <div className="options">
-            <a href={userUrl} target="_blank">
+          <div className='options'>
+            <a href={userUrl} target='_blank'>
               <ExternalLinkIcon />
               {userName}
             </a>
@@ -286,15 +286,15 @@ export default class Header extends Component {
             </a>
           </div>
         </span>
-        <span className="repo menu">
-          <a className="item">
+        <span className='repo menu'>
+          <a className='item'>
             {repoDetails && <img src={repoDetails.ownerAvatar} />}
             {repoName}
           </a>
           <RepoSelection {...this.props}>
             <a
               href={`https://github.com/${repoOwner}/${repoName}`}
-              target="_blank"
+              target='_blank'
             >
               <ExternalLinkIcon />
               {repoOwner}/{repoName}
@@ -302,13 +302,13 @@ export default class Header extends Component {
             <hr />
           </RepoSelection>
         </span>
-        <span className="branch menu">
-          <a className="item">
+        <span className='branch menu'>
+          <a className='item'>
             <BranchIcon />
             {currentBranch}
           </a>
           {branches &&
-            <div className="options">
+            <div className='options'>
               {branches &&
                 branches.map(b => {
                   return (
@@ -322,7 +322,7 @@ export default class Header extends Component {
                         {b.name}
                       </span>
                     </a>
-                  );
+                  )
                 })}
             </div>}
         </span>
@@ -336,15 +336,15 @@ export default class Header extends Component {
           }}
         />
       </header>
-    );
+    )
   }
 }
 
-function mapStateToProps(
+function mapStateToProps (
   state,
   { params: { collectionType, branch, splat: path } }
 ) {
-  var repoStatus = state.repo.toJSON();
+  var repoStatus = state.repo.toJSON()
   return {
     currentBranch: repoStatus.currentBranch,
     avatar: state.user.get('avatar'),
@@ -357,10 +357,10 @@ function mapStateToProps(
     currentBranchUpdatedAt: repoStatus.currentBranchUpdatedAt,
     indexUpdatedAt: repoStatus.indexUpdatedAt,
     indexFetchStatus: repoStatus.indexFetchStatus
-  };
+  }
 }
 
-function mapDispatchToProps(dispatch) {
+function mapDispatchToProps (dispatch) {
   return bindActionCreators(
     {
       getAllBranch,
@@ -377,5 +377,5 @@ function mapDispatchToProps(dispatch) {
       retryIndexFetchRequest
     },
     dispatch
-  );
+  )
 }

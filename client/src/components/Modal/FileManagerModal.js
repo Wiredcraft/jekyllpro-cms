@@ -1,53 +1,53 @@
-import React, { Component } from 'react';
-import Modal from 'react-modal';
-import ModalCustomStyle from '../Modal';
-import ModalCloseIcon from '../svg/ModalCloseIcon';
+import React, { Component } from 'react'
+import Modal from 'react-modal'
+import ModalCustomStyle from '../Modal'
+import ModalCloseIcon from '../svg/ModalCloseIcon'
 
-import FileManager from '../common/FileManager';
-import FileUploader from '../common/FileUploader';
+import FileManager from '../common/FileManager'
+import FileUploader from '../common/FileUploader'
 
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
-import { fetchRepoTree, fileAdded } from '../../actions/repoActions';
-import { addNewFile } from '../../actions/editorActions';
+import { connect } from 'react-redux'
+import { bindActionCreators } from 'redux'
+import { fetchRepoTree, fileAdded } from '../../actions/repoActions'
+import { addNewFile } from '../../actions/editorActions'
 
 @connect(mapStateToProps, mapDispatchToProps)
 export default class FileManagerModal extends Component {
-  constructor(props) {
-    super(props);
+  constructor (props) {
+    super(props)
     this.state = {
       selectedFolderPath: '/',
       disableSelectBtn: true
-    };
+    }
   }
 
-  componentWillReceiveProps(nextProps) {
+  componentWillReceiveProps (nextProps) {
     if (nextProps.isOpen && !this.props.isOpen) {
       this.setState({
         selectedFolderPath: '/',
         disableSelectBtn: true
-      });
+      })
     }
   }
 
-  fileCallback(filepath) {
-    this.setState({ selectedFilePath: filepath, disableSelectBtn: false });
+  fileCallback (filepath) {
+    this.setState({ selectedFilePath: filepath, disableSelectBtn: false })
   }
 
-  folderCallback(name, path) {
+  folderCallback (name, path) {
     this.setState({
       selectedFilePath: '',
       disableSelectBtn: true,
       selectedFolderPath: path
-    });
+    })
   }
 
-  handleSelectBtn() {
-    this.props.handleSelect(this.state.selectedFilePath);
-    this.props.onclose();
+  handleSelectBtn () {
+    this.props.handleSelect(this.state.selectedFilePath)
+    this.props.onclose()
   }
 
-  render() {
+  render () {
     const {
       isOpen,
       onclose,
@@ -56,24 +56,24 @@ export default class FileManagerModal extends Component {
       addNewFile,
       fileAdded,
       fetchRepoTree
-    } = this.props;
-    const { disableSelectBtn, selectedFolderPath } = this.state;
+    } = this.props
+    const { disableSelectBtn, selectedFolderPath } = this.state
 
     return (
       <Modal
-        contentLabel="File manager"
-        className="file-picker"
+        contentLabel='File manager'
+        className='file-picker'
         style={ModalCustomStyle}
         isOpen={isOpen}
         onRequestClose={onclose}
       >
-        <header className="header">
-          <a className="close" id="close-modal" onClick={onclose}>
+        <header className='header'>
+          <a className='close' id='close-modal' onClick={onclose}>
             <ModalCloseIcon />
           </a>
           <h2>Select a file?</h2>
         </header>
-        <section className="body">
+        <section className='body'>
           <FileManager
             treeMeta={treeMeta}
             currentBranch={currentBranch}
@@ -82,7 +82,7 @@ export default class FileManagerModal extends Component {
             fileCallback={::this.fileCallback}
           />
         </section>
-        <footer className="footer">
+        <footer className='footer'>
           <FileUploader
             currentBranch={currentBranch}
             addNewFile={addNewFile}
@@ -99,19 +99,19 @@ export default class FileManagerModal extends Component {
           </button>
         </footer>
       </Modal>
-    );
+    )
   }
 }
 
-function mapStateToProps(state) {
-  var repoState = state.repo.toJSON();
+function mapStateToProps (state) {
+  var repoState = state.repo.toJSON()
   return {
     currentBranch: repoState.currentBranch,
     treeMeta: repoState.treeMeta
-  };
+  }
 }
 
-function mapDispatchToProps(dispatch) {
+function mapDispatchToProps (dispatch) {
   return bindActionCreators(
     {
       addNewFile,
@@ -119,5 +119,5 @@ function mapDispatchToProps(dispatch) {
       fetchRepoTree
     },
     dispatch
-  );
+  )
 }

@@ -1,13 +1,13 @@
-import { push, replace } from 'react-router-redux';
+import { push, replace } from 'react-router-redux'
 
-export function toRoute(routingUrl) {
+export function toRoute (routingUrl) {
   return dispatch => {
-    dispatch(push(routingUrl));
-  };
+    dispatch(push(routingUrl))
+  }
 }
 
-export function replaceRoute(routingUrl) {
+export function replaceRoute (routingUrl) {
   return dispatch => {
-    dispatch(replace(routingUrl));
-  };
+    dispatch(replace(routingUrl))
+  }
 }
