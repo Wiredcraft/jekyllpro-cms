@@ -13,6 +13,10 @@
   "keywords": [],
   "author": "Wiredcraft",
   "license": "MIT",
+  "engines": {
+    "node": ">=8.9.0",
+    "npm": ">=5.6.0"
+  },
   "dependencies": {
     "@skidding/react-codemirror": "^1.0.1",
     "codemirror": "^5.28.0",
