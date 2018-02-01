@@ -12,8 +12,8 @@ import Cookie from 'js-cookie';
 import { queryToUrlString } from '../helpers/utils';
 import 'codemirror/lib/codemirror.css';
 import 'react-notifications/lib/notifications.css';
-import 'styles/_sass/main.scss';
-import 'styles/_supplement.scss';
+import '../styles/_sass/main.scss';
+import '../styles/_supplement.scss';
 import 'react-select/dist/react-select.css';
 
 @connect(mapStateToProps, mapDispatchToProps)

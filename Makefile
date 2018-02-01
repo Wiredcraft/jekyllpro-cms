@@ -5,7 +5,7 @@ server_dev:
 	@NODE_ENV=development $(NODE_BIN)/nodemon ./api/index.js --ignore client/ --ignore public/ --ignore api/indexFiles/
 webpack-watch:
 	@rm -rf ./public/dev
-	@NODE_ENV=development $(NODE_BIN)/webpack --config client/webpack/development.js --watch --watch-poll
+	@NODE_ENV=development $(NODE_BIN)/webpack --config client/webpack/development.js --watch --watch-poll --progress
 dev:
 	@$(NODE_BIN)/concurrently --kill-others "make server_dev" "make webpack-watch"
 .PHONY: server_dev webpack-watch dev

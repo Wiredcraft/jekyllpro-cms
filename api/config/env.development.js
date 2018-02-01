@@ -1,3 +1,5 @@
+const path = require('path');
+
 module.exports = {
   db: {
     uri:
@@ -21,5 +23,8 @@ module.exports = {
     origin: 'http://localhost:8000',
     methods: 'POST,GET,OPTIONS,DELETE',
     credentials: true
-  }
+  },
+
+  clientPath: process.env.CLIENT_PATH || path.resolve(__dirname, '../../public/dev/index.html'),
+  clientPathPublic: process.env.CLIENT_PATH || path.resolve(__dirname, '../../public/dev'),
 };

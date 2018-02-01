@@ -1,3 +1,5 @@
+const path = require('path');
+
 module.exports = {
   db: {
     uri:
@@ -23,5 +25,8 @@ module.exports = {
     clientID: process.env.GITHUB_CLIENT_ID,
     clientSecret: process.env.GITHUB_CLIENT_SECRETE,
     callbackURL: process.env.REDIRECT_URL + '/api/auth/github/callback'
-  }
+  },
+
+  clientPath: process.env.CLIENT_PATH || path.resolve(__dirname, '../../public/dist/index.html'),
+  clientPathPublic: process.env.CLIENT_PATH || path.resolve(__dirname, '../../public/dist'),
 };

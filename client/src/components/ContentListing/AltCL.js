@@ -3,15 +3,15 @@ import { bindActionCreators } from 'redux';
 import React, { Component } from 'react';
 import moment from 'moment';
 
-import { parseFilePathByLang, getFilenameFromPath } from 'helpers/utils';
+import { parseFilePathByLang, getFilenameFromPath } from '../../helpers/utils';
 import {
   parseYamlInsideMarkdown,
   parseFilenameFromYaml
-} from 'helpers/markdown';
-import { filterFn } from 'helpers/filters';
+} from '../../helpers/markdown';
+import { filterFn } from '../../helpers/filters';
 
-import { selectCollectionFile, openNewFileEditor } from 'actions/editorActions';
-import { toRoute, replaceRoute } from 'actions/routeActions';
+import { selectCollectionFile, openNewFileEditor } from '../../actions/editorActions';
+import { toRoute, replaceRoute } from '../../actions/routeActions';
 
 import FileListing from './FileListing';
 import AltContentHeader from './AltContentHeader';

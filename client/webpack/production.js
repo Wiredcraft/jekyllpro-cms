@@ -25,8 +25,8 @@ module.exports = merge(baseConfig, {
   },
   output: {
     filename: 'assets/[name].[chunkhash].js',
-    path: path.resolve(__dirname, '../dist'),
-    publicPath: '/'
+    path: path.resolve(__dirname, '../../public/dist'),
+    publicPath: '/app-public/'
   },
   plugins: [
     new HtmlWebpackPlugin({
