@@ -1,6 +1,7 @@
 .*
 !.gitignore
 !.gitmodules
+!.babelrc
 *~
 
 node_modules/
@@ -9,3 +10,6 @@ yarn.lock
 
 public/dev
 public/dist
+
+client/dev
+client/dist
