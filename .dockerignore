@@ -1,9 +1,6 @@
-.*
-!.gitignore
-!.gitmodules
-!.babelrc
-!.dockerignore
-*~
+*.log
+*.orig
+*.DS_Store*
 
 node_modules/
 docs/_site/
