@@ -9,14 +9,19 @@ module.exports = {
   resolve: {
     modules: [
       path.resolve(__dirname, '..'),
-      path.resolve(__dirname, '../node_modules')
-    ],
-    alias: {
-      actions: path.resolve(__dirname, '../src/actions'),
-      components: path.resolve(__dirname, '../src/components'),
-      stores: path.resolve(__dirname, '../src/stores'),
-      styles: path.resolve(__dirname, '../src/styles')
-    }
+      path.resolve(__dirname, '../../node_modules')
+    ]
+  },
+  stats: {
+    colors: true,
+    reasons: true,
+    hash: false,
+    version: false,
+    timings: true,
+    chunks: true,
+    chunkModules: true,
+    cached: false,
+    cachedAssets: false
   },
   module: {
     rules: [{

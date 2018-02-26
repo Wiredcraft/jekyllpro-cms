@@ -2,11 +2,11 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
-import { parseFilenameFromYaml } from 'helpers/markdown';
-import { parseFilePathByLang, getFilenameFromPath } from 'helpers/utils';
+import { parseFilenameFromYaml } from '../../helpers/markdown';
+import { parseFilePathByLang, getFilenameFromPath } from '../../helpers/utils';
 
-import { selectCollectionFile, resetEditorData } from 'actions/editorActions';
-import { toRoute, replaceRoute } from 'actions/routeActions';
+import { selectCollectionFile, resetEditorData } from '../../actions/editorActions';
+import { toRoute, replaceRoute } from '../../actions/routeActions';
 
 import FileListing from './FileListing';
 import ContentHeader from './ContentHeader';

@@ -1,11 +1,11 @@
 import React from 'react';
 import moment from 'moment';
 import cx from 'classnames';
-import { getFilenameFromPath } from 'helpers/utils';
-import { parseFilenameFromYaml } from 'helpers/markdown';
-import CaretDownIcon from 'components/svg/CaretDownIcon';
-import RemoveIcon from 'components/svg/RemoveIcon';
-import CheckIcon from 'components/svg/CheckIcon';
+import { getFilenameFromPath } from '../../helpers/utils';
+import { parseFilenameFromYaml } from '../../helpers/markdown';
+import CaretDownIcon from '../svg/CaretDownIcon';
+import RemoveIcon from '../svg/RemoveIcon';
+import CheckIcon from '../svg/CheckIcon';
 
 const AltContentHeader = props => {
   const {

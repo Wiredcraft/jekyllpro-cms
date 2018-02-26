@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import NoSchema from 'components/common/NoSchema';
-import InvalidRepo from 'components/common/InvalidRepo';
+import NoSchema from '../common/NoSchema';
+import InvalidRepo from '../common/InvalidRepo';
 import MainCL from './MainCL';
 import AltCL from './AltCL';
 

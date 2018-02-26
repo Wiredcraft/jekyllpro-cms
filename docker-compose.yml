@@ -1,0 +1,32 @@
+version: '2'
+services:
+  web:
+    build: .
+    ports:
+      - "3000:3000"
+    depends_on:
+      - mongodb
+    environment:
+      - NODE_ENV=production
+      - PORT=${PORT}
+      - DB_HOST=mongodb
+      - DB=${DB}
+      - DB_USERNAME=${DB_USERNAME}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - GITHUB_CLIENT_ID=${GITHUB_CLIENT_ID}
+      - GITHUB_CLIENT_SECRET=${GITHUB_CLIENT_SECRET}
+      - SESSION_SECRET=${SESSION_SECRET}
+      - SERVER_URL=${SERVER_URL}
+  mongodb:
+    image: "mongo:3"
+    ports:
+      - "27017:27017"
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${DB_ROOT_USERNAME}
+      - MONGO_INITDB_ROOT_PASSWORD=${DB_ROOT_PASSWORD}
+      - APPLICATION_USER=${DB_USERNAME}
+      - APPLICATION_PASSWORD=${DB_PASSWORD}
+      - APPLICATION_DB=${DB}
+    volumes:
+      - "$PWD/docker/mongo-entrypoint/:/docker-entrypoint-initdb.d/"
+      # - ./data:/data/db

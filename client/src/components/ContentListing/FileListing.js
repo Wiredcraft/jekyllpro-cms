@@ -1,7 +1,7 @@
 import React from 'react';
 import moment from 'moment';
-import { getFilenameFromPath } from 'helpers/utils';
-import { parseFilenameFromYaml } from 'helpers/markdown';
+import { getFilenameFromPath } from '../../helpers/utils';
+import { parseFilenameFromYaml } from '../../helpers/markdown';
 
 const FileListing = props => {
   const { noContent, noResults, records, selectItem } = props;

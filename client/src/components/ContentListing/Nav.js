@@ -3,8 +3,8 @@ import { bindActionCreators } from 'redux';
 import React, { Component } from 'react';
 import moment from 'moment';
 
-import NestedFileTreeView from 'components/common/NestedFileTree';
-import { setNavPath } from 'actions/navActions';
+import NestedFileTreeView from '../common/NestedFileTree';
+import { setNavPath } from '../../actions/navActions';
 
 function parseNavMenu(navMenuArray) {
   let directory = { _contents: [] };

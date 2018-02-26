@@ -1,5 +1,6 @@
 import config from '../config';
 import express from 'express';
+import path from 'path';
 import bodyParser from 'body-parser';
 import session from 'express-session';
 import connectMongo from 'connect-mongo';
@@ -54,7 +55,7 @@ const initSession = (app, db) => {
   );
 
   // Lusca CSRF Middleware
-  app.use(lusca(config.csrf));
+  // app.use(lusca(config.csrf));
 };
 
 const initPassport = app => {
@@ -178,6 +179,12 @@ const initRoutes = app => {
     .post(repository.createTag);
 
   app.route('/api/webhook').post(pushHook);
+
+  // SPA
+  // TODO: use /app to handle react application might be better
+  app.get('*', (req, res) => {
+    res.sendFile(config.clientPath)
+  })
 };
 
 const initErrorHandler = app => {
@@ -196,6 +203,10 @@ const init = db => {
   var app = express();
   app.set('views', './views');
   app.set('view engine', config.templateEngine || 'pug');
+
+  // Static files
+  app.use('/public', express.static(path.join(__dirname, '../../public')));
+  app.use('/app-public', express.static(config.clientPathPublic));
 
   initMiddleware(app);
 
