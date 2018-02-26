@@ -19,10 +19,27 @@ It contains two parts:
 
 ## How to develop in local
 * Install Mongodb
-* `$ npm install`
+* `$ yarn`
 * `$ export GITHUB_CLIENT_ID=yourGithubClient`
 * `$ export GITHUB_CLIENT_SECRETE=yourGithubClientSecret`
 * `$ make dev`
+
+## Deployment
+`$ docker-compose up`
+
+#### Environmental variables
+```yml
+- PORT: application port, default 3000
+- DB_ROOT_USERNAME: mongodb admin user name       [required]
+- DB_ROOT_PASSWORD: mongodb admin password        [required]
+- DB: mongodb database name, e.g.: cms-production [required]
+- DB_USERNAME: mongodb application user name      [required]
+- DB_PASSWORD: mongodb application password       [required]
+- GITHUB_CLIENT_ID: github client id              [required]
+- GITHUB_CLIENT_SECRET: github client secret      [required]
+- SERVER_URL: default http://localhost:3000       [required]
+- SESSION_SECRET: session secret, default WIREDCRAFT
+```
 
 ## Product user guide
 
